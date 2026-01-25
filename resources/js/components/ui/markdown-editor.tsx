@@ -69,7 +69,7 @@ export function MarkdownEditor({
                     onFocus: onFocus,
                     onBlur: onBlur,
                 }}
-                className="rounded-md! border-input! border! bg-transparent! shadow-xs! dark:bg-transparent!"
+                className="rounded-md! border-input! border! bg-transparent! shadow-xs! dark:bg-transparent! dark:text-neutral-400!"
             />
         </div>
     );

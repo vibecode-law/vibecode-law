@@ -52,7 +52,7 @@ export default function Home({
             </Head>
 
             {/* Hero Section */}
-            <section className="bg-white py-16 dark:bg-neutral-950">
+            <section className="bg-white py-10 lg:py-16 dark:bg-neutral-950">
                 <div className="mx-auto max-w-5xl px-4 text-center">
                     <h1 className="text-4xl font-bold tracking-tight text-neutral-900 sm:text-5xl dark:text-white">
                         Build. Launch. Discover.
@@ -61,40 +61,17 @@ export default function Home({
                         <div className="mx-auto mt-8 max-w-4xl space-y-4 text-lg text-neutral-600 dark:text-neutral-400">
                             <p>
                                 vibecode.law is a new open platform for the
-                                legal community. Let's see what you've been
-                                building!{' '}
+                                legal community. We're launching in the coming
+                                days and all projects will go live together.
                             </p>
 
-                            <p>
-                                We're launching in the coming days and all
-                                projects will go live together. Submit now to be
-                                one of the first.
-                            </p>
-
-                            <div className="py-4">
+                            <div className="pt-4">
                                 <Button asChild size="lg">
                                     <Link href={ShowcaseCreateController.url()}>
                                         Submit Your Project
                                     </Link>
                                 </Button>
                             </div>
-
-                            <p>
-                                If you are keen to contribute in a different
-                                way, please reach out at{' '}
-                                <a
-                                    href="mailto:hello@vibecode.law"
-                                    className="font-medium text-neutral-900 underline underline-offset-4 hover:text-neutral-700 dark:text-white dark:hover:text-neutral-300"
-                                >
-                                    hello@vibecode.law
-                                </a>
-                                .
-                            </p>
-
-                            <p>
-                                In the meantime, checkout the preview showcases
-                                below!
-                            </p>
                         </div>
                     ) : (
                         <p className="mt-4 text-lg text-neutral-600 dark:text-neutral-400">
