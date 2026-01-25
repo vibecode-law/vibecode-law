@@ -3,6 +3,7 @@
 namespace App\Http\Requests\Showcase;
 
 use App\Enums\SourceStatus;
+use App\Models\PracticeArea;
 use App\Models\Showcase\Showcase;
 use Illuminate\Contracts\Validation\Validator;
 use Illuminate\Foundation\Http\FormRequest;
@@ -82,9 +83,15 @@ class ShowcaseWriteRequest extends FormRequest
         $showcase = $this->route('showcase');
         $isEditing = $showcase !== null;
 
+        $practiceAreaIds = PracticeArea::pluck('id');
+
         return [
             'practice_area_ids' => ['required', 'array', 'min:1'],
-            'practice_area_ids.*' => ['required', 'integer', 'exists:practice_areas,id'],
+            'practice_area_ids.*' => [
+                'required',
+                'integer',
+                Rule::in($practiceAreaIds),
+            ],
             'title' => ['required', 'string', 'max:60'],
             'slug' => [
                 $this->getSlugRequirementRule(showcase: $showcase),

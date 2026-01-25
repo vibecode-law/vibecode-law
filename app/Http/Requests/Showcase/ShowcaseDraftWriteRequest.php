@@ -3,6 +3,7 @@
 namespace App\Http\Requests\Showcase;
 
 use App\Enums\SourceStatus;
+use App\Models\PracticeArea;
 use App\Models\Showcase\ShowcaseDraft;
 use App\Models\Showcase\ShowcaseDraftImage;
 use Illuminate\Contracts\Validation\Validator;
@@ -33,9 +34,15 @@ class ShowcaseDraftWriteRequest extends FormRequest
         /** @var ShowcaseDraft $draft */
         $draft = $this->route('draft');
 
+        $practiceAreaIds = PracticeArea::pluck('id');
+
         return [
             'practice_area_ids' => ['required', 'array', 'min:1'],
-            'practice_area_ids.*' => ['required', 'integer', 'exists:practice_areas,id'],
+            'practice_area_ids.*' => [
+                'required',
+                'integer',
+                Rule::in($practiceAreaIds),
+            ],
             'title' => ['required', 'string', 'max:60'],
             'tagline' => ['required', 'string', 'max:255'],
             'description' => ['required', 'string', 'max:5000'],
