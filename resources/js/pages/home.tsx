@@ -57,28 +57,28 @@ export default function Home({
                     <h1 className="text-4xl font-bold tracking-tight text-neutral-900 sm:text-5xl dark:text-white">
                         Build. Launch. Discover.
                     </h1>
-                    {isPreLaunch ? (
-                        <div className="mx-auto mt-8 max-w-4xl space-y-4 text-lg text-neutral-600 dark:text-neutral-400">
+                    <div className="mx-auto mt-8 max-w-4xl space-y-4 text-lg text-neutral-600 dark:text-neutral-400">
+                        {isPreLaunch ? (
                             <p>
                                 vibecode.law is a new open platform for the
                                 legal community. We're launching in the coming
                                 days and all projects will go live together.
                             </p>
+                        ) : (
+                            <p className="mt-4 text-lg text-neutral-600 dark:text-neutral-400">
+                                The latest legaltech projects, ranked by the
+                                community.
+                            </p>
+                        )}
 
-                            <div className="pt-4">
-                                <Button asChild size="lg">
-                                    <Link href={ShowcaseCreateController.url()}>
-                                        Submit Your Project
-                                    </Link>
-                                </Button>
-                            </div>
+                        <div className="pt-4">
+                            <Button asChild size="lg">
+                                <Link href={ShowcaseCreateController.url()}>
+                                    Submit Your Project
+                                </Link>
+                            </Button>
                         </div>
-                    ) : (
-                        <p className="mt-4 text-lg text-neutral-600 dark:text-neutral-400">
-                            The latest legaltech projects, ranked by the
-                            community.
-                        </p>
-                    )}
+                    </div>
                 </div>
             </section>
 

@@ -7,6 +7,7 @@ use App\Http\Resources\Showcase\ShowcaseResource;
 use App\Models\Showcase\Showcase;
 use App\Queries\Showcase\PublicShowcaseQuery;
 use Illuminate\Support\Carbon;
+use Illuminate\Support\Facades\Config;
 use Inertia\Inertia;
 use Inertia\Response;
 use Spatie\LaravelData\PaginatedDataCollection;
@@ -51,6 +52,10 @@ class ShowcaseMonthIndexController extends BaseController
     {
         return Showcase::query()
             ->publiclyVisible()
+            ->when(
+                value: Config::get('app.launched') === false,
+                callback: fn ($query) => $query->where('is_featured', true),
+            )
             ->pluck('submitted_date')
             ->map(fn (Carbon $date) => $date->format('Y-m'))
             ->unique()

@@ -7,7 +7,6 @@ use App\Http\Resources\Showcase\ShowcaseResource;
 use App\Models\Showcase\Showcase;
 use App\Services\Showcase\ShowcaseRankingService;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Config;
 use Inertia\Inertia;
 use Inertia\Response;
 
@@ -36,19 +35,6 @@ class ShowcaseShowController extends BaseController
 
     private function ensureShowcaseIsAccessible(Showcase $showcase): void
     {
-        // Pre-launch: non-featured showcases only accessible to owner/admin/moderator
-        if (
-            Config::get('app.launched') === false &&
-            $showcase->is_featured === false &&
-            (Auth::check() === false || (
-                Auth::id() !== $showcase->user_id &&
-                Auth::user()->is_admin !== true &&
-                Auth::user()->can('toggleApproval', $showcase) === false
-            ))
-        ) {
-            abort(404);
-        }
-
         if (
             $showcase->isApproved() === false &&
             (Auth::check() === false || (Auth::id() !== $showcase->user_id && Auth::user()->can('toggleApproval', $showcase) === false))

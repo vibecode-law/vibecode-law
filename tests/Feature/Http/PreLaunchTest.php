@@ -106,33 +106,72 @@ describe('showcase index routes pre-launch', function () {
         Config::set('app.launched', false);
     });
 
-    test('showcase index returns 404', function () {
-        Showcase::factory()->approved()->create([
+    test('showcase index is accessible and returns only featured showcases', function () {
+        $featured = Showcase::factory()->featured()->create();
+        $nonFeatured = Showcase::factory()->approved()->create([
             'submitted_date' => now(),
         ]);
 
         get(route('showcase.index'))
-            ->assertNotFound();
+            ->assertOk()
+            ->assertInertia(fn (AssertableInertia $page) => $page
+                ->component('showcase/public/index')
+                ->has('showcases.data', 1)
+                ->where('showcases.data.0.id', $featured->id)
+            );
     });
 
-    test('showcase practice area filter returns 404', function () {
-        $showcase = Showcase::factory()->approved()->create([
+    test('showcase practice area filter is accessible and returns only featured showcases', function () {
+        $featured = Showcase::factory()->featured()->create();
+        $nonFeatured = Showcase::factory()->approved()->create([
             'submitted_date' => now(),
         ]);
 
-        $practiceArea = $showcase->practiceAreas->first();
+        $practiceArea = $featured->practiceAreas->first();
 
         get(route('showcase.practice-area', ['practiceArea' => $practiceArea]))
-            ->assertNotFound();
+            ->assertOk()
+            ->assertInertia(fn (AssertableInertia $page) => $page
+                ->component('showcase/public/index')
+                ->has('showcases.data', 1)
+                ->where('showcases.data.0.id', $featured->id)
+            );
     });
 
-    test('showcase month filter returns 404', function () {
+    test('showcase month filter is accessible and returns only featured showcases', function () {
+        $featured = Showcase::factory()->featured()->create([
+            'submitted_date' => now(),
+        ]);
         Showcase::factory()->approved()->create([
             'submitted_date' => now(),
         ]);
 
         get(route('showcase.month', ['month' => now()->format('Y-m')]))
-            ->assertNotFound();
+            ->assertOk()
+            ->assertInertia(fn (AssertableInertia $page) => $page
+                ->component('showcase/public/index')
+                ->has('showcases.data', 1)
+                ->where('showcases.data.0.id', $featured->id)
+            );
+    });
+
+    test('available months filter only includes months with featured showcases', function () {
+        // Featured showcase in January
+        Showcase::factory()->featured()->create([
+            'submitted_date' => now()->startOfYear(),
+        ]);
+
+        // Non-featured showcase in current month (should not appear in available months)
+        Showcase::factory()->approved()->create([
+            'submitted_date' => now(),
+        ]);
+
+        get(route('showcase.index'))
+            ->assertOk()
+            ->assertInertia(fn (AssertableInertia $page) => $page
+                ->component('showcase/public/index')
+                ->where('availableFilters.months', [now()->startOfYear()->format('Y-m')])
+            );
     });
 });
 
@@ -141,8 +180,10 @@ describe('showcase show pre-launch', function () {
         Config::set('app.launched', false);
     });
 
-    test('featured showcase is accessible to guests', function () {
-        $showcase = Showcase::factory()->featured()->create();
+    test('approved showcases are accessible to guests', function () {
+        $showcase = Showcase::factory()->approved()->create([
+            'submitted_date' => now(),
+        ]);
 
         get(route('showcase.show', $showcase))
             ->assertOk()
@@ -152,64 +193,15 @@ describe('showcase show pre-launch', function () {
             );
     });
 
-    test('non-featured showcase returns 404 for guests', function () {
-        $showcase = Showcase::factory()->approved()->create([
-            'submitted_date' => now(),
-        ]);
+    test('featured showcases are accessible to guests', function () {
+        $showcase = Showcase::factory()->featured()->create();
 
         get(route('showcase.show', $showcase))
-            ->assertNotFound();
-    });
-
-    test('non-featured showcase returns 404 for non-owner authenticated users', function () {
-        /** @var User */
-        $user = User::factory()->create();
-        $showcase = Showcase::factory()->approved()->create([
-            'submitted_date' => now(),
-        ]);
-
-        actingAs($user);
-
-        get(route('showcase.show', $showcase))
-            ->assertNotFound();
-    });
-
-    test('owner can view their own non-featured showcase', function () {
-        /** @var User */
-        $user = User::factory()->create();
-        $showcase = Showcase::factory()->approved()->for($user)->create([
-            'submitted_date' => now(),
-        ]);
-
-        actingAs($user);
-
-        get(route('showcase.show', $showcase))
-            ->assertOk();
-    });
-
-    test('admin can view any non-featured showcase', function () {
-        /** @var User */
-        $admin = User::factory()->admin()->create();
-        $showcase = Showcase::factory()->approved()->create([
-            'submitted_date' => now(),
-        ]);
-
-        actingAs($admin);
-
-        get(route('showcase.show', $showcase))
-            ->assertOk();
-    });
-
-    test('moderator can view any non-featured showcase', function () {
-        $moderator = User::factory()->moderator()->create();
-        $showcase = Showcase::factory()->approved()->create([
-            'submitted_date' => now(),
-        ]);
-
-        actingAs($moderator);
-
-        get(route('showcase.show', $showcase))
-            ->assertOk();
+            ->assertOk()
+            ->assertInertia(fn (AssertableInertia $page) => $page
+                ->component('showcase/public/show')
+                ->has('showcase')
+            );
     });
 });
 
