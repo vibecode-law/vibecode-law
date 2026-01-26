@@ -1,7 +1,7 @@
 import { useCallback, useState } from 'react';
 import Cropper from 'react-easy-crop';
 import type { Area, Point } from 'react-easy-crop';
-import { ImagePlus, Minus, Plus } from 'lucide-react';
+import { ImagePlus, Minus, Plus, Trash2 } from 'lucide-react';
 
 import { Button } from '@/components/ui/button';
 import {
@@ -38,6 +38,8 @@ interface ImageCropModalProps {
     initialCropData?: SimpleCropData | null;
     onCropComplete: (croppedFile: File, cropData: CropData) => void;
     onChangeImage: () => void;
+    onRemove?: () => void;
+    showRemoveButton?: boolean;
 }
 
 async function createCroppedImage(
@@ -103,6 +105,8 @@ export function ImageCropModal({
     initialCropData,
     onCropComplete,
     onChangeImage,
+    onRemove,
+    showRemoveButton = false,
 }: ImageCropModalProps) {
     const [crop, setCrop] = useState<Point>({ x: 0, y: 0 });
     const [zoom, setZoom] = useState(1);
@@ -251,32 +255,38 @@ export function ImageCropModal({
                     </button>
                 </div>
 
-                <DialogFooter className="sm:justify-between">
-                    <Button
-                        type="button"
-                        variant="outline"
-                        onClick={handleChangeImage}
-                        className="hidden sm:mr-auto sm:inline-flex"
-                    >
-                        <ImagePlus className="size-4" />
-                        Change Image
-                    </Button>
-                    <div className="flex justify-end gap-2">
-                        <Button
-                            type="button"
-                            variant="outline"
-                            onClick={handleCancel}
-                        >
-                            Cancel
-                        </Button>
+                <DialogFooter className="flex-col gap-2 sm:flex-row sm:justify-between">
+                    <div className="flex w-full gap-2 sm:mr-auto sm:w-auto">
                         <Button
                             type="button"
                             variant="outline"
                             onClick={handleChangeImage}
-                            className="sm:hidden"
+                            className="flex-1 sm:flex-none"
                         >
                             <ImagePlus className="size-4" />
-                            Change
+                            <span className="sm:hidden">Change</span>
+                            <span className="hidden sm:inline">Change Image</span>
+                        </Button>
+                        {showRemoveButton === true && onRemove !== undefined && (
+                            <Button
+                                type="button"
+                                variant="outline"
+                                onClick={onRemove}
+                                className="flex-1 text-red-600 hover:bg-red-50 hover:text-red-700 sm:flex-none dark:text-red-400 dark:hover:bg-red-950 dark:hover:text-red-300"
+                            >
+                                <Trash2 className="size-4" />
+                                Remove
+                            </Button>
+                        )}
+                    </div>
+                    <div className="flex w-full gap-2 sm:w-auto">
+                        <Button
+                            type="button"
+                            variant="outline"
+                            onClick={handleCancel}
+                            className="flex-1 sm:flex-none"
+                        >
+                            Cancel
                         </Button>
                         <Button
                             type="button"
@@ -286,6 +296,7 @@ export function ImageCropModal({
                                 imageUrl === null ||
                                 croppedAreaPixels === null
                             }
+                            className="flex-1 sm:flex-none"
                         >
                             {isSaving === true ? 'Saving...' : 'Save'}
                         </Button>

@@ -34,7 +34,6 @@ import {
     Globe,
     Hash,
     LinkIcon,
-    Video,
 } from 'lucide-react';
 import { useState } from 'react';
 import { SaveButtonGroup } from './save-button-group';
@@ -269,6 +268,7 @@ export function ShowcaseForm({
                                                             textClasses="text-xl lg:text-3xl"
                                                             weight="bold"
                                                             error={errors.title}
+                                                            label="Project Title"
                                                         />
                                                     </div>
                                                 </div>
@@ -292,6 +292,7 @@ export function ShowcaseForm({
                                                     textClasses="text-base lg:text-xl"
                                                     className="text-neutral-600 dark:text-neutral-400"
                                                     error={errors.tagline}
+                                                    label="Tagline"
                                                 />
                                             </div>
 
@@ -320,13 +321,15 @@ export function ShowcaseForm({
 
                                             {/* Video URL */}
                                             <div className="space-y-2">
-                                                <Label
+                                                <label
                                                     htmlFor="video_url"
-                                                    className="flex items-center gap-2 text-sm"
+                                                    className="block text-xl font-semibold text-neutral-900 dark:text-white"
                                                 >
-                                                    <Video className="size-4" />
                                                     Video URL
-                                                </Label>
+                                                    <span className="ml-2 text-sm font-normal text-neutral-400">
+                                                        (optional)
+                                                    </span>
+                                                </label>
                                                 <Input
                                                     id="video_url"
                                                     name="video_url"
@@ -386,6 +389,7 @@ export function ShowcaseForm({
                                                         | string
                                                         | undefined
                                                 }
+                                                required
                                             />
 
                                             {/* Key Features */}

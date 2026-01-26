@@ -187,10 +187,6 @@ describe('validation', function () {
             ['launch_date' => now()->addDay()->format('Y-m-d')],
             ['launch_date'],
         ],
-        'thumbnail is required' => [
-            ['thumbnail' => null],
-            ['thumbnail'],
-        ],
         'thumbnail must be an image' => [
             ['thumbnail' => UploadedFile::fake()->create('document.pdf', 100)],
             ['thumbnail'],

@@ -19,7 +19,7 @@ class ShowcaseStoreController extends BaseController
 
         /** @var Showcase */
         $showcase = $request->user()->showcases()->create([
-            ...$request->safe()->except(['images', 'practice_area_ids', 'thumbnail', 'submit']),
+            ...$request->safe()->except(['images', 'practice_area_ids', 'thumbnail', 'remove_thumbnail', 'submit']),
             'slug' => $slug,
         ]);
 

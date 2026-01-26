@@ -57,14 +57,14 @@ export function InlineRichText({
     return (
         <div className={cn('space-y-2', className)}>
             {label !== undefined && (
-                <h2 className="text-xl font-semibold text-neutral-900 dark:text-white">
+                <label className="block text-xl font-semibold text-neutral-900 dark:text-white">
                     {label}
                     {required === false && (
                         <span className="ml-2 text-sm font-normal text-neutral-400">
                             (optional)
                         </span>
                     )}
-                </h2>
+                </label>
             )}
             <div
                 ref={containerRef}

@@ -13,6 +13,7 @@ use Database\Factories\Showcase\ShowcaseImageFactory;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Date;
+use Illuminate\Support\Lottery;
 use Illuminate\Support\Str;
 
 class ShowcaseSeeder extends Seeder
@@ -133,12 +134,15 @@ class ShowcaseSeeder extends Seeder
 
             $showcase = Showcase::factory()
                 ->withoutPracticeAreas()
-                ->withStockThumbnail()
                 ->when($approved, fn (ShowcaseFactory $factory) => $factory->approved())
                 ->when($state === ShowcaseStatus::Rejected, fn (ShowcaseFactory $factory) => $factory->rejected())
                 ->when($state === ShowcaseStatus::Pending, fn (ShowcaseFactory $factory) => $factory->pending())
                 ->when($state === ShowcaseStatus::Draft, fn (ShowcaseFactory $factory) => $factory->draft())
                 ->when($featured, fn (ShowcaseFactory $factory) => $factory->featured())
+                ->when(
+                    Lottery::odds(70, 100)->choose(),
+                    fn (ShowcaseFactory $factory) => $factory->withStockThumbnail()
+                )
                 ->has(
                     ShowcaseImage::factory()
                         ->count(3)

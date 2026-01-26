@@ -63,6 +63,7 @@ class ShowcaseDraftWriteRequest extends FormRequest
             ],
             'launch_date' => ['nullable', 'date', 'before_or_equal:today'],
             'thumbnail' => ['nullable', 'image', 'dimensions:min_width=400,min_height=400', 'max:1024'],
+            'remove_thumbnail' => ['nullable', 'boolean'],
             'thumbnail_crop' => ['nullable', 'required_with:thumbnail', 'array'],
             'thumbnail_crop.x' => ['required_with:thumbnail_crop', 'integer', 'min:0'],
             'thumbnail_crop.y' => ['required_with:thumbnail_crop', 'integer', 'min:0'],

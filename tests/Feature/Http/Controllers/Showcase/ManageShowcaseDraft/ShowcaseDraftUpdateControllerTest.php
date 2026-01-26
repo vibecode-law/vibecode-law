@@ -558,3 +558,124 @@ describe('status restrictions', function () {
         $response->assertForbidden();
     });
 });
+
+describe('thumbnail operations', function () {
+    test('removes thumbnail when remove_thumbnail flag is true', function () {
+        Storage::fake('public');
+
+        /** @var User */
+        $owner = User::factory()->create();
+        $showcase = Showcase::factory()->approved()->for($owner, 'user')->create();
+        $draft = ShowcaseDraft::factory()
+            ->for($showcase, 'showcase')
+            ->create([
+                'thumbnail_extension' => 'jpg',
+                'thumbnail_crop' => ['x' => 0, 'y' => 0, 'width' => 500, 'height' => 500],
+            ]);
+        ShowcaseDraftImage::factory()->for($draft, 'showcaseDraft')->add()->create();
+
+        // Create the thumbnail file
+        Storage::disk('public')->put("showcase-drafts/{$draft->id}/thumbnail.jpg", 'fake-image-content');
+        Storage::disk('public')->assertExists("showcase-drafts/{$draft->id}/thumbnail.jpg");
+
+        actingAs($owner);
+
+        $response = put(route('showcase.draft.update', $draft), [
+            'practice_area_ids' => $draft->practiceAreas->pluck('id')->toArray(),
+            'title' => $draft->title,
+            'tagline' => $draft->tagline,
+            'description' => $draft->description,
+            'source_status' => SourceStatus::NotAvailable->value,
+            'remove_thumbnail' => true,
+        ]);
+
+        $response->assertRedirect();
+
+        $draft->refresh();
+
+        expect($draft->thumbnail_extension)->toBeNull();
+        expect($draft->thumbnail_crop)->toBeNull();
+        Storage::disk('public')->assertMissing("showcase-drafts/{$draft->id}/thumbnail.jpg");
+    });
+
+    test('does not remove thumbnail when remove_thumbnail flag is false', function () {
+        Storage::fake('public');
+
+        /** @var User */
+        $owner = User::factory()->create();
+        $showcase = Showcase::factory()->approved()->for($owner, 'user')->create();
+        $draft = ShowcaseDraft::factory()
+            ->for($showcase, 'showcase')
+            ->create([
+                'thumbnail_extension' => 'jpg',
+                'thumbnail_crop' => ['x' => 0, 'y' => 0, 'width' => 500, 'height' => 500],
+            ]);
+        ShowcaseDraftImage::factory()->for($draft, 'showcaseDraft')->add()->create();
+
+        // Create the thumbnail file
+        Storage::disk('public')->put("showcase-drafts/{$draft->id}/thumbnail.jpg", 'fake-image-content');
+
+        actingAs($owner);
+
+        $response = put(route('showcase.draft.update', $draft), [
+            'practice_area_ids' => $draft->practiceAreas->pluck('id')->toArray(),
+            'title' => $draft->title,
+            'tagline' => $draft->tagline,
+            'description' => $draft->description,
+            'source_status' => SourceStatus::NotAvailable->value,
+            'remove_thumbnail' => false,
+        ]);
+
+        $response->assertRedirect();
+
+        $draft->refresh();
+
+        expect($draft->thumbnail_extension)->toBe('jpg');
+        expect($draft->thumbnail_crop)->toBe(['x' => 0, 'y' => 0, 'width' => 500, 'height' => 500]);
+        Storage::disk('public')->assertExists("showcase-drafts/{$draft->id}/thumbnail.jpg");
+    });
+
+    test('new thumbnail upload takes precedence over remove_thumbnail flag', function () {
+        Storage::fake('public');
+
+        /** @var User */
+        $owner = User::factory()->create();
+        $showcase = Showcase::factory()->approved()->for($owner, 'user')->create();
+        $draft = ShowcaseDraft::factory()
+            ->for($showcase, 'showcase')
+            ->create([
+                'thumbnail_extension' => 'jpg',
+                'thumbnail_crop' => ['x' => 0, 'y' => 0, 'width' => 500, 'height' => 500],
+            ]);
+        ShowcaseDraftImage::factory()->for($draft, 'showcaseDraft')->add()->create();
+
+        // Create the old thumbnail file
+        Storage::disk('public')->put("showcase-drafts/{$draft->id}/thumbnail.jpg", 'fake-image-content');
+
+        actingAs($owner);
+
+        $newThumbnail = UploadedFile::fake()->image('new-thumbnail.png', 500, 500);
+
+        $response = put(route('showcase.draft.update', $draft), [
+            'practice_area_ids' => $draft->practiceAreas->pluck('id')->toArray(),
+            'title' => $draft->title,
+            'tagline' => $draft->tagline,
+            'description' => $draft->description,
+            'source_status' => SourceStatus::NotAvailable->value,
+            'thumbnail' => $newThumbnail,
+            'thumbnail_crop' => ['x' => 10, 'y' => 10, 'width' => 400, 'height' => 400],
+            'remove_thumbnail' => true,
+        ]);
+
+        $response->assertRedirect();
+
+        $draft->refresh();
+
+        // New thumbnail should be stored
+        expect($draft->thumbnail_extension)->toBe('png');
+        expect($draft->thumbnail_crop)->toBe(['x' => 10, 'y' => 10, 'width' => 400, 'height' => 400]);
+        Storage::disk('public')->assertExists("showcase-drafts/{$draft->id}/thumbnail.png");
+        // Old thumbnail should be removed
+        Storage::disk('public')->assertMissing("showcase-drafts/{$draft->id}/thumbnail.jpg");
+    });
+});
