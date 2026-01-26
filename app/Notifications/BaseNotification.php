@@ -10,4 +10,9 @@ use Illuminate\Notifications\Notification;
 class BaseNotification extends Notification implements ShouldQueue
 {
     use Queueable, ThrottlesMail;
+
+    /**
+     * @var int
+     */
+    public $tries = 5;
 }
