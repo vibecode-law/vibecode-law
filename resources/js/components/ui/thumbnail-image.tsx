@@ -2,6 +2,25 @@ import { cn } from '@/lib/utils';
 import { type SharedData } from '@/types';
 import { usePage } from '@inertiajs/react';
 
+const colorPalette = [
+    'bg-rose-500',
+    'bg-amber-500',
+    'bg-emerald-500',
+    'bg-sky-500',
+    'bg-violet-500',
+    'bg-pink-500',
+    'bg-teal-500',
+    'bg-orange-500',
+];
+
+function getColorIndex(text: string): number {
+    let hash = 0;
+    for (let i = 0; i < text.length; i++) {
+        hash = text.charCodeAt(i) + ((hash << 5) - hash);
+    }
+    return Math.abs(hash) % colorPalette.length;
+}
+
 interface ThumbnailImageProps {
     url?: string | null;
     fallbackText: string;
@@ -52,19 +71,19 @@ export function ThumbnailImage({
         );
     }
 
+    const colorClass = colorPalette[getColorIndex(fallbackText)];
+
     return (
         <div
             className={cn(
                 sizeClasses[size],
-                'flex shrink-0 items-center justify-center rounded-lg bg-neutral-100 dark:bg-neutral-800',
+                'flex shrink-0 items-center justify-center rounded-lg',
+                colorClass,
                 className,
             )}
         >
             <span
-                className={cn(
-                    fontSizeClasses[size],
-                    'font-bold text-neutral-400 dark:text-neutral-500',
-                )}
+                className={cn(fontSizeClasses[size], 'font-bold text-white')}
             >
                 {fallbackText.charAt(0)}
             </span>

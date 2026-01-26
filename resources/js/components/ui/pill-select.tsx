@@ -15,6 +15,7 @@ interface PillSelectProps {
     error?: string;
     label?: string;
     className?: string;
+    required?: boolean;
 }
 
 export function PillSelect({
@@ -26,6 +27,7 @@ export function PillSelect({
     error,
     label,
     className,
+    required = false,
 }: PillSelectProps) {
     const toggleOption = (value: number | string) => {
         if (selected.includes(value)) {
@@ -41,9 +43,14 @@ export function PillSelect({
     return (
         <div className={cn('space-y-3', className)}>
             {label !== undefined && (
-                <h2 className="text-xl font-semibold text-neutral-900 dark:text-white">
+                <label className="block text-xl font-semibold text-neutral-900 dark:text-white">
                     {label}
-                </h2>
+                    {required === false && (
+                        <span className="ml-2 text-sm font-normal text-neutral-400">
+                            (optional)
+                        </span>
+                    )}
+                </label>
             )}
 
             {/* Hidden inputs for form submission */}

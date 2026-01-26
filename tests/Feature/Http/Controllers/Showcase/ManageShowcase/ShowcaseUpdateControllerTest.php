@@ -1197,3 +1197,124 @@ describe('submit on update', function () {
         $response->assertSessionHas('flash.message', ['message' => 'Showcase updated successfully.', 'type' => 'success']);
     });
 });
+
+describe('thumbnail operations', function () {
+    test('removes thumbnail when remove_thumbnail flag is true', function () {
+        Storage::fake('public');
+
+        /** @var User */
+        $user = User::factory()->create();
+        $showcase = Showcase::factory()
+            ->has(ShowcaseImage::factory(), 'images')
+            ->for($user, 'user')
+            ->create([
+                'thumbnail_extension' => 'jpg',
+                'thumbnail_crop' => ['x' => 0, 'y' => 0, 'width' => 500, 'height' => 500],
+            ]);
+
+        // Create the thumbnail file
+        Storage::disk('public')->put("showcase/{$showcase->id}/thumbnail.jpg", 'fake-image-content');
+        Storage::disk('public')->assertExists("showcase/{$showcase->id}/thumbnail.jpg");
+
+        actingAs($user);
+
+        $response = put(route('showcase.manage.update', $showcase), [
+            'practice_area_ids' => $showcase->practiceAreas->pluck('id')->toArray(),
+            'title' => 'Updated Title',
+            'tagline' => 'Updated tagline',
+            'description' => 'Updated description',
+            'url' => 'https://updated.com',
+            'source_status' => SourceStatus::NotAvailable->value,
+            'remove_thumbnail' => true,
+        ]);
+
+        $response->assertRedirect();
+
+        $showcase->refresh();
+
+        expect($showcase->thumbnail_extension)->toBeNull();
+        expect($showcase->thumbnail_crop)->toBeNull();
+        Storage::disk('public')->assertMissing("showcase/{$showcase->id}/thumbnail.jpg");
+    });
+
+    test('does not remove thumbnail when remove_thumbnail flag is false', function () {
+        Storage::fake('public');
+
+        /** @var User */
+        $user = User::factory()->create();
+        $showcase = Showcase::factory()
+            ->has(ShowcaseImage::factory(), 'images')
+            ->for($user, 'user')
+            ->create([
+                'thumbnail_extension' => 'jpg',
+                'thumbnail_crop' => ['x' => 0, 'y' => 0, 'width' => 500, 'height' => 500],
+            ]);
+
+        // Create the thumbnail file
+        Storage::disk('public')->put("showcase/{$showcase->id}/thumbnail.jpg", 'fake-image-content');
+
+        actingAs($user);
+
+        $response = put(route('showcase.manage.update', $showcase), [
+            'practice_area_ids' => $showcase->practiceAreas->pluck('id')->toArray(),
+            'title' => 'Updated Title',
+            'tagline' => 'Updated tagline',
+            'description' => 'Updated description',
+            'url' => 'https://updated.com',
+            'source_status' => SourceStatus::NotAvailable->value,
+            'remove_thumbnail' => false,
+        ]);
+
+        $response->assertRedirect();
+
+        $showcase->refresh();
+
+        expect($showcase->thumbnail_extension)->toBe('jpg');
+        expect($showcase->thumbnail_crop)->toBe(['x' => 0, 'y' => 0, 'width' => 500, 'height' => 500]);
+        Storage::disk('public')->assertExists("showcase/{$showcase->id}/thumbnail.jpg");
+    });
+
+    test('new thumbnail upload takes precedence over remove_thumbnail flag', function () {
+        Storage::fake('public');
+
+        /** @var User */
+        $user = User::factory()->create();
+        $showcase = Showcase::factory()
+            ->has(ShowcaseImage::factory(), 'images')
+            ->for($user, 'user')
+            ->create([
+                'thumbnail_extension' => 'jpg',
+                'thumbnail_crop' => ['x' => 0, 'y' => 0, 'width' => 500, 'height' => 500],
+            ]);
+
+        // Create the old thumbnail file
+        Storage::disk('public')->put("showcase/{$showcase->id}/thumbnail.jpg", 'fake-image-content');
+
+        actingAs($user);
+
+        $newThumbnail = UploadedFile::fake()->image('new-thumbnail.png', 500, 500);
+
+        $response = put(route('showcase.manage.update', $showcase), [
+            'practice_area_ids' => $showcase->practiceAreas->pluck('id')->toArray(),
+            'title' => 'Updated Title',
+            'tagline' => 'Updated tagline',
+            'description' => 'Updated description',
+            'url' => 'https://updated.com',
+            'source_status' => SourceStatus::NotAvailable->value,
+            'thumbnail' => $newThumbnail,
+            'thumbnail_crop' => ['x' => 10, 'y' => 10, 'width' => 400, 'height' => 400],
+            'remove_thumbnail' => true,
+        ]);
+
+        $response->assertRedirect();
+
+        $showcase->refresh();
+
+        // New thumbnail should be stored
+        expect($showcase->thumbnail_extension)->toBe('png');
+        expect($showcase->thumbnail_crop)->toBe(['x' => 10, 'y' => 10, 'width' => 400, 'height' => 400]);
+        Storage::disk('public')->assertExists("showcase/{$showcase->id}/thumbnail.png");
+        // Old thumbnail should be removed
+        Storage::disk('public')->assertMissing("showcase/{$showcase->id}/thumbnail.jpg");
+    });
+});

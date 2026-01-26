@@ -17,6 +17,7 @@ interface ThumbnailSelectorProps {
     className?: string;
     aspectRatio?: number;
     onCropDataChange?: (cropData: CropData | null) => void;
+    onRemove?: () => void;
 }
 
 /**
@@ -69,6 +70,7 @@ export function ThumbnailSelector({
     className,
     aspectRatio = 1,
     onCropDataChange,
+    onRemove,
 }: ThumbnailSelectorProps) {
     const [croppedPreviewUrl, setCroppedPreviewUrl] = useState<string | null>(
         null,
@@ -80,6 +82,7 @@ export function ThumbnailSelector({
     const [originalFile, setOriginalFile] = useState<File | null>(null);
     const [cropData, setCropData] = useState<CropData | null>(null);
     const [modalOpen, setModalOpen] = useState(false);
+    const [isRemoved, setIsRemoved] = useState(false);
     const inputRef = useRef<HTMLInputElement>(null);
 
     // Generate cropped preview from existing original URL and crop data
@@ -126,6 +129,11 @@ export function ThumbnailSelector({
     };
 
     const handleClick = () => {
+        // If thumbnail was removed, open file dialog to select a new one
+        if (isRemoved === true) {
+            inputRef.current?.click();
+            return;
+        }
         // If we have a new original image (user selected a file), re-open the crop modal
         if (originalUrl !== null) {
             setModalOpen(true);
@@ -155,7 +163,34 @@ export function ThumbnailSelector({
         }, 100);
     };
 
-    const displayUrl = croppedPreviewUrl ?? existingCroppedPreviewUrl;
+    const handleRemove = () => {
+        setIsRemoved(true);
+        setCroppedPreviewUrl(null);
+        setOriginalUrl(null);
+        setOriginalFile(null);
+        setCropData(null);
+        onCropDataChange?.(null);
+        onRemove?.();
+        setModalOpen(false);
+    };
+
+    // When a new file is selected or crop is made, the thumbnail is no longer "removed"
+    const handleFileChangeWithReset = (
+        event: React.ChangeEvent<HTMLInputElement>,
+    ) => {
+        setIsRemoved(false);
+        handleFileChange(event);
+    };
+
+    const handleCropCompleteWithReset = (
+        croppedPreviewFile: File,
+        newCropData: CropData,
+    ) => {
+        setIsRemoved(false);
+        handleCropComplete(croppedPreviewFile, newCropData);
+    };
+
+    const displayUrl = isRemoved === true ? null : (croppedPreviewUrl ?? existingCroppedPreviewUrl);
 
     // Use the new original URL if set (user selected a file), otherwise fall back to existing
     const modalImageUrl = originalUrl ?? currentOriginalUrl ?? null;
@@ -200,7 +235,7 @@ export function ThumbnailSelector({
                 type="file"
                 accept="image/*"
                 className="hidden"
-                onChange={handleFileChange}
+                onChange={handleFileChangeWithReset}
             />
             {/* Hidden file input with the original (uncropped) file for form submission */}
             {originalFile !== null && (
@@ -247,6 +282,10 @@ export function ThumbnailSelector({
                     {error}
                 </p>
             )}
+            {/* Hidden input for remove_thumbnail flag */}
+            {isRemoved === true && (
+                <input type="hidden" name="remove_thumbnail" value="1" />
+            )}
             <ImageCropModal
                 open={modalOpen}
                 onOpenChange={setModalOpen}
@@ -257,8 +296,14 @@ export function ThumbnailSelector({
                     // (not when user has selected a new file)
                     originalUrl === null ? currentCropData : null
                 }
-                onCropComplete={handleCropComplete}
+                onCropComplete={handleCropCompleteWithReset}
                 onChangeImage={handleChangeImage}
+                onRemove={handleRemove}
+                showRemoveButton={
+                    originalUrl !== null ||
+                    (currentOriginalUrl !== null &&
+                        currentOriginalUrl !== undefined)
+                }
             />
         </div>
     );

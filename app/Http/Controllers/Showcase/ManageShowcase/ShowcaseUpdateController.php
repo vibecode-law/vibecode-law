@@ -18,7 +18,7 @@ class ShowcaseUpdateController extends BaseController
         $wasApproved = $showcase->isApproved();
         $isAdmin = $request->user()->is_admin;
 
-        $excludeFields = ['images', 'practice_area_ids', 'thumbnail', 'removed_images', 'submit'];
+        $excludeFields = ['images', 'practice_area_ids', 'thumbnail', 'remove_thumbnail', 'removed_images', 'submit'];
 
         if ($wasApproved === true) {
             $excludeFields[] = 'slug';
@@ -33,13 +33,15 @@ class ShowcaseUpdateController extends BaseController
             $showcase->update(['status' => ShowcaseStatus::Pending]);
         }
 
-        // Handle thumbnail upload
+        // Handle thumbnail upload or removal
         if ($request->hasFile('thumbnail')) {
             $mediaService->storeThumbnail(
                 model: $showcase,
                 file: $request->file('thumbnail'),
                 crop: $request->validated('thumbnail_crop'),
             );
+        } elseif ($request->boolean('remove_thumbnail') === true) {
+            $mediaService->removeThumbnail(model: $showcase);
         }
 
         // Handle removed images

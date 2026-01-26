@@ -18,19 +18,21 @@ class ShowcaseDraftUpdateController extends BaseController
 {
     public function __invoke(ShowcaseDraftWriteRequest $request, ShowcaseDraft $draft, ShowcaseMediaService $mediaService): RedirectResponse
     {
-        $excludeFields = ['images', 'practice_area_ids', 'thumbnail', 'removed_images', 'deleted_new_images', 'submit'];
+        $excludeFields = ['images', 'practice_area_ids', 'thumbnail', 'remove_thumbnail', 'removed_images', 'deleted_new_images', 'submit'];
 
         $draft->update($request->safe()->except($excludeFields));
 
         $draft->practiceAreas()->sync($request->validated()['practice_area_ids']);
 
-        // Handle thumbnail upload
+        // Handle thumbnail upload or removal
         if ($request->hasFile('thumbnail')) {
             $mediaService->storeThumbnail(
                 model: $draft,
                 file: $request->file('thumbnail'),
                 crop: $request->validated('thumbnail_crop'),
             );
+        } elseif ($request->boolean('remove_thumbnail') === true) {
+            $mediaService->removeThumbnail(model: $draft);
         }
 
         // Handle marking kept images as removed

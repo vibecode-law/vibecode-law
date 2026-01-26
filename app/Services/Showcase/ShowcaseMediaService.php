@@ -36,6 +36,21 @@ class ShowcaseMediaService
         ]);
     }
 
+    public function removeThumbnail(Showcase|ShowcaseDraft $model): void
+    {
+        if ($model->thumbnail_extension === null) {
+            return;
+        }
+
+        $storagePath = $this->getStoragePath(model: $model);
+        Storage::disk('public')->delete("{$storagePath}/thumbnail.{$model->thumbnail_extension}");
+
+        $model->update([
+            'thumbnail_extension' => null,
+            'thumbnail_crop' => null,
+        ]);
+    }
+
     /**
      * @param  array<UploadedFile>  $files
      */
