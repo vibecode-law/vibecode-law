@@ -1,14 +1,15 @@
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { cn } from '@/lib/utils';
-import { ArrowUp, Share2 } from 'lucide-react';
+import { Share2 } from 'lucide-react';
+import { UpvoteButton } from '../upvote-button';
 
 interface ShowcaseSidebarProps {
     monthlyRank: number | null;
     lifetimeRank: number | null;
-    hasUpvoted?: boolean;
-    upvotesCount?: number;
-    onUpvote: () => void;
+    hasUpvoted: boolean;
+    upvotesCount: number;
+    showcaseSlug: string;
     linkedinShareUrl: string;
 }
 
@@ -17,7 +18,7 @@ export function ShowcaseSidebar({
     lifetimeRank,
     hasUpvoted,
     upvotesCount,
-    onUpvote,
+    showcaseSlug,
     linkedinShareUrl,
 }: ShowcaseSidebarProps) {
     return (
@@ -42,21 +43,12 @@ export function ShowcaseSidebar({
                     </div>
 
                     <div className="flex w-full flex-col gap-4">
-                        <Button
-                            variant={
-                                hasUpvoted === true ? 'default' : 'outline'
-                            }
-                            className="w-full"
-                            onClick={onUpvote}
-                        >
-                            <ArrowUp className="size-4" />
-                            Upvote
-                            {upvotesCount !== undefined && upvotesCount > 0 && (
-                                <span className="ml-1">
-                                    &bull; {upvotesCount}
-                                </span>
-                            )}
-                        </Button>
+                        <UpvoteButton
+                            showcaseSlug={showcaseSlug}
+                            upvotesCount={upvotesCount}
+                            hasUpvoted={hasUpvoted}
+                            variant="full"
+                        />
                         <Button variant="outline" className="w-full" asChild>
                             <a href={linkedinShareUrl} target="_blank">
                                 <Share2 className="size-4" />

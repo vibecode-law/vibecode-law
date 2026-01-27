@@ -10,6 +10,8 @@ import {
     DialogPortal,
     DialogTitle,
 } from '@/components/ui/dialog';
+import { useReducedMotion } from '@/hooks/use-reduced-motion';
+import { CONFETTI_COLORS } from '@/lib/utils';
 import { router } from '@inertiajs/react';
 import { PartyPopper, X } from 'lucide-react';
 import { useEffect, useState } from 'react';
@@ -37,6 +39,7 @@ export function ApprovalCelebrationModal({
     const [isDismissing, setIsDismissing] = useState(false);
     const [fireworks, setFireworks] = useState<Firework[]>([]);
     const [wasOpen, setWasOpen] = useState(isOpen);
+    const prefersReducedMotion = useReducedMotion();
 
     // Reset fireworks when modal closes (during render, not in effect)
     if (wasOpen !== isOpen) {
@@ -47,28 +50,17 @@ export function ApprovalCelebrationModal({
     }
 
     useEffect(() => {
-        if (isOpen === false) {
+        if (isOpen === false || prefersReducedMotion === true) {
             return;
         }
-
-        const fireworkColors = [
-            '#fbbf24',
-            '#f59e0b',
-            '#f97316',
-            '#ef4444',
-            '#8b5cf6',
-            '#3b82f6',
-            '#10b981',
-            '#ec4899',
-        ];
 
         const createFirework = () => {
             const newFirework: Firework = {
                 id: Date.now() + Math.random(),
                 x: 10 + Math.random() * 80,
                 y: 10 + Math.random() * 60,
-                color: fireworkColors[
-                    Math.floor(Math.random() * fireworkColors.length)
+                color: CONFETTI_COLORS[
+                    Math.floor(Math.random() * CONFETTI_COLORS.length)
                 ],
             };
             setFireworks((prev) => [...prev, newFirework]);
@@ -89,7 +81,7 @@ export function ApprovalCelebrationModal({
         const interval = setInterval(createFirework, 800);
 
         return () => clearInterval(interval);
-    }, [isOpen]);
+    }, [isOpen, prefersReducedMotion]);
 
     const handleDismiss = () => {
         setIsDismissing(true);
@@ -162,16 +154,10 @@ export function ApprovalCelebrationModal({
                     {[...Array(12)].map((_, i) => (
                         <span
                             key={i}
-                            className="confetti-particle inline-block size-2 rounded-full"
+                            className="confetti-fall-particle inline-block size-2 rounded-full"
                             style={{
-                                backgroundColor: [
-                                    '#fbbf24',
-                                    '#f59e0b',
-                                    '#f97316',
-                                    '#ef4444',
-                                    '#8b5cf6',
-                                    '#3b82f6',
-                                ][i % 6],
+                                backgroundColor:
+                                    CONFETTI_COLORS[i % CONFETTI_COLORS.length],
                                 animationDelay: `${i * 0.1}s`,
                             }}
                         />
@@ -226,7 +212,7 @@ export function ApprovalCelebrationModal({
                         }
                     }
 
-                    .confetti-particle {
+                    .confetti-fall-particle {
                         animation: confetti-fall 1.5s ease-out infinite;
                     }
 
@@ -247,6 +233,14 @@ export function ApprovalCelebrationModal({
                     .firework-particle {
                         animation: firework-burst 1s ease-out forwards;
                         box-shadow: 0 0 6px 2px currentColor;
+                    }
+
+                    @media (prefers-reduced-motion: reduce) {
+                        .confetti-fall-particle,
+                        .firework-particle {
+                            animation: none;
+                            display: none;
+                        }
                     }
                 `}</style>
             </DialogContent>

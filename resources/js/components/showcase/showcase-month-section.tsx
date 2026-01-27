@@ -19,14 +19,14 @@ export function ProjectMonthSection({
     showcases,
 }: ProjectMonthSectionProps) {
     return (
-        <section className="overflow-hidden py-6">
+        <section className="py-6">
             <div className="mb-4 flex items-center gap-4">
                 <h2 className="text-2xl font-semibold text-neutral-900 dark:text-white">
                     {formatMonth(month)}
                 </h2>
                 <div className="h-px flex-1 bg-border/60 dark:border-neutral-800"></div>
             </div>
-            <div className="divide-y divide-neutral-100 overflow-hidden dark:divide-neutral-800">
+            <div className="divide-y divide-neutral-100 dark:divide-neutral-800">
                 {showcases.map((showcase, index) => (
                     <ProjectItem
                         key={showcase.id}
