@@ -11,12 +11,14 @@ interface UpvoteButtonProps {
     showcaseSlug: string;
     upvotesCount: number;
     hasUpvoted: boolean;
+    variant?: 'compact' | 'full';
 }
 
 export function UpvoteButton({
     showcaseSlug,
     upvotesCount,
     hasUpvoted,
+    variant = 'compact',
 }: UpvoteButtonProps) {
     const page = usePage<SharedData>();
     const { auth } = page.props;
@@ -35,6 +37,28 @@ export function UpvoteButton({
             { preserveScroll: true },
         );
     };
+
+    if (variant === 'full') {
+        return (
+            <>
+                <Button
+                    variant={hasUpvoted === true ? 'default' : 'outline'}
+                    className="w-full"
+                    onClick={handleUpvote}
+                >
+                    <ArrowUp className="size-4" />
+                    Upvote
+                    {upvotesCount > 0 && (
+                        <span className="ml-1">&bull; {upvotesCount}</span>
+                    )}
+                </Button>
+                <AuthPromptModal
+                    isOpen={showAuthModal}
+                    onClose={() => setShowAuthModal(false)}
+                />
+            </>
+        );
+    }
 
     return (
         <>

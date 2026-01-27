@@ -5,7 +5,6 @@ import ShowcaseDraftStoreController from '@/actions/App/Http/Controllers/Showcas
 import ShowcaseMonthIndexController from '@/actions/App/Http/Controllers/Showcase/Public/ShowcaseMonthIndexController';
 import ShowcasePracticeAreaIndexController from '@/actions/App/Http/Controllers/Showcase/Public/ShowcasePracticeAreaIndexController';
 import ShowcaseShowController from '@/actions/App/Http/Controllers/Showcase/Public/ShowcaseShowController';
-import ShowcaseUpvoteController from '@/actions/App/Http/Controllers/Showcase/ShowcaseUpvoteController';
 import ApproveController from '@/actions/App/Http/Controllers/Staff/ShowcaseModeration/ApproveController';
 import RejectController from '@/actions/App/Http/Controllers/Staff/ShowcaseModeration/RejectController';
 import { type BreadcrumbItem } from '@/components/navigation/breadcrumbs';
@@ -17,7 +16,6 @@ import { ShowcaseBadges } from '@/components/showcase/show/showcase-badges';
 import { ShowcaseGallery } from '@/components/showcase/show/showcase-gallery';
 import { ShowcaseSidebar } from '@/components/showcase/show/showcase-sidebar';
 import { ShowcaseStatusBadge } from '@/components/showcase/showcase-status-badge';
-import { AuthPromptModal } from '@/components/showcase/upvote-prompt-modal';
 import { usePermissions } from '@/hooks/use-permissions';
 import PublicLayout from '@/layouts/public-layout';
 import { type SharedData } from '@/types';
@@ -111,25 +109,11 @@ export default function PublicShow({
             showcase.status.name === 'Rejected');
 
     const [selectedImageIndex, setSelectedImageIndex] = useState(0);
-    const [showAuthModal, setShowAuthModal] = useState(false);
     const [showCelebrationModal, setShowCelebrationModal] = useState(
         showcase.show_approval_celebration === true,
     );
 
     const images = Array.isArray(showcase.images) ? showcase.images : [];
-
-    const handleUpvote = () => {
-        if (isAuthenticated === false) {
-            setShowAuthModal(true);
-            return;
-        }
-
-        router.post(
-            ShowcaseUpvoteController.url({ showcase: showcase.slug }),
-            {},
-            { preserveScroll: true },
-        );
-    };
 
     const formatDate = (dateString: string | null) => {
         if (dateString === null) {
@@ -274,9 +258,9 @@ export default function PublicShow({
                         <ShowcaseSidebar
                             monthlyRank={monthlyRank}
                             lifetimeRank={lifetimeRank}
-                            hasUpvoted={showcase.has_upvoted}
-                            upvotesCount={showcase.upvotes_count}
-                            onUpvote={handleUpvote}
+                            hasUpvoted={showcase.has_upvoted ?? false}
+                            upvotesCount={showcase.upvotes_count ?? 0}
+                            showcaseSlug={showcase.slug}
                             linkedinShareUrl={showcase.linkedin_share_url ?? ''}
                         />
 
@@ -424,11 +408,6 @@ export default function PublicShow({
                     </div>
                 </div>
             </PublicLayout>
-
-            <AuthPromptModal
-                isOpen={showAuthModal}
-                onClose={() => setShowAuthModal(false)}
-            />
 
             {showcase.show_approval_celebration === true &&
                 showcase.linkedin_share_url !== null &&
