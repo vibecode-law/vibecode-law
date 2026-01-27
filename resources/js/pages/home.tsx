@@ -1,11 +1,14 @@
 import HomeController from '@/actions/App/Http/Controllers/HomeController';
+import HowItWorksController from '@/actions/App/Http/Controllers/Showcase/Help/HowItWorksController';
 import ShowcaseCreateController from '@/actions/App/Http/Controllers/Showcase/ManageShowcase/ShowcaseCreateController';
 import { ProjectItem } from '@/components/showcase/showcase-item';
 import { ProjectMonthSection } from '@/components/showcase/showcase-month-section';
+import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import PublicLayout from '@/layouts/public-layout';
 import { type SharedData } from '@/types';
 import { Head, Link, usePage } from '@inertiajs/react';
+import { Megaphone } from 'lucide-react';
 
 interface HomeProps {
     showcasesByMonth?: Record<
@@ -52,8 +55,18 @@ export default function Home({
             </Head>
 
             {/* Hero Section */}
-            <section className="bg-white py-10 lg:py-16 dark:bg-neutral-950">
+            <section className="bg bg-white py-10 lg:py-16 dark:bg-neutral-950">
                 <div className="mx-auto max-w-5xl px-4 text-center">
+                    <Badge asChild variant="neutral" size="sm" className="mb-6">
+                        <a
+                            href="https://www.artificiallawyer.com/2026/01/26/vibecode-law-launches-an-open-platform-for-diy-ai-tools/"
+                            target="_blank"
+                            rel="noopener"
+                        >
+                            <Megaphone />
+                            As featured on Artificial Lawyer
+                        </a>
+                    </Badge>
                     <h1 className="text-4xl font-bold tracking-tight text-neutral-900 sm:text-5xl dark:text-white">
                         Build. Launch. Discover.
                     </h1>
@@ -71,10 +84,15 @@ export default function Home({
                             </p>
                         )}
 
-                        <div className="pt-4">
+                        <div className="flex justify-center gap-2 pt-4">
                             <Button asChild size="lg">
                                 <Link href={ShowcaseCreateController.url()}>
                                     Submit Your Project
+                                </Link>
+                            </Button>
+                            <Button asChild size="lg" variant="outline">
+                                <Link href={HowItWorksController.url()}>
+                                    How does it work?
                                 </Link>
                             </Button>
                         </div>

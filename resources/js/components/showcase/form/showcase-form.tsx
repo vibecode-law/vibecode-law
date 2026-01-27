@@ -1,3 +1,4 @@
+import HowItWorksController from '@/actions/App/Http/Controllers/Showcase/Help/HowItWorksController';
 import { PublicFooter } from '@/components/layout/public-footer';
 import { PublicHeader } from '@/components/layout/public-header';
 import { Breadcrumbs } from '@/components/navigation/breadcrumbs';
@@ -186,8 +187,8 @@ export function ShowcaseForm({
                                     )}
 
                                     {/* Header with Save Button */}
-                                    <div className="mb-8 flex items-center justify-between">
-                                        <div className="flex items-center gap-3">
+                                    <div className="flex items-center justify-between">
+                                        <div className="flex flex-wrap items-center gap-3">
                                             <h1 className="text-2xl font-bold text-neutral-900 dark:text-white">
                                                 {pageTitle}
                                             </h1>
@@ -235,7 +236,23 @@ export function ShowcaseForm({
                                         />
                                     </div>
 
-                                    <div className="flex flex-col gap-4 lg:flex-row lg:gap-8">
+                                    {initialData.status?.name !==
+                                        'Approved' && (
+                                        <p className="text-muted-foreground">
+                                            See our{' '}
+                                            <a
+                                                href={HowItWorksController.url()}
+                                                target="_blank"
+                                                className="font-medium underline underline-offset-2 hover:text-neutral-700 dark:text-white dark:hover:text-neutral-300"
+                                            >
+                                                how it works
+                                            </a>{' '}
+                                            page to learn more (opens in new
+                                            window).
+                                        </p>
+                                    )}
+
+                                    <div className="mt-8 flex flex-col gap-4 lg:flex-row lg:gap-8">
                                         {/* Main Content - Inline Editing */}
                                         <div className="flex-1 space-y-8">
                                             {/* Title & Thumbnail Section */}

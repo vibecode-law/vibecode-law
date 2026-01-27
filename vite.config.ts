@@ -24,6 +24,11 @@ export default defineConfig({
         sentryVitePlugin({
             org: 'vibecodelaw',
             project: 'vibecode-law',
+            sourcemaps: {
+                filesToDeleteAfterUpload: [
+                    "./public/build/assets/*.map",
+                ],
+            },
         }),
     ],
 
@@ -34,4 +39,8 @@ export default defineConfig({
     build: {
         sourcemap: true,
     },
+
+    ssr: {
+        noExternal: [/\.css$/]
+    }
 });

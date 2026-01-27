@@ -31,5 +31,5 @@ Route::middleware(['auth', 'verified'])->group(function () {
     require __DIR__.'/authed/staff.php';
 });
 
-// Showcase catch-all route (must be after auth routes to avoid conflicts with /showcase/create, /showcase/mine, etc.)
+// Showcase catch-all route (must be after auth routes to avoid conflicts with /showcase/create etc.)
 Route::get('/showcase/{showcase}', ShowcaseShowController::class)->name('showcase.show');

@@ -181,7 +181,7 @@ export default function PublicShow({
     ];
 
     const breadcrumbActions = (
-        <div className="flex items-center gap-3">
+        <div className="flex flex-wrap items-center gap-3">
             {canViewStatus === true && (
                 <ShowcaseStatusBadge status={showcase.status} />
             )}
