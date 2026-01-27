@@ -84,7 +84,7 @@ export default function Home({
                             </p>
                         )}
 
-                        <div className="flex justify-center gap-2 pt-4">
+                        <div className="flex flex-col items-center justify-center gap-4 pt-4 md:flex-row">
                             <Button asChild size="lg">
                                 <Link href={ShowcaseCreateController.url()}>
                                     Submit Your Project
