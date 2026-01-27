@@ -10,7 +10,7 @@ interface ProjectItemProps {
 
 export function ProjectItem({ showcase, rank }: ProjectItemProps) {
     return (
-        <div className="flex items-center gap-4 overflow-hidden px-2 py-4 transition-transform duration-200 ease-out hover:scale-[1.01]">
+        <div className="flex items-center gap-4 px-2 py-4 transition-transform duration-200 ease-out hover:scale-[1.01]">
             <Link
                 href={ShowcaseShowController.url({ showcase: showcase })}
                 className="flex min-w-0 flex-1 items-center gap-4"

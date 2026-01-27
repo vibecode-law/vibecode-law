@@ -102,7 +102,7 @@ export default function Home({
 
             {/* Projects */}
             <section className="bg-white dark:bg-neutral-950">
-                <div className="mx-auto max-w-5xl overflow-hidden px-4">
+                <div className="mx-auto max-w-5xl px-4">
                     {isPreLaunch ? (
                         featuredShowcases.length > 0 ? (
                             <div className="py-6">
@@ -112,7 +112,7 @@ export default function Home({
                                     </h2>
                                     <div className="h-px flex-1 bg-border/60 dark:border-neutral-800"></div>
                                 </div>
-                                <div className="divide-y divide-neutral-100 overflow-hidden dark:divide-neutral-800">
+                                <div className="divide-y divide-neutral-100 dark:divide-neutral-800">
                                     {featuredShowcases.map(
                                         (showcase, index) => (
                                             <ProjectItem
