@@ -23,8 +23,8 @@ class MarkdownService
         }
 
         $resolvedCacheKey = $this->getCacheKey(
-            markdown: $markdown,
             profile: $profile,
+            markdown: $markdown,
             cacheKey: $cacheKey
         );
 
@@ -43,7 +43,7 @@ class MarkdownService
         return $this->convertToHtml(markdown: $markdown, profile: $profile);
     }
 
-    public function getCacheKey(string $markdown, MarkdownProfile $profile = MarkdownProfile::Basic, ?string $cacheKey = null): string
+    public function getCacheKey(MarkdownProfile $profile = MarkdownProfile::Basic, ?string $markdown = null, ?string $cacheKey = null): string
     {
         $identifier = $cacheKey ?? crc32($markdown);
 
@@ -53,7 +53,15 @@ class MarkdownService
     public function clearCache(string $markdown, MarkdownProfile $profile = MarkdownProfile::Basic, ?string $cacheKey = null): bool
     {
         return Cache::forget($this->getCacheKey(
+            profile: $profile,
             markdown: $markdown,
+            cacheKey: $cacheKey
+        ));
+    }
+
+    public function clearCacheByKey(string $cacheKey, MarkdownProfile $profile = MarkdownProfile::Basic): bool
+    {
+        return Cache::forget($this->getCacheKey(
             profile: $profile,
             cacheKey: $cacheKey
         ));

@@ -2,10 +2,12 @@
 
 namespace App\Models\Showcase;
 
+use App\Enums\MarkdownProfile;
 use App\Enums\ShowcaseStatus;
 use App\Enums\SourceStatus;
 use App\Models\PracticeArea;
 use App\Models\User;
+use App\Services\Markdown\MarkdownService;
 use App\Services\YoutubeIdExtractionService;
 use Illuminate\Database\Eloquent\Attributes\Scope;
 use Illuminate\Database\Eloquent\Builder;
@@ -65,6 +67,35 @@ class Showcase extends Model
             'is_featured' => 'boolean',
             'source_status' => SourceStatus::class,
             'thumbnail_crop' => 'array',
+        ];
+    }
+
+    protected static function booted(): void
+    {
+        $clearMarkdownCache = function (Showcase $showcase): void {
+            $markdownService = app(MarkdownService::class);
+
+            foreach ($showcase->getMarkdownCacheKeys() as $cacheKey) {
+                $markdownService->clearCacheByKey(
+                    cacheKey: $cacheKey,
+                    profile: MarkdownProfile::Basic
+                );
+            }
+        };
+
+        static::updated($clearMarkdownCache);
+        static::deleted($clearMarkdownCache);
+    }
+
+    /**
+     * @return array<int, string>
+     */
+    public function getMarkdownCacheKeys(): array
+    {
+        return [
+            "showcase|{$this->id}|description",
+            "showcase|{$this->id}|help_needed",
+            "showcase|{$this->id}|key_features",
         ];
     }
 

@@ -358,6 +358,44 @@ describe('caching behavior', function () {
         expect(Cache::has(key: $basicKey))->toBeFalse();
         expect(Cache::has(key: $fullKey))->toBeTrue();
     });
+
+    it('clears cache by key identifier', function () {
+        $service = new MarkdownService;
+        $cacheKey = 'custom-cache-key';
+
+        $service->render(markdown: '**content**', cacheKey: $cacheKey);
+
+        $fullCacheKey = $service->getCacheKey(cacheKey: $cacheKey);
+        expect(Cache::has(key: $fullCacheKey))->toBeTrue();
+
+        $result = $service->clearCacheByKey(cacheKey: $cacheKey);
+
+        expect($result)->toBeTrue();
+        expect(Cache::has(key: $fullCacheKey))->toBeFalse();
+    });
+
+    it('clears cache by key identifier for specific profile', function () {
+        $service = new MarkdownService;
+        $cacheKey = 'profile-specific-key';
+
+        $service->render(markdown: '**content**', profile: MarkdownProfile::Full, cacheKey: $cacheKey);
+
+        $fullCacheKey = $service->getCacheKey(profile: MarkdownProfile::Full, cacheKey: $cacheKey);
+        expect(Cache::has(key: $fullCacheKey))->toBeTrue();
+
+        $result = $service->clearCacheByKey(cacheKey: $cacheKey, profile: MarkdownProfile::Full);
+
+        expect($result)->toBeTrue();
+        expect(Cache::has(key: $fullCacheKey))->toBeFalse();
+    });
+
+    it('returns false when clearing cache by key for non-existent key', function () {
+        $service = new MarkdownService;
+
+        $result = $service->clearCacheByKey(cacheKey: 'non-existent-key');
+
+        expect($result)->toBeFalse();
+    });
 });
 
 describe('xss protection', function () {

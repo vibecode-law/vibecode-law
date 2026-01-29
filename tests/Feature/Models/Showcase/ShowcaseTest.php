@@ -1,6 +1,8 @@
 <?php
 
 use App\Models\Showcase\Showcase;
+use App\Services\Markdown\MarkdownService;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\Storage;
 
@@ -76,4 +78,73 @@ test('youtube id returns null for invalid youtube url', function () {
     ]);
 
     expect($showcase->youtube_id)->toBeNull();
+});
+
+describe('markdown cache keys', function () {
+    it('returns correct cache keys', function () {
+        $showcase = Showcase::factory()->withoutPracticeAreas()->create();
+
+        $keys = $showcase->getMarkdownCacheKeys();
+
+        expect($keys)->toBe([
+            "showcase|{$showcase->id}|description",
+            "showcase|{$showcase->id}|help_needed",
+            "showcase|{$showcase->id}|key_features",
+        ]);
+    });
+});
+
+describe('markdown cache clearing on model events', function () {
+    beforeEach(function () {
+        Cache::flush();
+    });
+
+    it('clears markdown cache when showcase is updated', function () {
+        $showcase = Showcase::factory()->withoutPracticeAreas()->create();
+        $markdownService = app(MarkdownService::class);
+
+        foreach ($showcase->getMarkdownCacheKeys() as $cacheKey) {
+            $markdownService->render(
+                markdown: '**test content**',
+                cacheKey: $cacheKey
+            );
+        }
+
+        foreach ($showcase->getMarkdownCacheKeys() as $cacheKey) {
+            $fullKey = $markdownService->getCacheKey(cacheKey: $cacheKey);
+            expect(Cache::has(key: $fullKey))->toBeTrue();
+        }
+
+        $showcase->update(['title' => 'Updated Title']);
+
+        foreach ($showcase->getMarkdownCacheKeys() as $cacheKey) {
+            $fullKey = $markdownService->getCacheKey(cacheKey: $cacheKey);
+            expect(Cache::has(key: $fullKey))->toBeFalse();
+        }
+    });
+
+    it('clears markdown cache when showcase is deleted', function () {
+        $showcase = Showcase::factory()->withoutPracticeAreas()->create();
+        $markdownService = app(MarkdownService::class);
+        $cacheKeys = $showcase->getMarkdownCacheKeys();
+
+        foreach ($cacheKeys as $cacheKey) {
+            $markdownService->render(
+                markdown: '**test content**',
+                cacheKey: $cacheKey
+            );
+        }
+
+        foreach ($cacheKeys as $cacheKey) {
+            $fullKey = $markdownService->getCacheKey(cacheKey: $cacheKey);
+            expect(Cache::has(key: $fullKey))->toBeTrue();
+        }
+
+        $showcase->delete();
+
+        foreach ($cacheKeys as $cacheKey) {
+            $fullKey = $markdownService->getCacheKey(cacheKey: $cacheKey);
+            expect(Cache::has(key: $fullKey))->toBeFalse();
+        }
+    });
 });
