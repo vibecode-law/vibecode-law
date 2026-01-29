@@ -6,6 +6,8 @@ use App\Models\Showcase\Showcase;
 use App\Models\Showcase\ShowcaseDraft;
 use App\Models\Showcase\ShowcaseDraftImage;
 use App\Models\Showcase\ShowcaseImage;
+use App\Services\Markdown\MarkdownService;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Storage;
 
 beforeEach(function () {
@@ -197,5 +199,38 @@ describe('thumbnail handling', function () {
         expect($showcase->thumbnail_crop)->toBe(['x' => 50, 'y' => 50, 'width' => 300, 'height' => 300]);
         Storage::disk('public')->assertExists("showcase/{$showcase->id}/thumbnail.jpg");
         expect(Storage::disk('public')->get("showcase/{$showcase->id}/thumbnail.jpg"))->toBe('new thumbnail content');
+    });
+});
+
+describe('markdown cache clearing', function () {
+    beforeEach(function () {
+        Storage::fake('public');
+        Cache::flush();
+    });
+
+    test('clears markdown cache when approving draft with updated description', function () {
+        $showcase = Showcase::factory()->approved()->create([
+            'description' => 'Original content',
+        ]);
+
+        $markdownService = app(MarkdownService::class);
+        $cacheKey = "showcase|{$showcase->id}|description";
+
+        $markdownService->render(
+            markdown: '**test content**',
+            cacheKey: $cacheKey
+        );
+
+        $fullKey = $markdownService->getCacheKey(cacheKey: $cacheKey);
+        expect(Cache::has(key: $fullKey))->toBeTrue();
+
+        $draft = ShowcaseDraft::factory()->pending()->create([
+            'showcase_id' => $showcase->id,
+            'description' => 'Updated content from draft',
+        ]);
+
+        (new ApproveShowcaseDraftAction)->approve(draft: $draft);
+
+        expect(Cache::has(key: $fullKey))->toBeFalse();
     });
 });

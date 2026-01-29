@@ -2,6 +2,7 @@
 
 use App\Models\Showcase\Showcase;
 use App\Services\Markdown\MarkdownService;
+use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\Storage;
@@ -80,53 +81,56 @@ test('youtube id returns null for invalid youtube url', function () {
     expect($showcase->youtube_id)->toBeNull();
 });
 
-describe('markdown cache keys', function () {
-    it('returns correct cache keys', function () {
-        $showcase = Showcase::factory()->withoutPracticeAreas()->create();
-
-        $keys = $showcase->getMarkdownCacheKeys();
-
-        expect($keys)->toBe([
-            "showcase|{$showcase->id}|description",
-            "showcase|{$showcase->id}|help_needed",
-            "showcase|{$showcase->id}|key_features",
-        ]);
-    });
-});
-
 describe('markdown cache clearing on model events', function () {
     beforeEach(function () {
         Cache::flush();
     });
 
-    it('clears markdown cache when showcase is updated', function () {
+    it('clears a specific markdown cache when that field is updated', function (string $field) {
         $showcase = Showcase::factory()->withoutPracticeAreas()->create();
         $markdownService = app(MarkdownService::class);
 
-        foreach ($showcase->getMarkdownCacheKeys() as $cacheKey) {
-            $markdownService->render(
-                markdown: '**test content**',
-                cacheKey: $cacheKey
-            );
-        }
+        $cacheKey = "showcase|{$showcase->id}|$field";
 
-        foreach ($showcase->getMarkdownCacheKeys() as $cacheKey) {
-            $fullKey = $markdownService->getCacheKey(cacheKey: $cacheKey);
-            expect(Cache::has(key: $fullKey))->toBeTrue();
-        }
+        $markdownService->render(
+            markdown: '**test content**',
+            cacheKey: $cacheKey
+        );
+
+        $fullKey = $markdownService->getCacheKey(cacheKey: $cacheKey);
+
+        expect(Cache::has(key: $fullKey))->toBeTrue();
+
+        $showcase->update([$field => 'Updated content']);
+
+        expect(Cache::has(key: $fullKey))->toBeFalse();
+    })->with(['description', 'help_needed', 'key_features']);
+
+    it('does not clear markdown cache when non-markdown fields are updated', function () {
+        $showcase = Showcase::factory()->withoutPracticeAreas()->create();
+        $markdownService = app(MarkdownService::class);
+
+        $cacheKey = "showcase|{$showcase->id}|description";
+
+        $markdownService->render(
+            markdown: '**test content**',
+            cacheKey: $cacheKey
+        );
+
+        $fullKey = $markdownService->getCacheKey(cacheKey: $cacheKey);
+
+        expect(Cache::has(key: $fullKey))->toBeTrue();
 
         $showcase->update(['title' => 'Updated Title']);
 
-        foreach ($showcase->getMarkdownCacheKeys() as $cacheKey) {
-            $fullKey = $markdownService->getCacheKey(cacheKey: $cacheKey);
-            expect(Cache::has(key: $fullKey))->toBeFalse();
-        }
+        expect(Cache::has(key: $fullKey))->toBeTrue();
     });
 
     it('clears markdown cache when showcase is deleted', function () {
         $showcase = Showcase::factory()->withoutPracticeAreas()->create();
         $markdownService = app(MarkdownService::class);
-        $cacheKeys = $showcase->getMarkdownCacheKeys();
+
+        $cacheKeys = new Collection($showcase->getCachedFields())->map(fn (string $field) => "showcase|{$showcase->id}|$field");
 
         foreach ($cacheKeys as $cacheKey) {
             $markdownService->render(

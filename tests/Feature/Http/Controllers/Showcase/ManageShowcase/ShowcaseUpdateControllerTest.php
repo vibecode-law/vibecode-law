@@ -6,7 +6,9 @@ use App\Enums\SourceStatus;
 use App\Models\Showcase\Showcase;
 use App\Models\Showcase\ShowcaseImage;
 use App\Models\User;
+use App\Services\Markdown\MarkdownService;
 use Illuminate\Http\UploadedFile;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Storage;
 
 use function Pest\Laravel\actingAs;
@@ -1316,5 +1318,43 @@ describe('thumbnail operations', function () {
         Storage::disk('public')->assertExists("showcase/{$showcase->id}/thumbnail.png");
         // Old thumbnail should be removed
         Storage::disk('public')->assertMissing("showcase/{$showcase->id}/thumbnail.jpg");
+    });
+});
+
+describe('markdown cache clearing', function () {
+    beforeEach(function () {
+        Cache::flush();
+    });
+
+    test('clears markdown cache when updating description via controller', function () {
+        /** @var User */
+        $user = User::factory()->create();
+        $showcase = Showcase::factory()->has(ShowcaseImage::factory(), 'images')->for($user, 'user')->create([
+            'description' => 'Original content',
+        ]);
+
+        $markdownService = app(MarkdownService::class);
+        $cacheKey = "showcase|{$showcase->id}|description";
+
+        $markdownService->render(
+            markdown: '**test content**',
+            cacheKey: $cacheKey
+        );
+
+        $fullKey = $markdownService->getCacheKey(cacheKey: $cacheKey);
+        expect(Cache::has(key: $fullKey))->toBeTrue();
+
+        actingAs($user);
+
+        put(route('showcase.manage.update', $showcase), [
+            'practice_area_ids' => $showcase->practiceAreas->pluck('id')->toArray(),
+            'title' => $showcase->title,
+            'tagline' => $showcase->tagline,
+            'description' => 'Updated content',
+            'url' => $showcase->url,
+            'source_status' => SourceStatus::NotAvailable->value,
+        ])->assertRedirect();
+
+        expect(Cache::has(key: $fullKey))->toBeFalse();
     });
 });

@@ -72,31 +72,39 @@ class Showcase extends Model
 
     protected static function booted(): void
     {
-        $clearMarkdownCache = function (Showcase $showcase): void {
-            $markdownService = app(MarkdownService::class);
+        static::updated(function (Showcase $showcase): void {
+            $cached = $showcase->getCachedFields();
 
-            foreach ($showcase->getMarkdownCacheKeys() as $cacheKey) {
-                $markdownService->clearCacheByKey(
-                    cacheKey: $cacheKey,
+            foreach ($showcase->changes as $field => $value) {
+                if (in_array($field, $cached) === false) {
+                    continue;
+                }
+
+                app(MarkdownService::class)->clearCacheByKey(
+                    cacheKey: "showcase|{$showcase->id}|$field",
                     profile: MarkdownProfile::Basic
                 );
             }
-        };
+        });
 
-        static::updated($clearMarkdownCache);
-        static::deleted($clearMarkdownCache);
+        static::deleted(function (Showcase $showcase): void {
+            $markdownService = app(MarkdownService::class);
+
+            foreach ($showcase->getCachedFields() as $cacheKey) {
+                $markdownService->clearCacheByKey(
+                    cacheKey: "showcase|{$showcase->id}|$cacheKey",
+                    profile: MarkdownProfile::Basic
+                );
+            }
+        });
     }
 
     /**
      * @return array<int, string>
      */
-    public function getMarkdownCacheKeys(): array
+    public function getCachedFields(): array
     {
-        return [
-            "showcase|{$this->id}|description",
-            "showcase|{$this->id}|help_needed",
-            "showcase|{$this->id}|key_features",
-        ];
+        return ['description', 'help_needed', 'key_features'];
     }
 
     public function getRouteKeyName(): string
