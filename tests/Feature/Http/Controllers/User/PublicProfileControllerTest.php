@@ -8,8 +8,78 @@ use Inertia\Testing\AssertableInertia;
 use function Pest\Laravel\actingAs;
 use function Pest\Laravel\get;
 
+describe('visibility', function () {
+    test('returns 404 for user without public profile', function () {
+        $user = User::factory()->create();
+
+        get(route('user.show', $user))
+            ->assertNotFound();
+    });
+
+    test('returns profile for team member without showcases', function () {
+        $user = User::factory()->coreTeam()->create();
+
+        get(route('user.show', $user))
+            ->assertOk()
+            ->assertInertia(fn (AssertableInertia $page) => $page
+                ->component('user/show')
+                ->has('user')
+                ->has('showcases', 0)
+            );
+    });
+
+    test('returns profile for collaborator without showcases', function () {
+        $user = User::factory()->collaborator()->create();
+
+        get(route('user.show', $user))
+            ->assertOk()
+            ->assertInertia(fn (AssertableInertia $page) => $page
+                ->component('user/show')
+                ->has('user')
+                ->has('showcases', 0)
+            );
+    });
+
+    test('returns profile for user with approved showcase', function () {
+        $user = User::factory()->create();
+        Showcase::factory()->approved()->for($user)->create();
+
+        get(route('user.show', $user))
+            ->assertOk()
+            ->assertInertia(fn (AssertableInertia $page) => $page
+                ->component('user/show')
+                ->has('user')
+                ->has('showcases', 1)
+            );
+    });
+
+    test('returns 404 for user with only draft showcase', function () {
+        $user = User::factory()->create();
+        Showcase::factory()->draft()->for($user)->create();
+
+        get(route('user.show', $user))
+            ->assertNotFound();
+    });
+
+    test('returns 404 for user with only pending showcase', function () {
+        $user = User::factory()->create();
+        Showcase::factory()->pending()->for($user)->create();
+
+        get(route('user.show', $user))
+            ->assertNotFound();
+    });
+
+    test('returns 404 for user with only rejected showcase', function () {
+        $user = User::factory()->create();
+        Showcase::factory()->rejected()->for($user)->create();
+
+        get(route('user.show', $user))
+            ->assertNotFound();
+    });
+});
+
 test('show returns user profile for guests', function () {
-    $user = User::factory()->create();
+    $user = User::factory()->coreTeam()->create();
 
     get(route('user.show', $user))
         ->assertOk()
@@ -21,7 +91,7 @@ test('show returns user profile for guests', function () {
 });
 
 test('show returns correct user data', function () {
-    $user = User::factory()->create([
+    $user = User::factory()->coreTeam(role: 'Lead Developer')->create([
         'first_name' => 'John',
         'last_name' => 'Doe',
         'handle' => 'john-doe',
@@ -43,7 +113,7 @@ test('show returns correct user data', function () {
                 ->where('job_title', 'Developer')
                 ->where('avatar', Storage::disk('public')->url('avatars/test.jpg'))
                 ->where('linkedin_url', 'https://linkedin.com/in/johndoe')
-                ->where('team_role', null)
+                ->where('team_role', 'Lead Developer')
                 ->where('bio', 'A passionate developer.')
                 ->where('bio_html', "<p>A passionate developer.</p>\n")
             )
@@ -51,7 +121,7 @@ test('show returns correct user data', function () {
 });
 
 test('show returns null bio_html when bio is null', function () {
-    $user = User::factory()->create([
+    $user = User::factory()->coreTeam()->create([
         'bio' => null,
     ]);
 
@@ -186,8 +256,8 @@ test('show returns has_upvoted false when viewer has not upvoted', function () {
         );
 });
 
-test('show returns empty showcases when user has no approved showcases', function () {
-    $user = User::factory()->create();
+test('show returns empty showcases for team member with no approved showcases', function () {
+    $user = User::factory()->coreTeam()->create();
 
     get(route('user.show', $user))
         ->assertInertia(fn (AssertableInertia $page) => $page
@@ -195,8 +265,8 @@ test('show returns empty showcases when user has no approved showcases', functio
         );
 });
 
-test('show returns 404 for non-existent user', function () {
-    get(route('user.show', ['user' => 99999]))
+test('show returns 404 for non-existent user handle', function () {
+    get(route('user.show', ['user' => 'non-existent-handle']))
         ->assertNotFound();
 });
 

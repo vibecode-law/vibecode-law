@@ -3,6 +3,7 @@
 namespace App\Models;
 
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
+use App\Enums\ShowcaseStatus;
 use App\Enums\TeamType;
 use App\Models\Showcase\Showcase;
 use Illuminate\Contracts\Auth\MustVerifyEmail;
@@ -124,6 +125,21 @@ class User extends Authenticatable implements MustVerifyEmail
     //
     // Helpers
     //
+
+    public function isTeamMember(): bool
+    {
+        return $this->team_type !== null;
+    }
+
+    public function hasApprovedShowcase(): bool
+    {
+        return $this->showcases()->where('status', ShowcaseStatus::Approved)->exists();
+    }
+
+    public function hasPublicProfile(): bool
+    {
+        return $this->isTeamMember() === true || $this->hasApprovedShowcase() === true;
+    }
 
     public function isBlockedFromSubmissions(): bool
     {

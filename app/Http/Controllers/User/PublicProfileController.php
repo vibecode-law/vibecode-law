@@ -16,6 +16,10 @@ class PublicProfileController extends BaseController
 {
     public function __invoke(User $user): Response
     {
+        if ($user->hasPublicProfile() === false) {
+            abort(404);
+        }
+
         return Inertia::render('user/show', [
             'user' => UserResource::from($user)
                 ->include('bio', 'bio_html'),
