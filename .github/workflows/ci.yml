@@ -43,6 +43,21 @@ jobs:
           npm install
           npx playwright install --with-deps
 
+      - name: Backend format check
+        run: composer lint
+     
+      - name: Backend static analysis
+        run: composer types
+
+      - name: Frontend format check
+        run: npm run format:check
+
+      - name: Frontend type check
+        run: npm run lint
+
+      - name: Frontend lint
+        run: npm run lint
+
       - name: Build Assets
         run: npm run build
 
