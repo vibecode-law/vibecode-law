@@ -4,6 +4,8 @@ import { Breadcrumbs } from '@/components/navigation/breadcrumbs';
 import { ApproveShowcaseButton } from '@/components/showcase/approve-showcase-button';
 import { RejectShowcaseModal } from '@/components/showcase/reject-showcase-modal';
 import { ShowcaseStatusBadge } from '@/components/showcase/showcase-status-badge';
+import { FancySelect } from '@/components/ui/fancy-select';
+import { FancyTextInput } from '@/components/ui/fancy-text-input';
 import { ImageUploadGallery } from '@/components/ui/image-upload-gallery';
 import {
     InfoBox,
@@ -11,18 +13,10 @@ import {
     InfoBoxTitle,
 } from '@/components/ui/info-box';
 import { InlineRichText } from '@/components/ui/inline/inline-rich-text';
-import { InlineText } from '@/components/ui/inline/inline-text';
 import { Input } from '@/components/ui/input';
 import InputError from '@/components/ui/input-error';
 import { Label } from '@/components/ui/label';
 import { PillSelect } from '@/components/ui/pill-select';
-import {
-    Select,
-    SelectContent,
-    SelectItem,
-    SelectTrigger,
-    SelectValue,
-} from '@/components/ui/select';
 import { ThumbnailSelector } from '@/components/ui/thumbnail-selector';
 import { slugify } from '@/lib/slug';
 import { type FrontendEnum } from '@/types';
@@ -38,7 +32,9 @@ import {
     Images,
     LinkIcon,
     List,
+    Quote,
     Tags,
+    Type,
     Video,
 } from 'lucide-react';
 import { useState } from 'react';
@@ -242,36 +238,36 @@ export function ShowcaseForm({
 
                                     <div className="mx-auto mt-8 max-w-3xl space-y-8">
                                         {/* Title Section */}
-                                        <div>
-                                            <InlineText
-                                                name="title"
-                                                value={title}
-                                                onChange={(e) =>
-                                                    setTitle(e.target.value)
-                                                }
-                                                placeholder="Enter your project title..."
-                                                textClasses="text-xl lg:text-3xl"
-                                                weight="bold"
-                                                error={errors.title}
-                                                label="Project Title"
-                                            />
-                                        </div>
+                                        <FancyTextInput
+                                            name="title"
+                                            value={title}
+                                            onChange={(e) =>
+                                                setTitle(e.target.value)
+                                            }
+                                            placeholder="Enter your project title..."
+                                            error={errors.title}
+                                            label="Project Title"
+                                            labelIcon={
+                                                <Type className="size-5" />
+                                            }
+                                            required
+                                        />
 
                                         {/* Tagline */}
-                                        <div>
-                                            <InlineText
-                                                name="tagline"
-                                                value={tagline}
-                                                onChange={(e) =>
-                                                    setTagline(e.target.value)
-                                                }
-                                                placeholder="A short, catchy description of your project..."
-                                                textClasses="text-base lg:text-xl"
-                                                className="text-neutral-600 dark:text-neutral-400"
-                                                error={errors.tagline}
-                                                label="Tagline"
-                                            />
-                                        </div>
+                                        <FancyTextInput
+                                            name="tagline"
+                                            value={tagline}
+                                            onChange={(e) =>
+                                                setTagline(e.target.value)
+                                            }
+                                            placeholder="A short, catchy description of your project..."
+                                            error={errors.tagline}
+                                            label="Tagline"
+                                            labelIcon={
+                                                <Quote className="size-5" />
+                                            }
+                                            required
+                                        />
 
                                         {/* Gallery - key resets state when images change (e.g., after save) */}
                                         <ImageUploadGallery
@@ -420,78 +416,39 @@ export function ShowcaseForm({
                                                     />
                                                 </div>
                                                 {/* Video URL */}
-                                                <div className="space-y-2">
-                                                    <Label
-                                                        htmlFor="video_url"
-                                                        className="flex items-center gap-2 text-xl font-semibold text-neutral-900 dark:text-white"
-                                                    >
+                                                <FancyTextInput
+                                                    name="video_url"
+                                                    type="url"
+                                                    value={videoUrl}
+                                                    onChange={(e) =>
+                                                        setVideoUrl(
+                                                            e.target.value,
+                                                        )
+                                                    }
+                                                    placeholder="https://youtube.com/..."
+                                                    label="Video URL"
+                                                    labelIcon={
                                                         <Video className="size-5" />
-                                                        Video URL
-                                                    </Label>
-                                                    <Input
-                                                        id="video_url"
-                                                        name="video_url"
-                                                        type="url"
-                                                        value={videoUrl}
-                                                        onChange={(e) =>
-                                                            setVideoUrl(
-                                                                e.target.value,
-                                                            )
-                                                        }
-                                                        placeholder="https://youtube.com/..."
-                                                        aria-invalid={
-                                                            errors.video_url !==
-                                                            undefined
-                                                        }
-                                                    />
-                                                    <p className="text-sm text-neutral-500 dark:text-neutral-400">
-                                                        YouTube videos will
-                                                        display embedded in your
-                                                        showcase page. Other
-                                                        platforms will just be
-                                                        links.
-                                                    </p>
-                                                    <InputError
-                                                        message={
-                                                            errors.video_url
-                                                        }
-                                                    />
-                                                </div>
+                                                    }
+                                                    description="YouTube videos will display embedded in your showcase page. Other platforms will just be links."
+                                                    error={errors.video_url}
+                                                />
                                                 {/* Demo URL */}
-                                                <div className="space-y-2">
-                                                    <Label
-                                                        htmlFor="url"
-                                                        className="flex items-center gap-2 text-xl font-semibold text-neutral-900 dark:text-white"
-                                                    >
+                                                <FancyTextInput
+                                                    name="url"
+                                                    type="url"
+                                                    value={url}
+                                                    onChange={(e) =>
+                                                        setUrl(e.target.value)
+                                                    }
+                                                    placeholder="https://your-project.com"
+                                                    label="Demo URL"
+                                                    labelIcon={
                                                         <Globe className="size-5" />
-                                                        Demo URL
-                                                    </Label>
-                                                    <Input
-                                                        id="url"
-                                                        name="url"
-                                                        type="url"
-                                                        value={url}
-                                                        onChange={(e) =>
-                                                            setUrl(
-                                                                e.target.value,
-                                                            )
-                                                        }
-                                                        placeholder="https://your-project.com"
-                                                        aria-invalid={
-                                                            errors.url !==
-                                                            undefined
-                                                        }
-                                                    />
-                                                    <p className="text-sm text-neutral-500 dark:text-neutral-400">
-                                                        Link to a prototype/demo
-                                                        of your project, rather
-                                                        than a marketing or
-                                                        landing page.
-                                                    </p>
-                                                    <InputError
-                                                        message={errors.url}
-                                                    />
-                                                </div>
+                                                    }
+                                                    description="Link to a prototype/demo of your project, rather than a marketing or landing page."
+                                                    error={errors.url}
+                                                />
                                                 {/* Help Needed */}
                                                 <InlineRichText
                                                     name="help_needed"
@@ -507,61 +464,28 @@ export function ShowcaseForm({
                                                     required
                                                 />
                                                 {/* Source Code Status */}
-                                                <div className="space-y-2">
-                                                    <Label
-                                                        htmlFor="source_status"
-                                                        className="flex items-center gap-2 text-xl font-semibold text-neutral-900 dark:text-white"
-                                                    >
+                                                <FancySelect
+                                                    name="source_status"
+                                                    value={sourceStatus}
+                                                    onValueChange={
+                                                        setSourceStatus
+                                                    }
+                                                    options={sourceStatuses.map(
+                                                        (status) => ({
+                                                            value: String(
+                                                                status.value,
+                                                            ),
+                                                            label: status.label,
+                                                        }),
+                                                    )}
+                                                    placeholder="Select source code availability..."
+                                                    label="Source Code Availability"
+                                                    labelIcon={
                                                         <Code className="size-5" />
-                                                        Source Code Availability
-                                                    </Label>
-                                                    <Select
-                                                        name="source_status"
-                                                        value={sourceStatus}
-                                                        onValueChange={
-                                                            setSourceStatus
-                                                        }
-                                                    >
-                                                        <SelectTrigger
-                                                            aria-invalid={
-                                                                errors.source_status !==
-                                                                undefined
-                                                            }
-                                                        >
-                                                            <SelectValue placeholder="Select status" />
-                                                        </SelectTrigger>
-                                                        <SelectContent>
-                                                            {sourceStatuses.map(
-                                                                (status) => (
-                                                                    <SelectItem
-                                                                        key={
-                                                                            status.value
-                                                                        }
-                                                                        value={String(
-                                                                            status.value,
-                                                                        )}
-                                                                    >
-                                                                        {
-                                                                            status.label
-                                                                        }
-                                                                    </SelectItem>
-                                                                ),
-                                                            )}
-                                                        </SelectContent>
-                                                    </Select>
-                                                    <p className="text-sm text-neutral-500 dark:text-neutral-400">
-                                                        Is the code for your
-                                                        project available to the
-                                                        public (e.g. on Github)?
-                                                        If not, leave this as
-                                                        "Not Available".
-                                                    </p>
-                                                    <InputError
-                                                        message={
-                                                            errors.source_status
-                                                        }
-                                                    />
-                                                </div>
+                                                    }
+                                                    description="Is the code for your project available to the public (e.g. on Github)? If not, leave this as 'Not Available'."
+                                                    error={errors.source_status}
+                                                />
 
                                                 {showSourceUrl === true && (
                                                     <div className="space-y-2">
@@ -607,7 +531,7 @@ export function ShowcaseForm({
                                             processing={processing}
                                             saveButtonText={saveButtonText}
                                             showSubmitButton={canSubmit}
-                                            className="hidden items-center justify-end gap-3 pt-6 lg:flex"
+                                            className="hidden items-center justify-end gap-3 pt-3 lg:flex"
                                             size="lg"
                                         />
                                     </div>
