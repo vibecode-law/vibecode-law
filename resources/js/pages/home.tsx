@@ -72,7 +72,11 @@ export default function Home({
                     </h1>
                     <div className="mx-auto mt-8 max-w-4xl space-y-4 text-lg text-neutral-600 dark:text-neutral-400">
                         {isPreLaunch ? (
-                            <p>We're an open platform for apps built by legal professionals. Learn to build, share what you've made, and get discovered. Now in preview.</p>
+                            <p>
+                                We're an open platform for apps built by legal
+                                professionals. Learn to build, share what you've
+                                made, and get discovered. Now in preview.
+                            </p>
                         ) : (
                             <p className="mt-4 text-lg text-neutral-600 dark:text-neutral-400">
                                 The latest legaltech projects, ranked by the
