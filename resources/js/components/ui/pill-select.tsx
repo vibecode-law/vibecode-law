@@ -14,6 +14,7 @@ interface PillSelectProps {
     placeholder?: string;
     error?: string;
     label?: string;
+    labelIcon?: React.ReactNode;
     className?: string;
     required?: boolean;
 }
@@ -26,6 +27,7 @@ export function PillSelect({
     placeholder,
     error,
     label,
+    labelIcon,
     className,
     required = false,
 }: PillSelectProps) {
@@ -43,7 +45,8 @@ export function PillSelect({
     return (
         <div className={cn('space-y-3', className)}>
             {label !== undefined && (
-                <label className="block text-xl font-semibold text-neutral-900 dark:text-white">
+                <label className="flex items-center gap-2 text-xl font-semibold text-neutral-900 dark:text-white">
+                    {labelIcon}
                     {label}
                     {required === false && (
                         <span className="ml-2 text-sm font-normal text-neutral-400">

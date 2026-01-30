@@ -253,7 +253,6 @@ describe('data structure', function () {
             'source_status' => \App\Enums\SourceStatus::OpenSource,
             'source_url' => 'https://github.com/test/complete',
             'status' => \App\Enums\ShowcaseStatus::Draft,
-            'launch_date' => '2026-03-15',
             'view_count' => 75,
             'submitted_date' => null,
             'rejection_reason' => null,
@@ -294,7 +293,6 @@ describe('data structure', function () {
                 ->where('source_status', \App\Enums\SourceStatus::OpenSource->forFrontend())
                 ->where('source_url', 'https://github.com/test/complete')
                 ->where('status', \App\Enums\ShowcaseStatus::Draft->forFrontend())
-                ->where('launch_date', '2026-03-15T00:00:00+00:00')
                 ->where('submitted_date', null)
                 ->where('rejection_reason', null)
                 ->where('view_count', 75)

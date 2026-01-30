@@ -37,7 +37,6 @@ class ShowcaseDraft extends Model
         'source_url',
         'thumbnail_extension',
         'thumbnail_crop',
-        'launch_date',
         'status',
         'submitted_at',
         'rejection_reason',
@@ -49,7 +48,6 @@ class ShowcaseDraft extends Model
             'status' => ShowcaseDraftStatus::class,
             'source_status' => SourceStatus::class,
             'thumbnail_crop' => 'array',
-            'launch_date' => 'date',
             'submitted_at' => 'datetime',
         ];
     }

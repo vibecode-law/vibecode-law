@@ -16,9 +16,16 @@ interface ThumbnailSelectorProps {
     showError?: boolean;
     className?: string;
     aspectRatio?: number;
+    size?: 'sm' | 'md' | 'lg';
     onCropDataChange?: (cropData: CropData | null) => void;
     onRemove?: () => void;
 }
+
+const sizeClasses = {
+    sm: 'size-14',
+    md: 'size-20',
+    lg: 'size-24',
+};
 
 /**
  * Creates a cropped image preview from a source URL and crop coordinates
@@ -69,6 +76,7 @@ export function ThumbnailSelector({
     showError = true,
     className,
     aspectRatio = 1,
+    size = 'sm',
     onCropDataChange,
     onRemove,
 }: ThumbnailSelectorProps) {
@@ -204,7 +212,8 @@ export function ThumbnailSelector({
                 type="button"
                 onClick={handleClick}
                 className={cn(
-                    'group relative size-14 overflow-hidden rounded-lg border-2 border-dashed transition-colors',
+                    'group relative overflow-hidden rounded-lg border-2 border-dashed transition-colors',
+                    sizeClasses[size],
                     error !== undefined
                         ? 'border-red-300 dark:border-red-700'
                         : 'border-neutral-300 hover:border-amber-400 dark:border-neutral-700 dark:hover:border-amber-500',

@@ -56,7 +56,6 @@ class ShowcaseDraftFactory extends Factory
             'source_url' => fake()->url(),
             'thumbnail_extension' => null,
             'thumbnail_crop' => null,
-            'launch_date' => fake()->optional()->dateTimeBetween('-2 years', 'now'),
             'status' => ShowcaseDraftStatus::Draft,
         ];
     }

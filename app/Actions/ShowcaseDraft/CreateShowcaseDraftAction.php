@@ -28,7 +28,6 @@ class CreateShowcaseDraftAction
                 'source_url' => $showcase->source_url,
                 'thumbnail_extension' => $showcase->thumbnail_extension,
                 'thumbnail_crop' => $showcase->thumbnail_crop,
-                'launch_date' => $showcase->launch_date,
                 'status' => ShowcaseDraftStatus::Draft,
             ]);
 

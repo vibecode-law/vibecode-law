@@ -102,7 +102,6 @@ test('index returns correct data structure', function () {
                 ->missing('source_status')
                 ->missing('source_url')
                 ->missing('status')
-                ->missing('launch_date')
                 ->missing('submitted_date')
                 ->missing('created_at')
                 ->missing('updated_at')

@@ -33,6 +33,7 @@ describe('auth', function () {
             'title' => 'Updated Title',
             'tagline' => 'Updated tagline',
             'description' => 'Updated description',
+            'key_features' => 'Updated key features',
             'source_status' => SourceStatus::NotAvailable->value,
         ]);
 
@@ -53,6 +54,7 @@ describe('auth', function () {
             'title' => 'Updated Title',
             'tagline' => 'Updated tagline',
             'description' => 'Updated description',
+            'key_features' => 'Updated key features',
             'source_status' => SourceStatus::NotAvailable->value,
         ]);
 
@@ -84,6 +86,7 @@ describe('removed images', function () {
             'title' => 'Updated Title',
             'tagline' => 'Updated tagline',
             'description' => 'Updated description',
+            'key_features' => 'Updated key features',
             'source_status' => SourceStatus::NotAvailable->value,
             'removed_images' => [$image1->id],
         ]);
@@ -118,6 +121,7 @@ describe('removed images', function () {
             'title' => 'Updated Title',
             'tagline' => 'Updated tagline',
             'description' => 'Updated description',
+            'key_features' => 'Updated key features',
             'source_status' => SourceStatus::NotAvailable->value,
             'removed_images' => [$otherImage->id],
         ]);
@@ -147,6 +151,7 @@ describe('removed images', function () {
             'title' => 'Updated Title',
             'tagline' => 'Updated tagline',
             'description' => 'Updated description',
+            'key_features' => 'Updated key features',
             'source_status' => SourceStatus::NotAvailable->value,
             'removed_images' => [$image2->id],
         ]);
@@ -176,6 +181,7 @@ describe('deleted new images', function () {
             'title' => 'Updated Title',
             'tagline' => 'Updated tagline',
             'description' => 'Updated description',
+            'key_features' => 'Updated key features',
             'source_status' => SourceStatus::NotAvailable->value,
             'deleted_new_images' => [$newDraftImage->id],
         ]);
@@ -209,7 +215,6 @@ describe('field updates', function () {
             'video_url' => 'https://youtube.com/watch?v=new',
             'source_status' => SourceStatus::OpenSource->value,
             'source_url' => 'https://github.com/new/repo',
-            'launch_date' => '2026-01-10',
         ]);
 
         $draft->refresh();
@@ -223,7 +228,6 @@ describe('field updates', function () {
         expect($draft->video_url)->toBe('https://youtube.com/watch?v=new');
         expect($draft->source_status)->toBe(SourceStatus::OpenSource);
         expect($draft->source_url)->toBe('https://github.com/new/repo');
-        expect($draft->launch_date->format('Y-m-d'))->toBe('2026-01-10');
     });
 
     test('syncs practice areas', function () {
@@ -246,6 +250,7 @@ describe('field updates', function () {
             'title' => $draft->title,
             'tagline' => $draft->tagline,
             'description' => $draft->description,
+            'key_features' => $draft->key_features,
             'source_status' => SourceStatus::NotAvailable->value,
         ]);
 
@@ -269,6 +274,7 @@ describe('field updates', function () {
             'title' => 'Updated Title',
             'tagline' => 'Updated tagline',
             'description' => 'Updated description',
+            'key_features' => 'Updated key features',
             'source_status' => SourceStatus::NotAvailable->value,
         ]);
 
@@ -294,6 +300,7 @@ describe('thumbnail', function () {
             'title' => $draft->title,
             'tagline' => $draft->tagline,
             'description' => $draft->description,
+            'key_features' => $draft->key_features,
             'source_status' => SourceStatus::NotAvailable->value,
             'thumbnail' => $thumbnail,
             'thumbnail_crop' => ['x' => 0, 'y' => 0, 'width' => 400, 'height' => 400],
@@ -321,6 +328,7 @@ describe('thumbnail', function () {
             'title' => $draft->title,
             'tagline' => $draft->tagline,
             'description' => $draft->description,
+            'key_features' => $draft->key_features,
             'source_status' => SourceStatus::NotAvailable->value,
             'thumbnail' => $thumbnail,
             'thumbnail_crop' => ['x' => 10, 'y' => 20, 'width' => 300, 'height' => 300],
@@ -352,6 +360,7 @@ describe('thumbnail', function () {
             'title' => $draft->title,
             'tagline' => $draft->tagline,
             'description' => $draft->description,
+            'key_features' => $draft->key_features,
             'source_status' => SourceStatus::NotAvailable->value,
             'thumbnail' => $newThumbnail,
             'thumbnail_crop' => ['x' => 0, 'y' => 0, 'width' => 400, 'height' => 400],
@@ -387,6 +396,7 @@ describe('submit flag', function () {
             'title' => $draft->title,
             'tagline' => $draft->tagline,
             'description' => $draft->description,
+            'key_features' => $draft->key_features,
             'source_status' => SourceStatus::NotAvailable->value,
             'submit' => true,
         ]);
@@ -413,6 +423,7 @@ describe('submit flag', function () {
             'title' => $draft->title,
             'tagline' => $draft->tagline,
             'description' => $draft->description,
+            'key_features' => $draft->key_features,
             'source_status' => SourceStatus::NotAvailable->value,
             'submit' => true,
         ]);
@@ -436,6 +447,7 @@ describe('submit flag', function () {
             'title' => $draft->title,
             'tagline' => $draft->tagline,
             'description' => $draft->description,
+            'key_features' => $draft->key_features,
             'source_status' => SourceStatus::NotAvailable->value,
             'submit' => true,
         ]);
@@ -458,6 +470,7 @@ describe('submit flag', function () {
             'title' => $draft->title,
             'tagline' => $draft->tagline,
             'description' => $draft->description,
+            'key_features' => $draft->key_features,
             'source_status' => SourceStatus::NotAvailable->value,
             'submit' => false,
         ]);
@@ -484,6 +497,7 @@ describe('status restrictions', function () {
             'title' => 'New Title',
             'tagline' => 'New tagline',
             'description' => 'New description',
+            'key_features' => 'New key features',
             'source_status' => SourceStatus::NotAvailable->value,
         ]);
 
@@ -504,6 +518,7 @@ describe('status restrictions', function () {
             'title' => 'Updated After Rejection',
             'tagline' => 'Updated tagline',
             'description' => 'Updated description',
+            'key_features' => 'Updated key features',
             'source_status' => SourceStatus::NotAvailable->value,
         ]);
 
@@ -528,6 +543,7 @@ describe('status restrictions', function () {
             'title' => 'Admin Updated',
             'tagline' => 'Admin tagline',
             'description' => 'Admin description',
+            'key_features' => 'Admin key features',
             'source_status' => SourceStatus::NotAvailable->value,
         ]);
 
@@ -552,6 +568,7 @@ describe('status restrictions', function () {
             'title' => 'Blocked Update',
             'tagline' => 'Blocked tagline',
             'description' => 'Blocked description',
+            'key_features' => 'Blocked key features',
             'source_status' => SourceStatus::NotAvailable->value,
         ]);
 
@@ -585,6 +602,7 @@ describe('thumbnail operations', function () {
             'title' => $draft->title,
             'tagline' => $draft->tagline,
             'description' => $draft->description,
+            'key_features' => $draft->key_features,
             'source_status' => SourceStatus::NotAvailable->value,
             'remove_thumbnail' => true,
         ]);
@@ -622,6 +640,7 @@ describe('thumbnail operations', function () {
             'title' => $draft->title,
             'tagline' => $draft->tagline,
             'description' => $draft->description,
+            'key_features' => $draft->key_features,
             'source_status' => SourceStatus::NotAvailable->value,
             'remove_thumbnail' => false,
         ]);
@@ -661,6 +680,7 @@ describe('thumbnail operations', function () {
             'title' => $draft->title,
             'tagline' => $draft->tagline,
             'description' => $draft->description,
+            'key_features' => $draft->key_features,
             'source_status' => SourceStatus::NotAvailable->value,
             'thumbnail' => $newThumbnail,
             'thumbnail_crop' => ['x' => 10, 'y' => 10, 'width' => 400, 'height' => 400],

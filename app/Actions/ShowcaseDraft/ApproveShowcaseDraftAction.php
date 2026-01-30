@@ -29,7 +29,6 @@ class ApproveShowcaseDraftAction
                 'video_url' => $draft->video_url,
                 'source_status' => $draft->source_status,
                 'source_url' => $draft->source_url,
-                'launch_date' => $draft->launch_date,
             ]);
 
             // Handle thumbnail

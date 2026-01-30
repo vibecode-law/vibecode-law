@@ -26,6 +26,7 @@ describe('auth', function () {
             'title' => 'Test Showcase',
             'tagline' => 'Test tagline',
             'description' => 'Test description',
+            'key_features' => 'Test key features',
             'url' => 'https://example.com',
             'source_status' => SourceStatus::NotAvailable->value,
             'images' => [UploadedFile::fake()->image('test.jpg', 1280, 720)],
@@ -49,6 +50,7 @@ describe('auth', function () {
             'title' => 'Test Showcase',
             'tagline' => 'Test tagline',
             'description' => 'Test description',
+            'key_features' => 'Test key features',
             'url' => 'https://example.com',
             'source_status' => SourceStatus::NotAvailable->value,
             'images' => [UploadedFile::fake()->image('test.jpg', 1280, 720)],
@@ -72,6 +74,7 @@ describe('auth', function () {
             'title' => 'Test Showcase',
             'tagline' => 'Test tagline',
             'description' => 'Test description',
+            'key_features' => 'Test key features',
             'url' => 'https://example.com',
             'source_status' => SourceStatus::NotAvailable->value,
             'images' => [UploadedFile::fake()->image('test.jpg', 1280, 720)],
@@ -95,6 +98,7 @@ describe('auth', function () {
             'title' => 'Test Showcase',
             'tagline' => 'Test tagline',
             'description' => 'Test description',
+            'key_features' => 'Test key features',
             'url' => 'https://example.com',
             'source_status' => SourceStatus::NotAvailable->value,
             'images' => [UploadedFile::fake()->image('test.jpg', 1280, 720)],
@@ -120,6 +124,7 @@ describe('validation', function () {
             'title' => 'Test Showcase',
             'tagline' => 'Test tagline',
             'description' => 'Test description',
+            'key_features' => 'Test key features',
             'url' => 'https://example.com',
             'source_status' => SourceStatus::NotAvailable->value,
             'images' => [UploadedFile::fake()->image('test.jpg', 1280, 720)],
@@ -163,6 +168,10 @@ describe('validation', function () {
             ['description' => null],
             ['description'],
         ],
+        'key_features is required' => [
+            ['key_features' => null],
+            ['key_features'],
+        ],
         'url must be valid format' => [
             ['url' => 'not-a-valid-url'],
             ['url'],
@@ -182,10 +191,6 @@ describe('validation', function () {
         'help_needed cannot exceed 5000 characters' => [
             ['help_needed' => str_repeat('a', 5001)],
             ['help_needed'],
-        ],
-        'launch date must be in the past or today' => [
-            ['launch_date' => now()->addDay()->format('Y-m-d')],
-            ['launch_date'],
         ],
         'thumbnail must be an image' => [
             ['thumbnail' => UploadedFile::fake()->create('document.pdf', 100)],
@@ -291,6 +296,7 @@ describe('showcase creation', function () {
             'title' => 'My Awesome Project',
             'tagline' => 'A great project tagline',
             'description' => 'This is a great project description',
+            'key_features' => 'Some key features',
             'url' => 'https://example.com',
             'source_status' => SourceStatus::NotAvailable->value,
             'images' => [UploadedFile::fake()->image('test.jpg', 1280, 720)],
@@ -307,6 +313,7 @@ describe('showcase creation', function () {
             'title' => 'My Awesome Project',
             'tagline' => 'A great project tagline',
             'description' => 'This is a great project description',
+            'key_features' => 'Some key features',
             'url' => 'https://example.com',
         ]);
 
@@ -335,7 +342,6 @@ describe('showcase creation', function () {
             'help_needed' => 'Looking for contributors to help with documentation.',
             'url' => 'https://example.com',
             'source_status' => SourceStatus::NotAvailable->value,
-            'launch_date' => '2025-12-01',
             'images' => [UploadedFile::fake()->image('test.jpg', 1280, 720)],
             'thumbnail' => UploadedFile::fake()->image('thumbnail.jpg', 500, 500),
             'thumbnail_crop' => ['x' => 0, 'y' => 0, 'width' => 500, 'height' => 500],
@@ -356,10 +362,9 @@ describe('showcase creation', function () {
         ]);
 
         expect($showcase->slug)->toMatch('/^my-awesome-project-\d{6}$/');
-        expect($showcase->launch_date->format('Y-m-d'))->toBe('2025-12-01');
     });
 
-    test('creates showcase with key_features and help_needed as null', function () {
+    test('creates showcase with help_needed as null', function () {
         $practiceArea = PracticeArea::factory()->create();
 
         /** @var User */
@@ -372,7 +377,7 @@ describe('showcase creation', function () {
             'title' => 'My Awesome Project',
             'tagline' => 'A great project tagline',
             'description' => 'This is a great project description',
-            'key_features' => null,
+            'key_features' => 'Some key features',
             'help_needed' => null,
             'url' => 'https://example.com',
             'source_status' => SourceStatus::NotAvailable->value,
@@ -387,7 +392,7 @@ describe('showcase creation', function () {
 
         assertDatabaseHas('showcases', [
             'id' => $showcase->id,
-            'key_features' => null,
+            'key_features' => 'Some key features',
             'help_needed' => null,
         ]);
     });
@@ -408,6 +413,7 @@ describe('showcase creation', function () {
             'title' => $longTitle,
             'tagline' => 'A great project tagline',
             'description' => 'This is a great project description',
+            'key_features' => 'Some key features',
             'url' => 'https://example.com',
             'source_status' => SourceStatus::NotAvailable->value,
             'images' => [UploadedFile::fake()->image('test.jpg', 1280, 720)],
@@ -435,6 +441,7 @@ describe('showcase creation', function () {
             'title' => 'My Awesome Project',
             'tagline' => 'A great project tagline',
             'description' => 'This is a great project description',
+            'key_features' => 'Some key features',
             'url' => 'https://example.com',
             'source_status' => SourceStatus::NotAvailable->value,
             'images' => [UploadedFile::fake()->image('test.jpg', 1280, 720)],
@@ -459,6 +466,7 @@ describe('showcase creation', function () {
             'title' => 'My Awesome Project',
             'tagline' => 'A great project tagline',
             'description' => 'This is a great project description',
+            'key_features' => 'Some key features',
             'url' => 'https://example.com',
             'source_status' => SourceStatus::NotAvailable->value,
             'images' => [UploadedFile::fake()->image('test.jpg', 1280, 720)],
@@ -485,6 +493,7 @@ describe('showcase creation', function () {
             'title' => 'My Awesome Project',
             'tagline' => 'A great project tagline',
             'description' => 'This is a great project description',
+            'key_features' => 'Some key features',
             'url' => 'https://example.com',
             'source_status' => SourceStatus::NotAvailable->value,
             'images' => [UploadedFile::fake()->image('test.jpg', 1280, 720)],
@@ -510,6 +519,7 @@ describe('showcase creation', function () {
             'title' => 'My Awesome Project',
             'tagline' => 'A great project tagline',
             'description' => 'This is a great project description',
+            'key_features' => 'Some key features',
             'url' => 'https://example.com',
             'video_url' => 'https://youtube.com/watch?v=example',
             'source_status' => SourceStatus::OpenSource->value,
@@ -540,6 +550,7 @@ describe('showcase creation', function () {
             'title' => 'My Awesome Project',
             'tagline' => 'A great project tagline',
             'description' => 'This is a great project description',
+            'key_features' => 'Some key features',
             'url' => 'https://example.com',
             'source_status' => SourceStatus::NotAvailable->value,
             'images' => [UploadedFile::fake()->image('test.jpg', 1280, 720)],
@@ -567,6 +578,7 @@ describe('showcase creation', function () {
             'title' => 'My Awesome Project',
             'tagline' => 'A great project tagline',
             'description' => 'This is a great project description',
+            'key_features' => 'Some key features',
             'url' => 'https://example.com',
             'source_status' => SourceStatus::NotAvailable->value,
             'source_url' => 'https://github.com/user/repo',
@@ -597,6 +609,7 @@ describe('image uploads', function () {
             'title' => 'My Awesome Project',
             'tagline' => 'A great project tagline',
             'description' => 'This is a great project description',
+            'key_features' => 'Some key features',
             'url' => 'https://example.com',
             'source_status' => SourceStatus::NotAvailable->value,
             'images' => [$image],
@@ -629,6 +642,7 @@ describe('image uploads', function () {
             'title' => 'My Awesome Project',
             'tagline' => 'A great project tagline',
             'description' => 'This is a great project description',
+            'key_features' => 'Some key features',
             'url' => 'https://example.com',
             'source_status' => SourceStatus::NotAvailable->value,
             'images' => $images,
@@ -657,6 +671,7 @@ describe('image uploads', function () {
             'title' => 'My Awesome Project',
             'tagline' => 'A great project tagline',
             'description' => 'This is a great project description',
+            'key_features' => 'Some key features',
             'url' => 'https://example.com',
             'source_status' => SourceStatus::NotAvailable->value,
             'images' => [$image],
@@ -690,6 +705,7 @@ describe('image uploads', function () {
             'title' => 'My Awesome Project',
             'tagline' => 'A great project tagline',
             'description' => 'This is a great project description',
+            'key_features' => 'Some key features',
             'url' => 'https://example.com',
             'source_status' => SourceStatus::NotAvailable->value,
             'images' => $images,
@@ -721,6 +737,7 @@ describe('image uploads', function () {
             'title' => 'My Awesome Project',
             'tagline' => 'A great project tagline',
             'description' => 'This is a great project description',
+            'key_features' => 'Some key features',
             'url' => 'https://example.com',
             'source_status' => SourceStatus::NotAvailable->value,
             'thumbnail' => $thumbnail,
@@ -750,6 +767,7 @@ describe('image uploads', function () {
             'title' => 'My Awesome Project',
             'tagline' => 'A great project tagline',
             'description' => 'This is a great project description',
+            'key_features' => 'Some key features',
             'url' => 'https://example.com',
             'source_status' => SourceStatus::NotAvailable->value,
             'images' => [$image],
@@ -778,6 +796,7 @@ describe('response', function () {
             'title' => 'My Awesome Project',
             'tagline' => 'A great project tagline',
             'description' => 'This is a great project description',
+            'key_features' => 'Some key features',
             'url' => 'https://example.com',
             'source_status' => SourceStatus::NotAvailable->value,
             'images' => [UploadedFile::fake()->image('test.jpg', 1280, 720)],
@@ -803,6 +822,7 @@ describe('response', function () {
             'title' => 'My Awesome Project',
             'tagline' => 'A great project tagline',
             'description' => 'This is a great project description',
+            'key_features' => 'Some key features',
             'url' => 'https://example.com',
             'source_status' => SourceStatus::NotAvailable->value,
             'images' => [UploadedFile::fake()->image('test.jpg', 1280, 720)],
@@ -830,6 +850,7 @@ describe('submit on create', function () {
             'title' => 'My Awesome Project',
             'tagline' => 'A great project tagline',
             'description' => 'This is a great project description',
+            'key_features' => 'Some key features',
             'url' => 'https://example.com',
             'source_status' => SourceStatus::NotAvailable->value,
             'images' => [UploadedFile::fake()->image('test.jpg', 1280, 720)],
@@ -860,6 +881,7 @@ describe('submit on create', function () {
             'title' => 'My Awesome Project',
             'tagline' => 'A great project tagline',
             'description' => 'This is a great project description',
+            'key_features' => 'Some key features',
             'url' => 'https://example.com',
             'source_status' => SourceStatus::NotAvailable->value,
             'images' => [UploadedFile::fake()->image('test.jpg', 1280, 720)],
@@ -890,6 +912,7 @@ describe('submit on create', function () {
             'title' => 'My Awesome Project',
             'tagline' => 'A great project tagline',
             'description' => 'This is a great project description',
+            'key_features' => 'Some key features',
             'url' => 'https://example.com',
             'source_status' => SourceStatus::NotAvailable->value,
             'images' => [UploadedFile::fake()->image('test.jpg', 1280, 720)],
@@ -916,6 +939,7 @@ describe('submit on create', function () {
             'title' => 'Test Showcase',
             'tagline' => 'Test tagline',
             'description' => 'Test description',
+            'key_features' => 'Test key features',
             'url' => 'https://example.com',
             'source_status' => SourceStatus::NotAvailable->value,
             'images' => [UploadedFile::fake()->image('test.jpg', 1280, 720)],
@@ -944,6 +968,7 @@ describe('submit on create', function () {
             'title' => 'My Awesome Project',
             'tagline' => 'A great project tagline',
             'description' => 'This is a great project description',
+            'key_features' => 'Some key features',
             'url' => 'https://example.com',
             'source_status' => SourceStatus::NotAvailable->value,
             'images' => [UploadedFile::fake()->image('test.jpg', 1280, 720)],

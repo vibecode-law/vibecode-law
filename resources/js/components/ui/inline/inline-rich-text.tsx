@@ -8,6 +8,7 @@ interface InlineRichTextProps {
     onChange?: (value: string) => void;
     placeholder?: string;
     label?: string;
+    labelIcon?: React.ReactNode;
     className?: string;
     height?: number;
     error?: string;
@@ -20,6 +21,7 @@ export function InlineRichText({
     onChange,
     placeholder,
     label,
+    labelIcon,
     className,
     height = 200,
     error,
@@ -57,7 +59,8 @@ export function InlineRichText({
     return (
         <div className={cn('space-y-2', className)}>
             {label !== undefined && (
-                <label className="block text-xl font-semibold text-neutral-900 dark:text-white">
+                <label className="flex items-center gap-2 text-xl font-semibold text-neutral-900 dark:text-white">
+                    {labelIcon}
                     {label}
                     {required === false && (
                         <span className="ml-2 text-sm font-normal text-neutral-400">

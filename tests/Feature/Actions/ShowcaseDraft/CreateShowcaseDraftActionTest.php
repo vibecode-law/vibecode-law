@@ -45,7 +45,6 @@ describe('draft creation', function () {
         expect($draft->video_url)->toBe($showcase->video_url);
         expect($draft->source_url)->toBe($showcase->source_url);
         expect($draft->source_status)->toBe($showcase->source_status);
-        expect($draft->launch_date?->format('Y-m-d'))->toBe($showcase->launch_date?->format('Y-m-d'));
     });
 
     test('copies practice areas to draft', function () {

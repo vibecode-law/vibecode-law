@@ -47,9 +47,6 @@ class ShowcaseDraftResource extends Resource
     public FrontendEnum $status;
 
     #[WithCast(DateTimeInterfaceCast::class)]
-    public ?CarbonInterface $launch_date;
-
-    #[WithCast(DateTimeInterfaceCast::class)]
     public CarbonInterface $created_at;
 
     #[WithCast(DateTimeInterfaceCast::class)]
@@ -92,7 +89,6 @@ class ShowcaseDraftResource extends Resource
             'source_status' => $draft->source_status->forFrontend(),
             'source_url' => $draft->source_url,
             'status' => $draft->status->forFrontend(),
-            'launch_date' => $draft->launch_date,
             'created_at' => $draft->created_at,
             'updated_at' => $draft->updated_at,
             'practiceAreas' => Lazy::whenLoaded('practiceAreas', $draft, fn () => PracticeAreaResource::collect($draft->practiceAreas)),

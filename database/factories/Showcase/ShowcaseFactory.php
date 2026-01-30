@@ -62,7 +62,6 @@ class ShowcaseFactory extends Factory
             'thumbnail_extension' => null,
             'thumbnail_crop' => null,
             'status' => ShowcaseStatus::Draft,
-            'launch_date' => fake()->optional()->dateTimeBetween('-2 years', 'now'),
             'view_count' => fake()->numberBetween(0, 1000),
             'is_featured' => false,
         ];

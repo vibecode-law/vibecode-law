@@ -24,6 +24,7 @@ describe('auth', function () {
             'title' => 'Updated Title',
             'tagline' => 'Updated tagline',
             'description' => 'Updated description',
+            'key_features' => 'Updated key features',
             'url' => 'https://updated.com',
             'source_status' => SourceStatus::NotAvailable->value,
         ]);
@@ -43,6 +44,7 @@ describe('auth', function () {
             'title' => 'Updated Title',
             'tagline' => 'Updated tagline',
             'description' => 'Updated description',
+            'key_features' => 'Updated key features',
             'url' => 'https://updated.com',
             'source_status' => SourceStatus::NotAvailable->value,
         ]);
@@ -62,6 +64,7 @@ describe('auth', function () {
             'title' => 'Updated Title',
             'tagline' => 'Updated tagline',
             'description' => 'Updated description',
+            'key_features' => 'Updated key features',
             'url' => 'https://updated.com',
             'source_status' => SourceStatus::NotAvailable->value,
         ]);
@@ -82,6 +85,7 @@ describe('auth', function () {
             'title' => 'Updated Title',
             'tagline' => 'Updated tagline',
             'description' => 'Updated description',
+            'key_features' => 'Updated key features',
             'url' => 'https://updated.com',
             'source_status' => SourceStatus::NotAvailable->value,
         ]);
@@ -102,6 +106,7 @@ describe('auth', function () {
             'title' => 'Updated Title',
             'tagline' => 'Updated tagline',
             'description' => 'Updated description',
+            'key_features' => 'Updated key features',
             'url' => 'https://updated.com',
             'source_status' => SourceStatus::NotAvailable->value,
         ]);
@@ -122,6 +127,7 @@ describe('auth', function () {
             'title' => 'Updated Title',
             'tagline' => 'Updated tagline',
             'description' => 'Updated description',
+            'key_features' => 'Updated key features',
             'url' => 'https://updated.com',
             'source_status' => SourceStatus::NotAvailable->value,
         ]);
@@ -141,6 +147,7 @@ describe('auth', function () {
             'title' => 'Updated Title',
             'tagline' => 'Updated tagline',
             'description' => 'Updated description',
+            'key_features' => 'Updated key features',
             'url' => 'https://updated.com',
             'source_status' => SourceStatus::NotAvailable->value,
         ]);
@@ -160,6 +167,7 @@ describe('auth', function () {
             'title' => 'Updated Title',
             'tagline' => 'Updated tagline',
             'description' => 'Updated description',
+            'key_features' => 'Updated key features',
             'url' => 'https://updated.com',
             'source_status' => SourceStatus::NotAvailable->value,
         ]);
@@ -180,6 +188,7 @@ describe('auth', function () {
             'title' => 'Updated Title',
             'tagline' => 'Updated tagline',
             'description' => 'Updated description',
+            'key_features' => 'Updated key features',
             'url' => 'https://updated.com',
             'source_status' => SourceStatus::NotAvailable->value,
         ]);
@@ -201,6 +210,7 @@ describe('auth', function () {
             'title' => 'Updated Title',
             'tagline' => 'Updated tagline',
             'description' => 'Updated description',
+            'key_features' => 'Updated key features',
             'url' => 'https://updated.com',
             'source_status' => SourceStatus::NotAvailable->value,
         ]);
@@ -227,6 +237,7 @@ describe('validation', function () {
             'title' => 'Updated Title',
             'tagline' => 'Updated tagline',
             'description' => 'Updated description',
+            'key_features' => 'Updated key features',
             'url' => 'https://updated.com',
             'source_status' => SourceStatus::NotAvailable->value,
         ];
@@ -267,6 +278,10 @@ describe('validation', function () {
             ['description' => null],
             ['description'],
         ],
+        'key_features is required' => [
+            ['key_features' => null],
+            ['key_features'],
+        ],
         'url must be valid format' => [
             ['url' => 'not-a-valid-url'],
             ['url'],
@@ -286,10 +301,6 @@ describe('validation', function () {
         'help_needed cannot exceed 5000 characters' => [
             ['help_needed' => str_repeat('a', 5001)],
             ['help_needed'],
-        ],
-        'launch date must be in the past or today' => [
-            ['launch_date' => now()->addDay()->format('Y-m-d')],
-            ['launch_date'],
         ],
         'images must be valid image files' => [
             [
@@ -370,6 +381,7 @@ describe('validation', function () {
             'title' => 'Updated Title',
             'tagline' => 'Updated tagline',
             'description' => 'Updated description',
+            'key_features' => 'Updated key features',
             'url' => 'https://updated.com',
             'source_status' => SourceStatus::NotAvailable->value,
             // No slug provided
@@ -390,6 +402,7 @@ describe('validation', function () {
             'slug' => 'new-slug',
             'tagline' => 'Updated tagline',
             'description' => 'Updated description',
+            'key_features' => 'Updated key features',
             'url' => 'https://updated.com',
             'source_status' => SourceStatus::NotAvailable->value,
         ])->assertValid();
@@ -412,6 +425,7 @@ describe('validation', function () {
             'slug' => 'new-slug',
             'tagline' => 'Updated tagline',
             'description' => 'Updated description',
+            'key_features' => 'Updated key features',
             'url' => 'https://updated.com',
             'source_status' => SourceStatus::NotAvailable->value,
         ])->assertInvalid(['slug']);
@@ -430,6 +444,7 @@ describe('validation', function () {
             'title' => 'Updated Title',
             'tagline' => 'Updated tagline',
             'description' => 'Updated description',
+            'key_features' => 'Updated key features',
             'url' => 'https://updated.com',
             'source_status' => SourceStatus::NotAvailable->value,
             'removed_images' => [$imageId],
@@ -448,6 +463,7 @@ describe('validation', function () {
             'title' => 'Updated Title',
             'tagline' => 'Updated tagline',
             'description' => 'Updated description',
+            'key_features' => 'Updated key features',
             'url' => 'https://updated.com',
             'source_status' => SourceStatus::NotAvailable->value,
         ])->assertInvalid(['images']);
@@ -469,6 +485,7 @@ describe('validation', function () {
             'title' => 'Updated Title',
             'tagline' => 'Updated tagline',
             'description' => 'Updated description',
+            'key_features' => 'Updated key features',
             'url' => 'https://updated.com',
             'source_status' => SourceStatus::NotAvailable->value,
             'removed_images' => [$imageToRemove],
@@ -490,6 +507,7 @@ describe('validation', function () {
             'title' => 'Updated Title',
             'tagline' => 'Updated tagline',
             'description' => 'Updated description',
+            'key_features' => 'Updated key features',
             'url' => 'https://updated.com',
             'source_status' => SourceStatus::NotAvailable->value,
             'removed_images' => [$imageId],
@@ -516,6 +534,7 @@ describe('showcase updates', function () {
             'title' => 'Updated Title',
             'tagline' => 'Updated tagline',
             'description' => 'Updated description',
+            'key_features' => 'Updated key features',
             'url' => 'https://updated.com',
             'source_status' => SourceStatus::NotAvailable->value,
         ]);
@@ -529,6 +548,7 @@ describe('showcase updates', function () {
             'title' => 'Updated Title',
             'tagline' => 'Updated tagline',
             'description' => 'Updated description',
+            'key_features' => 'Updated key features',
             'url' => 'https://updated.com',
             'source_status' => SourceStatus::NotAvailable->value,
             'source_url' => null,
@@ -557,7 +577,6 @@ describe('showcase updates', function () {
             'video_url' => 'https://youtube.com/watch?v=updated',
             'source_status' => SourceStatus::OpenSource->value,
             'source_url' => 'https://github.com/updated/repo',
-            'launch_date' => '2025-11-01',
         ]);
 
         $response->assertRedirect();
@@ -579,10 +598,9 @@ describe('showcase updates', function () {
 
         // Normal users cannot change slug - it remains unchanged
         expect($showcase->slug)->toBe($originalSlug);
-        expect($showcase->launch_date->format('Y-m-d'))->toBe('2025-11-01');
     });
 
-    test('clears key_features and help_needed when set to null', function () {
+    test('clears help_needed when set to null', function () {
         /** @var User */
         $user = User::factory()->create();
         $showcase = Showcase::factory()->has(ShowcaseImage::factory(), 'images')->for($user, 'user')->create([
@@ -597,7 +615,7 @@ describe('showcase updates', function () {
             'title' => $showcase->title,
             'tagline' => $showcase->tagline,
             'description' => $showcase->description,
-            'key_features' => null,
+            'key_features' => 'Updated key features',
             'help_needed' => null,
             'url' => $showcase->url,
             'source_status' => SourceStatus::NotAvailable->value,
@@ -607,7 +625,7 @@ describe('showcase updates', function () {
 
         assertDatabaseHas('showcases', [
             'id' => $showcase->id,
-            'key_features' => null,
+            'key_features' => 'Updated key features',
             'help_needed' => null,
         ]);
     });
@@ -629,6 +647,7 @@ describe('showcase updates', function () {
             'title' => 'Updated Title',
             'tagline' => 'Original tagline',
             'description' => 'Original description',
+            'key_features' => $showcase->key_features,
             'url' => 'https://original.com',
             'source_status' => SourceStatus::NotAvailable->value,
         ]);
@@ -660,6 +679,7 @@ describe('showcase updates', function () {
             'title' => $showcase->title,
             'tagline' => $showcase->tagline,
             'description' => $showcase->description,
+            'key_features' => $showcase->key_features,
             'url' => $showcase->url,
             'source_status' => SourceStatus::NotAvailable->value,
             'source_url' => 'https://github.com/user/repo',
@@ -693,6 +713,7 @@ describe('status handling', function () {
             'title' => 'Updated Title',
             'tagline' => 'Updated tagline',
             'description' => 'Updated description',
+            'key_features' => 'Updated key features',
             'url' => 'https://updated.com',
             'source_status' => SourceStatus::NotAvailable->value,
         ]);
@@ -715,6 +736,7 @@ describe('status handling', function () {
             'title' => 'Updated Title',
             'tagline' => 'Updated tagline',
             'description' => 'Updated description',
+            'key_features' => 'Updated key features',
             'url' => 'https://updated.com',
             'source_status' => SourceStatus::NotAvailable->value,
         ]);
@@ -738,6 +760,7 @@ describe('status handling', function () {
             'title' => 'Updated Title',
             'tagline' => 'Updated tagline',
             'description' => 'Updated description',
+            'key_features' => 'Updated key features',
             'url' => 'https://updated.com',
             'source_status' => SourceStatus::NotAvailable->value,
         ]);
@@ -760,6 +783,7 @@ describe('status handling', function () {
             'title' => 'Updated Title',
             'tagline' => 'Updated tagline',
             'description' => 'Updated description',
+            'key_features' => 'Updated key features',
             'url' => 'https://updated.com',
             'source_status' => SourceStatus::NotAvailable->value,
         ]);
@@ -787,6 +811,7 @@ describe('image uploads', function () {
             'title' => 'Updated Title',
             'tagline' => 'Updated tagline',
             'description' => 'Updated description',
+            'key_features' => 'Updated key features',
             'url' => 'https://updated.com',
             'source_status' => SourceStatus::NotAvailable->value,
         ]);
@@ -814,6 +839,7 @@ describe('image uploads', function () {
             'title' => 'Updated Title',
             'tagline' => 'Updated tagline',
             'description' => 'Updated description',
+            'key_features' => 'Updated key features',
             'url' => 'https://updated.com',
             'source_status' => SourceStatus::NotAvailable->value,
             'images' => [$newImage],
@@ -845,6 +871,7 @@ describe('image uploads', function () {
             'title' => 'Updated Title',
             'tagline' => 'Updated tagline',
             'description' => 'Updated description',
+            'key_features' => 'Updated key features',
             'url' => 'https://updated.com',
             'source_status' => SourceStatus::NotAvailable->value,
             'images' => [$newImage],
@@ -877,6 +904,7 @@ describe('image uploads', function () {
             'title' => 'Updated Title',
             'tagline' => 'Updated tagline',
             'description' => 'Updated description',
+            'key_features' => 'Updated key features',
             'url' => 'https://updated.com',
             'source_status' => SourceStatus::NotAvailable->value,
             'images' => $newImages,
@@ -908,6 +936,7 @@ describe('image uploads', function () {
             'title' => 'Updated Title',
             'tagline' => 'Updated tagline',
             'description' => 'Updated description',
+            'key_features' => 'Updated key features',
             'url' => 'https://updated.com',
             'source_status' => SourceStatus::NotAvailable->value,
             'images' => [$image],
@@ -936,6 +965,7 @@ describe('image uploads', function () {
             'title' => 'Updated Title',
             'tagline' => 'Updated tagline',
             'description' => 'Updated description',
+            'key_features' => 'Updated key features',
             'url' => 'https://updated.com',
             'source_status' => SourceStatus::NotAvailable->value,
             'images' => [$image],
@@ -966,6 +996,7 @@ describe('image uploads', function () {
             'title' => 'Updated Title',
             'tagline' => 'Updated tagline',
             'description' => 'Updated description',
+            'key_features' => 'Updated key features',
             'url' => 'https://updated.com',
             'source_status' => SourceStatus::NotAvailable->value,
             'images' => [$newImage],
@@ -990,6 +1021,7 @@ describe('response', function () {
             'title' => 'Updated Title',
             'tagline' => 'Updated tagline',
             'description' => 'Updated description',
+            'key_features' => 'Updated key features',
             'url' => 'https://updated.com',
             'source_status' => SourceStatus::NotAvailable->value,
         ]);
@@ -1011,6 +1043,7 @@ describe('response', function () {
             'title' => 'Updated Title',
             'tagline' => 'Updated tagline',
             'description' => 'Updated description',
+            'key_features' => 'Updated key features',
             'url' => 'https://updated.com',
             'source_status' => SourceStatus::NotAvailable->value,
         ]);
@@ -1031,6 +1064,7 @@ describe('response', function () {
             'title' => 'Updated Title',
             'tagline' => 'Updated tagline',
             'description' => 'Updated description',
+            'key_features' => 'Updated key features',
             'url' => 'https://updated.com',
             'source_status' => SourceStatus::NotAvailable->value,
         ]);
@@ -1054,6 +1088,7 @@ describe('submit on update', function () {
             'title' => 'Updated Title',
             'tagline' => 'Updated tagline',
             'description' => 'Updated description',
+            'key_features' => 'Updated key features',
             'url' => 'https://updated.com',
             'source_status' => SourceStatus::NotAvailable->value,
             'submit' => true,
@@ -1083,6 +1118,7 @@ describe('submit on update', function () {
             'title' => 'Updated Title',
             'tagline' => 'Updated tagline',
             'description' => 'Updated description',
+            'key_features' => 'Updated key features',
             'url' => 'https://updated.com',
             'source_status' => SourceStatus::NotAvailable->value,
             'submit' => true,
@@ -1111,6 +1147,7 @@ describe('submit on update', function () {
             'slug' => 'updated-slug',
             'tagline' => 'Updated tagline',
             'description' => 'Updated description',
+            'key_features' => 'Updated key features',
             'url' => 'https://updated.com',
             'source_status' => SourceStatus::NotAvailable->value,
             'submit' => true,
@@ -1138,6 +1175,7 @@ describe('submit on update', function () {
             'title' => 'Updated Title',
             'tagline' => 'Updated tagline',
             'description' => 'Updated description',
+            'key_features' => 'Updated key features',
             'url' => 'https://updated.com',
             'source_status' => SourceStatus::NotAvailable->value,
             'submit' => true,
@@ -1167,6 +1205,7 @@ describe('submit on update', function () {
             'title' => 'Updated Title',
             'tagline' => 'Updated tagline',
             'description' => 'Updated description',
+            'key_features' => 'Updated key features',
             'url' => 'https://updated.com',
             'source_status' => SourceStatus::NotAvailable->value,
             'submit' => true,
@@ -1185,6 +1224,7 @@ describe('submit on update', function () {
             'title' => 'Updated Title',
             'tagline' => 'Updated tagline',
             'description' => 'Updated description',
+            'key_features' => 'Updated key features',
             'url' => 'https://updated.com',
             'source_status' => SourceStatus::NotAvailable->value,
             'submit' => false,
@@ -1225,6 +1265,7 @@ describe('thumbnail operations', function () {
             'title' => 'Updated Title',
             'tagline' => 'Updated tagline',
             'description' => 'Updated description',
+            'key_features' => 'Updated key features',
             'url' => 'https://updated.com',
             'source_status' => SourceStatus::NotAvailable->value,
             'remove_thumbnail' => true,
@@ -1262,6 +1303,7 @@ describe('thumbnail operations', function () {
             'title' => 'Updated Title',
             'tagline' => 'Updated tagline',
             'description' => 'Updated description',
+            'key_features' => 'Updated key features',
             'url' => 'https://updated.com',
             'source_status' => SourceStatus::NotAvailable->value,
             'remove_thumbnail' => false,
@@ -1301,6 +1343,7 @@ describe('thumbnail operations', function () {
             'title' => 'Updated Title',
             'tagline' => 'Updated tagline',
             'description' => 'Updated description',
+            'key_features' => 'Updated key features',
             'url' => 'https://updated.com',
             'source_status' => SourceStatus::NotAvailable->value,
             'thumbnail' => $newThumbnail,
@@ -1351,6 +1394,7 @@ describe('markdown cache clearing', function () {
             'title' => $showcase->title,
             'tagline' => $showcase->tagline,
             'description' => 'Updated content',
+            'key_features' => $showcase->key_features,
             'url' => $showcase->url,
             'source_status' => SourceStatus::NotAvailable->value,
         ])->assertRedirect();

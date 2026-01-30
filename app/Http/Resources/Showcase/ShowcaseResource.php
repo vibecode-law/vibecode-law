@@ -52,9 +52,6 @@ class ShowcaseResource extends Resource
     public Lazy|int|null $view_count;
 
     #[WithCast(DateTimeInterfaceCast::class)]
-    public ?CarbonInterface $launch_date;
-
-    #[WithCast(DateTimeInterfaceCast::class)]
     public CarbonInterface $created_at;
 
     #[WithCast(DateTimeInterfaceCast::class)]
@@ -141,7 +138,6 @@ class ShowcaseResource extends Resource
                 condition: fn () => $canViewOwnerFields,
                 value: fn () => $showcase->view_count,
             ),
-            'launch_date' => $showcase->launch_date,
             'created_at' => $showcase->created_at,
             'updated_at' => $showcase->updated_at,
             'user' => Lazy::whenLoaded('user', $showcase, fn () => UserResource::from($showcase->user)),

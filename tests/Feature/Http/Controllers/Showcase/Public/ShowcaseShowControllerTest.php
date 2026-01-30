@@ -53,7 +53,6 @@ test('show returns correct showcase data', function () {
         'video_url' => 'https://youtube.com/watch?v=dQw4w9WgXcQ',
         'source_status' => \App\Enums\SourceStatus::NotAvailable,
         'source_url' => null,
-        'launch_date' => '2025-11-20',
         'view_count' => 0,
         'is_featured' => true,
         'thumbnail_extension' => 'jpg',
@@ -101,7 +100,6 @@ test('show returns correct showcase data', function () {
             ->where('youtube_id', 'dQw4w9WgXcQ')
             ->where('source_status', \App\Enums\SourceStatus::NotAvailable->forFrontend())
             ->where('source_url', null)
-            ->where('launch_date', '2025-11-20T00:00:00+00:00')
             ->where('thumbnail_url', \Illuminate\Support\Facades\Storage::disk('public')->url("showcase/{$showcase->id}/thumbnail.jpg"))
             ->where('thumbnail_rect_string', 'rect=10,20,300,200')
             ->missing('view_count') // Only visible to owner/admin

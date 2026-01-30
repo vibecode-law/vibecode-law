@@ -57,7 +57,6 @@ namespace App\Models\Showcase{
  * @property \Illuminate\Support\Carbon|null $approval_celebrated_at
  * @property int|null $approved_by
  * @property string|null $rejection_reason
- * @property \Illuminate\Support\Carbon|null $launch_date
  * @property int $view_count
  * @property bool $is_featured
  * @property \Illuminate\Support\Carbon|null $created_at
@@ -94,7 +93,6 @@ namespace App\Models\Showcase{
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Showcase whereId($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Showcase whereIsFeatured($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Showcase whereKeyFeatures($value)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|Showcase whereLaunchDate($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Showcase whereRejectionReason($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Showcase whereSlug($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Showcase whereSourceStatus($value)
@@ -133,7 +131,6 @@ namespace App\Models\Showcase{
  * @property \App\Enums\SourceStatus $source_status
  * @property string|null $source_url
  * @property string|null $thumbnail_extension
- * @property \Illuminate\Support\Carbon|null $launch_date
  * @property \App\Enums\ShowcaseDraftStatus $status
  * @property \Illuminate\Support\Carbon|null $submitted_at
  * @property string|null $rejection_reason
@@ -155,7 +152,6 @@ namespace App\Models\Showcase{
  * @method static \Illuminate\Database\Eloquent\Builder<static>|ShowcaseDraft whereHelpNeeded($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|ShowcaseDraft whereId($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|ShowcaseDraft whereKeyFeatures($value)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|ShowcaseDraft whereLaunchDate($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|ShowcaseDraft whereRejectionReason($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|ShowcaseDraft whereShowcaseId($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|ShowcaseDraft whereSourceStatus($value)

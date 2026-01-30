@@ -15,6 +15,8 @@ function generateId(): string {
 
 interface ImageUploadGalleryProps {
     name: string;
+    label?: string;
+    labelIcon?: React.ReactNode;
     className?: string;
     error?: string;
     imageErrors?: Record<string, string>;
@@ -56,6 +58,8 @@ function HiddenFileInput({ name, file }: { name: string; file: File }) {
 
 export function ImageUploadGallery({
     name,
+    label = 'Gallery',
+    labelIcon,
     className,
     error,
     imageErrors,
@@ -164,8 +168,9 @@ export function ImageUploadGallery({
 
     return (
         <div className={cn('space-y-3', className)}>
-            <p className="text-sm text-neutral-500 dark:text-neutral-400">
-                Gallery
+            <p className="flex items-center gap-2 text-xl font-semibold text-neutral-900 dark:text-white">
+                {labelIcon}
+                {label}
             </p>
 
             {images.length > 0 ? (

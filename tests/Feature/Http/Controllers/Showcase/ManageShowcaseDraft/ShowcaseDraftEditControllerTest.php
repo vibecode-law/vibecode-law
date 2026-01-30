@@ -169,7 +169,6 @@ describe('response', function () {
             'source_status' => SourceStatus::OpenSource,
             'source_url' => 'https://github.com/test/draft',
             'status' => ShowcaseDraftStatus::Draft,
-            'launch_date' => '2026-01-15',
         ]);
 
         $practiceArea = PracticeArea::factory()->create(['name' => 'Web Development']);
@@ -201,7 +200,6 @@ describe('response', function () {
                 ->where('source_status', SourceStatus::OpenSource->forFrontend())
                 ->where('source_url', 'https://github.com/test/draft')
                 ->where('status', ShowcaseDraftStatus::Draft->forFrontend())
-                ->where('launch_date', '2026-01-15T00:00:00+00:00')
                 ->has('thumbnail_url')
                 ->has('thumbnail_crop')
                 ->has('thumbnail_rect_string')

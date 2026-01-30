@@ -38,7 +38,6 @@ declare namespace App.Http.Resources.Showcase {
         source_status: App.ValueObjects.FrontendEnum;
         source_url: string | null;
         status: App.ValueObjects.FrontendEnum;
-        launch_date: string | null;
         created_at: string;
         updated_at: string;
         practiceAreas?: App.Http.Resources.PracticeAreaResource;
@@ -74,7 +73,6 @@ declare namespace App.Http.Resources.Showcase {
         source_url: string | null;
         status: App.ValueObjects.FrontendEnum;
         view_count?: number | null;
-        launch_date: string | null;
         created_at: string;
         updated_at: string;
         user?: App.Http.Resources.User.UserResource | null;

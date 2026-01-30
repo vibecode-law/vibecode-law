@@ -70,7 +70,6 @@ export interface ShowcaseFormData {
     videoUrl: string;
     sourceStatus: string;
     sourceUrl: string;
-    launchDate: string;
     selectedPracticeAreaIds: (number | string)[];
     thumbnailUrl: string | null;
     thumbnailCrop: App.ValueObjects.ImageCrop | null;
@@ -130,9 +129,6 @@ export function normalizeShowcase(
         videoUrl: showcase.video_url ?? '',
         sourceStatus: String(showcase.source_status.value),
         sourceUrl: showcase.source_url ?? '',
-        launchDate: showcase.launch_date
-            ? new Date(showcase.launch_date).toISOString().split('T')[0]
-            : '',
         selectedPracticeAreaIds:
             (
                 showcase.practiceAreas as
@@ -180,9 +176,6 @@ export function normalizeDraft(
         videoUrl: draft.video_url ?? '',
         sourceStatus: String(draft.source_status.value),
         sourceUrl: draft.source_url ?? '',
-        launchDate: draft.launch_date
-            ? new Date(draft.launch_date).toISOString().split('T')[0]
-            : '',
         selectedPracticeAreaIds:
             (
                 draft.practiceAreas as
@@ -212,7 +205,6 @@ export function getDefaultFormData(): ShowcaseFormData {
         videoUrl: '',
         sourceStatus: '1',
         sourceUrl: '',
-        launchDate: '',
         selectedPracticeAreaIds: [],
         thumbnailUrl: null,
         thumbnailCrop: null,
