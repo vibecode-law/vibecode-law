@@ -91,7 +91,6 @@ class HomeController extends BaseController
 
         $featuredShowcases = Showcase::query()
             ->publiclyVisible()
-            ->featured()
             ->with($relations)
             ->withCount('upvoters')
             ->orderByDesc('upvoters_count')

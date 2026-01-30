@@ -57,7 +57,7 @@ export function PublicHeader() {
                         <Button variant="outline" size="sm" asChild>
                             <Link href={ShowcaseCreateController.url()}>
                                 <Plus className="size-4" />
-                                Submit Project
+                                Share Project
                             </Link>
                         </Button>
                     </div>

@@ -68,15 +68,11 @@ export default function Home({
                         </a>
                     </Badge>
                     <h1 className="text-4xl font-bold tracking-tight text-neutral-900 sm:text-5xl dark:text-white">
-                        Build. Launch. Discover.
+                        Learn. Share. Discover.
                     </h1>
                     <div className="mx-auto mt-8 max-w-4xl space-y-4 text-lg text-neutral-600 dark:text-neutral-400">
                         {isPreLaunch ? (
-                            <p>
-                                vibecode.law is a new open platform for the
-                                legal community. We're launching in the coming
-                                days and all projects will go live together.
-                            </p>
+                            <p>We're an open platform for apps built by legal professionals. Learn to build, share what you've made, and get discovered. Now in preview.</p>
                         ) : (
                             <p className="mt-4 text-lg text-neutral-600 dark:text-neutral-400">
                                 The latest legaltech projects, ranked by the
@@ -87,7 +83,7 @@ export default function Home({
                         <div className="flex flex-col items-center justify-center gap-4 pt-4 md:flex-row">
                             <Button asChild size="lg">
                                 <Link href={ShowcaseCreateController.url()}>
-                                    Submit Your Project
+                                    Share Your Project
                                 </Link>
                             </Button>
                             <Button asChild size="lg" variant="outline">
