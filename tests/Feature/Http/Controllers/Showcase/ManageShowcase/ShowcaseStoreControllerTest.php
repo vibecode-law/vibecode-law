@@ -197,7 +197,7 @@ describe('validation', function () {
             ['thumbnail'],
         ],
         'thumbnail must meet minimum dimensions' => [
-            ['thumbnail' => UploadedFile::fake()->image('small.jpg', 200, 200)],
+            ['thumbnail' => UploadedFile::fake()->image('small.jpg', 50, 50)],
             ['thumbnail'],
         ],
         'thumbnail_crop is required when thumbnail is provided' => [
@@ -239,12 +239,12 @@ describe('validation', function () {
             ['images' => [UploadedFile::fake()->create('document.pdf', 100)]],
             ['images.0'],
         ],
-        'images cannot exceed 2MB' => [
-            ['images' => [UploadedFile::fake()->image('large.jpg', 1280, 720)->size(2049)]],
+        'images cannot exceed 4MB' => [
+            ['images' => [UploadedFile::fake()->image('large.jpg', 1280, 720)->size(4097)]],
             ['images.0'],
         ],
         'images must meet minimum dimensions' => [
-            ['images' => [UploadedFile::fake()->image('small.jpg', 640, 480)]],
+            ['images' => [UploadedFile::fake()->image('small.jpg', 300, 200)]],
             ['images.0'],
         ],
         'cannot upload more than 10 images' => [

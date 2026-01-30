@@ -279,6 +279,7 @@ export function ShowcaseForm({
                                             labelIcon={
                                                 <Images className="size-5" />
                                             }
+                                            description="Up to 10 images. Min 400x225px and max 4MB per image."
                                             existingImages={initialData.images}
                                             removedImagesFieldName={
                                                 imageDeletionConfig.removedImagesFieldName
@@ -399,7 +400,8 @@ export function ShowcaseForm({
                                                     </Label>
                                                     <p className="text-sm text-neutral-500 dark:text-neutral-400">
                                                         A square image used in
-                                                        showcase listings.
+                                                        showcase listings. Min
+                                                        100×100px, max 2MB.
                                                     </p>
                                                     <ThumbnailSelector
                                                         name="thumbnail"

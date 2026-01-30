@@ -17,6 +17,7 @@ interface ImageUploadGalleryProps {
     name: string;
     label?: string;
     labelIcon?: React.ReactNode;
+    description?: string;
     className?: string;
     error?: string;
     imageErrors?: Record<string, string>;
@@ -60,6 +61,7 @@ export function ImageUploadGallery({
     name,
     label = 'Gallery',
     labelIcon,
+    description,
     className,
     error,
     imageErrors,
@@ -172,6 +174,11 @@ export function ImageUploadGallery({
                 {labelIcon}
                 {label}
             </p>
+            {description !== undefined && (
+                <p className="text-sm text-neutral-500 dark:text-neutral-400">
+                    {description}
+                </p>
+            )}
 
             {images.length > 0 ? (
                 <>
@@ -245,7 +252,7 @@ export function ImageUploadGallery({
                     <ImagePlus className="size-8" />
                     <span className="text-sm">Click to add images</span>
                     <span className="text-xs">
-                        Up to {maxImages} images, 2MB each, min 1000x562px
+                        Up to {maxImages} images, 4MB each, min 400×225px
                     </span>
                 </button>
             )}
