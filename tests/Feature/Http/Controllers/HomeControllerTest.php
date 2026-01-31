@@ -115,23 +115,25 @@ test('only returns showcases from the last 3 months', function () {
     ]);
 
     Showcase::factory()->approved()->create([
-        'submitted_date' => now()->subMonth()->startOfMonth(),
+        'submitted_date' => now()->subMonthNoOverflow()->startOfMonth(),
     ]);
 
     Showcase::factory()->approved()->create([
-        'submitted_date' => now()->subMonths(2)->startOfMonth(),
+        'submitted_date' => now()->subMonthsNoOverflow(2)->startOfMonth(),
     ]);
 
     Showcase::factory()->approved()->create([
-        'submitted_date' => now()->subMonths(3)->startOfMonth(),
+        'submitted_date' => now()->subMonthsNoOverflow(3)->startOfMonth(),
     ]);
 
     Showcase::factory()->approved()->create([
-        'submitted_date' => now()->subMonths(4)->startOfMonth(),
+        'submitted_date' => now()->subMonthsNoOverflow(4)->startOfMonth(),
     ]);
 
     $response = get('/');
     $response->assertOk();
+
+    ray($response->original->getData()['page']['props']);
 
     $showcasesByMonth = $response->original->getData()['page']['props']['showcasesByMonth'];
 
@@ -140,12 +142,12 @@ test('only returns showcases from the last 3 months', function () {
 
     // Should include current month and 2 months back
     expect($showcasesByMonth)->toHaveKey(now()->format('Y-m'));
-    expect($showcasesByMonth)->toHaveKey(now()->subMonth()->format('Y-m'));
-    expect($showcasesByMonth)->toHaveKey(now()->subMonths(2)->format('Y-m'));
+    expect($showcasesByMonth)->toHaveKey(now()->subMonthNoOverflow()->format('Y-m'));
+    expect($showcasesByMonth)->toHaveKey(now()->subMonthsNoOverflow(2)->format('Y-m'));
 
     // Should not include 3 or 4 months ago
-    expect($showcasesByMonth)->not->toHaveKey(now()->subMonths(3)->format('Y-m'));
-    expect($showcasesByMonth)->not->toHaveKey(now()->subMonths(4)->format('Y-m'));
+    expect($showcasesByMonth)->not->toHaveKey(now()->subMonthsNoOverflow(3)->format('Y-m'));
+    expect($showcasesByMonth)->not->toHaveKey(now()->subMonthsNoOverflow(4)->format('Y-m'));
 });
 
 test('only returns minimal fields for homepage showcases', function () {

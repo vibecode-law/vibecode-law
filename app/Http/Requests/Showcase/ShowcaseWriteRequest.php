@@ -5,10 +5,13 @@ namespace App\Http\Requests\Showcase;
 use App\Enums\SourceStatus;
 use App\Models\PracticeArea;
 use App\Models\Showcase\Showcase;
-use Illuminate\Contracts\Validation\Validator;
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Str;
 use Illuminate\Validation\Rule;
+use Illuminate\Validation\Validator;
 
 class ShowcaseWriteRequest extends FormRequest
 {
@@ -147,6 +150,22 @@ class ShowcaseWriteRequest extends FormRequest
             if ($totalImages < 1) {
                 $validator->errors()->add('images', 'There should be at least one image.');
             }
+
+            if ($validator->errors()->isNotEmpty()) {
+                Log::channel('showcaseUX')->info('Showcase validation failed', [
+                    'route' => Route::currentRouteName(),
+                    'name' => Auth::user()->first_name.' '.Auth::user()->last_name,
+                    'errors' => $validator->errors()->toArray(),
+                    'data' => $validator->getData(),
+                ]);
+
+                return;
+            }
+
+            Log::channel('showcaseUX')->info('Showcase validation succeeded', [
+                'route' => Route::currentRouteName(),
+                'name' => Auth::user()->first_name.' '.Auth::user()->last_name,
+            ]);
         });
     }
 
