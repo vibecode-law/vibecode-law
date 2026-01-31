@@ -37,7 +37,9 @@
         <link rel="shortcut icon" href="/favicon/favicon.ico" />
         <link rel="apple-touch-icon" sizes="180x180" href="/favicon/apple-touch-icon.png" />
         <meta name="apple-mobile-web-app-title" content="{{ config('app.name') }}" />
-        <link rel="manifest" href="/favicon/site.webmanifest" />
+        @if(app()->environment('production'))
+            <link rel="manifest" href="/favicon/site.webmanifest" />
+        @endif
 
         <link rel="preconnect" href="https://fonts.bunny.net">
         <link href="https://fonts.bunny.net/css?family=instrument-sans:400,500,600" rel="stylesheet" />
