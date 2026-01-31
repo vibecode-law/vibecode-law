@@ -35,6 +35,7 @@
 
 	// Use 'postCreateCommand' to run commands after the container is created.
 	"postCreateCommand": {
+        "sockets": "sudo -E docker-php-ext-install sockets",
 		"packages": "sudo apt update -y || sudo apt install -y sqlite3 || sudo apt install -y git-lfs",
 		"composer": "composer setup",
 		"db": "touch database/database.sqlite",
