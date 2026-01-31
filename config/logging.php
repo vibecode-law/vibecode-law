@@ -73,6 +73,11 @@ return [
             'replace_placeholders' => true,
         ],
 
+        'showcaseUX' => [
+            'driver' => env('SHOWCASE_UX_LOG_DRIVER', 'single'),
+            'level' => 'info',
+        ],
+
         'slack' => [
             'driver' => 'slack',
             'url' => env('LOG_SLACK_WEBHOOK_URL'),

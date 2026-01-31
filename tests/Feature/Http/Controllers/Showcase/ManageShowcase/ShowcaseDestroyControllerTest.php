@@ -108,7 +108,7 @@ describe('response', function () {
 
         $response = delete(route('showcase.manage.destroy', $showcase));
 
-        $response->assertRedirect(route('user-area.showcases.index'));
+        $response->assertRedirect();
     });
 
     test('includes success message', function () {

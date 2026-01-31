@@ -15,7 +15,7 @@ class ShowcaseDestroyController extends BaseController
 
         $showcase->delete();
 
-        return Redirect::route('user-area.showcases.index')->with('flash', [
+        return Redirect::back()->with('flash', [
             'message' => ['message' => 'Showcase deleted successfully.', 'type' => 'success'],
         ]);
     }
