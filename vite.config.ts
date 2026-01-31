@@ -59,7 +59,6 @@ export default defineConfig({
     } : {
         // Standard local development configuration
         host: 'localhost',
-        port: 5173,
     },
 
     esbuild: {
