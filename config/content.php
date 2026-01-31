@@ -44,6 +44,12 @@ return [
                 'icon' => 'shield',
             ],
             [
+                'title' => 'Responsible Vibecoding',
+                'slug' => 'responsible-vibecoding',
+                'summary' => 'Ground rules for building legal tech responsibly with AI — protecting data, being honest, and thinking about impact.',
+                'icon' => 'scale',
+            ],
+            [
                 'title' => 'Contact',
                 'slug' => 'contact',
                 'summary' => 'Get in touch with us for questions, feedback, partnership opportunities, or to get involved.',

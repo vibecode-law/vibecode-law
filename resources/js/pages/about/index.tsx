@@ -8,6 +8,7 @@ import {
     Heart,
     Mail,
     Rocket,
+    Scale,
     Shield,
     type LucideIcon,
 } from 'lucide-react';
@@ -29,6 +30,7 @@ interface AboutIndexProps {
 const iconMap: Record<string, LucideIcon> = {
     rocket: Rocket,
     shield: Shield,
+    scale: Scale,
     heart: Heart,
     mail: Mail,
 };
@@ -48,6 +50,12 @@ const colorMap: Record<
         icon: 'text-blue-600 dark:text-blue-400',
         hover: 'group-hover:from-blue-100 group-hover:to-indigo-100 dark:group-hover:from-blue-950/50 dark:group-hover:to-indigo-950/50',
         border: 'border-blue-200 dark:border-blue-800/50',
+    },
+    scale: {
+        bg: 'bg-gradient-to-br from-violet-50 to-purple-50 dark:from-violet-950/30 dark:to-purple-950/30',
+        icon: 'text-violet-600 dark:text-violet-400',
+        hover: 'group-hover:from-violet-100 group-hover:to-purple-100 dark:group-hover:from-violet-950/50 dark:group-hover:to-purple-950/50',
+        border: 'border-violet-200 dark:border-violet-800/50',
     },
     heart: {
         bg: 'bg-gradient-to-br from-rose-50 to-pink-50 dark:from-rose-950/30 dark:to-pink-950/30',
