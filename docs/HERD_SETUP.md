@@ -10,19 +10,7 @@ This guide is a work in progress. If you have any issues getting setup please do
 
 ## Step 1: Install Laravel Herd
 
-### macOS
-
-1. Download Herd from [herd.laravel.com](https://herd.laravel.com)
-2. Open the downloaded `.dmg` file
-3. Drag Herd to your Applications folder
-4. Launch Herd from Applications
-5. Follow the on-screen setup wizard
-
-### Windows
-
-1. Download the Windows installer from [herd.laravel.com](https://herd.laravel.com)
-2. Run the installer and follow the prompts
-3. Herd will automatically configure your system
+Download and install Laravel Herd from [herd.laravel.com](https://herd.laravel.com).
 
 ## Step 2: Configure PHP Version
 
@@ -41,17 +29,17 @@ In the Github web UI, create a fork from the top right context menu:
 
 ![Fork menu](./images/fork-contextmenu.png "Fork menu")
 
+On the page that opens, you don't need to fill anything out - just hit "Create fork" in the bottom right:
+
+![Create fork screen](./images/create-fork.png "Create form screen")
+
 After creating, you'll be redirected to your new fork.
 
 ## Step 4: Clone the forked repository
 
-Navigate to the directory/folder above where you want the project to live:
+In VSCode, browser to the folder/directory above where you'd like the application to live.
 
-```bash
-cd ~/Herd  # or your preferred directory
-```
-
-Then clone the forked repository:
+Then clone the forked repository by entering to following into the terminal:
 
 ```bash
 git clone URL_TO_REPO # Replace with the URL to your forked repository.
@@ -59,13 +47,9 @@ git clone URL_TO_REPO # Replace with the URL to your forked repository.
 
 ## Step 5: Setup Dependencies and Environment
 
-Open your terminal and navigate to the project directory:
+Open the folder/directory that the above step just created (typically "vibecode-law").
 
-```bash
-cd ~/Herd/vibecode-law  # adjust path as needed
-```
-
-Run the following command to setup your environment:
+In the terminal, run the following command to setup your environment:
 
 ```bash
 composer setup
@@ -141,7 +125,7 @@ For development (with hot reloading):
 npm run dev
 ```
 
-For production build:
+For a production build:
 
 ```bash
 npm run build

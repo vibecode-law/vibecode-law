@@ -21,9 +21,17 @@ This repository contains the full source code for the platform, enabling contrib
 
 ## Getting Started
 
-If you're new to Laravel development, we recommend using [Laravel Herd](https://herd.laravel.com) — a native development environment for macOS and Windows that includes all dependencies out of the box.
+### Remote Environment - Github Codespaces
 
-**[View the full Laravel Herd Setup Guide](.github/HERD_SETUP.md)** for step-by-step installation instructions.
+The easiest way to get started is by using Github Codespaces, which gives you access to a fully configured remote development environment. 
+
+See [Getting Started using Github Codespaces Guide](docs/CODESPACES_SETUP.md)
+
+### Local Environment - Laravel Herd
+
+If you wish to run the app locally, we recommend using [Laravel Herd](https://herd.laravel.com). 
+
+See [Laravel Herd Setup Guide](docs/HERD_SETUP.md)
 
 ### AI-Assisted Development
 
