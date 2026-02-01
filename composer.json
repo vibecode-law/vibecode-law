@@ -17,6 +17,7 @@
         "resend/resend-laravel": "^1.1",
         "sentry/sentry-laravel": "^4.20",
         "spatie/laravel-data": "^4.18",
+        "spatie/laravel-mailcoach-sdk": "^1.4",
         "spatie/laravel-permission": "^6.24",
         "spatie/laravel-typescript-transformer": "^2.5"
     },

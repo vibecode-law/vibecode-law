@@ -24,7 +24,6 @@ use Illuminate\Support\Facades\Storage;
 
 /**
  * @property array{x: int, y: int, width: int, height: int}|null $thumbnail_crop
- *
  * @mixin IdeHelperShowcase
  */
 class Showcase extends Model
