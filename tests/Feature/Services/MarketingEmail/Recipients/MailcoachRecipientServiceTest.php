@@ -4,6 +4,7 @@ use App\Services\MarketingEmail\Recipients\MailcoachRecipientService;
 use App\Services\MarketingEmail\Recipients\ValueObjects\CreateRecipientData;
 use App\Services\MarketingEmail\Recipients\ValueObjects\RecipientData;
 use App\Services\MarketingEmail\Recipients\ValueObjects\UpdateRecipientData;
+use Illuminate\Support\Facades\Config;
 use Spatie\MailcoachSdk\Facades\Mailcoach;
 use Spatie\MailcoachSdk\Resources\Subscriber;
 
@@ -25,6 +26,11 @@ function createMockSubscriber(array $attributes = []): Subscriber
 
     return new Subscriber(array_merge($defaults, $attributes));
 }
+
+beforeEach(function (): void {
+    Config::set('mailcoach-sdk.api_token', 'abcdefg');
+    Config::set('mailcoach-sdk.endpoint', 'https://localhost');
+});
 
 describe('createRecipient', function () {
     it('creates a subscriber with required fields only', function () {
