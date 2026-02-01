@@ -4,8 +4,10 @@ namespace App\Services\Markdown;
 
 use App\Enums\MarkdownProfile;
 use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Facades\Config;
 use League\CommonMark\Environment\Environment;
 use League\CommonMark\Extension\CommonMark\CommonMarkCoreExtension;
+use League\CommonMark\Extension\ExternalLink\ExternalLinkExtension;
 use League\CommonMark\Extension\GithubFlavoredMarkdownExtension;
 use League\CommonMark\Extension\HeadingPermalink\HeadingPermalinkExtension;
 use League\CommonMark\MarkdownConverter;
@@ -88,9 +90,11 @@ class MarkdownService
         $environment = new Environment([
             'html_input' => 'strip',
             'allow_unsafe_links' => false,
+            'external_link' => $this->getExternalLinkConfig(),
         ]);
 
         $environment->addExtension(new BasicFormattingExtension);
+        $environment->addExtension(new ExternalLinkExtension);
 
         return new MarkdownConverter($environment);
     }
@@ -110,12 +114,32 @@ class MarkdownService
             'disallowed_raw_html' => [
                 'disallowed_tags' => ['title', 'textarea', 'style', 'xmp', 'noembed', 'noframes', 'script', 'plaintext'],
             ],
+            'external_link' => $this->getExternalLinkConfig(),
         ]);
 
         $environment->addExtension(new CommonMarkCoreExtension);
         $environment->addExtension(new GithubFlavoredMarkdownExtension);
         $environment->addExtension(new HeadingPermalinkExtension);
+        $environment->addExtension(new ExternalLinkExtension);
 
         return new MarkdownConverter($environment);
+    }
+
+    /**
+     * @return array{internal_hosts: string, open_in_new_window: bool, html_class: string, nofollow: string, noopener: string, noreferrer: string}
+     */
+    private function getExternalLinkConfig(): array
+    {
+        $appUrl = Config::get(key: 'app.url', default: '');
+        $host = parse_url(url: $appUrl, component: PHP_URL_HOST) ?: '';
+
+        return [
+            'internal_hosts' => $host,
+            'open_in_new_window' => true,
+            'html_class' => 'external-link',
+            'nofollow' => 'external',
+            'noopener' => 'external',
+            'noreferrer' => '',
+        ];
     }
 }

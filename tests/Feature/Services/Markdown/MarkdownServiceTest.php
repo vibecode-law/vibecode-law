@@ -70,13 +70,16 @@ describe('disallowed features for basic profile', function () {
         expect($html)->not->toContain('<td>');
     });
 
-    it('does not render links', function () {
+    it('renders links with external link attributes', function () {
         $service = new MarkdownService;
 
         $html = $service->render(markdown: '[click here](https://example.com)');
 
-        expect($html)->not->toContain('<a');
-        expect($html)->not->toContain('href=');
+        expect($html)->toContain('<a');
+        expect($html)->toContain('href="https://example.com"');
+        expect($html)->toContain('target="_blank"');
+        expect($html)->toContain('class="external-link"');
+        expect($html)->toContain('rel="nofollow noopener"');
     });
 
     it('does not render code blocks', function () {
@@ -115,12 +118,16 @@ describe('full markdown profile', function () {
         expect($html)->toContain('<h1>Heading 1</h1>');
     });
 
-    it('renders links', function () {
+    it('renders links with external link attributes', function () {
         $service = new MarkdownService;
 
         $html = $service->render(markdown: '[click here](https://example.com)', profile: MarkdownProfile::Full);
 
-        expect($html)->toContain('<a href="https://example.com">click here</a>');
+        expect($html)->toContain('href="https://example.com"');
+        expect($html)->toContain('target="_blank"');
+        expect($html)->toContain('class="external-link"');
+        expect($html)->toContain('rel="nofollow noopener"');
+        expect($html)->toContain('>click here</a>');
     });
 
     it('renders code blocks', function () {
@@ -181,12 +188,15 @@ describe('full markdown profile', function () {
         expect($html)->toContain('checked');
     });
 
-    it('renders autolinks', function () {
+    it('renders autolinks with external link attributes', function () {
         $service = new MarkdownService;
 
         $html = $service->render(markdown: 'Visit https://example.com for more info', profile: MarkdownProfile::Full);
 
-        expect($html)->toContain('<a href="https://example.com">');
+        expect($html)->toContain('href="https://example.com"');
+        expect($html)->toContain('target="_blank"');
+        expect($html)->toContain('class="external-link"');
+        expect($html)->toContain('rel="nofollow noopener"');
     });
 
     it('works with renderWithoutCache', function () {

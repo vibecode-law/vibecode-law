@@ -61,6 +61,8 @@ export function MarkdownEditor({
                     commands.divider,
                     commands.unorderedListCommand,
                     commands.orderedListCommand,
+                    commands.divider,
+                    commands.link,
                 ]}
                 extraCommands={[commands.codeEdit, commands.codeLive, commands.codePreview]}
                 textareaProps={{
