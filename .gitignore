@@ -1,3 +1,9 @@
+/.claude
+/.opencode
+/.github/skills
+/.github/copilot-instructions.md
+AGENTS.md
+CLAUDE.md
 /.fleet
 /.idea
 /.nova
@@ -28,8 +34,6 @@ Homestead.yaml
 npm-debug.log
 yarn-error.log
 boost.json
-AGENTS.md
-CLAUDE.md
 .mcp.json
 ray.php
 phpunit.xml
