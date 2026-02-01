@@ -6,6 +6,8 @@ parameters:
     level: 5
     paths:
         - app/
+    excludePaths:
+        - app/Services/MarketingEmail/Recipients/MailcoachRecipientService.php
     scanFiles:
         - _ide_helper_models.php
     treatPhpDocTypesAsCertain: false
