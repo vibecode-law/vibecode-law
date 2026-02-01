@@ -1,4 +1,5 @@
 import { LinkedInIcon } from '@/components/icons/linkedin-icon';
+import { RichTextContent } from '@/components/showcase/rich-text-content';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Badge } from '@/components/ui/badge';
 import { type SharedData } from '@/types';
@@ -51,11 +52,9 @@ export function CreatorSection({ user }: CreatorSectionProps) {
                         )}
                     </div>
                     {user.bio_html !== null && (
-                        <div
+                        <RichTextContent
+                            html={user.bio_html ?? ''}
                             className="rich-text-content"
-                            dangerouslySetInnerHTML={{
-                                __html: user.bio_html ?? '',
-                            }}
                         />
                     )}
                     {user.linkedin_url !== null && (
