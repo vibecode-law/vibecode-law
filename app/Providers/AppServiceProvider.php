@@ -33,9 +33,7 @@ class AppServiceProvider extends ServiceProvider
         $this->app->singleton(ContentNavigationService::class);
 
         $this->app->bind(RecipientService::class, function () {
-            $listUuid = Config::get('marketing.main_list_uuid');
-
-            if (empty($listUuid) === true || app()->runningUnitTests()) {
+            if (Config::get('marketing.enabled') === false || app()->runningUnitTests()) {
                 return new NullRecipientService;
             }
 
