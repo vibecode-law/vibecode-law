@@ -97,9 +97,11 @@ export default function Home({
                                 </Link>
                             </Button>
                         </div>
-                        <p className="mt-4 flex items-center justify-center gap-2 text-neutral-600 dark:text-neutral-400">
-                            <PlayCircle className="size-5" />
-                            New to building?{' '}
+                        <p className="mt-4 flex flex-col items-center justify-center gap-2 text-sm text-neutral-600 md:flex-row md:text-base dark:text-neutral-400">
+                            <div className="flex items-center justify-start gap-2">
+                                <PlayCircle className="size-5" />
+                                New to building?{' '}
+                            </div>
                             <Link
                                 href={ResourcesShowController.url(
                                     'start-vibecoding',
