@@ -1,5 +1,5 @@
 import HomeController from '@/actions/App/Http/Controllers/HomeController';
-import ResourcesIndexController from '@/actions/App/Http/Controllers/Resources/ResourcesIndexController';
+import ResourcesShowController from '@/actions/App/Http/Controllers/Resources/ResourcesShowController';
 import HowItWorksController from '@/actions/App/Http/Controllers/Showcase/Help/HowItWorksController';
 import ShowcaseCreateController from '@/actions/App/Http/Controllers/Showcase/ManageShowcase/ShowcaseCreateController';
 import ShowcaseIndexController from '@/actions/App/Http/Controllers/Showcase/Public/ShowcaseIndexController';
@@ -8,7 +8,13 @@ import PublicLayout from '@/layouts/public-layout';
 import { cn } from '@/lib/utils';
 import { type SharedData } from '@/types';
 import { Head, Link, usePage } from '@inertiajs/react';
-import { CircleCheckBig, CircleHelp, Share2, Upload } from 'lucide-react';
+import {
+    CircleCheckBig,
+    CircleHelp,
+    PlayCircle,
+    Share2,
+    Upload,
+} from 'lucide-react';
 
 interface Step {
     number: number;
@@ -167,15 +173,17 @@ export default function HowItWorks() {
                         ))}
                     </div>
 
-                    <p className="mt-10 text-center text-neutral-600 dark:text-neutral-400">
-                        Don&apos;t have a project yet? See our{' '}
+                    <p className="mt-4 flex items-center justify-center gap-2 text-neutral-600 dark:text-neutral-400">
+                        <PlayCircle className="size-5" />
+                        Don&apos;t have a project yet?{' '}
                         <Link
-                            href={ResourcesIndexController.url()}
-                            className="font-medium text-neutral-900 underline underline-offset-4 hover:text-neutral-700 dark:text-white dark:hover:text-neutral-300"
+                            href={ResourcesShowController.url(
+                                'start-vibecoding',
+                            )}
+                            className="font-bold underline underline-offset-4 transition-colors hover:text-neutral-900 dark:hover:text-white"
                         >
-                            Resources
-                        </Link>{' '}
-                        to help get you started.
+                            Make a demo app in three minutes.
+                        </Link>
                     </p>
                 </div>
             </section>
