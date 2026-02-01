@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\BaseController;
 use App\Models\User;
+use App\Services\Auth\Linkedin\FindOrCreateLinkedinUserResult;
 use App\Services\Auth\Linkedin\FindOrCreateLinkedinUserService;
 use App\Services\Auth\Linkedin\SyncUserLinkedinService;
 use Illuminate\Support\Facades\Auth;
@@ -27,13 +28,19 @@ class LinkedinAuthCallbackController extends BaseController
 
         $result = $this->findOrCreateUser(linkedinUser: $linkedinUser);
 
-        if (is_string($result)) {
-            return $this->redirectWithError(message: $result);
+        if ($result->failed() === true) {
+            return $this->redirectWithError(message: $result->errorMessage);
         }
 
-        Auth::login($result);
+        Auth::login($result->user);
 
-        $this->syncUserData(linkedinUser: $linkedinUser, localUser: $result);
+        $this->syncUserData(linkedinUser: $linkedinUser, localUser: $result->user);
+
+        if ($result->wasRecentlyCreated === true) {
+            return Redirect::route('auth.complete-profile', [
+                'intended' => session()->pull('url.intended'),
+            ]);
+        }
 
         return Redirect::intended();
     }
@@ -44,10 +51,11 @@ class LinkedinAuthCallbackController extends BaseController
         return Socialite::driver('linkedin-openid')->user();
     }
 
-    private function findOrCreateUser(LinkedinUser $linkedinUser): User|string
+    private function findOrCreateUser(LinkedinUser $linkedinUser): FindOrCreateLinkedinUserResult
     {
-        return new FindOrCreateLinkedinUserService(
-            linkedinUser: $linkedinUser
+        return app()->makeWith(
+            abstract: FindOrCreateLinkedinUserService::class,
+            parameters: ['linkedinUser' => $linkedinUser],
         )->handle();
     }
 

@@ -37,6 +37,7 @@ class UserUpdateRequest extends FormRequest
             'roles.*' => ['string', Rule::exists('roles', 'name')],
             'avatar' => ['nullable', 'image', 'mimes:png,jpg,jpeg,gif,webp', 'max:2048'],
             'remove_avatar' => ['nullable', 'boolean'],
+            'marketing_opt_out' => ['nullable', 'boolean'],
         ];
     }
 

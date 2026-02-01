@@ -88,6 +88,7 @@ describe('data', function () {
                 ->where('team_role', 'Lead Developer')
                 ->where('roles', ['Moderator'])
                 ->where('showcases_count', 0)
+                ->where('marketing_opt_out_at', null)
             )
         );
     });

@@ -253,6 +253,45 @@ describe('store', function () {
         ]);
     });
 
+    test('creates user with marketing opt-out', function () {
+        Notification::fake();
+
+        $admin = User::factory()->admin()->create();
+
+        actingAs($admin);
+
+        post(route('staff.users.store'), [
+            'first_name' => 'John',
+            'last_name' => 'Doe',
+            'handle' => 'john-doe',
+            'email' => 'john@example.com',
+            'marketing_opt_out' => true,
+        ]);
+
+        $user = User::query()->where('email', 'john@example.com')->first();
+
+        expect($user->marketing_opt_out_at)->not->toBeNull();
+    });
+
+    test('creates user without marketing opt-out by default', function () {
+        Notification::fake();
+
+        $admin = User::factory()->admin()->create();
+
+        actingAs($admin);
+
+        post(route('staff.users.store'), [
+            'first_name' => 'John',
+            'last_name' => 'Doe',
+            'handle' => 'john-doe',
+            'email' => 'john@example.com',
+        ]);
+
+        $user = User::query()->where('email', 'john@example.com')->first();
+
+        expect($user->marketing_opt_out_at)->toBeNull();
+    });
+
     test('creates user with avatar', function () {
         Notification::fake();
         Storage::fake('public');

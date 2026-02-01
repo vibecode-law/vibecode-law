@@ -2,10 +2,13 @@
 
 namespace Tests\Feature\Http\Controllers\Auth;
 
+use App\Jobs\MarketingEmail\CreateExternalSubscriberJob;
+use App\Jobs\MarketingEmail\UpdateExternalSubscriberJob;
 use App\Models\User;
 use Illuminate\Auth\Events\Verified;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Event;
+use Illuminate\Support\Facades\Queue;
 use Illuminate\Support\Facades\URL;
 use Tests\TestCase;
 
@@ -103,5 +106,71 @@ class EmailVerificationTest extends TestCase
 
         $this->assertTrue($user->fresh()->hasVerifiedEmail());
         Event::assertNotDispatched(Verified::class);
+    }
+
+    public function test_verification_dispatches_create_external_subscriber_job_when_subscribed_to_marketing(): void
+    {
+        Queue::fake();
+
+        $user = User::factory()->unverified()->create([
+            'marketing_opt_out_at' => null,
+            'external_subscriber_uuid' => null,
+        ]);
+
+        $verificationUrl = URL::temporarySignedRoute(
+            'verification.verify',
+            now()->addMinutes(60),
+            ['id' => $user->id, 'hash' => sha1($user->email)]
+        );
+
+        $this->actingAs($user)->get($verificationUrl);
+
+        Queue::assertPushed(CreateExternalSubscriberJob::class, function (CreateExternalSubscriberJob $job) use ($user) {
+            return $job->user->is($user);
+        });
+    }
+
+    public function test_verification_dispatches_update_external_subscriber_job_when_subscriber_exists(): void
+    {
+        Queue::fake();
+
+        $user = User::factory()->unverified()->create([
+            'marketing_opt_out_at' => null,
+            'external_subscriber_uuid' => '11111111-1111-1111-1111-111111111111',
+        ]);
+
+        $verificationUrl = URL::temporarySignedRoute(
+            'verification.verify',
+            now()->addMinutes(60),
+            ['id' => $user->id, 'hash' => sha1($user->email)]
+        );
+
+        $this->actingAs($user)->get($verificationUrl);
+
+        Queue::assertPushed(UpdateExternalSubscriberJob::class, function (UpdateExternalSubscriberJob $job) use ($user) {
+            return $job->user->is($user);
+        });
+        Queue::assertNotPushed(CreateExternalSubscriberJob::class);
+    }
+
+    public function test_verification_does_not_dispatch_create_job_when_opted_out_of_marketing(): void
+    {
+        Queue::fake();
+
+        $user = User::factory()->unverified()->create([
+            'marketing_opt_out_at' => now(),
+            'external_subscriber_uuid' => null,
+        ]);
+
+        $verificationUrl = URL::temporarySignedRoute(
+            'verification.verify',
+            now()->addMinutes(60),
+            ['id' => $user->id, 'hash' => sha1($user->email)]
+        );
+
+        $this->actingAs($user)->get($verificationUrl);
+
+        Queue::assertNotPushed(CreateExternalSubscriberJob::class);
+        Queue::assertNotPushed(UpdateExternalSubscriberJob::class);
     }
 }

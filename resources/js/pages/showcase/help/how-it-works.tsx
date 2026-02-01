@@ -173,10 +173,10 @@ export default function HowItWorks() {
                         ))}
                     </div>
                     <p className="mt-4 flex flex-col items-center justify-center gap-2 text-sm text-neutral-600 md:flex-row md:text-base dark:text-neutral-400">
-                        <div className="flex items-center justify-start gap-2">
+                        <span className="flex items-center justify-start gap-2">
                             <PlayCircle className="size-5" />
                             Don&apos;t have a project yet?{' '}
-                        </div>
+                        </span>
                         <Link
                             href={ResourcesShowController.url(
                                 'start-vibecoding',

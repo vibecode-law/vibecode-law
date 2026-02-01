@@ -54,6 +54,7 @@ class ProfileUpdateRequest extends FormRequest
             ],
             'avatar' => ['nullable', 'image', 'mimes:png,jpg,jpeg,gif,webp', 'max:2048'],
             'remove_avatar' => ['nullable', 'boolean'],
+            'marketing_opt_out' => ['nullable', 'boolean'],
         ];
     }
 }

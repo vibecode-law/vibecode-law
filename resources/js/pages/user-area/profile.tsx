@@ -8,8 +8,10 @@ import { lazy, Suspense } from 'react';
 import HeadingSmall from '@/components/heading/heading-small';
 import { AvatarUpload } from '@/components/ui/avatar-upload';
 import { Button } from '@/components/ui/button';
+import { Checkbox } from '@/components/ui/checkbox';
 import { FormField } from '@/components/ui/form-field';
 import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
 import { StatusMessage } from '@/components/ui/status-message';
 import DeleteUser from '@/components/user/delete-user';
 import UserAreaLayout from '@/layouts/user-area/layout';
@@ -210,6 +212,24 @@ export default function Profile({
                                         />
                                     </div>
                                 )}
+
+                            <div className="flex items-center space-x-3">
+                                <Checkbox
+                                    id="marketing_opt_out"
+                                    name="marketing_opt_out"
+                                    value="1"
+                                    defaultChecked={
+                                        auth.user.marketing_opt_out_at !== null
+                                    }
+                                />
+                                <Label
+                                    htmlFor="marketing_opt_out"
+                                    className="text-sm font-normal text-muted-foreground"
+                                >
+                                    I do not wish to receive newsletters and
+                                    marketing emails
+                                </Label>
+                            </div>
 
                             <div className="flex items-center gap-4">
                                 <Button

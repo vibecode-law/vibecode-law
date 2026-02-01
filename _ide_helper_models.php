@@ -261,6 +261,7 @@ namespace App\Models\Showcase{
 
 namespace App\Models{
 /**
+ * @property \Illuminate\Support\Carbon|null $marketing_opt_out_at
  * @property int $id
  * @property string $first_name
  * @property string $last_name
@@ -286,6 +287,7 @@ namespace App\Models{
  * @property string|null $two_factor_secret
  * @property string|null $two_factor_recovery_codes
  * @property \Illuminate\Support\Carbon|null $two_factor_confirmed_at
+ * @property string|null $external_subscriber_uuid
  * @property-read string|null $avatar
  * @property-read \Illuminate\Notifications\DatabaseNotificationCollection<int, \Illuminate\Notifications\DatabaseNotification> $notifications
  * @property-read int|null $notifications_count
@@ -312,6 +314,7 @@ namespace App\Models{
  * @method static \Illuminate\Database\Eloquent\Builder<static>|User whereCreatedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|User whereEmail($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|User whereEmailVerifiedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|User whereExternalSubscriberUuid($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|User whereFirstName($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|User whereHandle($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|User whereId($value)
@@ -321,6 +324,7 @@ namespace App\Models{
  * @method static \Illuminate\Database\Eloquent\Builder<static>|User whereLinkedinId($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|User whereLinkedinToken($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|User whereLinkedinUrl($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|User whereMarketingOptOutAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|User whereOrganisation($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|User wherePassword($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|User whereRememberToken($value)

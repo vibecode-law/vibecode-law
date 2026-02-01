@@ -22,6 +22,7 @@ class PrivateUserResource extends Resource
         public ?string $bio,
         public string $email,
         public ?Carbon $email_verified_at,
+        public ?Carbon $marketing_opt_out_at,
     ) {}
 
     public static function fromModel(User $user): self
@@ -38,6 +39,7 @@ class PrivateUserResource extends Resource
             bio: $user->bio,
             email: $user->email,
             email_verified_at: $user->email_verified_at,
+            marketing_opt_out_at: $user->marketing_opt_out_at,
         );
     }
 }

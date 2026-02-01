@@ -13364,89 +13364,6 @@ namespace Illuminate\Support\Facades {
         }
 
         /**
-         * Release a reserved job back onto the queue after (n) seconds.
-         *
-         * @param string $queue
-         * @param \Illuminate\Queue\Jobs\DatabaseJobRecord $job
-         * @param int $delay
-         * @return mixed
-         * @static
-         */
-        public static function release($queue, $job, $delay)
-        {
-            /** @var \Illuminate\Queue\DatabaseQueue $instance */
-            return $instance->release($queue, $job, $delay);
-        }
-
-        /**
-         * Delete a reserved job from the queue.
-         *
-         * @param string $queue
-         * @param string $id
-         * @return void
-         * @throws \Throwable
-         * @static
-         */
-        public static function deleteReserved($queue, $id)
-        {
-            /** @var \Illuminate\Queue\DatabaseQueue $instance */
-            $instance->deleteReserved($queue, $id);
-        }
-
-        /**
-         * Delete a reserved job from the reserved queue and release it.
-         *
-         * @param string $queue
-         * @param \Illuminate\Queue\Jobs\DatabaseJob $job
-         * @param int $delay
-         * @return void
-         * @static
-         */
-        public static function deleteAndRelease($queue, $job, $delay)
-        {
-            /** @var \Illuminate\Queue\DatabaseQueue $instance */
-            $instance->deleteAndRelease($queue, $job, $delay);
-        }
-
-        /**
-         * Delete all of the jobs from the queue.
-         *
-         * @param string $queue
-         * @return int
-         * @static
-         */
-        public static function clear($queue)
-        {
-            /** @var \Illuminate\Queue\DatabaseQueue $instance */
-            return $instance->clear($queue);
-        }
-
-        /**
-         * Get the queue or return the default.
-         *
-         * @param string|null $queue
-         * @return string
-         * @static
-         */
-        public static function getQueue($queue)
-        {
-            /** @var \Illuminate\Queue\DatabaseQueue $instance */
-            return $instance->getQueue($queue);
-        }
-
-        /**
-         * Get the underlying database instance.
-         *
-         * @return \Illuminate\Database\Connection
-         * @static
-         */
-        public static function getDatabase()
-        {
-            /** @var \Illuminate\Queue\DatabaseQueue $instance */
-            return $instance->getDatabase();
-        }
-
-        /**
          * Get the maximum number of attempts for an object-based queue handler.
          *
          * @param mixed $job
@@ -13456,7 +13373,7 @@ namespace Illuminate\Support\Facades {
         public static function getJobTries($job)
         {
             //Method inherited from \Illuminate\Queue\Queue 
-            /** @var \Illuminate\Queue\DatabaseQueue $instance */
+            /** @var \Illuminate\Queue\SyncQueue $instance */
             return $instance->getJobTries($job);
         }
 
@@ -13470,7 +13387,7 @@ namespace Illuminate\Support\Facades {
         public static function getJobBackoff($job)
         {
             //Method inherited from \Illuminate\Queue\Queue 
-            /** @var \Illuminate\Queue\DatabaseQueue $instance */
+            /** @var \Illuminate\Queue\SyncQueue $instance */
             return $instance->getJobBackoff($job);
         }
 
@@ -13484,7 +13401,7 @@ namespace Illuminate\Support\Facades {
         public static function getJobExpiration($job)
         {
             //Method inherited from \Illuminate\Queue\Queue 
-            /** @var \Illuminate\Queue\DatabaseQueue $instance */
+            /** @var \Illuminate\Queue\SyncQueue $instance */
             return $instance->getJobExpiration($job);
         }
 
@@ -13498,7 +13415,7 @@ namespace Illuminate\Support\Facades {
         public static function createPayloadUsing($callback)
         {
             //Method inherited from \Illuminate\Queue\Queue 
-            \Illuminate\Queue\DatabaseQueue::createPayloadUsing($callback);
+            \Illuminate\Queue\SyncQueue::createPayloadUsing($callback);
         }
 
         /**
@@ -13510,7 +13427,7 @@ namespace Illuminate\Support\Facades {
         public static function getConfig()
         {
             //Method inherited from \Illuminate\Queue\Queue 
-            /** @var \Illuminate\Queue\DatabaseQueue $instance */
+            /** @var \Illuminate\Queue\SyncQueue $instance */
             return $instance->getConfig();
         }
 
@@ -13518,13 +13435,13 @@ namespace Illuminate\Support\Facades {
          * Set the queue configuration array.
          *
          * @param array $config
-         * @return \Illuminate\Queue\DatabaseQueue
+         * @return \Illuminate\Queue\SyncQueue
          * @static
          */
         public static function setConfig($config)
         {
             //Method inherited from \Illuminate\Queue\Queue 
-            /** @var \Illuminate\Queue\DatabaseQueue $instance */
+            /** @var \Illuminate\Queue\SyncQueue $instance */
             return $instance->setConfig($config);
         }
 
@@ -13537,7 +13454,7 @@ namespace Illuminate\Support\Facades {
         public static function getContainer()
         {
             //Method inherited from \Illuminate\Queue\Queue 
-            /** @var \Illuminate\Queue\DatabaseQueue $instance */
+            /** @var \Illuminate\Queue\SyncQueue $instance */
             return $instance->getContainer();
         }
 
@@ -13551,7 +13468,7 @@ namespace Illuminate\Support\Facades {
         public static function setContainer($container)
         {
             //Method inherited from \Illuminate\Queue\Queue 
-            /** @var \Illuminate\Queue\DatabaseQueue $instance */
+            /** @var \Illuminate\Queue\SyncQueue $instance */
             $instance->setContainer($container);
         }
 
@@ -23631,6 +23548,468 @@ namespace Sentry\Laravel {
             }
     }
 
+namespace Spatie\MailcoachSdk\Facades {
+    /**
+     * @see \Spatie\MailcoachSdk\Mailcoach
+     */
+    class Mailcoach {
+        /**
+         * @static
+         */
+        public static function apiToken()
+        {
+            /** @var \Spatie\MailcoachSdk\Mailcoach $instance */
+            return $instance->apiToken();
+        }
+
+        /**
+         * @static
+         */
+        public static function endpoint()
+        {
+            /** @var \Spatie\MailcoachSdk\Mailcoach $instance */
+            return $instance->endpoint();
+        }
+
+        /**
+         * @static
+         */
+        public static function get($uri)
+        {
+            /** @var \Spatie\MailcoachSdk\Mailcoach $instance */
+            return $instance->get($uri);
+        }
+
+        /**
+         * @static
+         */
+        public static function post($uri, $payload = [])
+        {
+            /** @var \Spatie\MailcoachSdk\Mailcoach $instance */
+            return $instance->post($uri, $payload);
+        }
+
+        /**
+         * @static
+         */
+        public static function put($uri, $payload = [])
+        {
+            /** @var \Spatie\MailcoachSdk\Mailcoach $instance */
+            return $instance->put($uri, $payload);
+        }
+
+        /**
+         * @static
+         */
+        public static function patch($uri, $payload = [])
+        {
+            /** @var \Spatie\MailcoachSdk\Mailcoach $instance */
+            return $instance->patch($uri, $payload);
+        }
+
+        /**
+         * @static
+         */
+        public static function delete($uri, $payload = [])
+        {
+            /** @var \Spatie\MailcoachSdk\Mailcoach $instance */
+            return $instance->delete($uri, $payload);
+        }
+
+        /**
+         * @static
+         */
+        public static function request($verb, $uri, $payload = [])
+        {
+            /** @var \Spatie\MailcoachSdk\Mailcoach $instance */
+            return $instance->request($verb, $uri, $payload);
+        }
+
+        /**
+         * @static
+         */
+        public static function isSuccessful($response)
+        {
+            /** @var \Spatie\MailcoachSdk\Mailcoach $instance */
+            return $instance->isSuccessful($response);
+        }
+
+        /**
+         * @static
+         */
+        public static function triggerAutomation($automationUuid, $subscriberUuids)
+        {
+            /** @var \Spatie\MailcoachSdk\Mailcoach $instance */
+            return $instance->triggerAutomation($automationUuid, $subscriberUuids);
+        }
+
+        /**
+         * @static
+         */
+        public static function campaigns()
+        {
+            /** @var \Spatie\MailcoachSdk\Mailcoach $instance */
+            return $instance->campaigns();
+        }
+
+        /**
+         * @static
+         */
+        public static function campaign($uuid)
+        {
+            /** @var \Spatie\MailcoachSdk\Mailcoach $instance */
+            return $instance->campaign($uuid);
+        }
+
+        /**
+         * @static
+         */
+        public static function createCampaign($data)
+        {
+            /** @var \Spatie\MailcoachSdk\Mailcoach $instance */
+            return $instance->createCampaign($data);
+        }
+
+        /**
+         * @static
+         */
+        public static function updateCampaign($uuid, $data)
+        {
+            /** @var \Spatie\MailcoachSdk\Mailcoach $instance */
+            return $instance->updateCampaign($uuid, $data);
+        }
+
+        /**
+         * @static
+         */
+        public static function deleteCampaign($campaignUuid)
+        {
+            /** @var \Spatie\MailcoachSdk\Mailcoach $instance */
+            return $instance->deleteCampaign($campaignUuid);
+        }
+
+        /**
+         * @static
+         */
+        public static function sendTest($campaignUuid, $email)
+        {
+            /** @var \Spatie\MailcoachSdk\Mailcoach $instance */
+            return $instance->sendTest($campaignUuid, $email);
+        }
+
+        /**
+         * @static
+         */
+        public static function send($campaignUuid)
+        {
+            /** @var \Spatie\MailcoachSdk\Mailcoach $instance */
+            return $instance->send($campaignUuid);
+        }
+
+        /**
+         * @static
+         */
+        public static function campaignOpens($campaignUuid)
+        {
+            /** @var \Spatie\MailcoachSdk\Mailcoach $instance */
+            return $instance->campaignOpens($campaignUuid);
+        }
+
+        /**
+         * @static
+         */
+        public static function campaignClicks($campaignUuid)
+        {
+            /** @var \Spatie\MailcoachSdk\Mailcoach $instance */
+            return $instance->campaignClicks($campaignUuid);
+        }
+
+        /**
+         * @static
+         */
+        public static function campaignUnsubscribes($campaignUuid)
+        {
+            /** @var \Spatie\MailcoachSdk\Mailcoach $instance */
+            return $instance->campaignUnsubscribes($campaignUuid);
+        }
+
+        /**
+         * @static
+         */
+        public static function campaignBounces($campaignUuid)
+        {
+            /** @var \Spatie\MailcoachSdk\Mailcoach $instance */
+            return $instance->campaignBounces($campaignUuid);
+        }
+
+        /**
+         * @param array<string, string> $filters
+         * @return PaginatedResults<EmailList>
+         * @static
+         */
+        public static function emailLists($filters = [])
+        {
+            /** @var \Spatie\MailcoachSdk\Mailcoach $instance */
+            return $instance->emailLists($filters);
+        }
+
+        /**
+         * @static
+         */
+        public static function createEmailList($data)
+        {
+            /** @var \Spatie\MailcoachSdk\Mailcoach $instance */
+            return $instance->createEmailList($data);
+        }
+
+        /**
+         * @static
+         */
+        public static function emailList($uuid)
+        {
+            /** @var \Spatie\MailcoachSdk\Mailcoach $instance */
+            return $instance->emailList($uuid);
+        }
+
+        /**
+         * @static
+         */
+        public static function updateEmailList($uuid, $data)
+        {
+            /** @var \Spatie\MailcoachSdk\Mailcoach $instance */
+            return $instance->updateEmailList($uuid, $data);
+        }
+
+        /**
+         * @static
+         */
+        public static function deleteEmailList($uuid)
+        {
+            /** @var \Spatie\MailcoachSdk\Mailcoach $instance */
+            return $instance->deleteEmailList($uuid);
+        }
+
+        /**
+         * @static
+         */
+        public static function addTagToEmailList($uuid, $data)
+        {
+            /** @var \Spatie\MailcoachSdk\Mailcoach $instance */
+            return $instance->addTagToEmailList($uuid, $data);
+        }
+
+        /**
+         * @static
+         */
+        public static function updateTagOnEmailList($emailListUuid, $tagUuid, $data)
+        {
+            /** @var \Spatie\MailcoachSdk\Mailcoach $instance */
+            return $instance->updateTagOnEmailList($emailListUuid, $tagUuid, $data);
+        }
+
+        /**
+         * @static
+         */
+        public static function deleteTagFromEmailList($emailListUuid, $tagUuid)
+        {
+            /** @var \Spatie\MailcoachSdk\Mailcoach $instance */
+            return $instance->deleteTagFromEmailList($emailListUuid, $tagUuid);
+        }
+
+        /**
+         * @param array<string, string> $filters
+         * @return PaginatedResults<Subscriber>
+         * @static
+         */
+        public static function subscribers($emailListUuid, $filters = [])
+        {
+            /** @var \Spatie\MailcoachSdk\Mailcoach $instance */
+            return $instance->subscribers($emailListUuid, $filters);
+        }
+
+        /**
+         * @static
+         */
+        public static function subscriber($uuid)
+        {
+            /** @var \Spatie\MailcoachSdk\Mailcoach $instance */
+            return $instance->subscriber($uuid);
+        }
+
+        /**
+         * @static
+         */
+        public static function createSubscriber($emailListUuid, $attributes)
+        {
+            /** @var \Spatie\MailcoachSdk\Mailcoach $instance */
+            return $instance->createSubscriber($emailListUuid, $attributes);
+        }
+
+        /**
+         * @static
+         */
+        public static function findByEmail($emailListUuid, $email)
+        {
+            /** @var \Spatie\MailcoachSdk\Mailcoach $instance */
+            return $instance->findByEmail($emailListUuid, $email);
+        }
+
+        /**
+         * @static
+         */
+        public static function updateSubscriber($subscriberUuid, $attributes)
+        {
+            /** @var \Spatie\MailcoachSdk\Mailcoach $instance */
+            return $instance->updateSubscriber($subscriberUuid, $attributes);
+        }
+
+        /**
+         * @static
+         */
+        public static function deleteSubscriber($subscriberUuid)
+        {
+            /** @var \Spatie\MailcoachSdk\Mailcoach $instance */
+            return $instance->deleteSubscriber($subscriberUuid);
+        }
+
+        /**
+         * @static
+         */
+        public static function confirmSubscriber($subscriberUuid)
+        {
+            /** @var \Spatie\MailcoachSdk\Mailcoach $instance */
+            return $instance->confirmSubscriber($subscriberUuid);
+        }
+
+        /**
+         * @static
+         */
+        public static function unsubscribeSubscriber($subscriberUuid)
+        {
+            /** @var \Spatie\MailcoachSdk\Mailcoach $instance */
+            return $instance->unsubscribeSubscriber($subscriberUuid);
+        }
+
+        /**
+         * @static
+         */
+        public static function resubscribeSubscriber($subscriberUuid)
+        {
+            /** @var \Spatie\MailcoachSdk\Mailcoach $instance */
+            return $instance->resubscribeSubscriber($subscriberUuid);
+        }
+
+        /**
+         * @static
+         */
+        public static function resendConfirmation($subscriberUuid)
+        {
+            /** @var \Spatie\MailcoachSdk\Mailcoach $instance */
+            return $instance->resendConfirmation($subscriberUuid);
+        }
+
+        /**
+         * @static
+         */
+        public static function templates()
+        {
+            /** @var \Spatie\MailcoachSdk\Mailcoach $instance */
+            return $instance->templates();
+        }
+
+        /**
+         * @static
+         */
+        public static function template($uuid)
+        {
+            /** @var \Spatie\MailcoachSdk\Mailcoach $instance */
+            return $instance->template($uuid);
+        }
+
+        /**
+         * @static
+         */
+        public static function createTemplate($data)
+        {
+            /** @var \Spatie\MailcoachSdk\Mailcoach $instance */
+            return $instance->createTemplate($data);
+        }
+
+        /**
+         * @static
+         */
+        public static function updateTemplate($uuid, $data)
+        {
+            /** @var \Spatie\MailcoachSdk\Mailcoach $instance */
+            return $instance->updateTemplate($uuid, $data);
+        }
+
+        /**
+         * @static
+         */
+        public static function deleteTemplate($uuid)
+        {
+            /** @var \Spatie\MailcoachSdk\Mailcoach $instance */
+            return $instance->deleteTemplate($uuid);
+        }
+
+        /**
+         * @static
+         */
+        public static function transactionalMails($filters = [])
+        {
+            /** @var \Spatie\MailcoachSdk\Mailcoach $instance */
+            return $instance->transactionalMails($filters);
+        }
+
+        /**
+         * @static
+         */
+        public static function transactionalMail($uuid)
+        {
+            /** @var \Spatie\MailcoachSdk\Mailcoach $instance */
+            return $instance->transactionalMail($uuid);
+        }
+
+        /**
+         * @static
+         */
+        public static function transactionalMailTemplates($filters = [])
+        {
+            /** @var \Spatie\MailcoachSdk\Mailcoach $instance */
+            return $instance->transactionalMailTemplates($filters);
+        }
+
+        /**
+         * @static
+         */
+        public static function transactionalMailTemplate($uuid)
+        {
+            /** @var \Spatie\MailcoachSdk\Mailcoach $instance */
+            return $instance->transactionalMailTemplate($uuid);
+        }
+
+        /**
+         * @static
+         */
+        public static function sendTransactionMail($name, $from, $to, $replacements = null, $attachments = null, $subject = null, $cc = null, $bcc = null, $replyTo = null, $fake = null, $store = null)
+        {
+            /** @var \Spatie\MailcoachSdk\Mailcoach $instance */
+            return $instance->sendTransactionMail($name, $from, $to, $replacements, $attachments, $subject, $cc, $bcc, $replyTo, $fake, $store);
+        }
+
+        /**
+         * @static
+         */
+        public static function getRequests()
+        {
+            /** @var \Spatie\MailcoachSdk\Testing\MailcoachFake $instance */
+            return $instance->getRequests();
+        }
+
+            }
+    }
+
 namespace Illuminate\Support {
     /**
      * @template TKey of array-key
@@ -28900,6 +29279,7 @@ namespace  {
     class Vite extends \Illuminate\Support\Facades\Vite {}
     class Socialite extends \Laravel\Socialite\Facades\Socialite {}
     class Sentry extends \Sentry\Laravel\Facade {}
+    class Mailcoach extends \Spatie\MailcoachSdk\Facades\Mailcoach {}
 }
 
 

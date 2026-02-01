@@ -37,7 +37,7 @@ describe('new user', function () {
         ])->setToken('fake-access-token'));
 
         get('/auth/login/linkedin/callback')
-            ->assertRedirect(route('home'));
+            ->assertRedirect(route('auth.complete-profile'));
 
         assertDatabaseHas('users', [
             'linkedin_id' => 'linkedin-123',
@@ -47,6 +47,41 @@ describe('new user', function () {
             'email' => 'fake@email.com',
             'linkedin_token' => 'fake-access-token',
         ]);
+    });
+
+    it('redirects new users to complete profile page', function () {
+        Http::fake();
+
+        Socialite::fake('linkedin-openid', (new LinkedinUser)->map([
+            'id' => 'linkedin-new-user',
+            'email' => 'newuser@email.com',
+            'user' => [
+                'given_name' => 'New',
+                'family_name' => 'User',
+                'email_verified' => true,
+            ],
+        ])->setToken('fake-token'));
+
+        get('/auth/login/linkedin/callback')
+            ->assertRedirect(route('auth.complete-profile'));
+    });
+
+    it('passes intended url to complete profile page', function () {
+        Http::fake();
+
+        Socialite::fake('linkedin-openid', (new LinkedinUser)->map([
+            'id' => 'linkedin-intended',
+            'email' => 'intended@email.com',
+            'user' => [
+                'given_name' => 'Intended',
+                'family_name' => 'User',
+                'email_verified' => true,
+            ],
+        ])->setToken('fake-token'));
+
+        test()->withSession(['url.intended' => '/showcases'])
+            ->get('/auth/login/linkedin/callback')
+            ->assertRedirect(route('auth.complete-profile', ['intended' => '/showcases']));
     });
 
     it('generates unique handle when name already exists', function () {
@@ -65,7 +100,7 @@ describe('new user', function () {
         ])->setToken('fake-access-token'));
 
         get('/auth/login/linkedin/callback')
-            ->assertRedirect(route('home'));
+            ->assertRedirect(route('auth.complete-profile'));
 
         $user = User::where('linkedin_id', 'linkedin-123')->first();
 
@@ -347,7 +382,7 @@ describe('avatar handling', function () {
         ])->setToken('fake-token'));
 
         get('/auth/login/linkedin/callback')
-            ->assertRedirect(route('home'));
+            ->assertRedirect(route('auth.complete-profile'));
 
         $user = User::where('linkedin_id', 'linkedin-789')->first();
 
@@ -378,7 +413,7 @@ describe('avatar handling', function () {
         ])->setToken('fake-token'));
 
         get('/auth/login/linkedin/callback')
-            ->assertRedirect(route('home'));
+            ->assertRedirect(route('auth.complete-profile'));
 
         $user = User::where('linkedin_id', 'linkedin-avatar-test')->first();
 
@@ -513,7 +548,7 @@ describe('linkedin profile url', function () {
         ])->setToken('fake-token'));
 
         get('/auth/login/linkedin/callback')
-            ->assertRedirect(route('home'));
+            ->assertRedirect(route('auth.complete-profile'));
 
         $user = User::where('linkedin_id', 'linkedin-config-disabled')->first();
 
@@ -549,7 +584,7 @@ describe('linkedin profile url', function () {
         ])->setToken('fake-token'));
 
         get('/auth/login/linkedin/callback')
-            ->assertRedirect(route('home'));
+            ->assertRedirect(route('auth.complete-profile'));
 
         $user = User::where('linkedin_id', 'linkedin-url-test')->first();
 
@@ -610,7 +645,7 @@ describe('linkedin profile url', function () {
         ])->setToken('fake-token'));
 
         get('/auth/login/linkedin/callback')
-            ->assertRedirect(route('home'));
+            ->assertRedirect(route('auth.complete-profile'));
 
         $user = User::where('linkedin_id', 'linkedin-api-fail')->first();
 
@@ -643,7 +678,7 @@ describe('linkedin profile url', function () {
         ])->setToken('fake-token'));
 
         get('/auth/login/linkedin/callback')
-            ->assertRedirect(route('home'));
+            ->assertRedirect(route('auth.complete-profile'));
 
         $user = User::where('linkedin_id', 'linkedin-no-redirect')->first();
 
@@ -651,4 +686,29 @@ describe('linkedin profile url', function () {
         expect($user->linkedin_url)->toBeNull();
     });
 
+});
+
+describe('existing user redirect', function () {
+    it('does not redirect an existing user to complete profile', function () {
+        Http::fake();
+
+        $existingUser = User::factory()->create([
+            'linkedin_id' => 'linkedin-existing',
+            'email' => 'existing@email.com',
+        ]);
+
+        Socialite::fake('linkedin-openid', (new LinkedinUser)->map([
+            'id' => 'linkedin-existing',
+            'email' => 'existing@email.com',
+            'user' => [
+                'given_name' => 'Existing',
+                'family_name' => 'User',
+            ],
+        ])->setToken('fake-token'));
+
+        get('/auth/login/linkedin/callback')
+            ->assertRedirect(route('home'));
+
+        expect(User::count())->toBe(1);
+    });
 });

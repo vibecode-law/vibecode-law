@@ -81,6 +81,8 @@ export default function UsersEdit({ user, roles, teamTypes }: UsersEditProps) {
                                         team_role: user.team_role,
                                         roles: user.roles,
                                         avatar: user.avatar,
+                                        marketing_opt_out:
+                                            user.marketing_opt_out_at !== null,
                                     }}
                                 />
 
