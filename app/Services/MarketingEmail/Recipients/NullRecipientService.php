@@ -48,4 +48,8 @@ class NullRecipientService implements RecipientService
     public function unsubscribeRecipient(string $externalId): void {}
 
     public function resubscribeRecipient(string $externalId): void {}
+
+    public function addTags(string $externalId, array $tags): void {}
+
+    public function removeTags(string $externalId, array $tags): void {}
 }

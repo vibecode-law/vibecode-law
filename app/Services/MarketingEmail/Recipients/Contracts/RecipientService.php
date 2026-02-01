@@ -26,4 +26,14 @@ interface RecipientService
     public function unsubscribeRecipient(string $externalId): void;
 
     public function resubscribeRecipient(string $externalId): void;
+
+    /**
+     * @param  array<int, string>  $tags
+     */
+    public function addTags(string $externalId, array $tags): void;
+
+    /**
+     * @param  array<int, string>  $tags
+     */
+    public function removeTags(string $externalId, array $tags): void;
 }

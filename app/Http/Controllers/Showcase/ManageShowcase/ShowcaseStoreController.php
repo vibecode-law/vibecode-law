@@ -5,7 +5,9 @@ namespace App\Http\Controllers\Showcase\ManageShowcase;
 use App\Actions\Showcase\SubmitShowcaseAction;
 use App\Http\Controllers\BaseController;
 use App\Http\Requests\Showcase\ShowcaseWriteRequest;
+use App\Jobs\MarketingEmail\AddShowcaseTagToSubscriberJob;
 use App\Models\Showcase\Showcase;
+use App\Models\User;
 use App\Services\Showcase\ShowcaseMediaService;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Support\Facades\Redirect;
@@ -37,6 +39,8 @@ class ShowcaseStoreController extends BaseController
             $mediaService->storeImages(model: $showcase, files: $request->file('images'));
         }
 
+        $this->dispatchShowcaseTagJobIfFirstShowcase(user: $request->user());
+
         if ($request->boolean('submit') === true) {
             app(SubmitShowcaseAction::class)->submit(showcase: $showcase);
 
@@ -58,5 +62,20 @@ class ShowcaseStoreController extends BaseController
         $randomSuffix = random_int(min: 100000, max: 999999);
 
         return $slug.'-'.$randomSuffix;
+    }
+
+    private function dispatchShowcaseTagJobIfFirstShowcase(User $user): void
+    {
+        if ($user->external_subscriber_uuid === null) {
+            return;
+        }
+
+        $isFirstShowcase = $user->showcases()->count() === 1;
+
+        if ($isFirstShowcase === false) {
+            return;
+        }
+
+        AddShowcaseTagToSubscriberJob::dispatch(user: $user);
     }
 }

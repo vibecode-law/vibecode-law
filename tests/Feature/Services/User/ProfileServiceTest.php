@@ -4,8 +4,10 @@ use App\Jobs\MarketingEmail\CreateExternalSubscriberJob;
 use App\Jobs\MarketingEmail\ResubscribeToMarketingJob;
 use App\Jobs\MarketingEmail\UnsubscribeFromMarketingJob;
 use App\Jobs\MarketingEmail\UpdateExternalSubscriberJob;
+use App\Models\Showcase\Showcase;
 use App\Models\User;
 use App\Services\User\ProfileService;
+use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\Queue;
 
 describe('create', function () {
@@ -546,5 +548,78 @@ describe('job dispatching', function () {
 
             Queue::assertNotPushed(CreateExternalSubscriberJob::class);
         });
+    });
+
+    describe('showcase tag', function () {
+        it('includes showcase tag when creating subscriber for user with showcases', function () {
+            Queue::fake();
+            Config::set('marketing.has_showcase_tag_uuid', 'showcase-tag-uuid');
+
+            $user = User::factory()->create([
+                'email_verified_at' => now(),
+                'marketing_opt_out_at' => now(),
+                'external_subscriber_uuid' => null,
+            ]);
+
+            Showcase::factory()->for($user)->create();
+
+            $service = new ProfileService;
+
+            $service->update(user: $user, data: [
+                'marketing_opt_out_at' => null,
+            ]);
+
+            Queue::assertPushed(CreateExternalSubscriberJob::class, function (CreateExternalSubscriberJob $job) use ($user) {
+                return $job->user->is($user)
+                    && $job->tags === ['showcase-tag-uuid'];
+            });
+        });
+
+        it('does not include showcase tag when creating subscriber for user without showcases', function () {
+            Queue::fake();
+            Config::set('marketing.has_showcase_tag_uuid', 'showcase-tag-uuid');
+
+            $user = User::factory()->create([
+                'email_verified_at' => now(),
+                'marketing_opt_out_at' => now(),
+                'external_subscriber_uuid' => null,
+            ]);
+
+            $service = new ProfileService;
+
+            $service->update(user: $user, data: [
+                'marketing_opt_out_at' => null,
+            ]);
+
+            Queue::assertPushed(CreateExternalSubscriberJob::class, function (CreateExternalSubscriberJob $job) use ($user) {
+                return $job->user->is($user)
+                    && $job->tags === [];
+            });
+        });
+
+        it('does not include showcase tag when config is null', function () {
+            Queue::fake();
+            Config::set('marketing.has_showcase_tag_uuid', null);
+
+            $user = User::factory()->create([
+                'email_verified_at' => now(),
+                'marketing_opt_out_at' => now(),
+                'external_subscriber_uuid' => null,
+            ]);
+
+            Showcase::factory()->for($user)->create();
+
+            $service = new ProfileService;
+
+            $service->update(user: $user, data: [
+                'marketing_opt_out_at' => null,
+            ]);
+
+            Queue::assertPushed(CreateExternalSubscriberJob::class, function (CreateExternalSubscriberJob $job) use ($user) {
+                return $job->user->is($user)
+                    && $job->tags === [];
+            });
+        });
+
     });
 });

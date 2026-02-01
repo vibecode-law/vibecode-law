@@ -3,10 +3,12 @@
 use App\Actions\Showcase\SubmitShowcaseAction;
 use App\Enums\ShowcaseStatus;
 use App\Enums\SourceStatus;
+use App\Jobs\MarketingEmail\AddShowcaseTagToSubscriberJob;
 use App\Models\PracticeArea;
 use App\Models\Showcase\Showcase;
 use App\Models\User;
 use Illuminate\Http\UploadedFile;
+use Illuminate\Support\Facades\Queue;
 use Illuminate\Support\Facades\Storage;
 
 use function Pest\Laravel\actingAs;
@@ -976,5 +978,95 @@ describe('submit on create', function () {
             'thumbnail_crop' => ['x' => 0, 'y' => 0, 'width' => 500, 'height' => 500],
             'submit' => true,
         ]);
+    });
+});
+
+describe('marketing tag', function () {
+    test('dispatches AddShowcaseTagToSubscriberJob when user creates first showcase and has external subscriber', function () {
+        Queue::fake();
+
+        $practiceArea = PracticeArea::factory()->create();
+
+        /** @var User */
+        $user = User::factory()->create([
+            'external_subscriber_uuid' => '22222222-2222-2222-2222-222222222222',
+        ]);
+
+        actingAs($user);
+
+        post(route('showcase.manage.store'), [
+            'practice_area_ids' => [$practiceArea->id],
+            'title' => 'My First Showcase',
+            'tagline' => 'A great project tagline',
+            'description' => 'This is a great project description',
+            'key_features' => 'Some key features',
+            'url' => 'https://example.com',
+            'source_status' => SourceStatus::NotAvailable->value,
+            'images' => [UploadedFile::fake()->image('test.jpg', 1280, 720)],
+            'thumbnail' => UploadedFile::fake()->image('thumbnail.jpg', 500, 500),
+            'thumbnail_crop' => ['x' => 0, 'y' => 0, 'width' => 500, 'height' => 500],
+        ]);
+
+        Queue::assertPushed(AddShowcaseTagToSubscriberJob::class, function ($job) use ($user) {
+            return $job->user->id === $user->id;
+        });
+    });
+
+    test('does not dispatch AddShowcaseTagToSubscriberJob when user has no external subscriber', function () {
+        Queue::fake();
+
+        $practiceArea = PracticeArea::factory()->create();
+
+        /** @var User */
+        $user = User::factory()->create([
+            'external_subscriber_uuid' => null,
+        ]);
+
+        actingAs($user);
+
+        post(route('showcase.manage.store'), [
+            'practice_area_ids' => [$practiceArea->id],
+            'title' => 'My First Showcase',
+            'tagline' => 'A great project tagline',
+            'description' => 'This is a great project description',
+            'key_features' => 'Some key features',
+            'url' => 'https://example.com',
+            'source_status' => SourceStatus::NotAvailable->value,
+            'images' => [UploadedFile::fake()->image('test.jpg', 1280, 720)],
+            'thumbnail' => UploadedFile::fake()->image('thumbnail.jpg', 500, 500),
+            'thumbnail_crop' => ['x' => 0, 'y' => 0, 'width' => 500, 'height' => 500],
+        ]);
+
+        Queue::assertNotPushed(AddShowcaseTagToSubscriberJob::class);
+    });
+
+    test('does not dispatch AddShowcaseTagToSubscriberJob when user already has showcases', function () {
+        Queue::fake();
+
+        $practiceArea = PracticeArea::factory()->create();
+
+        /** @var User */
+        $user = User::factory()->create([
+            'external_subscriber_uuid' => '22222222-2222-2222-2222-222222222222',
+        ]);
+
+        Showcase::factory()->for($user)->create();
+
+        actingAs($user);
+
+        post(route('showcase.manage.store'), [
+            'practice_area_ids' => [$practiceArea->id],
+            'title' => 'My Second Showcase',
+            'tagline' => 'A great project tagline',
+            'description' => 'This is a great project description',
+            'key_features' => 'Some key features',
+            'url' => 'https://example.com',
+            'source_status' => SourceStatus::NotAvailable->value,
+            'images' => [UploadedFile::fake()->image('test.jpg', 1280, 720)],
+            'thumbnail' => UploadedFile::fake()->image('thumbnail.jpg', 500, 500),
+            'thumbnail_crop' => ['x' => 0, 'y' => 0, 'width' => 500, 'height' => 500],
+        ]);
+
+        Queue::assertNotPushed(AddShowcaseTagToSubscriberJob::class);
     });
 });

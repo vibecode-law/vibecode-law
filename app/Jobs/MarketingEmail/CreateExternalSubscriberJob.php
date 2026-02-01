@@ -13,8 +13,12 @@ class CreateExternalSubscriberJob implements ShouldQueue
 {
     use Queueable;
 
+    /**
+     * @param  array<int, string>  $tags
+     */
     public function __construct(
         public User $user,
+        public array $tags = [],
     ) {}
 
     public function handle(RecipientService $recipientService): void
@@ -25,6 +29,7 @@ class CreateExternalSubscriberJob implements ShouldQueue
                 listId: Config::get('marketing.main_list_uuid'),
                 firstName: $this->user->first_name,
                 lastName: $this->user->last_name,
+                tags: $this->tags,
             ),
         );
 

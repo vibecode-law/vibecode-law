@@ -7,6 +7,7 @@ use App\Jobs\MarketingEmail\ResubscribeToMarketingJob;
 use App\Jobs\MarketingEmail\UnsubscribeFromMarketingJob;
 use App\Jobs\MarketingEmail\UpdateExternalSubscriberJob;
 use App\Models\User;
+use Illuminate\Support\Facades\Config;
 
 class ProfileService
 {
@@ -147,6 +148,27 @@ class ProfileService
             return;
         }
 
-        CreateExternalSubscriberJob::dispatch(user: $user);
+        CreateExternalSubscriberJob::dispatch(
+            user: $user,
+            tags: $this->getTagsForNewSubscriber(user: $user),
+        );
+    }
+
+    /**
+     * @return array<int, string>
+     */
+    private function getTagsForNewSubscriber(User $user): array
+    {
+        $tags = [];
+
+        if ($user->showcases()->exists() === true) {
+            $showcaseTagUuid = Config::get('marketing.has_showcase_tag_uuid');
+
+            if ($showcaseTagUuid !== null) {
+                $tags[] = $showcaseTagUuid;
+            }
+        }
+
+        return $tags;
     }
 }
