@@ -5,12 +5,14 @@ namespace App\Actions\Staff\User;
 use App\Actions\User\GenerateUniqueUserHandleAction;
 use App\Models\User;
 use App\Notifications\UserInvitation;
+use App\Services\User\ProfileService;
 use Illuminate\Support\Facades\Password;
 
 class InviteUserAction
 {
     public function __construct(
         private GenerateUniqueUserHandleAction $generateHandle,
+        private ProfileService $profileService,
     ) {}
 
     /**
@@ -24,7 +26,7 @@ class InviteUserAction
             lastName: $data['last_name'],
         );
 
-        $user = User::query()->create([
+        $user = $this->profileService->create(data: [
             'first_name' => $data['first_name'],
             'last_name' => $data['last_name'],
             'handle' => $handle,
@@ -33,10 +35,12 @@ class InviteUserAction
             'job_title' => $data['job_title'] ?? null,
             'bio' => $data['bio'] ?? null,
             'linkedin_url' => $data['linkedin_url'] ?? null,
-            'team_type' => $data['team_type'] ?? null,
-            'team_role' => $data['team_role'] ?? null,
-            'password' => null,
         ]);
+
+        // Team fields are admin-only, handled separately from profile
+        $user->team_type = $data['team_type'] ?? null;
+        $user->team_role = $data['team_role'] ?? null;
+        $user->save();
 
         if (count($roles) > 0) {
             $user->syncRoles($roles);

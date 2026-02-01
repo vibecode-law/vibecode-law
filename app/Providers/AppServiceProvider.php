@@ -11,7 +11,9 @@ use App\Services\Content\ContentService;
 use App\Services\Markdown\MarkdownService;
 use App\Services\MarketingEmail\Recipients\Contracts\RecipientService;
 use App\Services\MarketingEmail\Recipients\MailcoachRecipientService;
+use App\Services\MarketingEmail\Recipients\NullRecipientService;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\ServiceProvider;
 
@@ -23,7 +25,15 @@ class AppServiceProvider extends ServiceProvider
         $this->app->singleton(ContentService::class);
         $this->app->singleton(ContentNavigationService::class);
 
-        $this->app->bind(RecipientService::class, MailcoachRecipientService::class);
+        $this->app->bind(RecipientService::class, function () {
+            $listUuid = Config::get('marketing.main_list_uuid');
+
+            if (empty($listUuid) === true || app()->runningUnitTests()) {
+                return new NullRecipientService;
+            }
+
+            return new MailcoachRecipientService;
+        });
     }
 
     public function boot(): void

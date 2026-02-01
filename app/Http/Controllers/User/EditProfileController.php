@@ -6,6 +6,7 @@ use App\Actions\User\DeleteUserAction;
 use App\Http\Controllers\BaseController;
 use App\Http\Requests\Settings\ProfileDeleteRequest;
 use App\Http\Requests\Settings\ProfileUpdateRequest;
+use App\Services\User\ProfileService;
 use App\Services\User\UserAvatarService;
 use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Http\RedirectResponse;
@@ -16,6 +17,10 @@ use Inertia\Response;
 
 class EditProfileController extends BaseController
 {
+    public function __construct(
+        private ProfileService $profileService,
+    ) {}
+
     /**
      * Show the user's profile settings page.
      */
@@ -32,32 +37,42 @@ class EditProfileController extends BaseController
      */
     public function update(ProfileUpdateRequest $request): RedirectResponse
     {
-        $request->user()->fill($request->safe()->except(['avatar', 'remove_avatar', 'marketing_opt_out']));
+        $user = $request->user();
+        $data = $request->safe()->except(['avatar', 'remove_avatar', 'marketing_opt_out']);
 
-        if ($request->user()->isDirty('email')) {
-            $request->user()->email_verified_at = null;
+        // Convert boolean marketing_opt_out to timestamp
+        $data['marketing_opt_out_at'] = $this->resolveMarketingOptOutAt(request: $request);
+
+        // Check if email will change to reset verification
+        $emailWillChange = isset($data['email']) && $data['email'] !== $user->email;
+
+        $this->profileService->update(user: $user, data: $data);
+
+        if ($emailWillChange === true) {
+            $user->email_verified_at = null;
+            $user->save();
         }
-
-        $this->handleMarketingOptOut(request: $request);
-
-        $request->user()->save();
 
         $this->handleAvatar(request: $request);
 
         return to_route('user-area.profile.edit');
     }
 
-    private function handleMarketingOptOut(ProfileUpdateRequest $request): void
+    private function resolveMarketingOptOutAt(ProfileUpdateRequest $request): ?\Illuminate\Support\Carbon
     {
         $user = $request->user();
         $wantsOptOut = $request->boolean('marketing_opt_out');
         $isCurrentlyOptedOut = $user->marketing_opt_out_at !== null;
 
         if ($wantsOptOut === true && $isCurrentlyOptedOut === false) {
-            $user->marketing_opt_out_at = now();
-        } elseif ($wantsOptOut === false && $isCurrentlyOptedOut === true) {
-            $user->marketing_opt_out_at = null;
+            return now();
         }
+
+        if ($wantsOptOut === false && $isCurrentlyOptedOut === true) {
+            return null;
+        }
+
+        return $user->marketing_opt_out_at;
     }
 
     private function handleAvatar(ProfileUpdateRequest $request): void

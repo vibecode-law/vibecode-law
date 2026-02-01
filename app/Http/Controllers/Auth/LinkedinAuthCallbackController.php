@@ -53,8 +53,9 @@ class LinkedinAuthCallbackController extends BaseController
 
     private function findOrCreateUser(LinkedinUser $linkedinUser): FindOrCreateLinkedinUserResult
     {
-        return new FindOrCreateLinkedinUserService(
-            linkedinUser: $linkedinUser
+        return app()->makeWith(
+            abstract: FindOrCreateLinkedinUserService::class,
+            parameters: ['linkedinUser' => $linkedinUser],
         )->handle();
     }
 

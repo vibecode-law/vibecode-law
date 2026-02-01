@@ -49,6 +49,7 @@ class UserFactory extends Factory
             'team_role' => null,
             'team_order' => null,
             'marketing_opt_out_at' => null,
+            'external_subscriber_uuid' => null,
         ];
     }
 

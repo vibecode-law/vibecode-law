@@ -4,8 +4,10 @@ namespace App\Actions\Fortify;
 
 use App\Actions\Fortify\Concerns\PasswordValidationRules;
 use App\Models\User;
+use App\Services\User\ProfileService;
 use App\Services\User\UserAvatarService;
 use Illuminate\Http\UploadedFile;
+use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\Rule;
 use Laravel\Fortify\Contracts\CreatesNewUsers;
@@ -13,6 +15,10 @@ use Laravel\Fortify\Contracts\CreatesNewUsers;
 class CreateNewUser implements CreatesNewUsers
 {
     use PasswordValidationRules;
+
+    public function __construct(
+        private ProfileService $profileService,
+    ) {}
 
     /**
      * Validate and create a newly registered user.
@@ -45,7 +51,7 @@ class CreateNewUser implements CreatesNewUsers
             'avatar' => ['nullable', 'image', 'mimes:png,jpg,jpeg,gif,webp', 'max:2048'],
         ])->validate();
 
-        $user = User::create([
+        $user = $this->profileService->create(data: [
             'first_name' => $input['first_name'],
             'last_name' => $input['last_name'],
             'handle' => $input['handle'],
@@ -53,8 +59,11 @@ class CreateNewUser implements CreatesNewUsers
             'job_title' => $input['job_title'] ?? null,
             'linkedin_url' => $input['linkedin_url'] ?? null,
             'email' => $input['email'],
-            'password' => $input['password'],
         ]);
+
+        // Password is handled separately from profile data
+        $user->password = Hash::make($input['password']);
+        $user->save();
 
         if (isset($input['avatar']) && $input['avatar'] instanceof UploadedFile) {
             $service = new UserAvatarService(user: $user);

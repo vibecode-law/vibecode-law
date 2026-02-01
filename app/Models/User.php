@@ -50,6 +50,7 @@ class User extends Authenticatable implements MustVerifyEmail
         'team_role',
         'team_order',
         'marketing_opt_out_at',
+        'external_subscriber_uuid',
     ];
 
     /**
@@ -65,6 +66,7 @@ class User extends Authenticatable implements MustVerifyEmail
         'linkedin_id',
         'linkedin_token',
         'avatar_path',
+        'external_subscriber_uuid',
     ];
 
     /**

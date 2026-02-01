@@ -4,12 +4,14 @@ namespace App\Services\Auth\Linkedin;
 
 use App\Actions\User\GenerateUniqueUserHandleAction;
 use App\Models\User;
+use App\Services\User\ProfileService;
 use Laravel\Socialite\Two\User as LinkedinUser;
 
 class FindOrCreateLinkedinUserService
 {
     public function __construct(
         protected LinkedinUser $linkedinUser,
+        protected ProfileService $profileService,
         protected GenerateUniqueUserHandleAction $handleAction = new GenerateUniqueUserHandleAction,
     ) {}
 
@@ -71,19 +73,22 @@ class FindOrCreateLinkedinUserService
 
     protected function updateExistingUser(User $user, bool $linkProfiles): User
     {
-        User::unguard();
+        $this->profileService->update(
+            user: $user,
+            data: [
+                'first_name' => $this->linkedinUser->user['given_name'],
+                'last_name' => $this->linkedinUser->user['family_name'],
+                'email' => $this->linkedinUser->email,
+            ],
+        );
 
-        $user->fill(array_filter([
-            'first_name' => $this->linkedinUser->user['given_name'],
-            'last_name' => $this->linkedinUser->user['family_name'],
-            'email' => $this->linkedinUser->email,
-            'linkedin_token' => $this->linkedinUser->token,
-            'linkedin_id' => $linkProfiles ? $this->linkedinUser->id : null,
-        ]));
+        $user->linkedin_token = $this->linkedinUser->token;
+
+        if ($linkProfiles === true) {
+            $user->linkedin_id = $this->linkedinUser->id;
+        }
 
         $user->save();
-
-        User::reguard();
 
         return $user;
     }
@@ -101,10 +106,7 @@ class FindOrCreateLinkedinUserService
         $firstName = $this->linkedinUser->user['given_name'];
         $lastName = $this->linkedinUser->user['family_name'];
 
-        User::unguard();
-
-        $user = User::create([
-            'linkedin_id' => $this->linkedinUser->id,
+        $user = $this->profileService->create([
             'first_name' => $firstName,
             'last_name' => $lastName,
             'handle' => $this->handleAction->generate(
@@ -112,11 +114,12 @@ class FindOrCreateLinkedinUserService
                 lastName: $lastName,
             ),
             'email' => $this->linkedinUser->email,
-            'linkedin_token' => $this->linkedinUser->token,
-            'email_verified_at' => now(),
         ]);
 
-        User::reguard();
+        $user->linkedin_id = $this->linkedinUser->id;
+        $user->linkedin_token = $this->linkedinUser->token;
+        $user->email_verified_at = now();
+        $user->save();
 
         return FindOrCreateLinkedinUserResult::success(
             user: $user,
