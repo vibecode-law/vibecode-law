@@ -261,6 +261,7 @@ namespace App\Models\Showcase{
 
 namespace App\Models{
 /**
+ * @property \Illuminate\Support\Carbon|null $marketing_opt_out_at
  * @property int $id
  * @property string $first_name
  * @property string $last_name

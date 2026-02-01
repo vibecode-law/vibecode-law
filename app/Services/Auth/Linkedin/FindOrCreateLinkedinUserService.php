@@ -13,16 +13,13 @@ class FindOrCreateLinkedinUserService
         protected GenerateUniqueUserHandleAction $handleAction = new GenerateUniqueUserHandleAction,
     ) {}
 
-    /**
-     * @return User|string Returns an error message string on failure.
-     */
-    public function handle(): User|string
+    public function handle(): FindOrCreateLinkedinUserResult
     {
         return $this->findByLinkedinId()
             ?? $this->findOrCreateByEmail();
     }
 
-    protected function findByLinkedinId(): ?User
+    protected function findByLinkedinId(): ?FindOrCreateLinkedinUserResult
     {
         $user = User::query()
             ->where('linkedin_id', '=', $this->linkedinUser->id)
@@ -32,13 +29,16 @@ class FindOrCreateLinkedinUserService
             return null;
         }
 
-        return $this->updateExistingUser(
-            user: $user,
-            linkProfiles: false
+        return FindOrCreateLinkedinUserResult::success(
+            user: $this->updateExistingUser(
+                user: $user,
+                linkProfiles: false
+            ),
+            wasRecentlyCreated: false,
         );
     }
 
-    protected function findOrCreateByEmail(): User|string
+    protected function findOrCreateByEmail(): FindOrCreateLinkedinUserResult
     {
         $user = User::query()
             ->where('email', '=', $this->linkedinUser->email)
@@ -52,15 +52,20 @@ class FindOrCreateLinkedinUserService
             $linkedIsVerified = $this->linkedinUser->user['email_verified'] ?? false;
 
             if ($linkedIsVerified === false) {
-                return 'Your Linkedin account does not have a verified email address. Please verify it and try again.';
+                return FindOrCreateLinkedinUserResult::error(
+                    message: 'Your Linkedin account does not have a verified email address. Please verify it and try again.'
+                );
             }
 
             $user->email_verified_at = now();
         }
 
-        return $this->updateExistingUser(
-            user: $user,
-            linkProfiles: true
+        return FindOrCreateLinkedinUserResult::success(
+            user: $this->updateExistingUser(
+                user: $user,
+                linkProfiles: true
+            ),
+            wasRecentlyCreated: false,
         );
     }
 
@@ -83,12 +88,14 @@ class FindOrCreateLinkedinUserService
         return $user;
     }
 
-    protected function createNewUser(): User|string
+    protected function createNewUser(): FindOrCreateLinkedinUserResult
     {
         $linkedIsVerified = $this->linkedinUser->user['email_verified'] ?? false;
 
         if ($linkedIsVerified !== true) {
-            return 'Your LinkedIn email address has not been verified. Please verify your email on LinkedIn and try again.';
+            return FindOrCreateLinkedinUserResult::error(
+                message: 'Your LinkedIn email address has not been verified. Please verify your email on LinkedIn and try again.'
+            );
         }
 
         $firstName = $this->linkedinUser->user['given_name'];
@@ -111,6 +118,9 @@ class FindOrCreateLinkedinUserService
 
         User::reguard();
 
-        return $user;
+        return FindOrCreateLinkedinUserResult::success(
+            user: $user,
+            wasRecentlyCreated: true,
+        );
     }
 }

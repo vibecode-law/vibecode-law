@@ -139,6 +139,7 @@ describe('authenticated users', function () {
                     'bio' => $user->bio,
                     'email' => $user->email,
                     'email_verified_at' => $user->email_verified_at->toIso8601String(),
+                    'marketing_opt_out_at' => $user->marketing_opt_out_at,
                 ])
             );
     });

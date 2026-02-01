@@ -21,6 +21,8 @@ use Laravel\Fortify\TwoFactorAuthenticatable;
 use Spatie\Permission\Traits\HasRoles;
 
 /**
+ * @property \Illuminate\Support\Carbon|null $marketing_opt_out_at
+ *
  * @mixin IdeHelperUser
  */
 class User extends Authenticatable implements MustVerifyEmail
@@ -47,6 +49,7 @@ class User extends Authenticatable implements MustVerifyEmail
         'team_type',
         'team_role',
         'team_order',
+        'marketing_opt_out_at',
     ];
 
     /**
@@ -78,6 +81,7 @@ class User extends Authenticatable implements MustVerifyEmail
             'two_factor_confirmed_at' => 'datetime',
             'blocked_from_submissions_at' => 'datetime',
             'team_type' => TeamType::class,
+            'marketing_opt_out_at' => 'datetime',
         ];
     }
 
@@ -144,6 +148,11 @@ class User extends Authenticatable implements MustVerifyEmail
     public function isBlockedFromSubmissions(): bool
     {
         return $this->blocked_from_submissions_at !== null;
+    }
+
+    public function isSubscribedToMarketing(): bool
+    {
+        return $this->marketing_opt_out_at === null;
     }
 
     //

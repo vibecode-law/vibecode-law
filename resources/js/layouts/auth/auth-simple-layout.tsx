@@ -6,12 +6,14 @@ interface AuthLayoutProps {
     name?: string;
     title?: string;
     description?: string | React.ReactNode;
+    showLinkedinLogin?: boolean;
 }
 
 export default function AuthSimpleLayout({
     children,
     title,
     description,
+    showLinkedinLogin = true,
 }: PropsWithChildren<AuthLayoutProps>) {
     return (
         <div className="flex min-h-svh flex-col items-center justify-center gap-6 bg-background p-6 md:p-10">
@@ -29,20 +31,24 @@ export default function AuthSimpleLayout({
                             )}
                         </div>
                     </div>
-                    <div className="divide-y">
-                        <div className="pb-8 text-center">
-                            <a
-                                href={LinkedinAuthRedirectController.url()}
-                                className="inline-block cursor-pointer hover:brightness-90"
-                            >
-                                <img
-                                    src="/static/sign-in-with-linkedin.png"
-                                    alt="Login with Linkedin"
-                                />
-                            </a>
-                        </div>
+                    <div className={showLinkedinLogin ? 'divide-y' : ''}>
+                        {showLinkedinLogin && (
+                            <div className="pb-8 text-center">
+                                <a
+                                    href={LinkedinAuthRedirectController.url()}
+                                    className="inline-block cursor-pointer hover:brightness-90"
+                                >
+                                    <img
+                                        src="/static/sign-in-with-linkedin.png"
+                                        alt="Login with Linkedin"
+                                    />
+                                </a>
+                            </div>
+                        )}
 
-                        <div className="pt-8">{children}</div>
+                        <div className={showLinkedinLogin ? 'pt-8' : ''}>
+                            {children}
+                        </div>
                     </div>
                 </div>
             </div>

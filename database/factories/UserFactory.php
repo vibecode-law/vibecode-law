@@ -48,6 +48,7 @@ class UserFactory extends Factory
             'team_type' => null,
             'team_role' => null,
             'team_order' => null,
+            'marketing_opt_out_at' => null,
         ];
     }
 
@@ -124,6 +125,16 @@ class UserFactory extends Factory
             'team_type' => TeamType::Collaborator,
             'team_role' => $role ?? fake()->jobTitle(),
             'team_order' => $order,
+        ]);
+    }
+
+    /**
+     * Indicate that the user has opted out of marketing emails.
+     */
+    public function marketingOptedOut(): static
+    {
+        return $this->state(fn (array $attributes): array => [
+            'marketing_opt_out_at' => now(),
         ]);
     }
 }

@@ -32,17 +32,32 @@ class EditProfileController extends BaseController
      */
     public function update(ProfileUpdateRequest $request): RedirectResponse
     {
-        $request->user()->fill($request->safe()->except(['avatar', 'remove_avatar']));
+        $request->user()->fill($request->safe()->except(['avatar', 'remove_avatar', 'marketing_opt_out']));
 
         if ($request->user()->isDirty('email')) {
             $request->user()->email_verified_at = null;
         }
+
+        $this->handleMarketingOptOut(request: $request);
 
         $request->user()->save();
 
         $this->handleAvatar(request: $request);
 
         return to_route('user-area.profile.edit');
+    }
+
+    private function handleMarketingOptOut(ProfileUpdateRequest $request): void
+    {
+        $user = $request->user();
+        $wantsOptOut = $request->boolean('marketing_opt_out');
+        $isCurrentlyOptedOut = $user->marketing_opt_out_at !== null;
+
+        if ($wantsOptOut === true && $isCurrentlyOptedOut === false) {
+            $user->marketing_opt_out_at = now();
+        } elseif ($wantsOptOut === false && $isCurrentlyOptedOut === true) {
+            $user->marketing_opt_out_at = null;
+        }
     }
 
     private function handleAvatar(ProfileUpdateRequest $request): void

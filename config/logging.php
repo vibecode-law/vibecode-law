@@ -75,6 +75,7 @@ return [
 
         'showcaseUX' => [
             'driver' => env('SHOWCASE_UX_LOG_DRIVER', 'single'),
+            'path' => storage_path('logs/showcaseux.log'),
             'level' => 'info',
         ],
 

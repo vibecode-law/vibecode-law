@@ -1,4 +1,5 @@
-import AppLogoIcon from '@/components/logo/app-logo-icon';
+import LinkedinAuthRedirectController from '@/actions/App/Http/Controllers/Auth/LinkedinAuthRedirectController';
+import AppLogo from '@/components/logo/app-logo';
 import {
     Card,
     CardContent,
@@ -6,30 +7,25 @@ import {
     CardHeader,
     CardTitle,
 } from '@/components/ui/card';
-import { home } from '@/routes';
-import { Link } from '@inertiajs/react';
 import { type PropsWithChildren } from 'react';
+
+interface AuthLayoutProps {
+    name?: string;
+    title?: string;
+    description?: string | React.ReactNode;
+    showLinkedinLogin?: boolean;
+}
 
 export default function AuthCardLayout({
     children,
     title,
     description,
-}: PropsWithChildren<{
-    name?: string;
-    title?: string;
-    description?: string;
-}>) {
+    showLinkedinLogin = true,
+}: PropsWithChildren<AuthLayoutProps>) {
     return (
         <div className="flex min-h-svh flex-col items-center justify-center gap-6 bg-muted p-6 md:p-10">
             <div className="flex w-full max-w-md flex-col gap-6">
-                <Link
-                    href={home()}
-                    className="flex items-center gap-2 self-center font-medium"
-                >
-                    <div className="flex h-9 w-9 items-center justify-center">
-                        <AppLogoIcon className="size-9 fill-current text-black dark:text-white" />
-                    </div>
-                </Link>
+                <AppLogo className="mx-auto" />
 
                 <div className="flex flex-col gap-6">
                     <Card className="rounded-xl">
@@ -37,8 +33,30 @@ export default function AuthCardLayout({
                             <CardTitle className="text-xl">{title}</CardTitle>
                             <CardDescription>{description}</CardDescription>
                         </CardHeader>
-                        <CardContent className="px-10 py-8">
-                            {children}
+                        <CardContent className="px-10 pb-8">
+                            <div
+                                className={showLinkedinLogin ? 'divide-y' : ''}
+                            >
+                                {showLinkedinLogin && (
+                                    <div className="pb-8 text-center">
+                                        <a
+                                            href={LinkedinAuthRedirectController.url()}
+                                            className="inline-block cursor-pointer hover:brightness-90"
+                                        >
+                                            <img
+                                                src="/static/sign-in-with-linkedin.png"
+                                                alt="Login with Linkedin"
+                                            />
+                                        </a>
+                                    </div>
+                                )}
+
+                                <div
+                                    className={showLinkedinLogin ? 'pt-8' : ''}
+                                >
+                                    {children}
+                                </div>
+                            </div>
                         </CardContent>
                     </Card>
                 </div>

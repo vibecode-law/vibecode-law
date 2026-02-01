@@ -1,17 +1,22 @@
-import AuthLayoutTemplate from '@/layouts/auth/auth-simple-layout';
+import AuthLayoutTemplate from '@/layouts/auth/auth-card-layout';
 
 export default function AuthLayout({
     children,
     title,
     description,
-    ...props
+    showLinkedinLogin,
 }: {
     children: React.ReactNode;
     title: string;
     description?: string | React.ReactNode;
+    showLinkedinLogin?: boolean;
 }) {
     return (
-        <AuthLayoutTemplate title={title} description={description} {...props}>
+        <AuthLayoutTemplate
+            title={title}
+            description={description}
+            showLinkedinLogin={showLinkedinLogin}
+        >
             {children}
         </AuthLayoutTemplate>
     );

@@ -129,6 +129,7 @@ declare namespace App.Http.Resources.User {
         bio: string | null;
         email: string;
         email_verified_at: string | null;
+        marketing_opt_out_at: string | null;
     };
     export type UserResource = {
         id?: number;
