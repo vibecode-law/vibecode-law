@@ -8,6 +8,7 @@ use App\Models\User;
 use App\Services\User\ProfileService;
 use App\Services\User\UserAvatarService;
 use Illuminate\Http\RedirectResponse;
+use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Redirect;
 
 class UpdateController extends BaseController
@@ -28,7 +29,14 @@ class UpdateController extends BaseController
             'team_role',
             'team_order',
             'blocked_from_submissions_at',
+            'marketing_opt_out',
         ]);
+
+        if ($request->has('marketing_opt_out') === true) {
+            $profileData['marketing_opt_out_at'] = $request->boolean('marketing_opt_out') === true
+                ? Carbon::now()
+                : null;
+        }
 
         $this->profileService->update(user: $user, data: $profileData);
 

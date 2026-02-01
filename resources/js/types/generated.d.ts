@@ -111,6 +111,7 @@ declare namespace App.Http.Resources.User {
         email: string;
         is_admin: boolean;
         blocked_from_submissions_at: string | null;
+        marketing_opt_out_at: string | null;
         created_at: string;
         team_type: App.Enums.TeamType | null;
         team_role: string | null;

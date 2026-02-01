@@ -46,12 +46,12 @@ class EditProfileController extends BaseController
         // Check if email will change to reset verification
         $emailWillChange = isset($data['email']) && $data['email'] !== $user->email;
 
-        $this->profileService->update(user: $user, data: $data);
-
         if ($emailWillChange === true) {
             $user->email_verified_at = null;
             $user->save();
         }
+
+        $this->profileService->update(user: $user, data: $data);
 
         $this->handleAvatar(request: $request);
 

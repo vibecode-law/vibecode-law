@@ -261,6 +261,46 @@ describe('update', function () {
         expect($user->avatar_path)->toBeNull();
         Storage::disk('public')->assertMissing($avatarPath);
     });
+
+    test('opts user out of marketing', function () {
+        $admin = User::factory()->admin()->create();
+        $user = User::factory()->create(['marketing_opt_out_at' => null]);
+
+        actingAs($admin);
+
+        patch(route('staff.users.update', $user), [
+            'first_name' => $user->first_name,
+            'last_name' => $user->last_name,
+            'handle' => $user->handle,
+            'email' => $user->email,
+            'marketing_opt_out' => true,
+        ]);
+
+        $user->refresh();
+
+        expect($user->marketing_opt_out_at)->not->toBeNull();
+    });
+
+    test('opts user back into marketing', function () {
+        $admin = User::factory()->admin()->create();
+        $user = User::factory()->marketingOptedOut()->create();
+
+        expect($user->marketing_opt_out_at)->not->toBeNull();
+
+        actingAs($admin);
+
+        patch(route('staff.users.update', $user), [
+            'first_name' => $user->first_name,
+            'last_name' => $user->last_name,
+            'handle' => $user->handle,
+            'email' => $user->email,
+            'marketing_opt_out' => false,
+        ]);
+
+        $user->refresh();
+
+        expect($user->marketing_opt_out_at)->toBeNull();
+    });
 });
 
 describe('validation', function () {

@@ -106,19 +106,21 @@ class FindOrCreateLinkedinUserService
         $firstName = $this->linkedinUser->user['given_name'];
         $lastName = $this->linkedinUser->user['family_name'];
 
-        $user = $this->profileService->create([
-            'first_name' => $firstName,
-            'last_name' => $lastName,
-            'handle' => $this->handleAction->generate(
-                firstName: $firstName,
-                lastName: $lastName,
-            ),
-            'email' => $this->linkedinUser->email,
-        ]);
+        $user = $this->profileService->create(
+            data: [
+                'first_name' => $firstName,
+                'last_name' => $lastName,
+                'handle' => $this->handleAction->generate(
+                    firstName: $firstName,
+                    lastName: $lastName,
+                ),
+                'email' => $this->linkedinUser->email,
+            ],
+            emailVerified: true,
+        );
 
         $user->linkedin_id = $this->linkedinUser->id;
         $user->linkedin_token = $this->linkedinUser->token;
-        $user->email_verified_at = now();
         $user->save();
 
         return FindOrCreateLinkedinUserResult::success(

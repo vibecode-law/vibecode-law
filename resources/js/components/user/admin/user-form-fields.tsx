@@ -5,7 +5,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Separator } from '@/components/ui/separator';
 import { Textarea } from '@/components/ui/textarea';
-import { Shield, Users } from 'lucide-react';
+import { Mail, Shield, Users } from 'lucide-react';
 
 interface TeamType {
     value: number;
@@ -30,6 +30,7 @@ interface UserFormFieldsProps {
         team_role?: string | null;
         roles?: string[];
         avatar?: string | null;
+        marketing_opt_out?: boolean;
     };
     mode: 'create' | 'edit';
 }
@@ -307,6 +308,33 @@ export default function UserFormFields({
                     </div>
                 </>
             )}
+
+            <Separator />
+
+            <div className="space-y-4">
+                <div className="flex items-center gap-2">
+                    <Mail className="size-4 text-neutral-500" />
+                    <Label className="text-base font-medium">
+                        Marketing Preferences
+                    </Label>
+                </div>
+                <label className="flex cursor-pointer items-center gap-3 rounded-md border p-3 hover:bg-neutral-50 dark:border-neutral-800 dark:hover:bg-neutral-800/50">
+                    <Checkbox
+                        name="marketing_opt_out"
+                        value="1"
+                        defaultChecked={defaultValues?.marketing_opt_out}
+                        disabled={processing}
+                    />
+                    <div>
+                        <span className="font-medium">
+                            Opt out of marketing emails
+                        </span>
+                        <p className="text-sm text-neutral-500 dark:text-neutral-400">
+                            User will not receive marketing newsletters.
+                        </p>
+                    </div>
+                </label>
+            </div>
         </div>
     );
 }

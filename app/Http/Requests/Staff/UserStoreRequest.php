@@ -44,6 +44,7 @@ class UserStoreRequest extends FormRequest
             'roles' => ['nullable', 'array'],
             'roles.*' => ['string', Rule::exists('roles', 'name')],
             'avatar' => ['nullable', 'image', 'mimes:png,jpg,jpeg,gif,webp', 'max:2048'],
+            'marketing_opt_out' => ['nullable', 'boolean'],
         ];
     }
 

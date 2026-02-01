@@ -30,11 +30,17 @@ class ProfileService
     /**
      * @param  array<string, mixed>  $data
      */
-    public function create(array $data): User
+    public function create(array $data, bool $emailVerified = false): User
     {
-        $user = User::query()->create(
-            $this->filterProfileData(data: $data)
-        );
+        $user = new User;
+
+        $user->fill($this->filterProfileData(data: $data));
+
+        if ($emailVerified === true) {
+            $user->email_verified_at = now();
+        }
+
+        $user->save();
 
         $this->onEmailSet(user: $user);
 
@@ -98,6 +104,10 @@ class ProfileService
 
     protected function onEmailSet(User $user): void
     {
+        if ($user->hasVerifiedEmail() === false) {
+            return;
+        }
+
         if ($user->isSubscribedToMarketing() === false) {
             return;
         }
@@ -107,6 +117,10 @@ class ProfileService
 
     protected function onEmailChanged(User $user): void
     {
+        if ($user->hasVerifiedEmail() === false) {
+            return;
+        }
+
         UpdateExternalSubscriberJob::dispatch(user: $user);
     }
 
@@ -126,6 +140,10 @@ class ProfileService
         if ($user->external_subscriber_uuid !== null) {
             ResubscribeToMarketingJob::dispatch(user: $user);
 
+            return;
+        }
+
+        if ($user->hasVerifiedEmail() === false) {
             return;
         }
 

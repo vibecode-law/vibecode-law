@@ -128,6 +128,39 @@ describe('create', function () {
             'marketing_opt_out_at' => now(),
         ]);
     });
+
+    it('creates user without email verified by default', function () {
+        Queue::fake();
+
+        $service = new ProfileService;
+
+        $user = $service->create(data: [
+            'first_name' => 'Unverified',
+            'last_name' => 'User',
+            'handle' => 'unverified-user',
+            'email' => 'unverified@example.com',
+        ]);
+
+        expect($user->email_verified_at)->toBeNull();
+    });
+
+    it('creates user with email verified when emailVerified is true', function () {
+        Queue::fake();
+
+        $service = new ProfileService;
+
+        $user = $service->create(
+            data: [
+                'first_name' => 'Verified',
+                'last_name' => 'User',
+                'handle' => 'verified-user',
+                'email' => 'verified@example.com',
+            ],
+            emailVerified: true,
+        );
+
+        expect($user->email_verified_at)->not->toBeNull();
+    });
 });
 
 describe('update', function () {
@@ -281,131 +314,237 @@ describe('update', function () {
 });
 
 describe('job dispatching', function () {
-    it('dispatches CreateExternalSubscriberJob when user is created and subscribed to marketing', function () {
-        Queue::fake();
+    describe('with verified email', function () {
+        it('dispatches CreateExternalSubscriberJob when user is created and subscribed to marketing', function () {
+            Queue::fake();
 
-        $service = new ProfileService;
+            $service = new ProfileService;
 
-        $user = $service->create(data: [
-            'first_name' => 'Subscriber',
-            'last_name' => 'Test',
-            'handle' => 'subscriber-test',
-            'email' => 'subscriber@example.com',
-        ]);
+            $user = $service->create(
+                data: [
+                    'first_name' => 'Subscriber',
+                    'last_name' => 'Test',
+                    'handle' => 'subscriber-test',
+                    'email' => 'subscriber@example.com',
+                ],
+                emailVerified: true,
+            );
 
-        Queue::assertPushed(CreateExternalSubscriberJob::class, function (CreateExternalSubscriberJob $job) use ($user) {
-            return $job->user->is($user);
+            Queue::assertPushed(CreateExternalSubscriberJob::class, function (CreateExternalSubscriberJob $job) use ($user) {
+                return $job->user->is($user);
+            });
+        });
+
+        it('does not dispatch CreateExternalSubscriberJob when user opts out at creation', function () {
+            Queue::fake();
+
+            $service = new ProfileService;
+
+            $service->create(
+                data: [
+                    'first_name' => 'OptedOut',
+                    'last_name' => 'Test',
+                    'handle' => 'opted-out-no-subscriber',
+                    'email' => 'opted-out-no-subscriber@example.com',
+                    'marketing_opt_out_at' => now(),
+                ],
+                emailVerified: true,
+            );
+
+            Queue::assertNotPushed(CreateExternalSubscriberJob::class);
+        });
+
+        it('dispatches UpdateExternalSubscriberJob when user email changes', function () {
+            Queue::fake();
+
+            $user = User::factory()->create([
+                'email' => 'old-email@example.com',
+                'email_verified_at' => now(),
+                'external_subscriber_uuid' => '22222222-2222-2222-2222-222222222222',
+            ]);
+
+            $service = new ProfileService;
+
+            $service->update(user: $user, data: [
+                'email' => 'new-email@example.com',
+            ]);
+
+            Queue::assertPushed(UpdateExternalSubscriberJob::class, function (UpdateExternalSubscriberJob $job) use ($user) {
+                return $job->user->is($user);
+            });
+        });
+
+        it('dispatches UpdateExternalSubscriberJob even when user has no subscriber uuid', function () {
+            Queue::fake();
+
+            $user = User::factory()->create([
+                'email' => 'old-email@example.com',
+                'email_verified_at' => now(),
+                'external_subscriber_uuid' => null,
+            ]);
+
+            $service = new ProfileService;
+
+            $service->update(user: $user, data: [
+                'email' => 'new-email@example.com',
+            ]);
+
+            Queue::assertPushed(UpdateExternalSubscriberJob::class, function (UpdateExternalSubscriberJob $job) use ($user) {
+                return $job->user->is($user);
+            });
+        });
+
+        it('dispatches UnsubscribeFromMarketingJob when opting out', function () {
+            Queue::fake();
+
+            $user = User::factory()->create([
+                'email_verified_at' => now(),
+                'marketing_opt_out_at' => null,
+                'external_subscriber_uuid' => '33333333-3333-3333-3333-333333333333',
+            ]);
+
+            $service = new ProfileService;
+
+            $service->update(user: $user, data: [
+                'marketing_opt_out_at' => now(),
+            ]);
+
+            Queue::assertPushed(UnsubscribeFromMarketingJob::class, function (UnsubscribeFromMarketingJob $job) use ($user) {
+                return $job->user->is($user);
+            });
+        });
+
+        it('dispatches ResubscribeToMarketingJob when opting back in with existing subscriber', function () {
+            Queue::fake();
+
+            $user = User::factory()->create([
+                'email_verified_at' => now(),
+                'marketing_opt_out_at' => now(),
+                'external_subscriber_uuid' => '44444444-4444-4444-4444-444444444444',
+            ]);
+
+            $service = new ProfileService;
+
+            $service->update(user: $user, data: [
+                'marketing_opt_out_at' => null,
+            ]);
+
+            Queue::assertPushed(ResubscribeToMarketingJob::class, function (ResubscribeToMarketingJob $job) use ($user) {
+                return $job->user->is($user);
+            });
+        });
+
+        it('dispatches CreateExternalSubscriberJob when opting back in without existing subscriber', function () {
+            Queue::fake();
+
+            $user = User::factory()->create([
+                'email_verified_at' => now(),
+                'marketing_opt_out_at' => now(),
+                'external_subscriber_uuid' => null,
+            ]);
+
+            $service = new ProfileService;
+
+            $service->update(user: $user, data: [
+                'marketing_opt_out_at' => null,
+            ]);
+
+            Queue::assertPushed(CreateExternalSubscriberJob::class, function (CreateExternalSubscriberJob $job) use ($user) {
+                return $job->user->is($user);
+            });
         });
     });
 
-    it('does not dispatch CreateExternalSubscriberJob when user opts out at creation', function () {
-        Queue::fake();
+    describe('with unverified email', function () {
+        it('does not dispatch CreateExternalSubscriberJob when user is created', function () {
+            Queue::fake();
 
-        $service = new ProfileService;
+            $service = new ProfileService;
 
-        $service->create(data: [
-            'first_name' => 'OptedOut',
-            'last_name' => 'Test',
-            'handle' => 'opted-out-no-subscriber',
-            'email' => 'opted-out-no-subscriber@example.com',
-            'marketing_opt_out_at' => now(),
-        ]);
+            $service->create(data: [
+                'first_name' => 'Unverified',
+                'last_name' => 'Test',
+                'handle' => 'unverified-subscriber',
+                'email' => 'unverified-subscriber@example.com',
+            ]);
 
-        Queue::assertNotPushed(CreateExternalSubscriberJob::class);
-    });
-
-    it('dispatches UpdateExternalSubscriberJob when user email changes', function () {
-        Queue::fake();
-
-        $user = User::factory()->create([
-            'email' => 'old-email@example.com',
-            'external_subscriber_uuid' => '22222222-2222-2222-2222-222222222222',
-        ]);
-
-        $service = new ProfileService;
-
-        $service->update(user: $user, data: [
-            'email' => 'new-email@example.com',
-        ]);
-
-        Queue::assertPushed(UpdateExternalSubscriberJob::class, function (UpdateExternalSubscriberJob $job) use ($user) {
-            return $job->user->is($user);
+            Queue::assertNotPushed(CreateExternalSubscriberJob::class);
         });
-    });
 
-    it('dispatches UpdateExternalSubscriberJob even when user has no subscriber uuid', function () {
-        Queue::fake();
+        it('does not dispatch UpdateExternalSubscriberJob when email changes', function () {
+            Queue::fake();
 
-        $user = User::factory()->create([
-            'email' => 'old-email@example.com',
-            'external_subscriber_uuid' => null,
-        ]);
+            $user = User::factory()->create([
+                'email' => 'old-email@example.com',
+                'email_verified_at' => null,
+                'external_subscriber_uuid' => '22222222-2222-2222-2222-222222222222',
+            ]);
 
-        $service = new ProfileService;
+            $service = new ProfileService;
 
-        $service->update(user: $user, data: [
-            'email' => 'new-email@example.com',
-        ]);
+            $service->update(user: $user, data: [
+                'email' => 'new-email@example.com',
+            ]);
 
-        Queue::assertPushed(UpdateExternalSubscriberJob::class, function (UpdateExternalSubscriberJob $job) use ($user) {
-            return $job->user->is($user);
+            Queue::assertNotPushed(UpdateExternalSubscriberJob::class);
         });
-    });
 
-    it('dispatches UnsubscribeFromMarketingJob when opting out', function () {
-        Queue::fake();
+        it('still dispatches UnsubscribeFromMarketingJob when opting out', function () {
+            Queue::fake();
 
-        $user = User::factory()->create([
-            'marketing_opt_out_at' => null,
-            'external_subscriber_uuid' => '33333333-3333-3333-3333-333333333333',
-        ]);
+            $user = User::factory()->create([
+                'email_verified_at' => null,
+                'marketing_opt_out_at' => null,
+                'external_subscriber_uuid' => '33333333-3333-3333-3333-333333333333',
+            ]);
 
-        $service = new ProfileService;
+            $service = new ProfileService;
 
-        $service->update(user: $user, data: [
-            'marketing_opt_out_at' => now(),
-        ]);
+            $service->update(user: $user, data: [
+                'marketing_opt_out_at' => now(),
+            ]);
 
-        Queue::assertPushed(UnsubscribeFromMarketingJob::class, function (UnsubscribeFromMarketingJob $job) use ($user) {
-            return $job->user->is($user);
+            Queue::assertPushed(UnsubscribeFromMarketingJob::class, function (UnsubscribeFromMarketingJob $job) use ($user) {
+                return $job->user->is($user);
+            });
         });
-    });
 
-    it('dispatches ResubscribeToMarketingJob when opting back in with existing subscriber', function () {
-        Queue::fake();
+        it('still dispatches ResubscribeToMarketingJob when opting back in', function () {
+            Queue::fake();
 
-        $user = User::factory()->create([
-            'marketing_opt_out_at' => now(),
-            'external_subscriber_uuid' => '44444444-4444-4444-4444-444444444444',
-        ]);
+            $user = User::factory()->create([
+                'email_verified_at' => null,
+                'marketing_opt_out_at' => now(),
+                'external_subscriber_uuid' => '44444444-4444-4444-4444-444444444444',
+            ]);
 
-        $service = new ProfileService;
+            $service = new ProfileService;
 
-        $service->update(user: $user, data: [
-            'marketing_opt_out_at' => null,
-        ]);
+            $service->update(user: $user, data: [
+                'marketing_opt_out_at' => null,
+            ]);
 
-        Queue::assertPushed(ResubscribeToMarketingJob::class, function (ResubscribeToMarketingJob $job) use ($user) {
-            return $job->user->is($user);
+            Queue::assertPushed(ResubscribeToMarketingJob::class, function (ResubscribeToMarketingJob $job) use ($user) {
+                return $job->user->is($user);
+            });
         });
-    });
 
-    it('dispatches CreateExternalSubscriberJob when opting back in without existing subscriber', function () {
-        Queue::fake();
+        it('does not dispatch CreateExternalSubscriberJob when opting back in without existing subscriber', function () {
+            Queue::fake();
 
-        $user = User::factory()->create([
-            'marketing_opt_out_at' => now(),
-            'external_subscriber_uuid' => null,
-        ]);
+            $user = User::factory()->create([
+                'email_verified_at' => null,
+                'marketing_opt_out_at' => now(),
+                'external_subscriber_uuid' => null,
+            ]);
 
-        $service = new ProfileService;
+            $service = new ProfileService;
 
-        $service->update(user: $user, data: [
-            'marketing_opt_out_at' => null,
-        ]);
+            $service->update(user: $user, data: [
+                'marketing_opt_out_at' => null,
+            ]);
 
-        Queue::assertPushed(CreateExternalSubscriberJob::class, function (CreateExternalSubscriberJob $job) use ($user) {
-            return $job->user->is($user);
+            Queue::assertNotPushed(CreateExternalSubscriberJob::class);
         });
     });
 });

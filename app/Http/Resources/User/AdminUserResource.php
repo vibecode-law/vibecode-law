@@ -36,6 +36,8 @@ class AdminUserResource extends Resource
 
     public ?Carbon $blocked_from_submissions_at;
 
+    public ?Carbon $marketing_opt_out_at;
+
     public Carbon $created_at;
 
     public ?TeamType $team_type;
@@ -62,6 +64,7 @@ class AdminUserResource extends Resource
             'email' => $user->email,
             'is_admin' => $user->is_admin,
             'blocked_from_submissions_at' => $user->blocked_from_submissions_at,
+            'marketing_opt_out_at' => $user->marketing_opt_out_at,
             'created_at' => $user->created_at,
             'team_type' => $user->team_type,
             'team_role' => $user->team_role,
