@@ -1,23 +1,18 @@
 <?php
 
+use App\Jobs\MarketingEmail\CreateExternalSubscriberJob;
+use App\Jobs\MarketingEmail\ResubscribeToMarketingJob;
+use App\Jobs\MarketingEmail\UnsubscribeFromMarketingJob;
+use App\Jobs\MarketingEmail\UpdateExternalSubscriberJob;
 use App\Models\User;
-use App\Services\MarketingEmail\Recipients\Contracts\RecipientService;
 use App\Services\User\ProfileService;
-
-function mockRecipientService(): RecipientService
-{
-    $mock = Mockery::mock(RecipientService::class);
-    $mock->shouldReceive('createRecipient')->andReturn('00000000-0000-0000-0000-000000000001');
-    $mock->shouldReceive('updateRecipient');
-    $mock->shouldReceive('unsubscribeRecipient');
-    $mock->shouldReceive('resubscribeRecipient');
-
-    return $mock;
-}
+use Illuminate\Support\Facades\Queue;
 
 describe('create', function () {
     it('creates a user with profile data', function () {
-        $service = new ProfileService(recipientService: mockRecipientService());
+        Queue::fake();
+
+        $service = new ProfileService;
 
         $user = $service->create(data: [
             'first_name' => 'John',
@@ -42,7 +37,9 @@ describe('create', function () {
     });
 
     it('filters out non-profile fields', function () {
-        $service = new ProfileService(recipientService: mockRecipientService());
+        Queue::fake();
+
+        $service = new ProfileService;
 
         $user = $service->create(data: [
             'first_name' => 'John',
@@ -60,7 +57,9 @@ describe('create', function () {
     });
 
     it('creates user with marketing opt-out when set', function () {
-        $service = new ProfileService(recipientService: mockRecipientService());
+        Queue::fake();
+
+        $service = new ProfileService;
 
         $user = $service->create(data: [
             'first_name' => 'John',
@@ -75,7 +74,9 @@ describe('create', function () {
     });
 
     it('creates user subscribed to marketing by default', function () {
-        $service = new ProfileService(recipientService: mockRecipientService());
+        Queue::fake();
+
+        $service = new ProfileService;
 
         $user = $service->create(data: [
             'first_name' => 'John',
@@ -89,8 +90,10 @@ describe('create', function () {
     });
 
     it('calls onEmailSet hook when user is created', function () {
+        Queue::fake();
+
         /** @var ProfileService&\Mockery\MockInterface $service */
-        $service = Mockery::mock(ProfileService::class, [mockRecipientService()])
+        $service = Mockery::mock(ProfileService::class)
             ->makePartial()
             ->shouldAllowMockingProtectedMethods();
 
@@ -107,8 +110,10 @@ describe('create', function () {
     });
 
     it('does not call onMarketingPreferenceSet hook when user opted out', function () {
+        Queue::fake();
+
         /** @var ProfileService&\Mockery\MockInterface $service */
-        $service = Mockery::mock(ProfileService::class, [mockRecipientService()])
+        $service = Mockery::mock(ProfileService::class)
             ->makePartial()
             ->shouldAllowMockingProtectedMethods();
 
@@ -127,12 +132,14 @@ describe('create', function () {
 
 describe('update', function () {
     it('updates user profile data', function () {
+        Queue::fake();
+
         $user = User::factory()->create([
             'first_name' => 'John',
             'last_name' => 'Doe',
         ]);
 
-        $service = new ProfileService(recipientService: mockRecipientService());
+        $service = new ProfileService;
         $updatedUser = $service->update(user: $user, data: [
             'first_name' => 'Jane',
             'organisation' => 'New Company',
@@ -144,9 +151,11 @@ describe('update', function () {
     });
 
     it('filters out non-profile fields during update', function () {
+        Queue::fake();
+
         $user = User::factory()->create();
 
-        $service = new ProfileService(recipientService: mockRecipientService());
+        $service = new ProfileService;
         $service->update(user: $user, data: [
             'first_name' => 'Updated',
             'password' => 'should-not-change',
@@ -160,12 +169,14 @@ describe('update', function () {
     });
 
     it('calls onEmailChanged hook when email changes', function () {
+        Queue::fake();
+
         $user = User::factory()->create([
             'email' => 'old@example.com',
         ]);
 
         /** @var ProfileService&\Mockery\MockInterface $service */
-        $service = Mockery::mock(ProfileService::class, [mockRecipientService()])
+        $service = Mockery::mock(ProfileService::class)
             ->makePartial()
             ->shouldAllowMockingProtectedMethods();
 
@@ -181,12 +192,14 @@ describe('update', function () {
     });
 
     it('does not call onEmailChanged hook when email stays the same', function () {
+        Queue::fake();
+
         $user = User::factory()->create([
             'email' => 'same@example.com',
         ]);
 
         /** @var ProfileService&\Mockery\MockInterface $service */
-        $service = Mockery::mock(ProfileService::class, [mockRecipientService()])
+        $service = Mockery::mock(ProfileService::class)
             ->makePartial()
             ->shouldAllowMockingProtectedMethods();
 
@@ -199,12 +212,14 @@ describe('update', function () {
     });
 
     it('calls onMarketingPreferenceChanged hook when opting out', function () {
+        Queue::fake();
+
         $user = User::factory()->create([
             'marketing_opt_out_at' => null,
         ]);
 
         /** @var ProfileService&\Mockery\MockInterface $service */
-        $service = Mockery::mock(ProfileService::class, [mockRecipientService()])
+        $service = Mockery::mock(ProfileService::class)
             ->makePartial()
             ->shouldAllowMockingProtectedMethods();
 
@@ -220,12 +235,14 @@ describe('update', function () {
     });
 
     it('calls onMarketingPreferenceChanged hook when opting back in', function () {
+        Queue::fake();
+
         $user = User::factory()->create([
             'marketing_opt_out_at' => now(),
         ]);
 
         /** @var ProfileService&\Mockery\MockInterface $service */
-        $service = Mockery::mock(ProfileService::class, [mockRecipientService()])
+        $service = Mockery::mock(ProfileService::class)
             ->makePartial()
             ->shouldAllowMockingProtectedMethods();
 
@@ -241,13 +258,15 @@ describe('update', function () {
     });
 
     it('does not call onMarketingPreferenceChanged when preference unchanged', function () {
+        Queue::fake();
+
         $optOutTime = now()->subDay();
         $user = User::factory()->create([
             'marketing_opt_out_at' => $optOutTime,
         ]);
 
         /** @var ProfileService&\Mockery\MockInterface $service */
-        $service = Mockery::mock(ProfileService::class, [mockRecipientService()])
+        $service = Mockery::mock(ProfileService::class)
             ->makePartial()
             ->shouldAllowMockingProtectedMethods();
 
@@ -261,16 +280,11 @@ describe('update', function () {
     });
 });
 
-describe('recipient service integration', function () {
-    it('creates subscriber when user is created and subscribed to marketing', function () {
-        $subscriberUuid = '11111111-1111-1111-1111-111111111111';
+describe('job dispatching', function () {
+    it('dispatches CreateExternalSubscriberJob when user is created and subscribed to marketing', function () {
+        Queue::fake();
 
-        $recipientService = Mockery::mock(RecipientService::class);
-        $recipientService->shouldReceive('createRecipient')
-            ->once()
-            ->andReturn($subscriberUuid);
-
-        $service = new ProfileService(recipientService: $recipientService);
+        $service = new ProfileService;
 
         $user = $service->create(data: [
             'first_name' => 'Subscriber',
@@ -279,16 +293,17 @@ describe('recipient service integration', function () {
             'email' => 'subscriber@example.com',
         ]);
 
-        expect($user->external_subscriber_uuid)->toBe($subscriberUuid);
+        Queue::assertPushed(CreateExternalSubscriberJob::class, function (CreateExternalSubscriberJob $job) use ($user) {
+            return $job->user->is($user);
+        });
     });
 
-    it('does not create subscriber when user opts out at creation', function () {
-        $recipientService = Mockery::mock(RecipientService::class);
-        $recipientService->shouldNotReceive('createRecipient');
+    it('does not dispatch CreateExternalSubscriberJob when user opts out at creation', function () {
+        Queue::fake();
 
-        $service = new ProfileService(recipientService: $recipientService);
+        $service = new ProfileService;
 
-        $user = $service->create(data: [
+        $service->create(data: [
             'first_name' => 'OptedOut',
             'last_name' => 'Test',
             'handle' => 'opted-out-no-subscriber',
@@ -296,104 +311,101 @@ describe('recipient service integration', function () {
             'marketing_opt_out_at' => now(),
         ]);
 
-        expect($user->external_subscriber_uuid)->toBeNull();
+        Queue::assertNotPushed(CreateExternalSubscriberJob::class);
     });
 
-    it('updates subscriber email when user email changes', function () {
-        $existingUuid = '22222222-2222-2222-2222-222222222222';
+    it('dispatches UpdateExternalSubscriberJob when user email changes', function () {
+        Queue::fake();
 
         $user = User::factory()->create([
             'email' => 'old-email@example.com',
-            'external_subscriber_uuid' => $existingUuid,
+            'external_subscriber_uuid' => '22222222-2222-2222-2222-222222222222',
         ]);
 
-        $recipientService = Mockery::mock(RecipientService::class);
-        $recipientService->shouldReceive('updateRecipient')
-            ->once()
-            ->withArgs(fn (string $externalId, $data) => $externalId === $existingUuid && $data->email === 'new-email@example.com');
-
-        $service = new ProfileService(recipientService: $recipientService);
+        $service = new ProfileService;
 
         $service->update(user: $user, data: [
             'email' => 'new-email@example.com',
         ]);
+
+        Queue::assertPushed(UpdateExternalSubscriberJob::class, function (UpdateExternalSubscriberJob $job) use ($user) {
+            return $job->user->is($user);
+        });
     });
 
-    it('does not update subscriber email when user has no subscriber uuid', function () {
+    it('dispatches UpdateExternalSubscriberJob even when user has no subscriber uuid', function () {
+        Queue::fake();
+
         $user = User::factory()->create([
             'email' => 'old-email@example.com',
             'external_subscriber_uuid' => null,
         ]);
 
-        $recipientService = Mockery::mock(RecipientService::class);
-        $recipientService->shouldNotReceive('updateRecipient');
-
-        $service = new ProfileService(recipientService: $recipientService);
+        $service = new ProfileService;
 
         $service->update(user: $user, data: [
             'email' => 'new-email@example.com',
         ]);
+
+        Queue::assertPushed(UpdateExternalSubscriberJob::class, function (UpdateExternalSubscriberJob $job) use ($user) {
+            return $job->user->is($user);
+        });
     });
 
-    it('unsubscribes user when opting out', function () {
-        $existingUuid = '33333333-3333-3333-3333-333333333333';
+    it('dispatches UnsubscribeFromMarketingJob when opting out', function () {
+        Queue::fake();
 
         $user = User::factory()->create([
             'marketing_opt_out_at' => null,
-            'external_subscriber_uuid' => $existingUuid,
+            'external_subscriber_uuid' => '33333333-3333-3333-3333-333333333333',
         ]);
 
-        $recipientService = Mockery::mock(RecipientService::class);
-        $recipientService->shouldReceive('unsubscribeRecipient')
-            ->once()
-            ->with($existingUuid);
-
-        $service = new ProfileService(recipientService: $recipientService);
+        $service = new ProfileService;
 
         $service->update(user: $user, data: [
             'marketing_opt_out_at' => now(),
         ]);
+
+        Queue::assertPushed(UnsubscribeFromMarketingJob::class, function (UnsubscribeFromMarketingJob $job) use ($user) {
+            return $job->user->is($user);
+        });
     });
 
-    it('resubscribes user when opting back in with existing subscriber', function () {
-        $existingUuid = '44444444-4444-4444-4444-444444444444';
+    it('dispatches ResubscribeToMarketingJob when opting back in with existing subscriber', function () {
+        Queue::fake();
 
         $user = User::factory()->create([
             'marketing_opt_out_at' => now(),
-            'external_subscriber_uuid' => $existingUuid,
+            'external_subscriber_uuid' => '44444444-4444-4444-4444-444444444444',
         ]);
 
-        $recipientService = Mockery::mock(RecipientService::class);
-        $recipientService->shouldReceive('resubscribeRecipient')
-            ->once()
-            ->with($existingUuid);
-
-        $service = new ProfileService(recipientService: $recipientService);
+        $service = new ProfileService;
 
         $service->update(user: $user, data: [
             'marketing_opt_out_at' => null,
         ]);
+
+        Queue::assertPushed(ResubscribeToMarketingJob::class, function (ResubscribeToMarketingJob $job) use ($user) {
+            return $job->user->is($user);
+        });
     });
 
-    it('creates subscriber when opting back in without existing subscriber', function () {
-        $newSubscriberUuid = '55555555-5555-5555-5555-555555555555';
+    it('dispatches CreateExternalSubscriberJob when opting back in without existing subscriber', function () {
+        Queue::fake();
 
         $user = User::factory()->create([
             'marketing_opt_out_at' => now(),
             'external_subscriber_uuid' => null,
         ]);
 
-        $recipientService = Mockery::mock(RecipientService::class);
-        $recipientService->shouldReceive('createRecipient')
-            ->once()
-            ->andReturn($newSubscriberUuid);
-
-        $service = new ProfileService(recipientService: $recipientService);
+        $service = new ProfileService;
 
         $service->update(user: $user, data: [
             'marketing_opt_out_at' => null,
         ]);
 
-        expect($user->external_subscriber_uuid)->toBe($newSubscriberUuid);
+        Queue::assertPushed(CreateExternalSubscriberJob::class, function (CreateExternalSubscriberJob $job) use ($user) {
+            return $job->user->is($user);
+        });
     });
 });

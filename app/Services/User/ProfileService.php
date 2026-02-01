@@ -2,11 +2,11 @@
 
 namespace App\Services\User;
 
+use App\Jobs\MarketingEmail\CreateExternalSubscriberJob;
+use App\Jobs\MarketingEmail\ResubscribeToMarketingJob;
+use App\Jobs\MarketingEmail\UnsubscribeFromMarketingJob;
+use App\Jobs\MarketingEmail\UpdateExternalSubscriberJob;
 use App\Models\User;
-use App\Services\MarketingEmail\Recipients\Contracts\RecipientService;
-use App\Services\MarketingEmail\Recipients\ValueObjects\CreateRecipientData;
-use App\Services\MarketingEmail\Recipients\ValueObjects\UpdateRecipientData;
-use Illuminate\Support\Facades\Config;
 
 class ProfileService
 {
@@ -26,10 +26,6 @@ class ProfileService
         'email',
         'marketing_opt_out_at',
     ];
-
-    public function __construct(
-        private RecipientService $recipientService,
-    ) {}
 
     /**
      * @param  array<string, mixed>  $data
@@ -100,38 +96,24 @@ class ProfileService
         );
     }
 
-    private function getListId(): string
-    {
-        return Config::get('marketing.main_list_uuid');
-    }
-
     protected function onEmailSet(User $user): void
     {
         if ($user->isSubscribedToMarketing() === false) {
             return;
         }
 
-        $this->createExternalSubscriber(user: $user);
+        CreateExternalSubscriberJob::dispatch(user: $user);
     }
 
     protected function onEmailChanged(User $user): void
     {
-        if ($user->external_subscriber_uuid === null) {
-            return;
-        }
-
-        $this->recipientService->updateRecipient(
-            externalId: $user->external_subscriber_uuid,
-            data: new UpdateRecipientData(
-                email: $user->email,
-            ),
-        );
+        UpdateExternalSubscriberJob::dispatch(user: $user);
     }
 
     protected function onMarketingPreferenceChanged(User $user, bool $wasSubscribed): void
     {
         if ($wasSubscribed === true) {
-            $this->unsubscribeFromMarketing(user: $user);
+            UnsubscribeFromMarketingJob::dispatch(user: $user);
 
             return;
         }
@@ -139,42 +121,14 @@ class ProfileService
         $this->subscribeToMarketing(user: $user);
     }
 
-    private function unsubscribeFromMarketing(User $user): void
-    {
-        if ($user->external_subscriber_uuid === null) {
-            return;
-        }
-
-        $this->recipientService->unsubscribeRecipient(
-            externalId: $user->external_subscriber_uuid,
-        );
-    }
-
     private function subscribeToMarketing(User $user): void
     {
         if ($user->external_subscriber_uuid !== null) {
-            $this->recipientService->resubscribeRecipient(
-                externalId: $user->external_subscriber_uuid,
-            );
+            ResubscribeToMarketingJob::dispatch(user: $user);
 
             return;
         }
 
-        $this->createExternalSubscriber(user: $user);
-    }
-
-    private function createExternalSubscriber(User $user): void
-    {
-        $subscriberUuid = $this->recipientService->createRecipient(
-            data: new CreateRecipientData(
-                email: $user->email,
-                listId: $this->getListId(),
-                firstName: $user->first_name,
-                lastName: $user->last_name,
-            ),
-        );
-
-        $user->external_subscriber_uuid = $subscriberUuid;
-        $user->save();
+        CreateExternalSubscriberJob::dispatch(user: $user);
     }
 }
