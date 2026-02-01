@@ -13,6 +13,7 @@ use App\Services\MarketingEmail\Recipients\Contracts\RecipientService;
 use App\Services\MarketingEmail\Recipients\MailcoachRecipientService;
 use App\Services\MarketingEmail\Recipients\NullRecipientService;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Foundation\AliasLoader;
 use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\ServiceProvider;
@@ -21,6 +22,12 @@ class AppServiceProvider extends ServiceProvider
 {
     public function register(): void
     {
+        // Fix incorrect alias from spatie/laravel-mailcoach-sdk package
+        AliasLoader::getInstance()->alias(
+            alias: 'Mailcoach',
+            class: \Spatie\MailcoachSdk\Facades\Mailcoach::class,
+        );
+
         $this->app->singleton(MarkdownService::class);
         $this->app->singleton(ContentService::class);
         $this->app->singleton(ContentNavigationService::class);
