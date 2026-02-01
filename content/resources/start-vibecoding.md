@@ -1,5 +1,15 @@
 # Start Vibecoding
 
+This page is intended to help you take your first steps in vibecoding.
+
+We'll be adding more detailed resources and video learning courses over the coming months, but for now, we hope this helps you get started!
+
+## From idea to demo app in three minutes
+
+To give you a sense of just how easy it is to get started, watch this video to see us go from idea to demo app in just three minutes.
+
+<iframe src="https://www.youtube-nocookie.com/embed/wjVqVIz-6FU" title="From idea to demo app in three minutes!" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen class="aspect-video w-full"></iframe>
+
 ## Choosing Your Platform
 
 The vibecoding landscape evolves rapidly. This guide compares the major platforms as of January 2026, focusing on what matters for legal tech builders. These are based on our own experiences as vibecoders and your experiences may differ. Do your own due diligence.

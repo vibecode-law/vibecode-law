@@ -98,7 +98,7 @@ class MarkdownService
     private function createFullConverter(): MarkdownConverter
     {
         $environment = new Environment([
-            'html_input' => 'strip',
+            'html_input' => 'allow',
             'allow_unsafe_links' => false,
             'heading_permalink' => [
                 'min_heading_level' => 2,
@@ -106,6 +106,9 @@ class MarkdownService
                 'insert' => 'none',
                 'apply_id_to_heading' => true,
                 'id_prefix' => '',
+            ],
+            'disallowed_raw_html' => [
+                'disallowed_tags' => ['title', 'textarea', 'style', 'xmp', 'noembed', 'noframes', 'script', 'plaintext'],
             ],
         ]);
 

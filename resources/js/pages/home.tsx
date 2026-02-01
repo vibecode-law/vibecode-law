@@ -1,4 +1,5 @@
 import HomeController from '@/actions/App/Http/Controllers/HomeController';
+import ResourcesShowController from '@/actions/App/Http/Controllers/Resources/ResourcesShowController';
 import HowItWorksController from '@/actions/App/Http/Controllers/Showcase/Help/HowItWorksController';
 import ShowcaseCreateController from '@/actions/App/Http/Controllers/Showcase/ManageShowcase/ShowcaseCreateController';
 import { ProjectItem } from '@/components/showcase/showcase-item';
@@ -8,7 +9,7 @@ import { Button } from '@/components/ui/button';
 import PublicLayout from '@/layouts/public-layout';
 import { type SharedData } from '@/types';
 import { Head, Link, usePage } from '@inertiajs/react';
-import { Megaphone } from 'lucide-react';
+import { Megaphone, PlayCircle } from 'lucide-react';
 
 interface HomeProps {
     showcasesByMonth?: Record<
@@ -96,6 +97,18 @@ export default function Home({
                                 </Link>
                             </Button>
                         </div>
+                        <p className="mt-4 flex items-center justify-center gap-2 text-neutral-600 dark:text-neutral-400">
+                            <PlayCircle className="size-5" />
+                            New to building?{' '}
+                            <Link
+                                href={ResourcesShowController.url(
+                                    'start-vibecoding',
+                                )}
+                                className="font-bold underline underline-offset-4 transition-colors hover:text-neutral-900 dark:hover:text-white"
+                            >
+                                Make a demo app in three minutes.
+                            </Link>
+                        </p>
                     </div>
                 </div>
             </section>
