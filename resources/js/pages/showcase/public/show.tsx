@@ -11,6 +11,7 @@ import { type BreadcrumbItem } from '@/components/navigation/breadcrumbs';
 import { ApprovalCelebrationModal } from '@/components/showcase/approval-celebration-modal';
 import { ApproveShowcaseButton } from '@/components/showcase/approve-showcase-button';
 import { RejectShowcaseModal } from '@/components/showcase/reject-showcase-modal';
+import { RichTextContent } from '@/components/showcase/rich-text-content';
 import { CreatorSection } from '@/components/showcase/show/creator-section';
 import { ShowcaseBadges } from '@/components/showcase/show/showcase-badges';
 import { ShowcaseGallery } from '@/components/showcase/show/showcase-gallery';
@@ -331,11 +332,9 @@ export default function PublicShow({
                                 <h2 className="mb-4 text-xl font-semibold text-neutral-900 dark:text-white">
                                     About the Project
                                 </h2>
-                                <div
+                                <RichTextContent
+                                    html={showcase.description_html ?? ''}
                                     className="rich-text-content"
-                                    dangerouslySetInnerHTML={{
-                                        __html: showcase.description_html ?? '',
-                                    }}
                                 />
                             </section>
 
@@ -374,11 +373,9 @@ export default function PublicShow({
                                         <h2 className="mb-4 text-xl font-semibold text-neutral-900 dark:text-white">
                                             Key Features
                                         </h2>
-                                        <div
+                                        <RichTextContent
+                                            html={showcase.key_features_html}
                                             className="rich-text-content"
-                                            dangerouslySetInnerHTML={{
-                                                __html: showcase.key_features_html,
-                                            }}
                                         />
                                     </section>
                                 )}
@@ -390,11 +387,9 @@ export default function PublicShow({
                                         <h2 className="mb-4 text-xl font-semibold text-neutral-900 dark:text-white">
                                             Help Needed
                                         </h2>
-                                        <div
+                                        <RichTextContent
+                                            html={showcase.help_needed_html}
                                             className="rich-text-content"
-                                            dangerouslySetInnerHTML={{
-                                                __html: showcase.help_needed_html,
-                                            }}
                                         />
                                     </section>
                                 )}

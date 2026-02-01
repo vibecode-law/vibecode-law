@@ -7,11 +7,15 @@ use League\CommonMark\Extension\CommonMark\Delimiter\Processor\EmphasisDelimiter
 use League\CommonMark\Extension\CommonMark\Node\Block\ListBlock;
 use League\CommonMark\Extension\CommonMark\Node\Block\ListItem;
 use League\CommonMark\Extension\CommonMark\Node\Inline\Emphasis;
+use League\CommonMark\Extension\CommonMark\Node\Inline\Link;
 use League\CommonMark\Extension\CommonMark\Node\Inline\Strong;
 use League\CommonMark\Extension\CommonMark\Parser\Block\ListBlockStartParser;
+use League\CommonMark\Extension\CommonMark\Parser\Inline\CloseBracketParser;
+use League\CommonMark\Extension\CommonMark\Parser\Inline\OpenBracketParser;
 use League\CommonMark\Extension\CommonMark\Renderer\Block\ListBlockRenderer;
 use League\CommonMark\Extension\CommonMark\Renderer\Block\ListItemRenderer;
 use League\CommonMark\Extension\CommonMark\Renderer\Inline\EmphasisRenderer;
+use League\CommonMark\Extension\CommonMark\Renderer\Inline\LinkRenderer;
 use League\CommonMark\Extension\CommonMark\Renderer\Inline\StrongRenderer;
 use League\CommonMark\Extension\ConfigurableExtensionInterface;
 use League\CommonMark\Node\Block\Document;
@@ -44,8 +48,10 @@ final class BasicFormattingExtension implements ConfigurableExtensionInterface
         // Block parsers - only lists
         $environment->addBlockStartParser(new ListBlockStartParser, 10);
 
-        // Inline parsers - only newlines (emphasis handled via delimiter processors)
+        // Inline parsers - newlines and links (emphasis handled via delimiter processors)
         $environment->addInlineParser(new NewlineParser, 200);
+        $environment->addInlineParser(new OpenBracketParser, 150);
+        $environment->addInlineParser(new CloseBracketParser, 151);
 
         // Block renderers
         $environment->addRenderer(nodeClass: Document::class, renderer: new DocumentRenderer, priority: 0);
@@ -58,6 +64,7 @@ final class BasicFormattingExtension implements ConfigurableExtensionInterface
         $environment->addRenderer(nodeClass: Newline::class, renderer: new NewlineRenderer, priority: 0);
         $environment->addRenderer(nodeClass: Emphasis::class, renderer: new EmphasisRenderer, priority: 0);
         $environment->addRenderer(nodeClass: Strong::class, renderer: new StrongRenderer, priority: 0);
+        $environment->addRenderer(nodeClass: Link::class, renderer: new LinkRenderer, priority: 0);
 
         // Delimiter processors for emphasis (bold/italic)
         if ($environment->getConfiguration()->get('commonmark/use_asterisk') === true) {
