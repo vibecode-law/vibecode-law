@@ -17982,6 +17982,18 @@ namespace Illuminate\Support\Facades {
             return \Illuminate\Routing\Router::inertia($uri, $component, $props);
         }
 
+        /**
+         * @see \Spatie\WebhookClient\WebhookClientServiceProvider::packageRegistered()
+         * @param string $url
+         * @param string $name
+         * @param mixed $method
+         * @static
+         */
+        public static function webhooks($url, $name = 'default', $method = 'post')
+        {
+            return \Illuminate\Routing\Router::webhooks($url, $name, $method);
+        }
+
             }
     /**
      * @method static \Illuminate\Console\Scheduling\PendingEventAttributes withoutOverlapping(int $expiresAt = 1440)
@@ -24137,6 +24149,18 @@ namespace Illuminate\Routing {
         public static function inertia($uri, $component, $props = [])
         {
             return \Illuminate\Routing\Router::inertia($uri, $component, $props);
+        }
+
+        /**
+         * @see \Spatie\WebhookClient\WebhookClientServiceProvider::packageRegistered()
+         * @param string $url
+         * @param string $name
+         * @param mixed $method
+         * @static
+         */
+        public static function webhooks($url, $name = 'default', $method = 'post')
+        {
+            return \Illuminate\Routing\Router::webhooks($url, $name, $method);
         }
 
             }
