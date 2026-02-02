@@ -79,6 +79,12 @@ return [
             'level' => 'info',
         ],
 
+        'mailcoachWebhook' => [
+            'driver' => env('MAILCOACH_WEBHOOK_LOG_DRIVER', 'single'),
+            'path' => storage_path('logs/mailcoach-webhook.log'),
+            'level' => 'info',
+        ],
+
         'slack' => [
             'driver' => 'slack',
             'url' => env('LOG_SLACK_WEBHOOK_URL'),

@@ -33,3 +33,6 @@ Route::middleware(['auth', 'verified'])->group(function () {
 
 // Showcase catch-all route (must be after auth routes to avoid conflicts with /showcase/create etc.)
 Route::get('/showcase/{showcase}', ShowcaseShowController::class)->name('showcase.show');
+
+// Webhooks
+Route::webhooks('webhooks/mailcoach', 'mailcoach');
