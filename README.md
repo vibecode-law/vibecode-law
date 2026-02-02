@@ -1,14 +1,19 @@
-<img src="./public/static/text-logo.png" width="30%" />
+<p align="center"><img src="./public/static/text-logo.png" width="50%" /></p>
 
 # vibecode.law
 
 The open-source platform powering [vibecode.law](https://vibecode.law) — a community-driven showcase for legaltech projects — especially prototypes built with AI coding tools.
 
-## Background
+This repository is primarily geared towards those looking to make contributions back to the functionality platform - whether that be a feature request, a bug report or a code contribution.
 
-vibecode.law is an open platform for the legal community to discover and share legaltech projects. Users can submit their projects for moderation, and once approved, projects are displayed and ranked by community upvotes.
+## Contributing
 
-This repository contains the full source code for the platform, enabling contributors to help improve the platform.
+We welcome contributions from the community. 
+
+Please see our [Contribution Guidelines](./.github/CONTRIBUTING.md) on how to get involved.
+
+> [!TIP]
+> If you are unsure about the process of making a pull request, why not point your AI coding tool at the [Contribution Guidelines](./.github/CONTRIBUTING.md) and ask it to guide you through?
 
 ## Technology Stack
 
@@ -59,29 +64,25 @@ For troubleshooting, see the [Laravel Boost Github Readme](https://github.com/la
 ## Code Quality & Testing
 
 ```bash
-php artisan format      # Format backend code
-php artisan types       # Static analysis & type checks
-php artisan test        # Run full test suite
+composer format      # Format backend code
+composer types       # Static analysis & type checks
+composer test        # Run full test suite
 
-php artisan lint-test   # Run code quality checks and tests
-php artisan format-test # Run formatter, static analysis and then tests
+composer lint-test   # Run code quality checks and tests
+composer format-test # Run formatter, static analysis and then tests
 
 npm run format          # Auto format frontend code
 npm run lint            # Check for frontend code quality issues
 npm run types           # Check for frontend type issues
 
-npm run check-all       # Check formatting, linting and types.
+npm run format-lint     # Auto format, lint and type checks.
+npm run check-all       # Check formatting (without making changes), lint and check types.
 ```
 
-## Contributing
-
-We welcome contributions from the community. 
-
-Please see our [Contribution Guidelines](.github/CONTRIBUTING.md) on how to get involved.
 
 ## Authors
 
-Created by **Chris Bridges**, **Matt Pollins** and **Alex Baker**, with contributions from the Open Source Community.
+Created by **Chris Bridges**, **Matt Pollins** and **Alex Baker**, with contributions from the [Open Source Community](https://github.com/vibecode-law/vibecode-law/graphs/contributors).
 
 ## License
 
