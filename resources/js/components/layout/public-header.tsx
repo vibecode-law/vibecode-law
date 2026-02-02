@@ -1,18 +1,23 @@
 import AboutIndexController from '@/actions/App/Http/Controllers/About/AboutIndexController';
+import HomeController from '@/actions/App/Http/Controllers/HomeController';
+import NewsletterIndexController from '@/actions/App/Http/Controllers/Newsletter/NewsletterIndexController';
 import ResourcesIndexController from '@/actions/App/Http/Controllers/Resources/ResourcesIndexController';
 import ShowcaseCreateController from '@/actions/App/Http/Controllers/Showcase/ManageShowcase/ShowcaseCreateController';
 import AppLogo from '@/components/logo/app-logo';
+import { NewsletterSignup } from '@/components/newsletter/newsletter-signup';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
 import {
     DropdownMenu,
     DropdownMenuContent,
+    DropdownMenuLabel,
     DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
 import {
     Sheet,
     SheetClose,
     SheetContent,
+    SheetHeader,
     SheetTitle,
     SheetTrigger,
 } from '@/components/ui/sheet';
@@ -21,8 +26,7 @@ import { useInitials } from '@/hooks/use-initials';
 import { login } from '@/routes';
 import { type SharedData } from '@/types';
 import { Link, usePage } from '@inertiajs/react';
-import { VisuallyHidden } from '@radix-ui/react-visually-hidden';
-import { Lock, Menu, Plus } from 'lucide-react';
+import { ArrowRight, Lock, Menu, Plus, X } from 'lucide-react';
 
 export function PublicHeader() {
     const page = usePage<SharedData>();
@@ -76,41 +80,162 @@ export function PublicHeader() {
                         </SheetTrigger>
                         <SheetContent
                             side="right"
-                            className="w-72 dark:bg-neutral-950"
+                            className="w-full border-none bg-white p-0 sm:max-w-md dark:bg-neutral-950 [&>button]:hidden"
                             aria-describedby={undefined}
                         >
-                            <VisuallyHidden>
-                                <SheetTitle>Navigation menu</SheetTitle>
-                            </VisuallyHidden>
-                            <nav className="flex flex-col gap-4 p-4">
+                            <SheetHeader className="flex-row items-center justify-between border-b border-neutral-200 px-6 py-4 dark:border-neutral-800">
+                                <SheetTitle className="sr-only">
+                                    Navigation menu
+                                </SheetTitle>
+                                <AppLogo />
                                 <SheetClose asChild>
-                                    <Link
-                                        href={ResourcesIndexController.url()}
-                                        className="text-base font-medium text-neutral-600 hover:text-neutral-900 dark:text-neutral-400 dark:hover:text-white"
+                                    <Button
+                                        variant="ghost"
+                                        size="icon"
+                                        className="size-10 rounded-full bg-neutral-100 text-neutral-900 hover:bg-neutral-200 hover:text-neutral-900 dark:bg-neutral-800 dark:text-white dark:hover:bg-neutral-700 dark:hover:text-white"
                                     >
-                                        Resources
-                                    </Link>
+                                        <X className="size-5" />
+                                        <span className="sr-only">
+                                            Close menu
+                                        </span>
+                                    </Button>
                                 </SheetClose>
-                                <SheetClose asChild>
-                                    <Link
-                                        href={AboutIndexController.url()}
-                                        className="text-base font-medium text-neutral-600 hover:text-neutral-900 dark:text-neutral-400 dark:hover:text-white"
-                                    >
-                                        About
-                                    </Link>
-                                </SheetClose>
-                                <hr className="border-neutral-200 dark:border-neutral-800" />
-                                <SheetClose asChild>
-                                    <Link
-                                        href={ShowcaseCreateController.url()}
-                                        className="text-base font-medium text-neutral-600 hover:text-neutral-900 dark:text-neutral-400 dark:hover:text-white"
-                                    >
-                                        Submit Project
-                                    </Link>
-                                </SheetClose>
+                            </SheetHeader>
+
+                            <nav className="flex flex-col justify-between px-6 py-6">
+                                <div className="flex flex-col">
+                                    <SheetClose asChild>
+                                        <Link
+                                            href={HomeController.url()}
+                                            className="group flex items-center justify-between py-4"
+                                        >
+                                            <div>
+                                                <h3 className="text-2xl font-bold text-neutral-900 group-hover:text-primary dark:text-white">
+                                                    Showcases
+                                                </h3>
+                                                <p className="mt-1 text-sm text-neutral-600 dark:text-neutral-400">
+                                                    Explore others' projects
+                                                </p>
+                                            </div>
+                                            <ArrowRight className="size-5 text-neutral-400 transition-transform group-hover:translate-x-1 group-hover:text-primary dark:text-neutral-500" />
+                                        </Link>
+                                    </SheetClose>
+
+                                    <hr className="border-neutral-200 dark:border-neutral-800" />
+
+                                    <SheetClose asChild>
+                                        <Link
+                                            href={ResourcesIndexController.url()}
+                                            className="group flex items-center justify-between py-4"
+                                        >
+                                            <div>
+                                                <h3 className="text-2xl font-bold text-neutral-900 group-hover:text-primary dark:text-white">
+                                                    Resources
+                                                </h3>
+                                                <p className="mt-1 text-sm text-neutral-600 dark:text-neutral-400">
+                                                    Learn to vibecode.
+                                                </p>
+                                            </div>
+                                            <ArrowRight className="size-5 text-neutral-400 transition-transform group-hover:translate-x-1 group-hover:text-primary dark:text-neutral-500" />
+                                        </Link>
+                                    </SheetClose>
+
+                                    <hr className="border-neutral-200 dark:border-neutral-800" />
+
+                                    <SheetClose asChild>
+                                        <Link
+                                            href={ShowcaseCreateController.url()}
+                                            className="group flex items-center justify-between py-4"
+                                        >
+                                            <div>
+                                                <h3 className="text-2xl font-bold text-neutral-900 group-hover:text-primary dark:text-white">
+                                                    Share Your Project
+                                                </h3>
+                                                <p className="mt-1 text-sm text-neutral-600 dark:text-neutral-400">
+                                                    Share your work the
+                                                    community.
+                                                </p>
+                                            </div>
+                                            <ArrowRight className="size-5 text-neutral-400 transition-transform group-hover:translate-x-1 group-hover:text-primary dark:text-neutral-500" />
+                                        </Link>
+                                    </SheetClose>
+
+                                    <hr className="border-neutral-200 dark:border-neutral-800" />
+
+                                    <SheetClose asChild>
+                                        <Link
+                                            href={AboutIndexController.url()}
+                                            className="group flex items-center justify-between py-4"
+                                        >
+                                            <div>
+                                                <h3 className="text-2xl font-bold text-neutral-900 group-hover:text-primary dark:text-white">
+                                                    About
+                                                </h3>
+                                                <p className="mt-1 text-sm text-neutral-600 dark:text-neutral-400">
+                                                    Find out more about us and
+                                                    our community
+                                                </p>
+                                            </div>
+                                            <ArrowRight className="size-5 text-neutral-400 transition-transform group-hover:translate-x-1 group-hover:text-primary dark:text-neutral-500" />
+                                        </Link>
+                                    </SheetClose>
+
+                                    {!isAuthenticated && (
+                                        <>
+                                            <hr className="border-neutral-200 dark:border-neutral-800" />
+
+                                            <SheetClose asChild>
+                                                <Link
+                                                    href={login()}
+                                                    className="group flex items-center justify-between py-4"
+                                                >
+                                                    <div>
+                                                        <h3 className="text-2xl font-bold text-neutral-900 group-hover:text-primary dark:text-white">
+                                                            Sign In
+                                                        </h3>
+                                                        <p className="mt-1 text-sm text-neutral-600 dark:text-neutral-400">
+                                                            Access your account
+                                                        </p>
+                                                    </div>
+                                                    <ArrowRight className="size-5 text-neutral-400 transition-transform group-hover:translate-x-1 group-hover:text-primary dark:text-neutral-500" />
+                                                </Link>
+                                            </SheetClose>
+                                        </>
+                                    )}
+                                </div>
                             </nav>
+
+                            <div className="mt-auto border-t border-neutral-200 px-6 py-6 dark:border-neutral-800">
+                                <h3 className="text-2xl font-bold text-neutral-900 dark:text-white">
+                                    Subscribe
+                                </h3>
+                                <p className="mt-1 text-sm text-neutral-600 dark:text-neutral-400">
+                                    Hear about the community designing the
+                                    future of law. Get the latest vibecode.law
+                                    news and showcases delivered straight to
+                                    your inbox.
+                                </p>
+                                <NewsletterSignup
+                                    compact
+                                    className="mt-3 max-w-none"
+                                />
+                            </div>
                         </SheetContent>
                     </Sheet>
+
+                    {/* Subscribe button (desktop, only for non-authenticated users) */}
+                    {!isAuthenticated && (
+                        <Button
+                            size="sm"
+                            className="hidden sm:inline-flex"
+                            asChild
+                        >
+                            <Link href={NewsletterIndexController.url()}>
+                                Subscribe
+                                <ArrowRight className="size-4" />
+                            </Link>
+                        </Button>
+                    )}
 
                     {/* User avatar or login button (all screens) */}
                     {isAuthenticated ? (
@@ -140,6 +265,9 @@ export function PublicHeader() {
                                 </Button>
                             </DropdownMenuTrigger>
                             <DropdownMenuContent className="w-56" align="end">
+                                <DropdownMenuLabel className="sr-only">
+                                    User menu
+                                </DropdownMenuLabel>
                                 <UserMenuContent user={auth.user} />
                             </DropdownMenuContent>
                         </DropdownMenu>

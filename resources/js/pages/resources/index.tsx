@@ -53,6 +53,12 @@ const colorMap: Record<
         hover: 'group-hover:from-red-100 group-hover:to-orange-100 dark:group-hover:from-red-950/50 dark:group-hover:to-orange-950/50',
         border: 'border-red-200 dark:border-red-800/50',
     },
+    scale: {
+        bg: 'bg-gradient-to-br from-violet-50 to-purple-50 dark:from-violet-950/30 dark:to-purple-950/30',
+        icon: 'text-violet-600 dark:text-violet-400',
+        hover: 'group-hover:from-violet-100 group-hover:to-purple-100 dark:group-hover:from-violet-950/50 dark:group-hover:to-purple-950/50',
+        border: 'border-violet-200 dark:border-violet-800/50',
+    },
 };
 
 export default function ResourcesIndex({
