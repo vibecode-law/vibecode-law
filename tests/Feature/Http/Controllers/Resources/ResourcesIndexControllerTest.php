@@ -24,7 +24,7 @@ test('returns correct props', function () {
             ->component('resources/index')
             ->has('title')
             ->has('content')
-            ->has('children', 3)
+            ->has('children', 4)
         );
 });
 
@@ -48,7 +48,7 @@ test('children array has correct structure', function () {
     get('/resources')
         ->assertOk()
         ->assertInertia(fn (AssertableInertia $page) => $page
-            ->has('children', 3)
+            ->has('children', 4)
             ->has('children.0', fn (AssertableInertia $child) => $child
                 ->where('name', 'What is Vibecoding?')
                 ->where('slug', 'what-is-vibecoding')
@@ -69,6 +69,13 @@ test('children array has correct structure', function () {
                 ->where('summary', 'Understand the technical, security, and professional risks of AI-generated code and how to mitigate them.')
                 ->where('icon', 'alert-triangle')
                 ->where('route', route(name: 'resources.show', parameters: ['slug' => 'risks-of-vibecoding']))
+            )
+            ->has('children.3', fn (AssertableInertia $child) => $child
+                ->where('name', 'Responsible Vibecoding')
+                ->where('slug', 'responsible-vibecoding')
+                ->where('summary', 'Ground rules for building legal tech responsibly with AI — protecting data, being honest, and thinking about impact.')
+                ->where('icon', 'scale')
+                ->where('route', route(name: 'resources.show', parameters: ['slug' => 'responsible-vibecoding']))
             )
         );
 });

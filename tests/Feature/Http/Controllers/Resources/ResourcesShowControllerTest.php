@@ -11,6 +11,7 @@ test('returns 200 for valid resources page slugs', function (string $slug) {
     'what-is-vibecoding',
     'start-vibecoding',
     'risks-of-vibecoding',
+    'responsible-vibecoding',
 ]);
 
 test('renders correct Inertia component', function () {
@@ -64,4 +65,5 @@ test('each configured resources page returns correct data', function (string $sl
     ['what-is-vibecoding', 'What is Vibecoding?'],
     ['start-vibecoding', 'Start Vibecoding'],
     ['risks-of-vibecoding', 'Risks of Vibecoding'],
+    ['responsible-vibecoding', 'Responsible Vibecoding'],
 ]);

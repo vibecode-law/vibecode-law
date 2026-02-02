@@ -40,14 +40,8 @@ return [
             [
                 'title' => 'Moderation Process',
                 'slug' => 'moderation-process',
-                'summary' => 'Learn more about our moderation process, who is involved and how to raise concerns.',
+                'summary' => 'Learn more about our moderation process and how to raise concerns.',
                 'icon' => 'shield',
-            ],
-            [
-                'title' => 'Responsible Vibecoding',
-                'slug' => 'responsible-vibecoding',
-                'summary' => 'Ground rules for building legal tech responsibly with AI — protecting data, being honest, and thinking about impact.',
-                'icon' => 'scale',
             ],
             [
                 'title' => 'Contact',
@@ -81,6 +75,12 @@ return [
                 'slug' => 'risks-of-vibecoding',
                 'summary' => 'Understand the technical, security, and professional risks of AI-generated code and how to mitigate them.',
                 'icon' => 'alert-triangle',
+            ],
+            [
+                'title' => 'Responsible Vibecoding',
+                'slug' => 'responsible-vibecoding',
+                'summary' => 'Ground rules for building legal tech responsibly with AI — protecting data, being honest, and thinking about impact.',
+                'icon' => 'scale',
             ],
         ],
     ],

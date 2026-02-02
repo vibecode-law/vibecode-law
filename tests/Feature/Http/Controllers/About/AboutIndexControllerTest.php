@@ -24,7 +24,7 @@ test('returns correct props', function () {
             ->component('about/index')
             ->has('title')
             ->has('content')
-            ->has('children', 5)
+            ->has('children', 4)
         );
 });
 
@@ -48,7 +48,7 @@ test('children array has correct structure', function () {
     get('/about')
         ->assertOk()
         ->assertInertia(fn (AssertableInertia $page) => $page
-            ->has('children', 5)
+            ->has('children', 4)
             ->has('children.0', fn (AssertableInertia $child) => $child
                 ->has('name')
                 ->where('slug', 'the-community')
@@ -71,13 +71,6 @@ test('children array has correct structure', function () {
                 ->where('route', route(name: 'about.show', parameters: ['slug' => 'moderation-process']))
             )
             ->has('children.3', fn (AssertableInertia $child) => $child
-                ->has('name')
-                ->where('slug', 'responsible-vibecoding')
-                ->has('summary')
-                ->has('icon')
-                ->where('route', route(name: 'about.show', parameters: ['slug' => 'responsible-vibecoding']))
-            )
-            ->has('children.4', fn (AssertableInertia $child) => $child
                 ->has('name')
                 ->where('slug', 'contact')
                 ->has('summary')
