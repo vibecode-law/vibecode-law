@@ -173,7 +173,7 @@ See [CONTRIBUTING.md](./CONTRIBUTING.md#commit-messages) for more examples.
 
 ### 9. Push Your Branch
 
-Upload your branch to your fork on GitHub via the Source Control screen, or via terminal by running:
+Push your branch to your fork on GitHub via the Source Control screen, or via terminal by running:
 
 ```bash
 git push origin feat/your-feature-name

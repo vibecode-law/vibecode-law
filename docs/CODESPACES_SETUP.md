@@ -90,4 +90,4 @@ Prompt away!
 
 # Step 6 (optional): Submit your first PR
 
-If you want to contribute back to the codespace, stay tuned for our "Submitting your first PR" guide - coming soon.
+If you want to contribute back to the vibecode-law codebase, check out the [Contribution Guidelines](../.github/CONTRIBUTING.md) or the more detailed [Pull Requests for Beginners Guide](./PULL_REQUEST_GUIDE.md).
