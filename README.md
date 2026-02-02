@@ -40,11 +40,13 @@ This project uses [Laravel Boost](https://github.com/laravel/boost) to enhance A
 Boost automatically configures application-specific guidance that makes AI tools more effective when working on this codebase. This includes project conventions, package versions, architectural patterns and instructions on how to run its test suite and linting tools.
 
 Boost supports:
-- VS Code
 - Claude Code
 - Cursor
 - Codex
-- Gemini
+- Gemini CLI
+- Github Copilot
+- Junie
+- OpenCode
 
 To get started with Boost, from your project directory run the following command from our editor of choice and follow the terminal instructions:
 
