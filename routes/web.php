@@ -5,6 +5,8 @@ use App\Http\Controllers\About\AboutShowController;
 use App\Http\Controllers\About\CommunityController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\Legal\LegalShowController;
+use App\Http\Controllers\Newsletter\NewsletterIndexController;
+use App\Http\Controllers\Newsletter\NewsletterSignupController;
 use App\Http\Controllers\Resources\ResourcesIndexController;
 use App\Http\Controllers\Resources\ResourcesShowController;
 use App\Http\Controllers\Showcase\Public\ShowcaseShowController;
@@ -22,6 +24,9 @@ Route::get('/about/{slug}', AboutShowController::class)->name('about.show');
 
 Route::get('/resources', ResourcesIndexController::class)->name('resources.index');
 Route::get('/resources/{slug}', ResourcesShowController::class)->name('resources.show');
+
+Route::get('/newsletter', NewsletterIndexController::class)->name('newsletter.index');
+Route::post('/newsletter/signup', NewsletterSignupController::class)->name('newsletter.signup');
 
 require __DIR__.'/guest/showcase.php';
 require __DIR__.'/guest/user.php';
