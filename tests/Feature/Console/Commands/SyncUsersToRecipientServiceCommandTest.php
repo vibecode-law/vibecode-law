@@ -36,7 +36,9 @@ it('dispatches jobs for verified users without marketing opt out', function () {
 
     Queue::assertPushed(
         job: CreateExternalSubscriberJob::class,
-        callback: fn (CreateExternalSubscriberJob $job) => $job->user->is($user) && $job->tags === [],
+        callback: fn (CreateExternalSubscriberJob $job) => $job->user->is($user)
+            && $job->tags === []
+            && $job->skipConfirmation === true,
     );
 });
 
@@ -83,7 +85,8 @@ it('includes showcase tag for users with showcases', function () {
     Queue::assertPushed(
         job: CreateExternalSubscriberJob::class,
         callback: fn (CreateExternalSubscriberJob $job) => $job->user->is($user)
-            && $job->tags === ['showcase-tag-uuid'],
+            && $job->tags === ['showcase-tag-uuid']
+            && $job->skipConfirmation === true,
     );
 });
 
@@ -103,7 +106,9 @@ it('does not include showcase tag when tag uuid is not configured', function () 
 
     Queue::assertPushed(
         job: CreateExternalSubscriberJob::class,
-        callback: fn (CreateExternalSubscriberJob $job) => $job->user->is($user) && $job->tags === [],
+        callback: fn (CreateExternalSubscriberJob $job) => $job->user->is($user)
+            && $job->tags === []
+            && $job->skipConfirmation === true,
     );
 });
 

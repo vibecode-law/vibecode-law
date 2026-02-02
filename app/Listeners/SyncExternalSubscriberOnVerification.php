@@ -27,6 +27,6 @@ class SyncExternalSubscriberOnVerification
             return;
         }
 
-        CreateExternalSubscriberJob::dispatch(user: $user);
+        CreateExternalSubscriberJob::dispatch(user: $user, skipConfirmation: true);
     }
 }

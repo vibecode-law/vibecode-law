@@ -61,6 +61,7 @@ class SyncUsersToRecipientServiceCommand extends Command
             CreateExternalSubscriberJob::dispatch(
                 user: $user,
                 tags: $tags,
+                skipConfirmation: true,
             );
 
             $progressBar->advance();

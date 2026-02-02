@@ -12,7 +12,7 @@ use Spatie\MailcoachSdk\Resources\Subscriber;
 
 class MailcoachRecipientService implements RecipientService
 {
-    public function createRecipient(CreateRecipientData $data): string
+    public function createRecipient(CreateRecipientData $data, bool $skipConfirmation = false): string
     {
         $subscriber = Mailcoach::createSubscriber(
             emailListUuid: $data->listId,
@@ -23,6 +23,7 @@ class MailcoachRecipientService implements RecipientService
                     'last_name' => $data->lastName,
                     'extra_attributes' => $data->extraAttributes ?: null,
                     'tags' => $data->tags ?: null,
+                    'skip_confirmation' => $skipConfirmation ?: null,
                 ],
                 fn ($value) => $value !== null,
             ),

@@ -20,7 +20,8 @@ it('dispatches CreateExternalSubscriberJob when user verifies email and is subsc
     $listener->handle(new Verified($user));
 
     Queue::assertPushed(CreateExternalSubscriberJob::class, function (CreateExternalSubscriberJob $job) use ($user) {
-        return $job->user->is($user);
+        return $job->user->is($user)
+            && $job->skipConfirmation === true;
     });
 });
 
