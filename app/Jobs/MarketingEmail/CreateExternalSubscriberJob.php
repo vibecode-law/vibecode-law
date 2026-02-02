@@ -19,6 +19,7 @@ class CreateExternalSubscriberJob implements ShouldQueue
     public function __construct(
         public User $user,
         public array $tags = [],
+        public bool $skipConfirmation = false,
     ) {}
 
     public function handle(RecipientService $recipientService): void
@@ -31,6 +32,7 @@ class CreateExternalSubscriberJob implements ShouldQueue
                 lastName: $this->user->last_name,
                 tags: $this->tags,
             ),
+            skipConfirmation: $this->skipConfirmation,
         );
 
         $this->user->external_subscriber_uuid = $subscriberUuid;

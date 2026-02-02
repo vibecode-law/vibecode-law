@@ -126,7 +126,8 @@ class EmailVerificationTest extends TestCase
         $this->actingAs($user)->get($verificationUrl);
 
         Queue::assertPushed(CreateExternalSubscriberJob::class, function (CreateExternalSubscriberJob $job) use ($user) {
-            return $job->user->is($user);
+            return $job->user->is($user)
+                && $job->skipConfirmation === true;
         });
     }
 

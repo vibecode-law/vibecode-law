@@ -333,7 +333,8 @@ describe('job dispatching', function () {
             );
 
             Queue::assertPushed(CreateExternalSubscriberJob::class, function (CreateExternalSubscriberJob $job) use ($user) {
-                return $job->user->is($user);
+                return $job->user->is($user)
+                    && $job->skipConfirmation === true;
             });
         });
 
@@ -452,7 +453,8 @@ describe('job dispatching', function () {
             ]);
 
             Queue::assertPushed(CreateExternalSubscriberJob::class, function (CreateExternalSubscriberJob $job) use ($user) {
-                return $job->user->is($user);
+                return $job->user->is($user)
+                    && $job->skipConfirmation === true;
             });
         });
     });
@@ -571,7 +573,8 @@ describe('job dispatching', function () {
 
             Queue::assertPushed(CreateExternalSubscriberJob::class, function (CreateExternalSubscriberJob $job) use ($user) {
                 return $job->user->is($user)
-                    && $job->tags === ['showcase-tag-uuid'];
+                    && $job->tags === ['showcase-tag-uuid']
+                    && $job->skipConfirmation === true;
             });
         });
 
@@ -593,7 +596,8 @@ describe('job dispatching', function () {
 
             Queue::assertPushed(CreateExternalSubscriberJob::class, function (CreateExternalSubscriberJob $job) use ($user) {
                 return $job->user->is($user)
-                    && $job->tags === [];
+                    && $job->tags === []
+                    && $job->skipConfirmation === true;
             });
         });
 
@@ -617,7 +621,8 @@ describe('job dispatching', function () {
 
             Queue::assertPushed(CreateExternalSubscriberJob::class, function (CreateExternalSubscriberJob $job) use ($user) {
                 return $job->user->is($user)
-                    && $job->tags === [];
+                    && $job->tags === []
+                    && $job->skipConfirmation === true;
             });
         });
 

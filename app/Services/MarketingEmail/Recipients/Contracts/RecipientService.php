@@ -11,7 +11,7 @@ interface RecipientService
     /**
      * @return string The external recipient ID
      */
-    public function createRecipient(CreateRecipientData $data): string;
+    public function createRecipient(CreateRecipientData $data, bool $skipConfirmation = false): string;
 
     public function updateRecipient(string $externalId, UpdateRecipientData $data): void;
 

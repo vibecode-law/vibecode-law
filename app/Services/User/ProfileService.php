@@ -113,7 +113,7 @@ class ProfileService
             return;
         }
 
-        CreateExternalSubscriberJob::dispatch(user: $user);
+        CreateExternalSubscriberJob::dispatch(user: $user, skipConfirmation: true);
     }
 
     protected function onEmailChanged(User $user): void
@@ -151,6 +151,7 @@ class ProfileService
         CreateExternalSubscriberJob::dispatch(
             user: $user,
             tags: $this->getTagsForNewSubscriber(user: $user),
+            skipConfirmation: true,
         );
     }
 

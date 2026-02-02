@@ -13,7 +13,7 @@ use Illuminate\Support\Str;
  */
 class NullRecipientService implements RecipientService
 {
-    public function createRecipient(CreateRecipientData $data): string
+    public function createRecipient(CreateRecipientData $data, bool $skipConfirmation = false): string
     {
         return Str::uuid()->toString();
     }
