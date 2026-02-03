@@ -1,8 +1,10 @@
+import LegalShowController from '@/actions/App/Http/Controllers/Legal/LegalShowController';
 import NewsletterSignupController from '@/actions/App/Http/Controllers/Newsletter/NewsletterSignupController';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import InputError from '@/components/ui/input-error';
+import TextLink from '@/components/ui/text-link';
 import PublicLayout from '@/layouts/public-layout';
 import { home } from '@/routes';
 import { type SharedData } from '@/types';
@@ -135,6 +137,18 @@ export default function NewsletterIndex() {
 
                                 <p className="mt-4 text-sm text-neutral-500 dark:text-neutral-500">
                                     No spam. Unsubscribe at any time.
+                                </p>
+
+                                <p className="mt-2 text-sm text-neutral-500 dark:text-neutral-500">
+                                    Read our{' '}
+                                    <TextLink
+                                        href={LegalShowController.url(
+                                            'privacy-notice',
+                                        )}
+                                    >
+                                        Privacy Notice
+                                    </TextLink>
+                                    .
                                 </p>
                             </>
                         )}
