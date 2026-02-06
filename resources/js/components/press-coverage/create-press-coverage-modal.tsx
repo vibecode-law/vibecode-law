@@ -1,4 +1,5 @@
 import { Button } from '@/components/ui/button';
+import { Checkbox } from '@/components/ui/checkbox';
 import {
     Dialog,
     DialogContent,
@@ -9,14 +10,13 @@ import {
     DialogTrigger,
 } from '@/components/ui/dialog';
 import { FormField } from '@/components/ui/form-field';
+import { type CropData } from '@/components/ui/image-crop-modal';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { SubmitButton } from '@/components/ui/submit-button';
-import { Checkbox } from '@/components/ui/checkbox';
 import { Textarea } from '@/components/ui/textarea';
 import { ThumbnailSelector } from '@/components/ui/thumbnail-selector';
 import { useModalForm } from '@/hooks/use-modal-form';
-import { type CropData } from '@/components/ui/image-crop-modal';
 import { router } from '@inertiajs/react';
 import { Plus } from 'lucide-react';
 import { useState } from 'react';
@@ -52,9 +52,7 @@ export function CreatePressCoverageModal({
     const [excerpt, setExcerpt] = useState('');
     const [displayOrder, setDisplayOrder] = useState('0');
     const [isPublished, setIsPublished] = useState(false);
-    const [thumbnailCropData, setThumbnailCropData] = useState<CropData | null>(
-        null,
-    );
+    const [, setThumbnailCropData] = useState<CropData | null>(null);
 
     const handleSubmit = (e: React.FormEvent) => {
         e.preventDefault();
@@ -191,7 +189,8 @@ export function CreatePressCoverageModal({
                                         placeholder="e.g. Legal Tech News"
                                         disabled={isSubmitting}
                                         aria-invalid={
-                                            errors.publication_name !== undefined
+                                            errors.publication_name !==
+                                            undefined
                                                 ? true
                                                 : undefined
                                         }
@@ -270,7 +269,9 @@ export function CreatePressCoverageModal({
                                 id="display_order"
                                 type="number"
                                 value={displayOrder}
-                                onChange={(e) => setDisplayOrder(e.target.value)}
+                                onChange={(e) =>
+                                    setDisplayOrder(e.target.value)
+                                }
                                 placeholder="0"
                                 disabled={isSubmitting}
                                 aria-invalid={
@@ -291,7 +292,9 @@ export function CreatePressCoverageModal({
                             <Checkbox
                                 id="is_published"
                                 checked={isPublished}
-                                onCheckedChange={setIsPublished}
+                                onCheckedChange={(checked) =>
+                                    setIsPublished(checked === true)
+                                }
                                 disabled={isSubmitting}
                             />
                         </div>

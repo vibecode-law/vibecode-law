@@ -1,4 +1,5 @@
 import { Button } from '@/components/ui/button';
+import { Checkbox } from '@/components/ui/checkbox';
 import {
     Dialog,
     DialogContent,
@@ -11,7 +12,6 @@ import { FormField } from '@/components/ui/form-field';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { SubmitButton } from '@/components/ui/submit-button';
-import { Checkbox } from '@/components/ui/checkbox';
 import { Textarea } from '@/components/ui/textarea';
 import { useModalForm } from '@/hooks/use-modal-form';
 import { router } from '@inertiajs/react';
@@ -65,17 +65,17 @@ export function EditTestimonialModal({
         setName(
             testimonial.user_id !== null
                 ? testimonial.display_name
-                : testimonial.name ?? '',
+                : (testimonial.name ?? ''),
         );
         setJobTitle(
             testimonial.user_id !== null
-                ? testimonial.display_job_title ?? ''
-                : testimonial.job_title ?? '',
+                ? (testimonial.display_job_title ?? '')
+                : (testimonial.job_title ?? ''),
         );
         setOrganisation(
             testimonial.user_id !== null
-                ? testimonial.display_organisation ?? ''
-                : testimonial.organisation ?? '',
+                ? (testimonial.display_organisation ?? '')
+                : (testimonial.organisation ?? ''),
         );
         setContent(testimonial.content);
         setDisplayOrder(String(testimonial.display_order));
@@ -154,17 +154,17 @@ export function EditTestimonialModal({
         setName(
             testimonial.user_id !== null
                 ? testimonial.display_name
-                : testimonial.name ?? '',
+                : (testimonial.name ?? ''),
         );
         setJobTitle(
             testimonial.user_id !== null
-                ? testimonial.display_job_title ?? ''
-                : testimonial.job_title ?? '',
+                ? (testimonial.display_job_title ?? '')
+                : (testimonial.job_title ?? ''),
         );
         setOrganisation(
             testimonial.user_id !== null
-                ? testimonial.display_organisation ?? ''
-                : testimonial.organisation ?? '',
+                ? (testimonial.display_organisation ?? '')
+                : (testimonial.organisation ?? ''),
         );
         setContent(testimonial.content);
         setDisplayOrder(String(testimonial.display_order));
@@ -198,8 +198,9 @@ export function EditTestimonialModal({
                                         </p>
                                         <p className="mt-1 text-xs text-blue-700 dark:text-blue-400">
                                             Name, job title, organisation, and
-                                            avatar are pulled from the linked user
-                                            profile and displayed read-only below.
+                                            avatar are pulled from the linked
+                                            user profile and displayed read-only
+                                            below.
                                         </p>
                                     </div>
                                     <Button
@@ -261,7 +262,9 @@ export function EditTestimonialModal({
                             <Input
                                 id="edit-organisation"
                                 value={organisation}
-                                onChange={(e) => setOrganisation(e.target.value)}
+                                onChange={(e) =>
+                                    setOrganisation(e.target.value)
+                                }
                                 placeholder="e.g. ABC Law Firm"
                                 disabled={isSubmitting || isLinkedToUser}
                                 readOnly={isLinkedToUser}
@@ -326,8 +329,9 @@ export function EditTestimonialModal({
                                         }
                                     />
                                     <p className="mt-1 text-xs text-neutral-500 dark:text-neutral-400">
-                                        Upload a new avatar to replace the current
-                                        one. Max 2MB. Formats: PNG, JPG, GIF, WEBP
+                                        Upload a new avatar to replace the
+                                        current one. Max 2MB. Formats: PNG, JPG,
+                                        GIF, WEBP
                                     </p>
                                 </>
                             )}

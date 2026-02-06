@@ -1,4 +1,5 @@
 import { Button } from '@/components/ui/button';
+import { Checkbox } from '@/components/ui/checkbox';
 import {
     Dialog,
     DialogContent,
@@ -8,13 +9,12 @@ import {
     DialogTitle,
 } from '@/components/ui/dialog';
 import { FormField } from '@/components/ui/form-field';
+import { type CropData } from '@/components/ui/image-crop-modal';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { SubmitButton } from '@/components/ui/submit-button';
-import { Checkbox } from '@/components/ui/checkbox';
 import { Textarea } from '@/components/ui/textarea';
 import { ThumbnailSelector } from '@/components/ui/thumbnail-selector';
-import { type CropData } from '@/components/ui/image-crop-modal';
 import { useModalForm } from '@/hooks/use-modal-form';
 import { router } from '@inertiajs/react';
 import { useState } from 'react';
@@ -56,9 +56,7 @@ export function EditPressCoverageModal({
         String(pressCoverage.display_order),
     );
     const [isPublished, setIsPublished] = useState(pressCoverage.is_published);
-    const [thumbnailCropData, setThumbnailCropData] = useState<CropData | null>(
-        null,
-    );
+    const [, setThumbnailCropData] = useState<CropData | null>(null);
     const [lastPressCoverageId, setLastPressCoverageId] = useState(
         pressCoverage.id,
     );
@@ -157,10 +155,10 @@ export function EditPressCoverageModal({
                                     currentCropData={
                                         pressCoverage.thumbnail_crop
                                             ? {
-                                                  x: pressCoverage.thumbnail_crop
-                                                      .x,
-                                                  y: pressCoverage.thumbnail_crop
-                                                      .y,
+                                                  x: pressCoverage
+                                                      .thumbnail_crop.x,
+                                                  y: pressCoverage
+                                                      .thumbnail_crop.y,
                                                   width: pressCoverage
                                                       .thumbnail_crop.width,
                                                   height: pressCoverage
@@ -216,7 +214,8 @@ export function EditPressCoverageModal({
                                         placeholder="e.g. Legal Tech News"
                                         disabled={isSubmitting}
                                         aria-invalid={
-                                            errors.publication_name !== undefined
+                                            errors.publication_name !==
+                                            undefined
                                                 ? true
                                                 : undefined
                                         }
@@ -295,7 +294,9 @@ export function EditPressCoverageModal({
                                 id="edit-display_order"
                                 type="number"
                                 value={displayOrder}
-                                onChange={(e) => setDisplayOrder(e.target.value)}
+                                onChange={(e) =>
+                                    setDisplayOrder(e.target.value)
+                                }
                                 placeholder="0"
                                 disabled={isSubmitting}
                                 aria-invalid={
@@ -314,7 +315,9 @@ export function EditPressCoverageModal({
                             <Checkbox
                                 id="edit-is_published"
                                 checked={isPublished}
-                                onCheckedChange={setIsPublished}
+                                onCheckedChange={(checked) =>
+                                    setIsPublished(checked === true)
+                                }
                                 disabled={isSubmitting}
                             />
                         </div>

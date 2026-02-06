@@ -1,7 +1,6 @@
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { router } from '@inertiajs/react';
 import { Search, X } from 'lucide-react';
 import { useEffect, useRef, useState } from 'react';
 
@@ -28,7 +27,7 @@ export function UserSearchSelect({
     const [users, setUsers] = useState<User[]>([]);
     const [isOpen, setIsOpen] = useState(false);
     const [isLoading, setIsLoading] = useState(false);
-    const searchTimeoutRef = useRef<NodeJS.Timeout>();
+    const searchTimeoutRef = useRef<NodeJS.Timeout | undefined>(undefined);
     const containerRef = useRef<HTMLDivElement>(null);
 
     useEffect(() => {
@@ -48,7 +47,6 @@ export function UserSearchSelect({
 
     useEffect(() => {
         if (!isOpen || search.length < 2) {
-            setUsers([]);
             return;
         }
 
@@ -118,7 +116,11 @@ export function UserSearchSelect({
                             placeholder="Search users by name or email..."
                             value={search}
                             onChange={(e) => {
-                                setSearch(e.target.value);
+                                const value = e.target.value;
+                                setSearch(value);
+                                if (value.length < 2) {
+                                    setUsers([]);
+                                }
                                 setIsOpen(true);
                             }}
                             onFocus={() => setIsOpen(true)}

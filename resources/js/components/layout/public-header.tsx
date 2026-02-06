@@ -179,7 +179,8 @@ export function PublicHeader() {
                                                     Wall of Love
                                                 </h3>
                                                 <p className="mt-1 text-sm text-neutral-600 dark:text-neutral-400">
-                                                    Community testimonials and press
+                                                    Community testimonials and
+                                                    press
                                                 </p>
                                             </div>
                                             <ArrowRight className="size-5 text-neutral-400 transition-transform group-hover:translate-x-1 group-hover:text-primary dark:text-neutral-500" />

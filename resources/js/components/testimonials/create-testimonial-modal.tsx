@@ -173,7 +173,9 @@ export function CreateTestimonialModal({
                                     <Input
                                         id="name"
                                         value={name}
-                                        onChange={(e) => setName(e.target.value)}
+                                        onChange={(e) =>
+                                            setName(e.target.value)
+                                        }
                                         placeholder="e.g. Jane Doe"
                                         disabled={isSubmitting}
                                         aria-invalid={
@@ -280,7 +282,9 @@ export function CreateTestimonialModal({
                             <Checkbox
                                 id="is_published"
                                 checked={isPublished}
-                                onCheckedChange={setIsPublished}
+                                onCheckedChange={(checked) =>
+                                    setIsPublished(checked === true)
+                                }
                                 disabled={isSubmitting}
                             />
                         </div>

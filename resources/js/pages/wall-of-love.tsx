@@ -4,7 +4,7 @@ import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import PublicLayout from '@/layouts/public-layout';
 import { type SharedData } from '@/types';
-import { Head, Link, usePage } from '@inertiajs/react';
+import { Head, usePage } from '@inertiajs/react';
 import { ExternalLink, Quote } from 'lucide-react';
 
 interface WallOfLoveProps {
@@ -16,8 +16,7 @@ export default function WallOfLove({
     testimonials,
     pressCoverage,
 }: WallOfLoveProps) {
-    const { name, appUrl, defaultMetaDescription } =
-        usePage<SharedData>().props;
+    const { name, appUrl } = usePage<SharedData>().props;
 
     return (
         <PublicLayout>
@@ -57,7 +56,8 @@ export default function WallOfLove({
                         Wall of Love
                     </h1>
                     <p className="mx-auto mt-6 max-w-2xl text-lg text-neutral-600 dark:text-neutral-400">
-                        What the community and press are saying about vibecode.law
+                        What the community and press are saying about
+                        vibecode.law
                     </p>
                 </div>
             </section>
@@ -106,7 +106,9 @@ export default function WallOfLove({
                                             {(testimonial.display_job_title ||
                                                 testimonial.display_organisation) && (
                                                 <p className="text-sm text-neutral-600 dark:text-neutral-400">
-                                                    {testimonial.display_job_title}
+                                                    {
+                                                        testimonial.display_job_title
+                                                    }
                                                     {testimonial.display_job_title &&
                                                         testimonial.display_organisation &&
                                                         ' at '}
@@ -203,9 +205,7 @@ export default function WallOfLove({
                     </p>
                     <div className="mt-6">
                         <Button asChild size="lg">
-                            <a href="mailto:press@vibecode.law">
-                                Get in Touch
-                            </a>
+                            <a href="mailto:press@vibecode.law">Get in Touch</a>
                         </Button>
                     </div>
                 </div>

@@ -18,8 +18,7 @@ export default function PressCoverageIndex({
 }: PressCoverageIndexProps) {
     const [editingPressCoverage, setEditingPressCoverage] =
         useState<App.Http.Resources.PressCoverageResource | null>(null);
-    const [localPressCoverage, setLocalPressCoverage] =
-        useState(pressCoverage);
+    const [localPressCoverage, setLocalPressCoverage] = useState(pressCoverage);
 
     // Sync local state when pressCoverage prop changes (after create/delete)
     useEffect(() => {
