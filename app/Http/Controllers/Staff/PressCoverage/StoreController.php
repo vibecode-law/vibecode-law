@@ -7,7 +7,6 @@ use App\Http\Requests\Staff\PressCoverageStoreRequest;
 use App\Models\PressCoverage;
 use App\Services\PressCoverage\PressCoverageMediaService;
 use Illuminate\Http\RedirectResponse;
-use Illuminate\Support\Facades\Redirect;
 
 class StoreController extends BaseController
 {

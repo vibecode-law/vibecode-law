@@ -74,7 +74,7 @@ class PressCoverageSeeder extends Seeder
 
             // Download and store placeholder image
             try {
-                $imageUrl = "https://placehold.co/600x600/{$color}/ffffff/png?text=" . urlencode($pressCoverage->publication_name);
+                $imageUrl = "https://placehold.co/600x600/{$color}/ffffff/png?text=".urlencode($pressCoverage->publication_name);
                 $imageContent = Http::get($imageUrl)->body();
 
                 $directory = "press-coverage/{$pressCoverage->id}";

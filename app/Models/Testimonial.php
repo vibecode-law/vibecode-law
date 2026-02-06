@@ -10,6 +10,9 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\Storage;
 
+/**
+ * @mixin IdeHelperTestimonial
+ */
 class Testimonial extends Model
 {
     protected $fillable = [
@@ -31,6 +34,15 @@ class Testimonial extends Model
         ];
     }
 
+    protected static function booted(): void
+    {
+        static::deleted(function (Testimonial $testimonial) {
+            if ($testimonial->avatar_path !== null) {
+                Storage::disk('public')->delete($testimonial->avatar_path);
+            }
+        });
+    }
+
     // Relationships
     public function user(): BelongsTo
     {
@@ -39,7 +51,7 @@ class Testimonial extends Model
 
     // Scopes
     #[Scope]
-    public function published(Builder $query): void
+    protected function published(Builder $query): void
     {
         $query->where('is_published', true);
     }
@@ -57,14 +69,14 @@ class Testimonial extends Model
     protected function displayJobTitle(): Attribute
     {
         return Attribute::make(
-            get: fn (): ?string => $this->user?->job_title ?? $this->job_title
+            get: fn (): ?string => $this->user !== null ? $this->user->job_title : $this->job_title
         );
     }
 
     protected function displayOrganisation(): Attribute
     {
         return Attribute::make(
-            get: fn (): ?string => $this->user?->organisation ?? $this->organisation
+            get: fn (): ?string => $this->user !== null ? $this->user->organisation : $this->organisation
         );
     }
 

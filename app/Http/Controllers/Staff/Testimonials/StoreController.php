@@ -7,7 +7,6 @@ use App\Http\Requests\Staff\TestimonialStoreRequest;
 use App\Models\Testimonial;
 use App\Services\Testimonial\TestimonialAvatarService;
 use Illuminate\Http\RedirectResponse;
-use Illuminate\Support\Facades\Redirect;
 
 class StoreController extends BaseController
 {

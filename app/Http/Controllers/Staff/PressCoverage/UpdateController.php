@@ -7,7 +7,6 @@ use App\Http\Requests\Staff\PressCoverageUpdateRequest;
 use App\Models\PressCoverage;
 use App\Services\PressCoverage\PressCoverageMediaService;
 use Illuminate\Http\RedirectResponse;
-use Illuminate\Support\Facades\Redirect;
 
 class UpdateController extends BaseController
 {

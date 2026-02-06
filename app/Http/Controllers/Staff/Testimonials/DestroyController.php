@@ -5,7 +5,6 @@ namespace App\Http\Controllers\Staff\Testimonials;
 use App\Http\Controllers\BaseController;
 use App\Models\Testimonial;
 use Illuminate\Http\RedirectResponse;
-use Illuminate\Support\Facades\Redirect;
 
 class DestroyController extends BaseController
 {

@@ -13,7 +13,7 @@ class TestimonialResource extends Resource
 {
     public int $id;
 
-    public int|null $user_id;
+    public ?int $user_id;
 
     public Lazy|string|null $name;
 

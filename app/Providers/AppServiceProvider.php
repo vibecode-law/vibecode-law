@@ -6,8 +6,6 @@ use App\Models\PressCoverage;
 use App\Models\Showcase\Showcase;
 use App\Models\Testimonial;
 use App\Models\User;
-use App\Observers\PressCoverageObserver;
-use App\Observers\TestimonialObserver;
 use App\Policies\PressCoveragePolicy;
 use App\Policies\Showcase\ShowcasePolicy;
 use App\Policies\TestimonialPolicy;
@@ -65,9 +63,5 @@ class AppServiceProvider extends ServiceProvider
         Gate::policy(User::class, UserPolicy::class);
         Gate::policy(Testimonial::class, TestimonialPolicy::class);
         Gate::policy(PressCoverage::class, PressCoveragePolicy::class);
-
-        // Register observers
-        Testimonial::observe(TestimonialObserver::class);
-        PressCoverage::observe(PressCoverageObserver::class);
     }
 }

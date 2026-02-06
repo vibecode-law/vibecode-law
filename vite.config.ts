@@ -46,7 +46,10 @@ export default defineConfig({
         host: '0.0.0.0',
         port: 5173,
         strictPort: true,
-        cors: true,
+        cors: {
+            origin: `https://${codespacesLaravelDomain}`,
+            credentials: true,
+        },        
         hmr: {
             protocol: 'wss',
             host: codespacesDomain!,

@@ -4,9 +4,6 @@ namespace App\Http\Resources;
 
 use App\Models\PressCoverage;
 use App\ValueObjects\ImageCrop;
-use Carbon\CarbonInterface;
-use Spatie\LaravelData\Attributes\WithCast;
-use Spatie\LaravelData\Casts\DateTimeInterfaceCast;
 use Spatie\LaravelData\Lazy;
 use Spatie\LaravelData\Resource;
 use Spatie\TypeScriptTransformer\Attributes\TypeScript;

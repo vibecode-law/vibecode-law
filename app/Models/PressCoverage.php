@@ -11,6 +11,8 @@ use Illuminate\Support\Facades\Storage;
 
 /**
  * @property array{x: int, y: int, width: int, height: int}|null $thumbnail_crop
+ *
+ * @mixin IdeHelperPressCoverage
  */
 class PressCoverage extends Model
 {
@@ -38,9 +40,19 @@ class PressCoverage extends Model
         ];
     }
 
+    protected static function booted(): void
+    {
+        static::deleted(function (PressCoverage $pressCoverage) {
+            if ($pressCoverage->thumbnail_extension !== null) {
+                $storagePath = "press-coverage/{$pressCoverage->id}";
+                Storage::disk('public')->delete("{$storagePath}/thumbnail.{$pressCoverage->thumbnail_extension}");
+            }
+        });
+    }
+
     // Scopes
     #[Scope]
-    public function published(Builder $query): void
+    protected function published(Builder $query): void
     {
         $query->where('is_published', true);
     }
