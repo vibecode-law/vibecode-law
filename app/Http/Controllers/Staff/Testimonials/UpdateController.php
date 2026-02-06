@@ -14,7 +14,7 @@ class UpdateController extends BaseController
     {
         $this->authorize('update', $testimonial);
 
-        $testimonial->update($request->safe()->except(['avatar', 'remove_avatar']));
+        $testimonial->update($request->safe()->except(['avatar', 'avatar_crop', 'remove_avatar']));
 
         $avatarService = new TestimonialAvatarService(testimonial: $testimonial);
 
@@ -24,7 +24,14 @@ class UpdateController extends BaseController
         }
         // Handle avatar upload
         elseif ($request->hasFile('avatar')) {
-            $avatarService->fromUploadedFile(file: $request->file('avatar'));
+            $avatarService->fromUploadedFile(
+                file: $request->file('avatar'),
+                crop: $request->validated('avatar_crop'),
+            );
+        }
+        // Handle crop-only update (re-crop existing avatar)
+        elseif ($request->has('avatar_crop') && $testimonial->avatar_path !== null) {
+            $testimonial->update(['avatar_crop' => $request->validated('avatar_crop')]);
         }
 
         return redirect()->back();

@@ -16,8 +16,10 @@ class TestimonialAvatarService
     /**
      * Store an avatar from an uploaded file.
      * Follows the same pattern as UserAvatarService.
+     *
+     * @param  array{x: int, y: int, width: int, height: int}|null  $crop
      */
-    public function fromUploadedFile(UploadedFile $file): void
+    public function fromUploadedFile(UploadedFile $file, ?array $crop = null): void
     {
         $extension = $file->extension();
         $path = 'testimonials/avatars/'.Str::uuid()->toString().'.'.$extension;
@@ -33,6 +35,7 @@ class TestimonialAvatarService
         );
 
         $this->testimonial->avatar_path = $path;
+        $this->testimonial->avatar_crop = $crop;
         $this->testimonial->save();
     }
 
@@ -48,6 +51,7 @@ class TestimonialAvatarService
         Storage::disk('public')->delete($this->testimonial->avatar_path);
 
         $this->testimonial->avatar_path = null;
+        $this->testimonial->avatar_crop = null;
         $this->testimonial->save();
     }
 }

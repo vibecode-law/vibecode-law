@@ -4,6 +4,7 @@ namespace App\Http\Resources;
 
 use App\Http\Resources\User\UserResource;
 use App\Models\Testimonial;
+use App\ValueObjects\ImageCrop;
 use Spatie\LaravelData\Lazy;
 use Spatie\LaravelData\Resource;
 use Spatie\TypeScriptTransformer\Attributes\TypeScript;
@@ -26,6 +27,10 @@ class TestimonialResource extends Resource
     public Lazy|string|null $avatar_path;
 
     public ?string $avatar;
+
+    public ?string $avatar_rect_string;
+
+    public Lazy|ImageCrop|null $avatar_crop;
 
     public string $display_name;
 
@@ -50,6 +55,10 @@ class TestimonialResource extends Resource
             'content' => $testimonial->content,
             'avatar_path' => Lazy::create(fn () => $testimonial->avatar_path),
             'avatar' => $testimonial->avatar,
+            'avatar_rect_string' => $testimonial->avatar_rect_string,
+            'avatar_crop' => Lazy::create(fn () => $testimonial->avatar_crop !== null
+                ? ImageCrop::fromArray($testimonial->avatar_crop)
+                : null),
             'display_name' => $testimonial->display_name,
             'display_job_title' => $testimonial->display_job_title,
             'display_organisation' => $testimonial->display_organisation,

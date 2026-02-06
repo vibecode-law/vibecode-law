@@ -35,6 +35,8 @@ declare namespace App.Http.Resources {
         content: string;
         avatar_path?: string | null;
         avatar: string | null;
+        avatar_rect_string: string | null;
+        avatar_crop?: App.ValueObjects.ImageCrop | null;
         display_name: string;
         display_job_title: string | null;
         display_organisation: string | null;

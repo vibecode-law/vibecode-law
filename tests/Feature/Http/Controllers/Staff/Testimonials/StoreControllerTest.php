@@ -104,6 +104,24 @@ describe('storing', function () {
             ->and($testimonial->avatar_path)->toEndWith('.jpg');
         Storage::disk('public')->assertExists($testimonial->avatar_path);
     });
+
+    test('handles avatar upload with crop data', function () {
+        $moderator = User::factory()->moderator()->create();
+
+        actingAs($moderator);
+
+        post(route('staff.testimonials.store'), [
+            'content' => 'With cropped avatar.',
+            'avatar' => UploadedFile::fake()->image('avatar.jpg', 200, 200),
+            'avatar_crop' => ['x' => 10, 'y' => 20, 'width' => 100, 'height' => 100],
+        ])->assertRedirect();
+
+        $testimonial = Testimonial::latest('id')->first();
+
+        expect($testimonial->avatar_path)->toStartWith('testimonials/avatars/')
+            ->and($testimonial->avatar_crop)->toBe(['x' => 10, 'y' => 20, 'width' => 100, 'height' => 100]);
+        Storage::disk('public')->assertExists($testimonial->avatar_path);
+    });
 });
 
 describe('validation', function () {

@@ -10,15 +10,17 @@ import {
     DialogTrigger,
 } from '@/components/ui/dialog';
 import { FormField } from '@/components/ui/form-field';
+import { type CropData } from '@/components/ui/image-crop-modal';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { SubmitButton } from '@/components/ui/submit-button';
 import { Textarea } from '@/components/ui/textarea';
+import { ThumbnailSelector } from '@/components/ui/thumbnail-selector';
 import { UserSearchSelect } from '@/components/ui/user-search-select';
 import { useModalForm } from '@/hooks/use-modal-form';
 import { router } from '@inertiajs/react';
 import { Plus } from 'lucide-react';
-import { useRef, useState } from 'react';
+import { useState } from 'react';
 
 interface CreateTestimonialModalProps {
     storeUrl: string;
@@ -56,15 +58,7 @@ export function CreateTestimonialModal({
     const [content, setContent] = useState('');
     const [displayOrder, setDisplayOrder] = useState('0');
     const [isPublished, setIsPublished] = useState(false);
-    const [avatarFile, setAvatarFile] = useState<File | null>(null);
-    const fileInputRef = useRef<HTMLInputElement>(null);
-
-    const handleAvatarChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-        const file = e.target.files?.[0];
-        if (file !== undefined) {
-            setAvatarFile(file);
-        }
-    };
+    const [, setAvatarCropData] = useState<CropData | null>(null);
 
     const handleSubmit = (e: React.FormEvent) => {
         e.preventDefault();
@@ -72,7 +66,8 @@ export function CreateTestimonialModal({
         setIsSubmitting(true);
         setErrors({});
 
-        const formData = new FormData();
+        const formElement = e.target as HTMLFormElement;
+        const formData = new FormData(formElement);
 
         if (selectedUser) {
             formData.append('user_id', selectedUser.id.toString());
@@ -80,9 +75,6 @@ export function CreateTestimonialModal({
             formData.append('name', name);
             formData.append('job_title', jobTitle);
             formData.append('organisation', organisation);
-            if (avatarFile !== null) {
-                formData.append('avatar', avatarFile);
-            }
         }
 
         formData.append('content', content);
@@ -99,10 +91,7 @@ export function CreateTestimonialModal({
                 setContent('');
                 setDisplayOrder('0');
                 setIsPublished(false);
-                setAvatarFile(null);
-                if (fileInputRef.current !== null) {
-                    fileInputRef.current.value = '';
-                }
+                setAvatarCropData(null);
             },
             onError: (newErrors) => {
                 setErrors(
@@ -131,10 +120,7 @@ export function CreateTestimonialModal({
             setContent('');
             setDisplayOrder('0');
             setIsPublished(false);
-            setAvatarFile(null);
-            if (fileInputRef.current !== null) {
-                fileInputRef.current.value = '';
-            }
+            setAvatarCropData(null);
         }
         baseHandleOpenChange(open);
     };
@@ -233,22 +219,17 @@ export function CreateTestimonialModal({
                                     htmlFor="avatar"
                                     error={errors.avatar}
                                 >
-                                    <Input
-                                        ref={fileInputRef}
-                                        id="avatar"
-                                        type="file"
-                                        accept="image/png,image/jpg,image/jpeg,image/gif,image/webp"
-                                        onChange={handleAvatarChange}
-                                        disabled={isSubmitting}
-                                        aria-invalid={
-                                            errors.avatar !== undefined
-                                                ? true
-                                                : undefined
-                                        }
+                                    <ThumbnailSelector
+                                        name="avatar"
+                                        removeFieldName="remove_avatar"
+                                        aspectRatio={1}
+                                        size="lg"
+                                        error={errors.avatar}
+                                        onCropDataChange={setAvatarCropData}
                                     />
                                     <p className="mt-1 text-xs text-neutral-500 dark:text-neutral-400">
-                                        Optional. Max 2MB. Formats: PNG, JPG,
-                                        GIF, WEBP
+                                        Optional. Square image (1:1 ratio). Max
+                                        2MB.
                                     </p>
                                 </FormField>
                             </>

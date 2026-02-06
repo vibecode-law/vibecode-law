@@ -10,6 +10,7 @@ import {
 
 interface ThumbnailSelectorProps {
     name: string;
+    removeFieldName?: string;
     currentOriginalUrl?: string | null;
     currentCropData?: SimpleCropData | null;
     error?: string;
@@ -70,6 +71,7 @@ async function createCroppedPreview(
 
 export function ThumbnailSelector({
     name,
+    removeFieldName = 'remove_thumbnail',
     currentOriginalUrl,
     currentCropData,
     error,
@@ -291,9 +293,9 @@ export function ThumbnailSelector({
                     {error}
                 </p>
             )}
-            {/* Hidden input for remove_thumbnail flag */}
+            {/* Hidden input for remove flag */}
             {isRemoved === true && (
-                <input type="hidden" name="remove_thumbnail" value="1" />
+                <input type="hidden" name={removeFieldName} value="1" />
             )}
             <ImageCropModal
                 open={modalOpen}

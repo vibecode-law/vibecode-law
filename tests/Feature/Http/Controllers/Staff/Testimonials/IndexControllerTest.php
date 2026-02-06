@@ -131,6 +131,7 @@ describe('data', function () {
                     ->where('is_published', true)
                     ->where('display_order', 5)
                     ->has('avatar')
+                    ->where('avatar_rect_string', null)
                     ->has('user')
                 )
             );

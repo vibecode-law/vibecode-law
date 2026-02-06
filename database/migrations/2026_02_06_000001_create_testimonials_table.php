@@ -25,6 +25,7 @@ return new class extends Migration
 
             // Avatar/thumbnail - follows avatar storage pattern
             $table->string('avatar_path')->nullable();
+            $table->json('avatar_crop')->nullable();
 
             // Display settings
             $table->boolean('is_published')->default(false);

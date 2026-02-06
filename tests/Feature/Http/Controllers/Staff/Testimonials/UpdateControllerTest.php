@@ -131,6 +131,68 @@ describe('updating', function () {
         Storage::disk('public')->assertMissing('testimonials/avatars/existing.jpg');
     });
 
+    test('handles avatar upload with crop data', function () {
+        $moderator = User::factory()->moderator()->create();
+        $testimonial = Testimonial::factory()->create();
+
+        actingAs($moderator);
+
+        put(route('staff.testimonials.update', $testimonial), [
+            'content' => $testimonial->content,
+            'avatar' => UploadedFile::fake()->image('avatar.png', 200, 200),
+            'avatar_crop' => ['x' => 10, 'y' => 20, 'width' => 100, 'height' => 100],
+        ])->assertRedirect();
+
+        $testimonial->refresh();
+
+        expect($testimonial->avatar_path)->toStartWith('testimonials/avatars/')
+            ->and($testimonial->avatar_crop)->toBe(['x' => 10, 'y' => 20, 'width' => 100, 'height' => 100]);
+        Storage::disk('public')->assertExists($testimonial->avatar_path);
+    });
+
+    test('updates crop data without replacing avatar file', function () {
+        $moderator = User::factory()->moderator()->create();
+        $testimonial = Testimonial::factory()->create([
+            'avatar_path' => 'testimonials/avatars/existing.jpg',
+            'avatar_crop' => ['x' => 0, 'y' => 0, 'width' => 50, 'height' => 50],
+        ]);
+        Storage::disk('public')->put('testimonials/avatars/existing.jpg', 'content');
+
+        actingAs($moderator);
+
+        put(route('staff.testimonials.update', $testimonial), [
+            'content' => $testimonial->content,
+            'avatar_crop' => ['x' => 15, 'y' => 25, 'width' => 80, 'height' => 80],
+        ])->assertRedirect();
+
+        $testimonial->refresh();
+
+        expect($testimonial->avatar_path)->toBe('testimonials/avatars/existing.jpg')
+            ->and($testimonial->avatar_crop)->toBe(['x' => 15, 'y' => 25, 'width' => 80, 'height' => 80]);
+        Storage::disk('public')->assertExists('testimonials/avatars/existing.jpg');
+    });
+
+    test('clears crop data when avatar is removed', function () {
+        $moderator = User::factory()->moderator()->create();
+        $testimonial = Testimonial::factory()->create([
+            'avatar_path' => 'testimonials/avatars/existing.jpg',
+            'avatar_crop' => ['x' => 10, 'y' => 20, 'width' => 100, 'height' => 100],
+        ]);
+        Storage::disk('public')->put('testimonials/avatars/existing.jpg', 'content');
+
+        actingAs($moderator);
+
+        put(route('staff.testimonials.update', $testimonial), [
+            'content' => $testimonial->content,
+            'remove_avatar' => true,
+        ])->assertRedirect();
+
+        $testimonial->refresh();
+
+        expect($testimonial->avatar_path)->toBeNull()
+            ->and($testimonial->avatar_crop)->toBeNull();
+    });
+
     test('preserves avatar when updating without avatar changes', function () {
         $moderator = User::factory()->moderator()->create();
         $testimonial = Testimonial::factory()->create([

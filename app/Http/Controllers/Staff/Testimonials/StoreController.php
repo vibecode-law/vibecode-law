@@ -14,12 +14,15 @@ class StoreController extends BaseController
     {
         $this->authorize('create', Testimonial::class);
 
-        $testimonial = Testimonial::create($request->safe()->except(['avatar']));
+        $testimonial = Testimonial::create($request->safe()->except(['avatar', 'avatar_crop']));
 
         // Handle avatar upload
         if ($request->hasFile('avatar')) {
             $avatarService = new TestimonialAvatarService(testimonial: $testimonial);
-            $avatarService->fromUploadedFile(file: $request->file('avatar'));
+            $avatarService->fromUploadedFile(
+                file: $request->file('avatar'),
+                crop: $request->validated('avatar_crop'),
+            );
         }
 
         return redirect()->back();

@@ -12,6 +12,8 @@ use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\Storage;
 
 /**
+ * @property array{x: int, y: int, width: int, height: int}|null $avatar_crop
+ *
  * @mixin IdeHelperTestimonial
  */
 class Testimonial extends Model
@@ -26,6 +28,7 @@ class Testimonial extends Model
         'organisation',
         'content',
         'avatar_path',
+        'avatar_crop',
         'is_published',
         'display_order',
     ];
@@ -33,6 +36,7 @@ class Testimonial extends Model
     protected function casts(): array
     {
         return [
+            'avatar_crop' => 'array',
             'is_published' => 'boolean',
             'display_order' => 'integer',
         ];
@@ -81,6 +85,29 @@ class Testimonial extends Model
     {
         return Attribute::make(
             get: fn (): ?string => $this->user !== null ? $this->user->organisation : $this->organisation
+        );
+    }
+
+    // Avatar rect string for image transformation
+    protected function avatarRectString(): Attribute
+    {
+        return Attribute::make(
+            get: function (): ?string {
+                if ($this->avatar_crop === null) {
+                    return null;
+                }
+
+                /** @var array{x: int, y: int, width: int, height: int} $crop */
+                $crop = $this->avatar_crop;
+
+                return sprintf(
+                    'rect=%d,%d,%d,%d',
+                    $crop['x'],
+                    $crop['y'],
+                    $crop['width'],
+                    $crop['height']
+                );
+            }
         );
     }
 

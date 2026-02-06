@@ -9,13 +9,15 @@ import {
     DialogTitle,
 } from '@/components/ui/dialog';
 import { FormField } from '@/components/ui/form-field';
+import { type CropData } from '@/components/ui/image-crop-modal';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { SubmitButton } from '@/components/ui/submit-button';
 import { Textarea } from '@/components/ui/textarea';
+import { ThumbnailSelector } from '@/components/ui/thumbnail-selector';
 import { useModalForm } from '@/hooks/use-modal-form';
 import { router } from '@inertiajs/react';
-import { useRef, useState } from 'react';
+import { useState } from 'react';
 
 interface EditTestimonialModalProps {
     testimonial: App.Http.Resources.TestimonialResource;
@@ -50,12 +52,11 @@ export function EditTestimonialModal({
         String(testimonial.display_order),
     );
     const [isPublished, setIsPublished] = useState(testimonial.is_published);
-    const [avatarFile, setAvatarFile] = useState<File | null>(null);
     const [lastTestimonialId, setLastTestimonialId] = useState(testimonial.id);
     const [isLinkedToUser, setIsLinkedToUser] = useState(
         testimonial.user_id !== null,
     );
-    const fileInputRef = useRef<HTMLInputElement>(null);
+    const [, setAvatarCropData] = useState<CropData | null>(null);
 
     // Reset form when a different testimonial is selected (during render, not in effect)
     if (testimonial.id !== lastTestimonialId) {
@@ -80,16 +81,9 @@ export function EditTestimonialModal({
         setContent(testimonial.content);
         setDisplayOrder(String(testimonial.display_order));
         setIsPublished(testimonial.is_published);
-        setAvatarFile(null);
+        setAvatarCropData(null);
         clearErrors();
     }
-
-    const handleAvatarChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-        const file = e.target.files?.[0];
-        if (file !== undefined) {
-            setAvatarFile(file);
-        }
-    };
 
     const handleSubmit = (e: React.FormEvent) => {
         e.preventDefault();
@@ -97,15 +91,13 @@ export function EditTestimonialModal({
         setIsSubmitting(true);
         setErrors({});
 
-        const formData = new FormData();
+        const formElement = e.target as HTMLFormElement;
+        const formData = new FormData(formElement);
         // Only send user data fields if not linked to user
         if (!isLinkedToUser) {
             formData.append('name', name);
             formData.append('job_title', jobTitle);
             formData.append('organisation', organisation);
-            if (avatarFile !== null) {
-                formData.append('avatar', avatarFile);
-            }
         } else {
             // If unlinking, send user_id as empty to unlink
             formData.append('user_id', '');
@@ -169,10 +161,7 @@ export function EditTestimonialModal({
         setContent(testimonial.content);
         setDisplayOrder(String(testimonial.display_order));
         setIsPublished(testimonial.is_published);
-        setAvatarFile(null);
-        if (fileInputRef.current !== null) {
-            fileInputRef.current.value = '';
-        }
+        setAvatarCropData(null);
         clearErrors();
         onOpenChange(open);
     };
@@ -301,44 +290,50 @@ export function EditTestimonialModal({
                             htmlFor="edit-avatar"
                             error={errors.avatar}
                         >
-                            {testimonial.avatar && (
-                                <div className="mb-2">
-                                    <img
-                                        src={testimonial.avatar}
-                                        alt="Current avatar"
-                                        className="size-16 rounded-full object-cover"
-                                    />
-                                    <p className="mt-1 text-xs text-neutral-500 dark:text-neutral-400">
-                                        Current avatar
-                                    </p>
-                                </div>
-                            )}
-                            {!isLinkedToUser && (
+                            {!isLinkedToUser ? (
                                 <>
-                                    <Input
-                                        ref={fileInputRef}
-                                        id="edit-avatar"
-                                        type="file"
-                                        accept="image/png,image/jpg,image/jpeg,image/gif,image/webp"
-                                        onChange={handleAvatarChange}
-                                        disabled={isSubmitting}
-                                        aria-invalid={
-                                            errors.avatar !== undefined
-                                                ? true
-                                                : undefined
+                                    <ThumbnailSelector
+                                        name="avatar"
+                                        removeFieldName="remove_avatar"
+                                        currentOriginalUrl={testimonial.avatar}
+                                        currentCropData={
+                                            testimonial.avatar_crop
+                                                ? {
+                                                      x: testimonial.avatar_crop
+                                                          .x,
+                                                      y: testimonial.avatar_crop
+                                                          .y,
+                                                      width: testimonial
+                                                          .avatar_crop.width,
+                                                      height: testimonial
+                                                          .avatar_crop.height,
+                                                  }
+                                                : null
                                         }
+                                        aspectRatio={1}
+                                        size="lg"
+                                        error={errors.avatar}
+                                        onCropDataChange={setAvatarCropData}
                                     />
                                     <p className="mt-1 text-xs text-neutral-500 dark:text-neutral-400">
-                                        Upload a new avatar to replace the
-                                        current one. Max 2MB. Formats: PNG, JPG,
-                                        GIF, WEBP
+                                        Square image (1:1 ratio). Max 2MB.
                                     </p>
                                 </>
-                            )}
-                            {isLinkedToUser && (
-                                <p className="text-sm text-neutral-500 dark:text-neutral-400">
-                                    Avatar is from the linked user profile
-                                </p>
+                            ) : (
+                                <>
+                                    {testimonial.avatar && (
+                                        <div className="mb-2">
+                                            <img
+                                                src={testimonial.avatar}
+                                                alt="Current avatar"
+                                                className="size-16 rounded-full object-cover"
+                                            />
+                                        </div>
+                                    )}
+                                    <p className="text-sm text-neutral-500 dark:text-neutral-400">
+                                        Avatar is from the linked user profile
+                                    </p>
+                                </>
                             )}
                         </FormField>
 

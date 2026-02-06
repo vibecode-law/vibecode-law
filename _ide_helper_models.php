@@ -300,6 +300,7 @@ namespace App\Models\Showcase{
 
 namespace App\Models{
 /**
+ * @property array{x: int, y: int, width: int, height: int}|null $avatar_crop
  * @property int $id
  * @property int|null $user_id
  * @property string|null $name
@@ -312,6 +313,7 @@ namespace App\Models{
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
  * @property-read string|null $avatar
+ * @property-read string|null $avatar_rect_string
  * @property-read string|null $display_job_title
  * @property-read string $display_name
  * @property-read string|null $display_organisation
@@ -321,6 +323,7 @@ namespace App\Models{
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Testimonial newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Testimonial published()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Testimonial query()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Testimonial whereAvatarCrop($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Testimonial whereAvatarPath($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Testimonial whereContent($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Testimonial whereCreatedAt($value)
