@@ -27,7 +27,7 @@ export function PressCoverageListItem({
     };
 
     return (
-        <div className="flex gap-4 py-4">
+        <div className="flex gap-4 px-4 py-4">
             <div className="shrink-0">
                 <AvatarFallback
                     name={pressCoverage.publication_name}
@@ -78,7 +78,7 @@ export function PressCoverageListItem({
                 </div>
             </div>
 
-            <div className="flex shrink-0 items-center gap-2">
+            <div className="flex shrink-0 items-center gap-3">
                 {actions}
 
                 {onEdit !== undefined && (

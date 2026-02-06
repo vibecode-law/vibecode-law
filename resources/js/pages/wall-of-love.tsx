@@ -79,11 +79,11 @@ export default function WallOfLove({
                             {testimonials.map((testimonial) => (
                                 <div
                                     key={testimonial.id}
-                                    className="relative rounded-lg border border-neutral-200 bg-white p-6 shadow-sm dark:border-neutral-700 dark:bg-neutral-950"
+                                    className="relative flex flex-col rounded-lg border border-neutral-200 bg-white p-6 shadow-sm dark:border-neutral-700 dark:bg-neutral-950"
                                 >
                                     <Quote className="mb-4 size-6 text-amber-500" />
 
-                                    <p className="mb-6 text-neutral-700 dark:text-neutral-300">
+                                    <p className="mb-6 flex-1 text-neutral-700 dark:text-neutral-300">
                                         "{testimonial.content}"
                                     </p>
 
@@ -156,7 +156,7 @@ export default function WallOfLove({
                                                 className="aspect-square w-full object-cover transition-transform group-hover:scale-105"
                                             />
                                         ) : (
-                                            <div className="flex aspect-square w-full items-center justify-center rounded bg-gradient-to-br from-amber-400 to-amber-600 text-3xl font-bold text-white">
+                                            <div className="flex aspect-square w-full items-center justify-center rounded bg-linear-to-br from-amber-400 to-amber-600 text-3xl font-bold text-white">
                                                 {article.publication_name
                                                     .split(/\s+/)
                                                     .slice(0, 2)
@@ -167,13 +167,10 @@ export default function WallOfLove({
                                         )}
                                     </div>
 
-                                    <div className="mb-2 flex items-center gap-2">
+                                    <div className="mb-2">
                                         <Badge variant="outline" size="sm">
                                             {article.publication_name}
                                         </Badge>
-                                        <span className="text-xs text-neutral-500 dark:text-neutral-400">
-                                            {article.publication_date}
-                                        </span>
                                     </div>
 
                                     <h3 className="mb-2 font-semibold text-neutral-900 group-hover:text-amber-600 dark:text-white dark:group-hover:text-amber-500">
@@ -186,6 +183,10 @@ export default function WallOfLove({
                                             {article.excerpt}
                                         </p>
                                     )}
+
+                                    <p className="mt-2 text-xs text-neutral-500 dark:text-neutral-400">
+                                        {article.publication_date}
+                                    </p>
                                 </a>
                             ))}
                         </div>
