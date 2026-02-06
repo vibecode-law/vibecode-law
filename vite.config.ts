@@ -49,7 +49,7 @@ export default defineConfig({
         cors: {
             origin: `https://${codespacesLaravelDomain}`,
             credentials: true,
-        },        
+        },
         hmr: {
             protocol: 'wss',
             host: codespacesDomain!,

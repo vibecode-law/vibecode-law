@@ -1,6 +1,5 @@
 <?php
 
-use App\Http\Controllers\Api\UsersController as ApiUsersController;
 use App\Http\Controllers\Staff\PracticeAreaController;
 use App\Http\Controllers\Staff\PressCoverage\DestroyController as PressCoverageDestroyController;
 use App\Http\Controllers\Staff\PressCoverage\IndexController as PressCoverageIndexController;
@@ -55,10 +54,6 @@ Route::middleware(['can:access-staff'])->prefix('staff')->name('staff.')->group(
         Route::delete('/{user}', UserDestroyController::class)->name('destroy');
         Route::post('/{user}/toggle-submissions', UserToggleSubmissionsController::class)->name('toggle-submissions');
         Route::post('/{user}/send-password-reset', UserSendPasswordResetController::class)->name('send-password-reset');
-    });
-
-    Route::prefix('api')->name('api.')->group(function () {
-        Route::get('/users', ApiUsersController::class)->name('users');
     });
 
     Route::prefix('testimonials')->name('testimonials.')->group(function () {

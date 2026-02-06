@@ -1,3 +1,4 @@
+import UsersController from '@/actions/App/Http/Controllers/Api/UsersController';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -56,7 +57,7 @@ export function UserSearchSelect({
 
         searchTimeoutRef.current = setTimeout(() => {
             setIsLoading(true);
-            fetch(`/staff/api/users?search=${encodeURIComponent(search)}`)
+            fetch(UsersController.url({ query: { search } }))
                 .then((res) => res.json())
                 .then((data) => {
                     setUsers(data);
