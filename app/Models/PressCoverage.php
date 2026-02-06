@@ -5,6 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Attributes\Scope;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Casts\Attribute;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\Storage;
@@ -16,6 +17,9 @@ use Illuminate\Support\Facades\Storage;
  */
 class PressCoverage extends Model
 {
+    /** @use HasFactory<\Database\Factories\PressCoverageFactory> */
+    use HasFactory;
+
     protected $table = 'press_coverage';
 
     protected $fillable = [

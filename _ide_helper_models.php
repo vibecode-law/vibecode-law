@@ -51,6 +51,7 @@ namespace App\Models{
  * @property \Illuminate\Support\Carbon|null $updated_at
  * @property-read string|null $thumbnail_rect_string
  * @property-read string|null $thumbnail_url
+ * @method static \Database\Factories\PressCoverageFactory factory($count = null, $state = [])
  * @method static \Illuminate\Database\Eloquent\Builder<static>|PressCoverage newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|PressCoverage newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|PressCoverage published()
@@ -315,6 +316,7 @@ namespace App\Models{
  * @property-read string $display_name
  * @property-read string|null $display_organisation
  * @property-read \App\Models\User|null $user
+ * @method static \Database\Factories\TestimonialFactory factory($count = null, $state = [])
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Testimonial newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Testimonial newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Testimonial published()

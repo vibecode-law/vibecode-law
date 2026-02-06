@@ -19,16 +19,16 @@ class PressCoveragePolicy
 
     public function create(User $user): bool
     {
-        return $user->hasRole('Moderator');
+        return $user->can('press-coverage.create');
     }
 
     public function update(User $user, PressCoverage $pressCoverage): bool
     {
-        return $user->hasRole('Moderator');
+        return $user->can('press-coverage.update');
     }
 
     public function delete(User $user, PressCoverage $pressCoverage): bool
     {
-        return $user->hasRole('Moderator');
+        return $user->can('press-coverage.delete');
     }
 }

@@ -19,16 +19,16 @@ class TestimonialPolicy
 
     public function create(User $user): bool
     {
-        return $user->hasRole('Moderator');
+        return $user->can('testimonial.create');
     }
 
     public function update(User $user, Testimonial $testimonial): bool
     {
-        return $user->hasRole('Moderator');
+        return $user->can('testimonial.update');
     }
 
     public function delete(User $user, Testimonial $testimonial): bool
     {
-        return $user->hasRole('Moderator');
+        return $user->can('testimonial.delete');
     }
 }

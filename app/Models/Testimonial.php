@@ -5,6 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Attributes\Scope;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Casts\Attribute;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Support\Facades\Config;
@@ -15,6 +16,9 @@ use Illuminate\Support\Facades\Storage;
  */
 class Testimonial extends Model
 {
+    /** @use HasFactory<\Database\Factories\TestimonialFactory> */
+    use HasFactory;
+
     protected $fillable = [
         'user_id',
         'name',

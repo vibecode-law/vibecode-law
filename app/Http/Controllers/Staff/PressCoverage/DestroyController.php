@@ -12,7 +12,7 @@ class DestroyController extends BaseController
     {
         $this->authorize('delete', $pressCoverage);
 
-        // Thumbnail will be deleted via model observer
+        // Thumbnail will be deleted via model event
         $pressCoverage->delete();
 
         return redirect()->back();

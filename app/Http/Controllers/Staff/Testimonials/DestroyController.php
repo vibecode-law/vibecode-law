@@ -12,7 +12,7 @@ class DestroyController extends BaseController
     {
         $this->authorize('delete', $testimonial);
 
-        // Avatar will be deleted via model observer
+        // Avatar will be deleted via model event
         $testimonial->delete();
 
         return redirect()->back();
