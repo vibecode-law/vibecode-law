@@ -124,4 +124,6 @@ return [
     ],
 
     'launched' => env('APP_LAUNCHED', true),
+
+    'wol-enabled' => (bool) env('WOL_ENABLED', true),
 ];

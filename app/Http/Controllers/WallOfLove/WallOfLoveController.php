@@ -7,6 +7,7 @@ use App\Http\Resources\PressCoverageResource;
 use App\Http\Resources\TestimonialResource;
 use App\Models\PressCoverage;
 use App\Models\Testimonial;
+use Illuminate\Support\Facades\Config;
 use Inertia\Inertia;
 use Inertia\Response;
 
@@ -14,6 +15,10 @@ class WallOfLoveController extends BaseController
 {
     public function __invoke(): Response
     {
+        if (Config::get('app.wol-enabled') !== true) {
+            abort(404);
+        }
+
         $testimonials = Testimonial::query()
             ->published()
             ->with('user')

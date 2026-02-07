@@ -59,6 +59,7 @@ class HandleInertiaRequests extends Middleware
                 ])
                 ->all(),
             'transformImages' => Config::get('services.image-transform.base_url') !== null,
+            'wolEnabled' => Config::get('app.wol-enabled') === true,
         ]);
     }
 

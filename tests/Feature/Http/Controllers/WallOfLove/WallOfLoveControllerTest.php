@@ -7,6 +7,13 @@ use Inertia\Testing\AssertableInertia;
 
 use function Pest\Laravel\get;
 
+test('returns not found when wol-enabled is false', function () {
+    config()->set('app.wol-enabled', false);
+
+    get('/wall-of-love')
+        ->assertNotFound();
+});
+
 test('returns a successful response', function () {
     get(route('wall-of-love'))
         ->assertSuccessful();
