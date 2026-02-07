@@ -3,6 +3,7 @@ import HomeController from '@/actions/App/Http/Controllers/HomeController';
 import NewsletterIndexController from '@/actions/App/Http/Controllers/Newsletter/NewsletterIndexController';
 import ResourcesIndexController from '@/actions/App/Http/Controllers/Resources/ResourcesIndexController';
 import ShowcaseCreateController from '@/actions/App/Http/Controllers/Showcase/ManageShowcase/ShowcaseCreateController';
+import WallOfLoveController from '@/actions/App/Http/Controllers/WallOfLove/WallOfLoveController';
 import AppLogo from '@/components/logo/app-logo';
 import { NewsletterSignup } from '@/components/newsletter/newsletter-signup';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
@@ -30,7 +31,7 @@ import { ArrowRight, Lock, Menu, Plus, X } from 'lucide-react';
 
 export function PublicHeader() {
     const page = usePage<SharedData>();
-    const { auth, transformImages } = page.props;
+    const { auth, transformImages, wolEnabled } = page.props;
     const getInitials = useInitials();
     const isAuthenticated = auth?.user !== undefined && auth?.user !== null;
 
@@ -48,6 +49,14 @@ export function PublicHeader() {
                         >
                             Resources
                         </Link>
+                        {wolEnabled && (
+                            <Link
+                                href={WallOfLoveController.url()}
+                                className="text-sm font-medium text-neutral-600 hover:text-neutral-900 dark:text-neutral-400 dark:hover:text-white"
+                            >
+                                Wall of Love
+                            </Link>
+                        )}
                         <Link
                             href={AboutIndexController.url()}
                             className="text-sm font-medium text-neutral-600 hover:text-neutral-900 dark:text-neutral-400 dark:hover:text-white"
@@ -159,6 +168,31 @@ export function PublicHeader() {
                                             <ArrowRight className="size-5 text-neutral-400 transition-transform group-hover:translate-x-1 group-hover:text-primary dark:text-neutral-500" />
                                         </Link>
                                     </SheetClose>
+
+                                    {wolEnabled && (
+                                        <>
+                                            <hr className="border-neutral-200 dark:border-neutral-800" />
+
+                                            <SheetClose asChild>
+                                                <Link
+                                                    href={WallOfLoveController.url()}
+                                                    className="group flex items-center justify-between py-4"
+                                                >
+                                                    <div>
+                                                        <h3 className="text-2xl font-bold text-neutral-900 group-hover:text-primary dark:text-white">
+                                                            Wall of Love
+                                                        </h3>
+                                                        <p className="mt-1 text-sm text-neutral-600 dark:text-neutral-400">
+                                                            Community
+                                                            testimonials and
+                                                            press
+                                                        </p>
+                                                    </div>
+                                                    <ArrowRight className="size-5 text-neutral-400 transition-transform group-hover:translate-x-1 group-hover:text-primary dark:text-neutral-500" />
+                                                </Link>
+                                            </SheetClose>
+                                        </>
+                                    )}
 
                                     <hr className="border-neutral-200 dark:border-neutral-800" />
 

@@ -12,6 +12,38 @@ declare namespace App.Http.Resources {
         slug: string;
         showcases_count?: number;
     };
+    export type PressCoverageResource = {
+        id: number;
+        title: string;
+        publication_name: string;
+        publication_date: string;
+        url: string;
+        excerpt: string | null;
+        thumbnail_extension?: string | null;
+        thumbnail_url: string | null;
+        thumbnail_rect_string: string | null;
+        thumbnail_crop?: App.ValueObjects.ImageCrop | null;
+        is_published: boolean;
+        display_order: number;
+    };
+    export type TestimonialResource = {
+        id: number;
+        user_id: number | null;
+        name?: string | null;
+        job_title?: string | null;
+        organisation?: string | null;
+        content: string;
+        avatar_path?: string | null;
+        avatar: string | null;
+        avatar_rect_string: string | null;
+        avatar_crop?: App.ValueObjects.ImageCrop | null;
+        display_name: string;
+        display_job_title: string | null;
+        display_organisation: string | null;
+        is_published: boolean;
+        display_order: number;
+        user?: App.Http.Resources.User.UserResource | null;
+    };
 }
 declare namespace App.Http.Resources.Showcase {
     export type ShowcaseDraftImageResource = {

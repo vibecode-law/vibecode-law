@@ -4,11 +4,12 @@ import InputError from '@/components/ui/input-error';
 import { Label } from '@/components/ui/label';
 import { cn } from '@/lib/utils';
 
-interface FormFieldProps {
+export interface FormFieldProps {
     label: string;
     htmlFor: string;
     error?: string;
     optional?: boolean;
+    required?: boolean;
     children: ReactNode;
     className?: string;
     labelClassName?: string;
@@ -23,6 +24,7 @@ export function FormField({
     htmlFor,
     error,
     optional = false,
+    required = false,
     children,
     className,
     labelClassName,
@@ -36,6 +38,9 @@ export function FormField({
                 <div className="flex items-center">
                     <Label htmlFor={htmlFor} className={labelClassName}>
                         {label}
+                        {required === true && (
+                            <span className="text-destructive"> *</span>
+                        )}
                         {optional === true && (
                             <span className="text-muted-foreground">
                                 {' '}
@@ -48,6 +53,9 @@ export function FormField({
             ) : (
                 <Label htmlFor={htmlFor} className={labelClassName}>
                     {label}
+                    {required === true && (
+                        <span className="text-destructive"> *</span>
+                    )}
                     {optional === true && (
                         <span className="text-muted-foreground"> (optional)</span>
                     )}

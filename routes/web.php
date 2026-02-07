@@ -10,6 +10,7 @@ use App\Http\Controllers\Newsletter\NewsletterSignupController;
 use App\Http\Controllers\Resources\ResourcesIndexController;
 use App\Http\Controllers\Resources\ResourcesShowController;
 use App\Http\Controllers\Showcase\Public\ShowcaseShowController;
+use App\Http\Controllers\WallOfLove\WallOfLoveController;
 use Illuminate\Support\Facades\Route;
 
 require __DIR__.'/auth.php';
@@ -27,6 +28,8 @@ Route::get('/resources/{slug}', ResourcesShowController::class)->name('resources
 
 Route::get('/newsletter', NewsletterIndexController::class)->name('newsletter.index');
 Route::post('/newsletter/signup', NewsletterSignupController::class)->name('newsletter.signup');
+
+Route::get('/wall-of-love', WallOfLoveController::class)->name('wall-of-love');
 
 require __DIR__.'/guest/showcase.php';
 require __DIR__.'/guest/user.php';

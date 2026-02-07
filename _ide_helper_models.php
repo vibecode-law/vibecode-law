@@ -35,6 +35,45 @@ namespace App\Models{
 	class IdeHelperPracticeArea {}
 }
 
+namespace App\Models{
+/**
+ * @property array{x: int, y: int, width: int, height: int}|null $thumbnail_crop
+ * @property int $id
+ * @property string $title
+ * @property string $publication_name
+ * @property \Illuminate\Support\Carbon $publication_date
+ * @property string $url
+ * @property string|null $excerpt
+ * @property string|null $thumbnail_extension
+ * @property bool $is_published
+ * @property int $display_order
+ * @property \Illuminate\Support\Carbon|null $created_at
+ * @property \Illuminate\Support\Carbon|null $updated_at
+ * @property-read string|null $thumbnail_rect_string
+ * @property-read string|null $thumbnail_url
+ * @method static \Database\Factories\PressCoverageFactory factory($count = null, $state = [])
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|PressCoverage newModelQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|PressCoverage newQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|PressCoverage published()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|PressCoverage query()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|PressCoverage whereCreatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|PressCoverage whereDisplayOrder($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|PressCoverage whereExcerpt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|PressCoverage whereId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|PressCoverage whereIsPublished($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|PressCoverage wherePublicationDate($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|PressCoverage wherePublicationName($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|PressCoverage whereThumbnailCrop($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|PressCoverage whereThumbnailExtension($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|PressCoverage whereTitle($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|PressCoverage whereUpdatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|PressCoverage whereUrl($value)
+ * @mixin \Eloquent
+ */
+	#[\AllowDynamicProperties]
+	class IdeHelperPressCoverage {}
+}
+
 namespace App\Models\Showcase{
 /**
  * @property array{x: int, y: int, width: int, height: int}|null $thumbnail_crop
@@ -257,6 +296,49 @@ namespace App\Models\Showcase{
  */
 	#[\AllowDynamicProperties]
 	class IdeHelperShowcaseUpvote {}
+}
+
+namespace App\Models{
+/**
+ * @property array{x: int, y: int, width: int, height: int}|null $avatar_crop
+ * @property int $id
+ * @property int|null $user_id
+ * @property string|null $name
+ * @property string|null $job_title
+ * @property string|null $organisation
+ * @property string $content
+ * @property string|null $avatar_path
+ * @property bool $is_published
+ * @property int $display_order
+ * @property \Illuminate\Support\Carbon|null $created_at
+ * @property \Illuminate\Support\Carbon|null $updated_at
+ * @property-read string|null $avatar
+ * @property-read string|null $avatar_rect_string
+ * @property-read string|null $display_job_title
+ * @property-read string $display_name
+ * @property-read string|null $display_organisation
+ * @property-read \App\Models\User|null $user
+ * @method static \Database\Factories\TestimonialFactory factory($count = null, $state = [])
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Testimonial newModelQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Testimonial newQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Testimonial published()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Testimonial query()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Testimonial whereAvatarCrop($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Testimonial whereAvatarPath($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Testimonial whereContent($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Testimonial whereCreatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Testimonial whereDisplayOrder($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Testimonial whereId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Testimonial whereIsPublished($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Testimonial whereJobTitle($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Testimonial whereName($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Testimonial whereOrganisation($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Testimonial whereUpdatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Testimonial whereUserId($value)
+ * @mixin \Eloquent
+ */
+	#[\AllowDynamicProperties]
+	class IdeHelperTestimonial {}
 }
 
 namespace App\Models{
