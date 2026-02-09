@@ -7,6 +7,7 @@ use App\Http\Resources\TestimonialResource;
 use App\Models\Testimonial;
 use Inertia\Inertia;
 use Inertia\Response;
+use Spatie\LaravelData\DataCollection;
 
 class IndexController extends BaseController
 {
@@ -19,7 +20,7 @@ class IndexController extends BaseController
             ->get();
 
         return Inertia::render('staff-area/testimonials/index', [
-            'testimonials' => TestimonialResource::collect($testimonials),
+            'testimonials' => TestimonialResource::collect($testimonials, DataCollection::class)->include('name', 'job_title', 'organisation', 'avatar_crop'),
         ]);
     }
 }

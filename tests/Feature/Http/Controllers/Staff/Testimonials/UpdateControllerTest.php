@@ -40,6 +40,7 @@ describe('auth', function () {
         actingAs($moderator);
 
         put(route('staff.testimonials.update', $testimonial), [
+            'name' => 'Jane Doe',
             'content' => 'Updated content.',
         ])->assertRedirect();
     });
@@ -83,6 +84,7 @@ describe('updating', function () {
         actingAs($moderator);
 
         put(route('staff.testimonials.update', $testimonial), [
+            'name' => $testimonial->name,
             'content' => $testimonial->content,
             'avatar' => UploadedFile::fake()->image('avatar.png', 100, 100),
         ])->assertRedirect();
@@ -103,6 +105,7 @@ describe('updating', function () {
         actingAs($moderator);
 
         put(route('staff.testimonials.update', $testimonial), [
+            'name' => $testimonial->name,
             'content' => $testimonial->content,
             'avatar' => UploadedFile::fake()->image('new-avatar.jpg', 100, 100),
         ])->assertRedirect();
@@ -121,6 +124,7 @@ describe('updating', function () {
         actingAs($moderator);
 
         put(route('staff.testimonials.update', $testimonial), [
+            'name' => $testimonial->name,
             'content' => $testimonial->content,
             'remove_avatar' => true,
         ])->assertRedirect();
@@ -138,6 +142,7 @@ describe('updating', function () {
         actingAs($moderator);
 
         put(route('staff.testimonials.update', $testimonial), [
+            'name' => $testimonial->name,
             'content' => $testimonial->content,
             'avatar' => UploadedFile::fake()->image('avatar.png', 200, 200),
             'avatar_crop' => ['x' => 10, 'y' => 20, 'width' => 100, 'height' => 100],
@@ -161,6 +166,7 @@ describe('updating', function () {
         actingAs($moderator);
 
         put(route('staff.testimonials.update', $testimonial), [
+            'name' => $testimonial->name,
             'content' => $testimonial->content,
             'avatar_crop' => ['x' => 15, 'y' => 25, 'width' => 80, 'height' => 80],
         ])->assertRedirect();
@@ -183,6 +189,7 @@ describe('updating', function () {
         actingAs($moderator);
 
         put(route('staff.testimonials.update', $testimonial), [
+            'name' => $testimonial->name,
             'content' => $testimonial->content,
             'remove_avatar' => true,
         ])->assertRedirect();
@@ -191,6 +198,42 @@ describe('updating', function () {
 
         expect($testimonial->avatar_path)->toBeNull()
             ->and($testimonial->avatar_crop)->toBeNull();
+    });
+
+    test('preserves user_id when not included in request', function () {
+        $moderator = User::factory()->moderator()->create();
+        $user = User::factory()->create();
+        $testimonial = Testimonial::factory()->for($user)->create();
+
+        actingAs($moderator);
+
+        put(route('staff.testimonials.update', $testimonial), [
+            'user_id' => $user->id,
+            'content' => 'Updated content.',
+        ])->assertRedirect();
+
+        $testimonial->refresh();
+
+        expect($testimonial->user_id)->toBe($user->id);
+    });
+
+    test('unlinks user when user_id is empty', function () {
+        $moderator = User::factory()->moderator()->create();
+        $user = User::factory()->create();
+        $testimonial = Testimonial::factory()->for($user)->create();
+
+        actingAs($moderator);
+
+        put(route('staff.testimonials.update', $testimonial), [
+            'user_id' => null,
+            'name' => 'Manual Name',
+            'content' => 'Updated content.',
+        ])->assertRedirect();
+
+        $testimonial->refresh();
+
+        expect($testimonial->user_id)->toBeNull()
+            ->and($testimonial->name)->toBe('Manual Name');
     });
 
     test('preserves avatar when updating without avatar changes', function () {
@@ -203,6 +246,7 @@ describe('updating', function () {
         actingAs($moderator);
 
         put(route('staff.testimonials.update', $testimonial), [
+            'name' => $testimonial->name,
             'content' => 'Updated content only.',
         ])->assertRedirect();
 
@@ -223,6 +267,10 @@ describe('validation', function () {
         put(route('staff.testimonials.update', $testimonial), $data)
             ->assertInvalid($invalidFields);
     })->with([
+        'name is required when user_id is empty' => [
+            ['content' => 'Valid', 'user_id' => null],
+            ['name'],
+        ],
         'content is required' => [
             [],
             ['content'],

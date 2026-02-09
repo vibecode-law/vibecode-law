@@ -124,6 +124,9 @@ describe('data', function () {
                 ->has('testimonials.0', fn (AssertableInertia $t) => $t
                     ->where('id', $testimonial->id)
                     ->where('user_id', $user->id)
+                    ->where('name', 'Override Name')
+                    ->where('job_title', 'Override Title')
+                    ->where('organisation', 'Override Org')
                     ->where('content', 'Great platform!')
                     ->where('display_name', "{$user->first_name} {$user->last_name}")
                     ->where('display_job_title', $user->job_title)
@@ -132,6 +135,7 @@ describe('data', function () {
                     ->where('display_order', 5)
                     ->has('avatar')
                     ->where('avatar_rect_string', null)
+                    ->where('avatar_crop', null)
                     ->has('user')
                 )
             );

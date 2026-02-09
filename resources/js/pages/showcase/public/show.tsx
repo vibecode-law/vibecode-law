@@ -121,7 +121,7 @@ export default function PublicShow({
             return null;
         }
         const date = new Date(dateString);
-        return date.toLocaleDateString('en-US', {
+        return date.toLocaleDateString('en-GB', {
             month: 'long',
             day: 'numeric',
             year: 'numeric',
@@ -141,7 +141,7 @@ export default function PublicShow({
     const formatMonth = (monthKey: string): string => {
         const [year, monthNum] = monthKey.split('-');
         const date = new Date(parseInt(year), parseInt(monthNum) - 1);
-        return date.toLocaleDateString('en-US', {
+        return date.toLocaleDateString('en-GB', {
             month: 'long',
             year: 'numeric',
         });

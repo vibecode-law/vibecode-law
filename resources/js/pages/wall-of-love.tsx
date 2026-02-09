@@ -185,7 +185,14 @@ export default function WallOfLove({
                                     )}
 
                                     <p className="mt-2 text-xs text-neutral-500 dark:text-neutral-400">
-                                        {article.publication_date}
+                                        {new Date(
+                                            article.publication_date +
+                                                'T00:00:00',
+                                        ).toLocaleDateString('en-GB', {
+                                            month: 'long',
+                                            day: 'numeric',
+                                            year: 'numeric',
+                                        })}
                                     </p>
                                 </a>
                             ))}

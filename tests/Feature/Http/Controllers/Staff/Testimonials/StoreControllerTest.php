@@ -76,6 +76,7 @@ describe('storing', function () {
         actingAs($moderator);
 
         post(route('staff.testimonials.store'), [
+            'name' => 'Jane Doe',
             'content' => 'Minimal testimonial.',
         ])->assertRedirect();
 
@@ -83,9 +84,26 @@ describe('storing', function () {
 
         expect($testimonial->content)->toBe('Minimal testimonial.')
             ->and($testimonial->user_id)->toBeNull()
-            ->and($testimonial->name)->toBeNull()
+            ->and($testimonial->name)->toBe('Jane Doe')
             ->and($testimonial->job_title)->toBeNull()
             ->and($testimonial->organisation)->toBeNull();
+    });
+
+    test('does not require name when user_id is provided', function () {
+        $moderator = User::factory()->moderator()->create();
+        $user = User::factory()->create();
+
+        actingAs($moderator);
+
+        post(route('staff.testimonials.store'), [
+            'user_id' => $user->id,
+            'content' => 'Linked testimonial.',
+        ])->assertRedirect();
+
+        $testimonial = Testimonial::latest('id')->first();
+
+        expect($testimonial->user_id)->toBe($user->id)
+            ->and($testimonial->name)->toBeNull();
     });
 
     test('handles avatar upload', function () {
@@ -94,6 +112,7 @@ describe('storing', function () {
         actingAs($moderator);
 
         post(route('staff.testimonials.store'), [
+            'name' => 'Jane Doe',
             'content' => 'With avatar.',
             'avatar' => UploadedFile::fake()->image('avatar.jpg', 100, 100),
         ])->assertRedirect();
@@ -111,6 +130,7 @@ describe('storing', function () {
         actingAs($moderator);
 
         post(route('staff.testimonials.store'), [
+            'name' => 'Jane Doe',
             'content' => 'With cropped avatar.',
             'avatar' => UploadedFile::fake()->image('avatar.jpg', 200, 200),
             'avatar_crop' => ['x' => 10, 'y' => 20, 'width' => 100, 'height' => 100],
@@ -133,8 +153,12 @@ describe('validation', function () {
         post(route('staff.testimonials.store'), $data)
             ->assertInvalid($invalidFields);
     })->with([
+        'name is required without user_id' => [
+            ['content' => 'Valid'],
+            ['name'],
+        ],
         'content is required' => [
-            [],
+            ['name' => 'Jane'],
             ['content'],
         ],
         'content must be a string' => [
@@ -200,6 +224,7 @@ describe('validation', function () {
         actingAs($moderator);
 
         post(route('staff.testimonials.store'), [
+            'name' => 'Jane Doe',
             'content' => 'Valid content',
             'avatar' => UploadedFile::fake()->image("avatar.{$extension}", 100, 100),
         ])->assertSessionHasNoErrors();
