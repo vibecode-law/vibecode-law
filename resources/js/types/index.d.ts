@@ -45,7 +45,6 @@ export interface SharedData {
     flash: FlashData;
     legalPages: LegalPage[];
     transformImages: boolean;
-    wolEnabled: boolean;
     [key: string]: unknown;
 }
 
