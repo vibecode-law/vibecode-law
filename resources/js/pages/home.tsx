@@ -2,14 +2,12 @@ import HomeController from '@/actions/App/Http/Controllers/HomeController';
 import ResourcesShowController from '@/actions/App/Http/Controllers/Resources/ResourcesShowController';
 import HowItWorksController from '@/actions/App/Http/Controllers/Showcase/Help/HowItWorksController';
 import ShowcaseCreateController from '@/actions/App/Http/Controllers/Showcase/ManageShowcase/ShowcaseCreateController';
-import WallOfLoveController from '@/actions/App/Http/Controllers/WallOfLove/WallOfLoveController';
 import { ProjectMonthSection } from '@/components/showcase/showcase-month-section';
-import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import PublicLayout from '@/layouts/public-layout';
 import { type SharedData } from '@/types';
 import { Head, Link, usePage } from '@inertiajs/react';
-import { Megaphone, PlayCircle } from 'lucide-react';
+import { PlayCircle } from 'lucide-react';
 
 interface HomeProps {
     showcasesByMonth?: Record<
@@ -54,22 +52,16 @@ export default function Home({ showcasesByMonth }: HomeProps) {
             {/* Hero Section */}
             <section className="bg bg-white py-10 lg:py-16 dark:bg-neutral-950">
                 <div className="mx-auto max-w-5xl px-4 text-center">
-                    <Badge asChild variant="neutral" size="sm" className="mb-6">
-                        <Link href={WallOfLoveController.url()}>
-                            <Megaphone />
-                            What are people saying?
-                        </Link>
-                    </Badge>
-                    <h1 className="text-4xl font-bold tracking-tight text-neutral-900 sm:text-5xl dark:text-white">
+                    <h1 className="text-4xl font-bold tracking-tight text-neutral-900 sm:text-5xl lg:text-6xl dark:text-white">
                         Learn. Share. Discover.
                     </h1>
-                    <div className="mx-auto mt-8 max-w-4xl space-y-4 text-lg text-neutral-600 dark:text-neutral-400">
-                        <p className="mt-4 text-lg text-neutral-600 dark:text-neutral-400">
+                    <div className="mx-auto mt-8 max-w-4xl space-y-6 text-lg text-neutral-600 dark:text-neutral-400">
+                        <p className="text-lg text-neutral-600 sm:text-xl dark:text-neutral-400">
                             An open platform for legal professionals building
                             with AI.
                         </p>
 
-                        <div className="flex flex-col items-center justify-center gap-4 pt-4 md:flex-row">
+                        <div className="flex flex-col items-center justify-center gap-4 py-2 md:flex-row">
                             <Button asChild size="lg">
                                 <Link href={ShowcaseCreateController.url()}>
                                     Share Your Project
@@ -81,7 +73,7 @@ export default function Home({ showcasesByMonth }: HomeProps) {
                                 </Link>
                             </Button>
                         </div>
-                        <p className="mt-4 flex flex-col items-center justify-center gap-2 text-sm text-neutral-600 md:flex-row md:text-base dark:text-neutral-400">
+                        <p className="flex flex-col items-center justify-center gap-2 text-sm text-neutral-600 md:flex-row md:text-base dark:text-neutral-400">
                             <span className="flex items-center justify-start gap-2">
                                 <PlayCircle className="size-5" />
                                 New to building?{' '}
