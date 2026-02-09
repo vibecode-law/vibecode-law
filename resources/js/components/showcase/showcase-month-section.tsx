@@ -1,6 +1,3 @@
-import ShowcaseMonthIndexController from '@/actions/App/Http/Controllers/Showcase/Public/ShowcaseMonthIndexController';
-import { Link } from '@inertiajs/react';
-import { ArrowRight } from 'lucide-react';
 import { ProjectItem } from './showcase-item';
 
 interface ProjectMonthSectionProps {
@@ -35,13 +32,6 @@ export function ProjectMonthSection({
                     />
                 ))}
             </div>
-            <Link
-                href={ShowcaseMonthIndexController.url(month)}
-                className="mt-2 flex w-full items-center justify-center gap-1 py-2 text-sm text-neutral-500 hover:text-neutral-900 dark:text-neutral-400 dark:hover:text-white"
-            >
-                <span>See all</span>
-                <ArrowRight className="size-4" />
-            </Link>
         </section>
     );
 }

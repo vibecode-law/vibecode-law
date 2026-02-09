@@ -79,17 +79,15 @@ test('only returns approved and publicly visible showcases', function () {
         );
 });
 
-test('limits showcases to top 5 per month', function () {
+test('returns all showcases for a month', function () {
     $upvoters = User::factory()->count(10)->create();
 
-    // Create 7 showcases in the same month with different upvote counts
     $showcases = collect();
     for ($i = 1; $i <= 7; $i++) {
         $showcase = Showcase::factory()->approved()->create([
             'title' => "Showcase {$i}",
             'submitted_date' => now()->startOfMonth()->addDays($i - 1),
         ]);
-        // More upvotes for lower numbers (so Showcase 1 has most upvotes)
         $showcase->upvoters()->attach($upvoters->take(8 - $i)->pluck('id'));
         $showcases->push($showcase);
     }
@@ -101,11 +99,10 @@ test('limits showcases to top 5 per month', function () {
     $currentMonth = now()->format('Y-m');
 
     expect($showcasesByMonth)->toHaveKey($currentMonth);
-    expect($showcasesByMonth[$currentMonth])->toHaveCount(5);
+    expect($showcasesByMonth[$currentMonth])->toHaveCount(7);
 
-    // Verify top 5 by upvotes are returned (showcases 1-5)
     $ids = collect($showcasesByMonth[$currentMonth])->pluck('id')->all();
-    expect($ids)->toBe($showcases->take(5)->pluck('id')->all());
+    expect($ids)->toBe($showcases->pluck('id')->all());
 });
 
 test('only returns showcases from the last 3 months', function () {
