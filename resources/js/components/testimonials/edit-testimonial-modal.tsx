@@ -93,14 +93,15 @@ export function EditTestimonialModal({
 
         const formElement = e.target as HTMLFormElement;
         const formData = new FormData(formElement);
-        // Only send user data fields if not linked to user
-        if (!isLinkedToUser) {
+        if (isLinkedToUser) {
+            // Preserve the existing user link
+            formData.append('user_id', String(testimonial.user_id));
+        } else {
+            // Unlink or no user: null out user_id and send editable fields
+            formData.append('user_id', '');
             formData.append('name', name);
             formData.append('job_title', jobTitle);
             formData.append('organisation', organisation);
-        } else {
-            // If unlinking, send user_id as empty to unlink
-            formData.append('user_id', '');
         }
         formData.append('content', content);
         formData.append('display_order', displayOrder);
@@ -188,8 +189,7 @@ export function EditTestimonialModal({
                                         <p className="mt-1 text-xs text-blue-700 dark:text-blue-400">
                                             Name, job title, organisation, and
                                             avatar are pulled from the linked
-                                            user profile and displayed read-only
-                                            below.
+                                            user profile.
                                         </p>
                                     </div>
                                     <Button
@@ -205,65 +205,72 @@ export function EditTestimonialModal({
                             </div>
                         )}
 
-                        <FormField
-                            label="Name"
-                            htmlFor="edit-name"
-                            error={errors.name}
-                        >
-                            <Input
-                                id="edit-name"
-                                value={name}
-                                onChange={(e) => setName(e.target.value)}
-                                placeholder="e.g. Jane Doe"
-                                disabled={isSubmitting || isLinkedToUser}
-                                readOnly={isLinkedToUser}
-                                aria-invalid={
-                                    errors.name !== undefined ? true : undefined
-                                }
-                            />
-                        </FormField>
+                        {!isLinkedToUser && (
+                            <>
+                                <FormField
+                                    label="Name"
+                                    htmlFor="edit-name"
+                                    error={errors.name}
+                                >
+                                    <Input
+                                        id="edit-name"
+                                        value={name}
+                                        onChange={(e) =>
+                                            setName(e.target.value)
+                                        }
+                                        placeholder="e.g. Jane Doe"
+                                        disabled={isSubmitting}
+                                        aria-invalid={
+                                            errors.name !== undefined
+                                                ? true
+                                                : undefined
+                                        }
+                                    />
+                                </FormField>
 
-                        <FormField
-                            label="Job Title"
-                            htmlFor="edit-job_title"
-                            error={errors.job_title}
-                        >
-                            <Input
-                                id="edit-job_title"
-                                value={jobTitle}
-                                onChange={(e) => setJobTitle(e.target.value)}
-                                placeholder="e.g. Senior Associate"
-                                disabled={isSubmitting || isLinkedToUser}
-                                readOnly={isLinkedToUser}
-                                aria-invalid={
-                                    errors.job_title !== undefined
-                                        ? true
-                                        : undefined
-                                }
-                            />
-                        </FormField>
+                                <FormField
+                                    label="Job Title"
+                                    htmlFor="edit-job_title"
+                                    error={errors.job_title}
+                                >
+                                    <Input
+                                        id="edit-job_title"
+                                        value={jobTitle}
+                                        onChange={(e) =>
+                                            setJobTitle(e.target.value)
+                                        }
+                                        placeholder="e.g. Senior Associate"
+                                        disabled={isSubmitting}
+                                        aria-invalid={
+                                            errors.job_title !== undefined
+                                                ? true
+                                                : undefined
+                                        }
+                                    />
+                                </FormField>
 
-                        <FormField
-                            label="Organisation"
-                            htmlFor="edit-organisation"
-                            error={errors.organisation}
-                        >
-                            <Input
-                                id="edit-organisation"
-                                value={organisation}
-                                onChange={(e) =>
-                                    setOrganisation(e.target.value)
-                                }
-                                placeholder="e.g. ABC Law Firm"
-                                disabled={isSubmitting || isLinkedToUser}
-                                readOnly={isLinkedToUser}
-                                aria-invalid={
-                                    errors.organisation !== undefined
-                                        ? true
-                                        : undefined
-                                }
-                            />
-                        </FormField>
+                                <FormField
+                                    label="Organisation"
+                                    htmlFor="edit-organisation"
+                                    error={errors.organisation}
+                                >
+                                    <Input
+                                        id="edit-organisation"
+                                        value={organisation}
+                                        onChange={(e) =>
+                                            setOrganisation(e.target.value)
+                                        }
+                                        placeholder="e.g. ABC Law Firm"
+                                        disabled={isSubmitting}
+                                        aria-invalid={
+                                            errors.organisation !== undefined
+                                                ? true
+                                                : undefined
+                                        }
+                                    />
+                                </FormField>
+                            </>
+                        )}
 
                         <FormField
                             label="Testimonial Content"

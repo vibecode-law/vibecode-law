@@ -10,7 +10,7 @@ class TestimonialStoreRequest extends FormRequest
     {
         return [
             'user_id' => ['nullable', 'integer', 'exists:users,id'],
-            'name' => ['nullable', 'string', 'max:255'],
+            'name' => ['required_without:user_id', 'nullable', 'string', 'max:255'],
             'job_title' => ['nullable', 'string', 'max:255'],
             'organisation' => ['nullable', 'string', 'max:255'],
             'content' => ['required', 'string', 'max:1000'],
@@ -29,6 +29,7 @@ class TestimonialStoreRequest extends FormRequest
     {
         return [
             'user_id.exists' => 'The selected user does not exist.',
+            'name.required_without' => 'A name is required when the testimonial is not linked to a user.',
             'name.max' => 'The name may not be greater than 255 characters.',
             'job_title.max' => 'The job title may not be greater than 255 characters.',
             'organisation.max' => 'The organisation may not be greater than 255 characters.',

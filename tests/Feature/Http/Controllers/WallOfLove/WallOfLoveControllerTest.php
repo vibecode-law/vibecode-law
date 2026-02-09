@@ -144,7 +144,7 @@ describe('press coverage', function () {
                     ->where('id', $item->id)
                     ->where('title', 'AI in Law')
                     ->where('publication_name', 'Legal Times')
-                    ->where('publication_date', 'January 15, 2026')
+                    ->where('publication_date', '2026-01-15')
                     ->where('url', 'https://example.com/article')
                     ->where('excerpt', 'A great article.')
                     ->where('is_published', true)

@@ -56,7 +56,16 @@ export function PressCoverageListItem({
                                 {pressCoverage.publication_name}
                             </span>
                             <span>•</span>
-                            <span>{pressCoverage.publication_date}</span>
+                            <span>
+                                {new Date(
+                                    pressCoverage.publication_date +
+                                        'T00:00:00',
+                                ).toLocaleDateString('en-GB', {
+                                    month: 'long',
+                                    day: 'numeric',
+                                    year: 'numeric',
+                                })}
+                            </span>
                         </div>
                         {pressCoverage.excerpt && (
                             <p className="mt-2 text-sm text-neutral-700 dark:text-neutral-300">

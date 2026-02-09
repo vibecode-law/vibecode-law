@@ -41,7 +41,7 @@ class PressCoverageResource extends Resource
             'id' => $pressCoverage->id,
             'title' => $pressCoverage->title,
             'publication_name' => $pressCoverage->publication_name,
-            'publication_date' => $pressCoverage->publication_date->format('F j, Y'),
+            'publication_date' => $pressCoverage->publication_date->format('Y-m-d'),
             'url' => $pressCoverage->url,
             'excerpt' => $pressCoverage->excerpt,
             'thumbnail_extension' => Lazy::create(fn () => $pressCoverage->thumbnail_extension),

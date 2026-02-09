@@ -11,7 +11,7 @@ interface ProjectMonthSectionProps {
 function formatMonth(month: string): string {
     const [year, monthNum] = month.split('-');
     const date = new Date(parseInt(year), parseInt(monthNum) - 1);
-    return date.toLocaleDateString('en-US', { month: 'long', year: 'numeric' });
+    return date.toLocaleDateString('en-GB', { month: 'long', year: 'numeric' });
 }
 
 export function ProjectMonthSection({
