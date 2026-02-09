@@ -8,7 +8,6 @@ use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Http\Request;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Config;
 use Inertia\Inertia;
 use Inertia\Response;
 use Spatie\LaravelData\DataCollection;
@@ -17,10 +16,6 @@ class HomeController extends BaseController
 {
     public function __invoke(Request $request): Response
     {
-        if (Config::get('app.launched') === false || ($request->user()?->is_admin === true && $request->input('pre-launch', false) === 'true')) {
-            return $this->preLaunchResponse();
-        }
-
         $userId = Auth::id();
 
         $showcasesByMonth = collect([0, 1, 2])
@@ -78,28 +73,5 @@ class HomeController extends BaseController
             ->orderByDesc('upvoters_count')
             ->limit(5)
             ->get();
-    }
-
-    private function preLaunchResponse(): Response
-    {
-        $userId = Auth::id();
-
-        $relations = array_filter([
-            'user',
-            'upvoters' => $userId === null ? null : fn ($query) => $query->where('user_id', $userId),
-        ]);
-
-        $featuredShowcases = Showcase::query()
-            ->publiclyVisible()
-            ->with($relations)
-            ->withCount('upvoters')
-            ->orderByDesc('upvoters_count')
-            ->get();
-
-        return Inertia::render('home', [
-            'featuredShowcases' => ShowcaseResource::collect($featuredShowcases, DataCollection::class)
-                ->only('id', 'slug', 'title', 'tagline', 'thumbnail_url', 'thumbnail_rect_string', 'upvotes_count', 'has_upvoted')
-                ->toArray(),
-        ]);
     }
 }
