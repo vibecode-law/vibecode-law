@@ -265,8 +265,8 @@ export default function PublicShow({
                     )}
                 </Head>
 
-                <div className="mx-auto max-w-5xl px-4 py-6 lg:py-12">
-                    <div className="flex flex-col gap-8 lg:flex-row-reverse">
+                <div className="mx-auto max-w-6xl px-4 py-6 lg:py-12">
+                    <div className="flex flex-col gap-8 lg:flex-row-reverse xl:gap-12">
                         <ShowcaseSidebar
                             monthlyRank={monthlyRank}
                             lifetimeRank={lifetimeRank}

@@ -1,5 +1,6 @@
 <?php
 
+use App\Models\Challenge\Challenge;
 use App\Models\Showcase\Showcase;
 use App\Models\User;
 use Inertia\Testing\AssertableInertia;
@@ -195,4 +196,169 @@ test('only returns minimal fields for homepage showcases', function () {
                 )
             )
         );
+});
+
+describe('recentShowcases', function () {
+    test('returns 3 most recent showcases ordered by submitted_date desc', function () {
+        $oldest = Showcase::factory()->approved()->create([
+            'title' => 'Oldest',
+            'submitted_date' => now()->subDays(3),
+        ]);
+
+        $middle = Showcase::factory()->approved()->create([
+            'title' => 'Middle',
+            'submitted_date' => now()->subDays(2),
+        ]);
+
+        $newest = Showcase::factory()->approved()->create([
+            'title' => 'Newest',
+            'submitted_date' => now()->subDay(),
+        ]);
+
+        $extraOld = Showcase::factory()->approved()->create([
+            'title' => 'Extra Old',
+            'submitted_date' => now()->subDays(4),
+        ]);
+
+        get('/')
+            ->assertOk()
+            ->assertInertia(fn (AssertableInertia $page) => $page
+                ->component('home')
+                ->has('recentShowcases', 3)
+                ->where('recentShowcases.0.id', $newest->id)
+                ->where('recentShowcases.1.id', $middle->id)
+                ->where('recentShowcases.2.id', $oldest->id)
+            );
+    });
+
+    test('only includes publicly visible showcases', function () {
+        Showcase::factory()->draft()->create();
+        Showcase::factory()->pending()->create();
+        Showcase::factory()->rejected()->create();
+
+        $approved = Showcase::factory()->approved()->create([
+            'submitted_date' => now(),
+        ]);
+
+        get('/')
+            ->assertOk()
+            ->assertInertia(fn (AssertableInertia $page) => $page
+                ->component('home')
+                ->has('recentShowcases', 1)
+                ->where('recentShowcases.0.id', $approved->id)
+            );
+    });
+
+    test('returns only minimal fields', function () {
+        /** @var User $user */
+        $user = User::factory()->create();
+
+        $showcase = Showcase::factory()
+            ->approved()
+            ->for($user)
+            ->create([
+                'title' => 'Recent Showcase',
+                'slug' => 'recent-showcase',
+                'submitted_date' => now(),
+                'thumbnail_extension' => 'jpg',
+                'thumbnail_crop' => ['x' => 10, 'y' => 20, 'width' => 100, 'height' => 100],
+            ]);
+
+        get('/')
+            ->assertOk()
+            ->assertInertia(fn (AssertableInertia $page) => $page
+                ->component('home')
+                ->has('recentShowcases.0', fn (AssertableInertia $showcaseProp) => $showcaseProp
+                    ->where('id', $showcase->id)
+                    ->where('slug', 'recent-showcase')
+                    ->where('title', 'Recent Showcase')
+                    ->has('thumbnail_url')
+                    ->where('thumbnail_rect_string', 'rect=10,20,100,100')
+                    ->has('user', fn (AssertableInertia $userProp) => $userProp
+                        ->where('first_name', $user->first_name)
+                        ->where('last_name', $user->last_name)
+                        ->where('handle', $user->handle)
+                        ->where('organisation', $user->organisation)
+                        ->where('job_title', $user->job_title)
+                        ->has('avatar')
+                        ->where('linkedin_url', $user->linkedin_url)
+                        ->where('team_role', null)
+                    )
+                )
+            );
+    });
+});
+
+describe('activeChallenges', function () {
+    test('returns active featured challenges when feature is enabled', function () {
+        config(['app.challenges_enabled' => true]);
+
+        $activeFeatured = Challenge::factory()->active()->featured()->create([
+            'title' => 'Active Featured Challenge',
+        ]);
+
+        Challenge::factory()->active()->create([
+            'title' => 'Active Non-Featured',
+        ]);
+
+        Challenge::factory()->featured()->create([
+            'title' => 'Inactive Featured',
+            'is_active' => false,
+        ]);
+
+        get('/')
+            ->assertOk()
+            ->assertInertia(fn (AssertableInertia $page) => $page
+                ->component('home')
+                ->has('activeChallenges', 1)
+                ->where('activeChallenges.0.id', $activeFeatured->id)
+                ->where('activeChallenges.0.title', 'Active Featured Challenge')
+            );
+    });
+
+    test('returns empty array when feature is disabled', function () {
+        config(['app.challenges_enabled' => false]);
+
+        Challenge::factory()->active()->featured()->create();
+
+        get('/')
+            ->assertOk()
+            ->assertInertia(fn (AssertableInertia $page) => $page
+                ->component('home')
+                ->where('activeChallenges', [])
+            );
+    });
+
+    test('orders active challenges by showcases count descending', function () {
+        config(['app.challenges_enabled' => true]);
+
+        $lessChallenged = Challenge::factory()->active()->featured()->create([
+            'title' => 'Less Popular',
+        ]);
+
+        $moreChallenged = Challenge::factory()->active()->featured()->create([
+            'title' => 'More Popular',
+        ]);
+
+        $showcases = Showcase::factory()->approved()->count(3)->create([
+            'submitted_date' => now(),
+        ]);
+        $moreChallenged->showcases()->attach($showcases->pluck('id'));
+
+        $singleShowcase = Showcase::factory()->approved()->create([
+            'submitted_date' => now(),
+        ]);
+        $lessChallenged->showcases()->attach($singleShowcase->id);
+
+        get('/')
+            ->assertOk()
+            ->assertInertia(fn (AssertableInertia $page) => $page
+                ->component('home')
+                ->has('activeChallenges', 2)
+                ->where('activeChallenges.0.id', $moreChallenged->id)
+                ->where('activeChallenges.0.showcases_count', 3)
+                ->where('activeChallenges.1.id', $lessChallenged->id)
+                ->where('activeChallenges.1.showcases_count', 1)
+            );
+    });
 });

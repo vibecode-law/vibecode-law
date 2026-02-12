@@ -13,7 +13,7 @@ export function PublicFooter() {
 
     return (
         <footer className="border-t border-neutral-200 bg-white dark:border-neutral-800 dark:bg-neutral-950">
-            <div className="mx-auto max-w-5xl px-4 py-12">
+            <div className="mx-auto max-w-6xl px-4 py-12">
                 <div
                     className={`grid grid-cols-1 gap-8 sm:grid-cols-2 ${isAuthenticated ? 'lg:grid-cols-3' : 'lg:grid-cols-[2fr_2fr_2fr_3fr]'}`}
                 >
@@ -116,7 +116,7 @@ export function PublicFooter() {
 
             {/* Bottom Bar */}
             <div className="border-t border-neutral-200 dark:border-neutral-800">
-                <div className="mx-auto flex max-w-5xl flex-col items-center justify-between gap-4 px-4 py-4 sm:flex-row">
+                <div className="mx-auto flex max-w-6xl flex-col items-center justify-between gap-4 px-4 py-4 sm:flex-row">
                     <p className="text-sm text-neutral-500 dark:text-neutral-400">
                         &copy; {currentYear} vibecode.law. All rights reserved.
                         Built for the legal community.

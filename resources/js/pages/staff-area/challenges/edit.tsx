@@ -17,7 +17,7 @@ export default function ChallengesEdit({ challenge }: ChallengesEditProps) {
         <StaffAreaLayout fullWidth>
             <Head title={`Edit ${challenge.title}`} />
 
-            <div className="mx-auto max-w-3xl space-y-6">
+            <div className="mx-auto max-w-4xl space-y-6">
                 <div className="flex items-center gap-4">
                     <Button variant="ghost" size="sm" asChild>
                         <Link href={index.url()}>

@@ -23,7 +23,7 @@ export default function UsersEdit({ user, roles, teamTypes }: UsersEditProps) {
         <StaffAreaLayout fullWidth>
             <Head title={`Edit ${user.first_name} ${user.last_name}`} />
 
-            <div className="mx-auto max-w-2xl space-y-6">
+            <div className="mx-auto max-w-3xl space-y-6">
                 <div className="flex items-center gap-4">
                     <Button variant="ghost" size="sm" asChild>
                         <Link href={index.url()}>

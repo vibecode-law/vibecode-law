@@ -64,7 +64,7 @@ export default function UserShow({ user, showcases }: UserShowProps) {
             </Head>
 
             <section className="bg-white py-12 dark:bg-neutral-950">
-                <div className="mx-auto max-w-4xl px-4">
+                <div className="mx-auto max-w-5xl px-4">
                     <div className="mb-8 flex items-start gap-6">
                         <Avatar className="size-24 shrink-0">
                             <AvatarImage

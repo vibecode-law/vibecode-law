@@ -57,7 +57,7 @@ export default function Community({
             </Head>
 
             <section className="bg-white py-12 dark:bg-neutral-950">
-                <div className="mx-auto max-w-5xl px-4">
+                <div className="mx-auto max-w-6xl px-4">
                     <h1 className="mb-2 text-3xl font-bold text-neutral-900 dark:text-white">
                         {title}
                     </h1>

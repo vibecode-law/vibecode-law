@@ -106,7 +106,7 @@ export default function ResourcesIndex({
             </Head>
 
             <section className="bg-white py-12 dark:bg-neutral-950">
-                <div className="mx-auto max-w-3xl px-4">
+                <div className="mx-auto max-w-4xl px-4">
                     <article
                         className="legal-content"
                         dangerouslySetInnerHTML={{ __html: content }}
