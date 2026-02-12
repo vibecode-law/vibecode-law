@@ -4,10 +4,12 @@ import ShowcaseMonthIndexController from '@/actions/App/Http/Controllers/Showcas
 import ShowcasePracticeAreaIndexController from '@/actions/App/Http/Controllers/Showcase/Public/ShowcasePracticeAreaIndexController';
 import { type BreadcrumbItem } from '@/components/navigation/breadcrumbs';
 import { ProjectItem } from '@/components/showcase/showcase-item';
+import { EmptyState } from '@/components/ui/empty-state';
 import { Pagination } from '@/components/ui/pagination';
 import PublicLayout from '@/layouts/public-layout';
 import { type SharedData } from '@/types';
 import { Head, Link, usePage } from '@inertiajs/react';
+import { Search } from 'lucide-react';
 
 interface ActiveFilter {
     type: 'practice_area' | 'month';
@@ -226,11 +228,11 @@ export default function PublicIndex({
                             ))}
                         </div>
                     ) : (
-                        <div className="py-16 text-center">
-                            <p className="text-neutral-500 dark:text-neutral-400">
-                                No showcases found.
-                            </p>
-                        </div>
+                        <EmptyState
+                            icon={Search}
+                            title="No Showcases Found"
+                            description="No showcases match your current filters. Try adjusting your selection."
+                        />
                     )}
 
                     <Pagination

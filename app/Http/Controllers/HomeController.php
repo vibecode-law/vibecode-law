@@ -24,6 +24,8 @@ class HomeController extends BaseController
             'upvoters' => $userId === null ? null : fn ($query) => $query->where('user_id', $userId),
         ]);
 
+        $currentMonth = now()->format('Y-m');
+
         $showcasesByMonth = Showcase::query()
             ->publiclyVisible()
             ->whereBetween('submitted_date', [
@@ -40,6 +42,10 @@ class HomeController extends BaseController
                 ->toArray()
             )
             ->toArray();
+
+        if (! array_key_exists($currentMonth, $showcasesByMonth)) {
+            $showcasesByMonth = [$currentMonth => []] + $showcasesByMonth;
+        }
 
         $recentShowcases = Showcase::query()
             ->publiclyVisible()

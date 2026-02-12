@@ -1,7 +1,7 @@
 import ChallengeShowController from '@/actions/App/Http/Controllers/Challenge/Public/ChallengeShowController';
 import { type SharedData } from '@/types';
 import { Link, usePage } from '@inertiajs/react';
-import { Trophy } from 'lucide-react';
+import { Lightbulb, Trophy } from 'lucide-react';
 
 interface SidebarActiveChallengesProps {
     challenges: App.Http.Resources.Challenge.ChallengeResource[];
@@ -18,7 +18,8 @@ export function SidebarActiveChallenges({
 
     return (
         <div>
-            <h3 className="mb-2 text-sm font-medium tracking-wide text-neutral-500 uppercase dark:text-neutral-400">
+            <h3 className="mb-2 flex items-center gap-1.5 text-sm font-medium tracking-wide text-neutral-500 uppercase dark:text-neutral-400">
+                <Lightbulb className="size-4" />
                 Inspiration
             </h3>
             <div className="divide-y divide-neutral-100 dark:divide-neutral-800">
