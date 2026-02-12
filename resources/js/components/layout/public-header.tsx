@@ -1,11 +1,11 @@
 import AboutIndexController from '@/actions/App/Http/Controllers/About/AboutIndexController';
+import ChallengeIndexController from '@/actions/App/Http/Controllers/Challenge/Public/ChallengeIndexController';
 import HomeController from '@/actions/App/Http/Controllers/HomeController';
 import NewsletterIndexController from '@/actions/App/Http/Controllers/Newsletter/NewsletterIndexController';
 import ResourcesIndexController from '@/actions/App/Http/Controllers/Resources/ResourcesIndexController';
 import ShowcaseCreateController from '@/actions/App/Http/Controllers/Showcase/ManageShowcase/ShowcaseCreateController';
 import WallOfLoveController from '@/actions/App/Http/Controllers/WallOfLove/WallOfLoveController';
 import AppLogo from '@/components/logo/app-logo';
-import { NewsletterSignup } from '@/components/newsletter/newsletter-signup';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
 import {
@@ -31,7 +31,7 @@ import { ArrowRight, Lock, Menu, Plus, X } from 'lucide-react';
 
 export function PublicHeader() {
     const page = usePage<SharedData>();
-    const { auth, transformImages } = page.props;
+    const { auth, transformImages, challengesEnabled } = page.props;
     const getInitials = useInitials();
     const isAuthenticated = auth?.user !== undefined && auth?.user !== null;
 
@@ -42,7 +42,15 @@ export function PublicHeader() {
 
                 <nav className="flex items-center gap-2 lg:gap-4">
                     {/* Desktop navigation */}
-                    <div className="hidden items-center gap-6 sm:flex">
+                    <div className="hidden items-center gap-6 lg:flex">
+                        {challengesEnabled && (
+                            <Link
+                                href={ChallengeIndexController.url()}
+                                className="text-sm font-medium text-neutral-600 hover:text-neutral-900 dark:text-neutral-400 dark:hover:text-white"
+                            >
+                                Inspiration
+                            </Link>
+                        )}
                         <Link
                             href={ResourcesIndexController.url()}
                             className="text-sm font-medium text-neutral-600 hover:text-neutral-900 dark:text-neutral-400 dark:hover:text-white"
@@ -64,8 +72,12 @@ export function PublicHeader() {
                     </div>
 
                     {/* Desktop actions */}
-                    <div className="hidden items-center gap-4 sm:flex">
-                        <Button variant="outline" size="sm" asChild>
+                    <div className="hidden items-center gap-4 lg:flex">
+                        <Button
+                            variant={isAuthenticated ? 'default' : 'outline'}
+                            size="sm"
+                            asChild
+                        >
                             <Link href={ShowcaseCreateController.url()}>
                                 <Plus className="size-4" />
                                 Share Project
@@ -79,7 +91,7 @@ export function PublicHeader() {
                             <Button
                                 variant="ghost"
                                 size="sm"
-                                className="sm:hidden"
+                                className="lg:hidden"
                             >
                                 <Menu className="size-5" />
                                 <span className="sr-only">Open menu</span>
@@ -87,7 +99,7 @@ export function PublicHeader() {
                         </SheetTrigger>
                         <SheetContent
                             side="right"
-                            className="w-full border-none bg-white p-0 sm:max-w-md dark:bg-neutral-950 [&>button]:hidden"
+                            className="w-full border-none bg-white p-0 lg:max-w-md dark:bg-neutral-950 [&>button]:hidden"
                             aria-describedby={undefined}
                         >
                             <SheetHeader className="flex-row items-center justify-between border-b border-neutral-200 px-6 py-4 dark:border-neutral-800">
@@ -109,15 +121,15 @@ export function PublicHeader() {
                                 </SheetClose>
                             </SheetHeader>
 
-                            <nav className="flex flex-col justify-between px-6 py-6">
+                            <nav className="flex flex-col px-6 pt-2 pb-6">
                                 <div className="flex flex-col">
                                     <SheetClose asChild>
                                         <Link
                                             href={HomeController.url()}
-                                            className="group flex items-center justify-between py-4"
+                                            className="group flex items-center justify-between py-3"
                                         >
                                             <div>
-                                                <h3 className="text-2xl font-bold text-neutral-900 group-hover:text-primary dark:text-white">
+                                                <h3 className="text-xl font-bold text-neutral-900 group-hover:text-primary dark:text-white">
                                                     Showcases
                                                 </h3>
                                                 <p className="mt-1 text-sm text-neutral-600 dark:text-neutral-400">
@@ -128,15 +140,39 @@ export function PublicHeader() {
                                         </Link>
                                     </SheetClose>
 
+                                    {challengesEnabled && (
+                                        <>
+                                            <hr className="border-neutral-200 dark:border-neutral-800" />
+
+                                            <SheetClose asChild>
+                                                <Link
+                                                    href={ChallengeIndexController.url()}
+                                                    className="group flex items-center justify-between py-3"
+                                                >
+                                                    <div>
+                                                        <h3 className="text-xl font-bold text-neutral-900 group-hover:text-primary dark:text-white">
+                                                            Inspiration
+                                                        </h3>
+                                                        <p className="mt-1 text-sm text-neutral-600 dark:text-neutral-400">
+                                                            Need an idea? This
+                                                            is for you.
+                                                        </p>
+                                                    </div>
+                                                    <ArrowRight className="size-5 text-neutral-400 transition-transform group-hover:translate-x-1 group-hover:text-primary dark:text-neutral-500" />
+                                                </Link>
+                                            </SheetClose>
+                                        </>
+                                    )}
+
                                     <hr className="border-neutral-200 dark:border-neutral-800" />
 
                                     <SheetClose asChild>
                                         <Link
                                             href={ResourcesIndexController.url()}
-                                            className="group flex items-center justify-between py-4"
+                                            className="group flex items-center justify-between py-3"
                                         >
                                             <div>
-                                                <h3 className="text-2xl font-bold text-neutral-900 group-hover:text-primary dark:text-white">
+                                                <h3 className="text-xl font-bold text-neutral-900 group-hover:text-primary dark:text-white">
                                                     Resources
                                                 </h3>
                                                 <p className="mt-1 text-sm text-neutral-600 dark:text-neutral-400">
@@ -151,31 +187,11 @@ export function PublicHeader() {
 
                                     <SheetClose asChild>
                                         <Link
-                                            href={ShowcaseCreateController.url()}
-                                            className="group flex items-center justify-between py-4"
-                                        >
-                                            <div>
-                                                <h3 className="text-2xl font-bold text-neutral-900 group-hover:text-primary dark:text-white">
-                                                    Share Your Project
-                                                </h3>
-                                                <p className="mt-1 text-sm text-neutral-600 dark:text-neutral-400">
-                                                    Share your work the
-                                                    community.
-                                                </p>
-                                            </div>
-                                            <ArrowRight className="size-5 text-neutral-400 transition-transform group-hover:translate-x-1 group-hover:text-primary dark:text-neutral-500" />
-                                        </Link>
-                                    </SheetClose>
-
-                                    <hr className="border-neutral-200 dark:border-neutral-800" />
-
-                                    <SheetClose asChild>
-                                        <Link
                                             href={WallOfLoveController.url()}
-                                            className="group flex items-center justify-between py-4"
+                                            className="group flex items-center justify-between py-3"
                                         >
                                             <div>
-                                                <h3 className="text-2xl font-bold text-neutral-900 group-hover:text-primary dark:text-white">
+                                                <h3 className="text-xl font-bold text-neutral-900 group-hover:text-primary dark:text-white">
                                                     Wall of Love
                                                 </h3>
                                                 <p className="mt-1 text-sm text-neutral-600 dark:text-neutral-400">
@@ -192,10 +208,10 @@ export function PublicHeader() {
                                     <SheetClose asChild>
                                         <Link
                                             href={AboutIndexController.url()}
-                                            className="group flex items-center justify-between py-4"
+                                            className="group flex items-center justify-between py-3"
                                         >
                                             <div>
-                                                <h3 className="text-2xl font-bold text-neutral-900 group-hover:text-primary dark:text-white">
+                                                <h3 className="text-xl font-bold text-neutral-900 group-hover:text-primary dark:text-white">
                                                     About
                                                 </h3>
                                                 <p className="mt-1 text-sm text-neutral-600 dark:text-neutral-400">
@@ -206,46 +222,49 @@ export function PublicHeader() {
                                             <ArrowRight className="size-5 text-neutral-400 transition-transform group-hover:translate-x-1 group-hover:text-primary dark:text-neutral-500" />
                                         </Link>
                                     </SheetClose>
-
-                                    {!isAuthenticated && (
-                                        <>
-                                            <hr className="border-neutral-200 dark:border-neutral-800" />
-
-                                            <SheetClose asChild>
-                                                <Link
-                                                    href={login()}
-                                                    className="group flex items-center justify-between py-4"
-                                                >
-                                                    <div>
-                                                        <h3 className="text-2xl font-bold text-neutral-900 group-hover:text-primary dark:text-white">
-                                                            Sign In
-                                                        </h3>
-                                                        <p className="mt-1 text-sm text-neutral-600 dark:text-neutral-400">
-                                                            Access your account
-                                                        </p>
-                                                    </div>
-                                                    <ArrowRight className="size-5 text-neutral-400 transition-transform group-hover:translate-x-1 group-hover:text-primary dark:text-neutral-500" />
-                                                </Link>
-                                            </SheetClose>
-                                        </>
-                                    )}
                                 </div>
                             </nav>
 
-                            <div className="mt-auto border-t border-neutral-200 px-6 py-6 dark:border-neutral-800">
-                                <h3 className="text-2xl font-bold text-neutral-900 dark:text-white">
-                                    Subscribe
-                                </h3>
-                                <p className="mt-1 text-sm text-neutral-600 dark:text-neutral-400">
-                                    Hear about the community designing the
-                                    future of law. Get the latest vibecode.law
-                                    news and showcases delivered straight to
-                                    your inbox.
-                                </p>
-                                <NewsletterSignup
-                                    compact
-                                    className="mt-3 max-w-none"
-                                />
+                            <div className="mt-auto flex flex-col gap-3 border-t border-neutral-200 px-6 py-6 dark:border-neutral-800">
+                                <SheetClose asChild>
+                                    <Button
+                                        variant={
+                                            isAuthenticated
+                                                ? 'default'
+                                                : 'outline'
+                                        }
+                                        asChild
+                                    >
+                                        <Link
+                                            href={ShowcaseCreateController.url()}
+                                        >
+                                            <Plus className="size-4" />
+                                            Share Your Project
+                                        </Link>
+                                    </Button>
+                                </SheetClose>
+                                {!isAuthenticated && (
+                                    <SheetClose asChild>
+                                        <Button asChild>
+                                            <Link
+                                                href={NewsletterIndexController.url()}
+                                            >
+                                                Subscribe
+                                                <ArrowRight className="size-4" />
+                                            </Link>
+                                        </Button>
+                                    </SheetClose>
+                                )}
+                                {!isAuthenticated && (
+                                    <SheetClose asChild>
+                                        <Button variant="ghost" asChild>
+                                            <Link href={login()}>
+                                                <Lock className="size-4" />
+                                                Sign In
+                                            </Link>
+                                        </Button>
+                                    </SheetClose>
+                                )}
                             </div>
                         </SheetContent>
                     </Sheet>
@@ -254,7 +273,7 @@ export function PublicHeader() {
                     {!isAuthenticated && (
                         <Button
                             size="sm"
-                            className="hidden sm:inline-flex"
+                            className="hidden lg:inline-flex"
                             asChild
                         >
                             <Link href={NewsletterIndexController.url()}>

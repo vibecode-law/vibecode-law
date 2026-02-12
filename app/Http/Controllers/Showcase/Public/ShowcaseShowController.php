@@ -3,10 +3,13 @@
 namespace App\Http\Controllers\Showcase\Public;
 
 use App\Http\Controllers\BaseController;
+use App\Http\Resources\Challenge\ChallengeResource;
 use App\Http\Resources\Showcase\ShowcaseResource;
+use App\Models\Challenge\Challenge;
 use App\Models\Showcase\Showcase;
 use App\Services\Showcase\ShowcaseRankingService;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Config;
 use Inertia\Inertia;
 use Inertia\Response;
 
@@ -24,13 +27,22 @@ class ShowcaseShowController extends BaseController
 
         $rankingService = new ShowcaseRankingService(showcase: $showcase);
 
-        return Inertia::render('showcase/public/show', [
+        $props = [
             'showcase' => $this->buildShowcaseResource(showcase: $showcase),
             'lifetimeRank' => $rankingService->getLifetimeRank(),
             'monthlyRank' => $rankingService->getMonthlyRank(),
             'canEdit' => Auth::user()?->can('update', $showcase) ?? false,
             'canCreateDraft' => Auth::user()?->can('createDraft', $showcase) ?? false,
-        ]);
+        ];
+
+        if (Config::get('app.challenges_enabled') === true) {
+            $props['challengeEntries'] = $this->buildChallengeEntries(
+                showcase: $showcase,
+                rankingService: $rankingService,
+            );
+        }
+
+        return Inertia::render('showcase/public/show', $props);
     }
 
     private function ensureShowcaseIsAccessible(Showcase $showcase): void
@@ -63,6 +75,23 @@ class ShowcaseShowController extends BaseController
 
         $showcase->load($relations);
         $showcase->loadCount('upvoters');
+    }
+
+    /**
+     * @return array<int, array{challenge: ChallengeResource, rank: int}>
+     */
+    private function buildChallengeEntries(Showcase $showcase, ShowcaseRankingService $rankingService): array
+    {
+        /** @var \Illuminate\Database\Eloquent\Collection<int, Challenge> $challenges */
+        $challenges = $showcase->challenges()
+            ->where('is_active', true)
+            ->get();
+
+        return $challenges->map(fn (Challenge $challenge) => [
+            'challenge' => ChallengeResource::from($challenge)
+                ->only('id', 'slug', 'title', 'thumbnail_url', 'thumbnail_rect_strings'),
+            'rank' => $rankingService->getChallengeRank(challenge: $challenge),
+        ])->all();
     }
 
     private function buildShowcaseResource(Showcase $showcase): ShowcaseResource

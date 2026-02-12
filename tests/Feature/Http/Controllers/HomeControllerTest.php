@@ -153,6 +153,7 @@ test('only returns minimal fields for homepage showcases', function () {
 
     $showcase = Showcase::factory()
         ->approved()
+        ->for($user)
         ->create([
             'title' => 'Test Showcase',
             'slug' => 'test-showcase',
@@ -160,6 +161,7 @@ test('only returns minimal fields for homepage showcases', function () {
             'submitted_date' => now(),
             'thumbnail_extension' => 'jpg',
             'thumbnail_crop' => ['x' => 10, 'y' => 20, 'width' => 100, 'height' => 100],
+            'view_count' => 15,
         ]);
 
     $showcase->upvoters()->attach($user);
@@ -180,6 +182,17 @@ test('only returns minimal fields for homepage showcases', function () {
                 ->where('thumbnail_rect_string', 'rect=10,20,100,100')
                 ->where('upvotes_count', 1)
                 ->where('has_upvoted', true)
+                ->where('view_count', 15)
+                ->has('user', fn (AssertableInertia $userProp) => $userProp
+                    ->where('first_name', $user->first_name)
+                    ->where('last_name', $user->last_name)
+                    ->where('handle', $user->handle)
+                    ->where('organisation', $user->organisation)
+                    ->where('job_title', $user->job_title)
+                    ->has('avatar')
+                    ->where('linkedin_url', $user->linkedin_url)
+                    ->where('team_role', null)
+                )
             )
         );
 });

@@ -45,6 +45,37 @@ declare namespace App.Http.Resources {
         user?: App.Http.Resources.User.UserResource | null;
     };
 }
+declare namespace App.Http.Resources.Challenge {
+    export type ChallengeResource = {
+        id: number;
+        slug: string;
+        title: string;
+        tagline: string;
+        description?: string;
+        description_html?: string;
+        starts_at: string | null;
+        ends_at: string | null;
+        is_active: boolean;
+        is_featured: boolean;
+        thumbnail_url: string | null;
+        thumbnail_rect_strings: { [key: string]: string } | null;
+        thumbnail_crops?: { [key: string]: App.ValueObjects.ImageCrop } | null;
+        organisation?: App.Http.Resources.Organisation.OrganisationResource | null;
+        showcases_count?: number | null;
+        total_upvotes_count?: number | null;
+    };
+}
+declare namespace App.Http.Resources.Organisation {
+    export type OrganisationResource = {
+        id: number;
+        name: string;
+        tagline: string | null;
+        thumbnail_url: string | null;
+        thumbnail_rect_strings: { [key: string]: string } | null;
+        thumbnail_crops?: { [key: string]: App.ValueObjects.ImageCrop } | null;
+        about?: string | null;
+    };
+}
 declare namespace App.Http.Resources.Showcase {
     export type ShowcaseDraftImageResource = {
         id: number;

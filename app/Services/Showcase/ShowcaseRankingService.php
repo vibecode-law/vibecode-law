@@ -2,6 +2,7 @@
 
 namespace App\Services\Showcase;
 
+use App\Models\Challenge\Challenge;
 use App\Models\Showcase\Showcase;
 use App\Models\Showcase\ShowcaseUpvote;
 use Illuminate\Database\Eloquent\Builder;
@@ -80,6 +81,16 @@ class ShowcaseRankingService
             ->whereNotNull('submitted_date')
             ->whereYear('submitted_date', $this->showcase->submitted_date->year)
             ->whereMonth('submitted_date', $this->showcase->submitted_date->month);
+
+        return $this->calculateRank($query);
+    }
+
+    public function getChallengeRank(Challenge $challenge): int
+    {
+        $showcaseIds = $challenge->showcases()->pluck('showcases.id');
+
+        $query = $this->baseRankingQuery()
+            ->whereIn('id', $showcaseIds);
 
         return $this->calculateRank($query);
     }

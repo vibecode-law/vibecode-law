@@ -5,6 +5,8 @@ namespace App\Models\Showcase;
 use App\Enums\MarkdownProfile;
 use App\Enums\ShowcaseStatus;
 use App\Enums\SourceStatus;
+use App\Models\Challenge\Challenge;
+use App\Models\Challenge\ChallengeShowcase;
 use App\Models\PracticeArea;
 use App\Models\User;
 use App\Services\Markdown\MarkdownService;
@@ -142,6 +144,13 @@ class Showcase extends Model
     public function draft(): HasOne
     {
         return $this->hasOne(ShowcaseDraft::class);
+    }
+
+    public function challenges(): BelongsToMany
+    {
+        return $this->belongsToMany(related: Challenge::class)
+            ->using(ChallengeShowcase::class)
+            ->withTimestamps();
     }
 
     //

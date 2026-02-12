@@ -4,6 +4,17 @@ import { Breadcrumbs } from '@/components/navigation/breadcrumbs';
 import { ApproveShowcaseButton } from '@/components/showcase/approve-showcase-button';
 import { RejectShowcaseModal } from '@/components/showcase/reject-showcase-modal';
 import { ShowcaseStatusBadge } from '@/components/showcase/showcase-status-badge';
+import {
+    AlertDialog,
+    AlertDialogAction,
+    AlertDialogCancel,
+    AlertDialogContent,
+    AlertDialogDescription,
+    AlertDialogFooter,
+    AlertDialogHeader,
+    AlertDialogTitle,
+    AlertDialogTrigger,
+} from '@/components/ui/alert-dialog';
 import { FancySelect } from '@/components/ui/fancy-select';
 import { FancyTextInput } from '@/components/ui/fancy-text-input';
 import { ImageUploadGallery } from '@/components/ui/image-upload-gallery';
@@ -34,13 +45,16 @@ import {
     List,
     Quote,
     Tags,
+    Trophy,
     Type,
     Video,
+    X,
 } from 'lucide-react';
 import { useState } from 'react';
 import { SaveButtonGroup } from './save-button-group';
 import {
     type BreadcrumbItem,
+    type ChallengeContext,
     type ImageDeletionConfig,
     type ModerationUrls,
     type ShowcaseFormData,
@@ -62,6 +76,7 @@ interface ShowcaseFormProps {
     pageTitle: string;
     showSlugField: boolean;
     canSubmit: boolean;
+    challenge?: ChallengeContext;
 }
 
 export function ShowcaseForm({
@@ -77,6 +92,7 @@ export function ShowcaseForm({
     pageTitle,
     showSlugField,
     canSubmit,
+    challenge,
 }: ShowcaseFormProps) {
     const [title, setTitle] = useState(initialData.title);
     const [slug, setSlug] = useState(initialData.slug);
@@ -93,6 +109,7 @@ export function ShowcaseForm({
     const [selectedPracticeAreas, setSelectedPracticeAreas] = useState<
         (number | string)[]
     >(initialData.selectedPracticeAreaIds);
+    const [activeChallenge, setActiveChallenge] = useState(challenge);
 
     const showSourceUrl = sourceStatus === '2' || sourceStatus === '3';
 
@@ -237,6 +254,87 @@ export function ShowcaseForm({
                                     </div>
 
                                     <div className="mx-auto mt-8 max-w-3xl space-y-8">
+                                        {/* Challenge tip */}
+                                        {activeChallenge !== undefined && (
+                                            <InfoBox
+                                                variant="info"
+                                                icon={
+                                                    <Trophy className="size-5" />
+                                                }
+                                            >
+                                                <div className="flex items-center justify-between gap-2">
+                                                    <p>
+                                                        You&apos;re entering the{' '}
+                                                        <strong>
+                                                            {
+                                                                activeChallenge.title
+                                                            }
+                                                        </strong>{' '}
+                                                        challenge.
+                                                    </p>
+                                                    <AlertDialog>
+                                                        <AlertDialogTrigger
+                                                            asChild
+                                                        >
+                                                            <button
+                                                                type="button"
+                                                                className="shrink-0 rounded-md p-1 hover:bg-blue-100 dark:hover:bg-blue-800/40"
+                                                                aria-label="Remove challenge"
+                                                            >
+                                                                <X className="size-4" />
+                                                            </button>
+                                                        </AlertDialogTrigger>
+                                                        <AlertDialogContent>
+                                                            <AlertDialogHeader>
+                                                                <AlertDialogTitle>
+                                                                    Remove
+                                                                    challenge?
+                                                                </AlertDialogTitle>
+                                                                <AlertDialogDescription>
+                                                                    Your
+                                                                    showcase
+                                                                    will no
+                                                                    longer be
+                                                                    linked to
+                                                                    the{' '}
+                                                                    <strong>
+                                                                        {
+                                                                            activeChallenge.title
+                                                                        }
+                                                                    </strong>{' '}
+                                                                    challenge.
+                                                                </AlertDialogDescription>
+                                                            </AlertDialogHeader>
+                                                            <AlertDialogFooter>
+                                                                <AlertDialogCancel>
+                                                                    Keep
+                                                                </AlertDialogCancel>
+                                                                <AlertDialogAction
+                                                                    onClick={() =>
+                                                                        setActiveChallenge(
+                                                                            undefined,
+                                                                        )
+                                                                    }
+                                                                >
+                                                                    Remove
+                                                                </AlertDialogAction>
+                                                            </AlertDialogFooter>
+                                                        </AlertDialogContent>
+                                                    </AlertDialog>
+                                                </div>
+                                                <input
+                                                    type="hidden"
+                                                    name="challenge_id"
+                                                    value={activeChallenge.id}
+                                                />
+                                                <InputError
+                                                    message={
+                                                        errors.challenge_id
+                                                    }
+                                                />
+                                            </InfoBox>
+                                        )}
+
                                         {/* Title Section */}
                                         <FancyTextInput
                                             name="title"

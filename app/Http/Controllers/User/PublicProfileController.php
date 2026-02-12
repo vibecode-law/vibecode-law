@@ -24,7 +24,7 @@ class PublicProfileController extends BaseController
             'user' => UserResource::from($user)
                 ->include('bio', 'bio_html'),
             'showcases' => ShowcaseResource::collect($this->getShowcases($user), DataCollection::class)
-                ->only('id', 'slug', 'title', 'tagline', 'thumbnail_url', 'thumbnail_rect_string', 'upvotes_count', 'has_upvoted'),
+                ->only('id', 'slug', 'title', 'tagline', 'thumbnail_url', 'thumbnail_rect_string', 'upvotes_count', 'has_upvoted', 'view_count', 'user'),
         ]);
     }
 
@@ -36,7 +36,7 @@ class PublicProfileController extends BaseController
         return Showcase::query()
             ->where('user_id', $user->id)
             ->publiclyVisible()
-            ->with($this->getUpvoterRelation())
+            ->with(['user', ...$this->getUpvoterRelation()])
             ->withCount('upvoters')
             ->orderByDesc('upvoters_count')
             ->orderByDesc('submitted_date')

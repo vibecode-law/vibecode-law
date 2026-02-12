@@ -11,6 +11,110 @@
  */
 
 
+namespace App\Models\Challenge{
+/**
+ * @property array<string, array{x: int, y: int, width: int, height: int}>|null $thumbnail_crops
+ * @property-read int|null $total_upvotes_count
+ * @property int $id
+ * @property string $title
+ * @property string $slug
+ * @property string $tagline
+ * @property string $description
+ * @property \Illuminate\Support\Carbon|null $starts_at
+ * @property \Illuminate\Support\Carbon|null $ends_at
+ * @property bool $is_active
+ * @property bool $is_featured
+ * @property int|null $organisation_id
+ * @property int|null $user_id
+ * @property string|null $thumbnail_extension
+ * @property \Illuminate\Support\Carbon|null $created_at
+ * @property \Illuminate\Support\Carbon|null $updated_at
+ * @property-read \App\Models\Organisation\Organisation|null $organisation
+ * @property-read \App\Models\Challenge\ChallengeShowcase|null $pivot
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\Showcase\Showcase> $showcases
+ * @property-read int|null $showcases_count
+ * @property-read array|null $thumbnail_rect_strings
+ * @property-read string|null $thumbnail_url
+ * @property-read \App\Models\User|null $user
+ * @method static \Database\Factories\Challenge\ChallengeFactory factory($count = null, $state = [])
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Challenge newModelQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Challenge newQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Challenge query()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Challenge whereCreatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Challenge whereDescription($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Challenge whereEndsAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Challenge whereId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Challenge whereIsActive($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Challenge whereIsFeatured($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Challenge whereOrganisationId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Challenge whereSlug($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Challenge whereStartsAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Challenge whereTagline($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Challenge whereThumbnailCrops($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Challenge whereThumbnailExtension($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Challenge whereTitle($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Challenge whereUpdatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Challenge whereUserId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Challenge withTotalUpvotesCount()
+ * @mixin \Eloquent
+ */
+	#[\AllowDynamicProperties]
+	class IdeHelperChallenge {}
+}
+
+namespace App\Models\Challenge{
+/**
+ * @property int $challenge_id
+ * @property int $showcase_id
+ * @property \Illuminate\Support\Carbon|null $created_at
+ * @property \Illuminate\Support\Carbon|null $updated_at
+ * @property-read \App\Models\Challenge\Challenge $challenge
+ * @property-read \App\Models\Showcase\Showcase $showcase
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|ChallengeShowcase newModelQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|ChallengeShowcase newQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|ChallengeShowcase query()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|ChallengeShowcase whereChallengeId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|ChallengeShowcase whereCreatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|ChallengeShowcase whereShowcaseId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|ChallengeShowcase whereUpdatedAt($value)
+ * @mixin \Eloquent
+ */
+	#[\AllowDynamicProperties]
+	class IdeHelperChallengeShowcase {}
+}
+
+namespace App\Models\Organisation{
+/**
+ * @property array<string, array{x: int, y: int, width: int, height: int}>|null $thumbnail_crops
+ * @property int $id
+ * @property string $name
+ * @property string $tagline
+ * @property string $about
+ * @property string|null $thumbnail_extension
+ * @property \Illuminate\Support\Carbon|null $created_at
+ * @property \Illuminate\Support\Carbon|null $updated_at
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\Challenge\Challenge> $challenges
+ * @property-read int|null $challenges_count
+ * @property-read array|null $thumbnail_rect_strings
+ * @property-read string|null $thumbnail_url
+ * @method static \Database\Factories\Organisation\OrganisationFactory factory($count = null, $state = [])
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Organisation newModelQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Organisation newQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Organisation query()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Organisation whereAbout($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Organisation whereCreatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Organisation whereId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Organisation whereName($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Organisation whereTagline($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Organisation whereThumbnailCrops($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Organisation whereThumbnailExtension($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Organisation whereUpdatedAt($value)
+ * @mixin \Eloquent
+ */
+	#[\AllowDynamicProperties]
+	class IdeHelperOrganisation {}
+}
+
 namespace App\Models{
 /**
  * @property int $id
@@ -102,6 +206,9 @@ namespace App\Models\Showcase{
  * @property \Illuminate\Support\Carbon|null $updated_at
  * @property \Illuminate\Support\Carbon|null $deleted_at
  * @property-read \App\Models\User|null $approvedBy
+ * @property-read \App\Models\Challenge\ChallengeShowcase|null $pivot
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\Challenge\Challenge> $challenges
+ * @property-read int|null $challenges_count
  * @property-read \App\Models\Showcase\ShowcaseDraft|null $draft
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\Showcase\ShowcaseImage> $images
  * @property-read int|null $images_count
@@ -371,6 +478,8 @@ namespace App\Models{
  * @property \Illuminate\Support\Carbon|null $two_factor_confirmed_at
  * @property string|null $external_subscriber_uuid
  * @property-read string|null $avatar
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\Challenge\Challenge> $hostedChallenges
+ * @property-read int|null $hosted_challenges_count
  * @property-read \Illuminate\Notifications\DatabaseNotificationCollection<int, \Illuminate\Notifications\DatabaseNotification> $notifications
  * @property-read int|null $notifications_count
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \Spatie\Permission\Models\Permission> $permissions

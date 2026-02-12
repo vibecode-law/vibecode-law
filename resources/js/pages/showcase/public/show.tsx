@@ -14,6 +14,7 @@ import { RejectShowcaseModal } from '@/components/showcase/reject-showcase-modal
 import { RichTextContent } from '@/components/showcase/rich-text-content';
 import { CreatorSection } from '@/components/showcase/show/creator-section';
 import { ShowcaseBadges } from '@/components/showcase/show/showcase-badges';
+import { ShowcaseChallengeEntries } from '@/components/showcase/show/showcase-challenge-entries';
 import { ShowcaseGallery } from '@/components/showcase/show/showcase-gallery';
 import { ShowcaseSidebar } from '@/components/showcase/show/showcase-sidebar';
 import { ShowcaseStatusBadge } from '@/components/showcase/showcase-status-badge';
@@ -82,12 +83,21 @@ function EditDraftButton({
     );
 }
 
+interface ChallengeEntry {
+    challenge: Pick<
+        App.Http.Resources.Challenge.ChallengeResource,
+        'id' | 'slug' | 'title' | 'thumbnail_url' | 'thumbnail_rect_strings'
+    >;
+    rank: number;
+}
+
 interface PublicShowProps {
     showcase: App.Http.Resources.Showcase.ShowcaseResource;
     lifetimeRank: number | null;
     monthlyRank: number | null;
     canEdit: boolean;
     canCreateDraft: boolean;
+    challengeEntries?: ChallengeEntry[];
 }
 
 export default function PublicShow({
@@ -96,6 +106,7 @@ export default function PublicShow({
     monthlyRank,
     canEdit,
     canCreateDraft,
+    challengeEntries,
 }: PublicShowProps) {
     const page = usePage<SharedData>();
     const { auth, appUrl, transformImages } = page.props;
@@ -254,7 +265,7 @@ export default function PublicShow({
                     )}
                 </Head>
 
-                <div className="mx-auto max-w-5xl px-4 py-12">
+                <div className="mx-auto max-w-5xl px-4 py-6 lg:py-12">
                     <div className="flex flex-col gap-8 lg:flex-row-reverse">
                         <ShowcaseSidebar
                             monthlyRank={monthlyRank}
@@ -263,6 +274,7 @@ export default function PublicShow({
                             upvotesCount={showcase.upvotes_count ?? 0}
                             showcaseSlug={showcase.slug}
                             linkedinShareUrl={showcase.linkedin_share_url ?? ''}
+                            challengeEntries={challengeEntries}
                         />
 
                         {/* Main Content */}
@@ -286,7 +298,7 @@ export default function PublicShow({
                                                 : showcase.thumbnail_url
                                         }
                                         alt={showcase.title}
-                                        className="size-14 shrink-0 rounded-lg object-cover"
+                                        className="size-10 shrink-0 rounded-lg object-cover lg:size-14"
                                     />
                                 ) : (
                                     <div className="flex size-14 shrink-0 items-center justify-center rounded-lg bg-amber-100 dark:bg-amber-900">
@@ -295,7 +307,7 @@ export default function PublicShow({
                                         </span>
                                     </div>
                                 )}
-                                <h1 className="text-3xl font-bold text-neutral-900 dark:text-white">
+                                <h1 className="text-xl font-bold text-neutral-900 lg:text-3xl dark:text-white">
                                     {showcase.title}
                                 </h1>
                             </div>
@@ -337,6 +349,15 @@ export default function PublicShow({
                                     className="rich-text-content"
                                 />
                             </section>
+
+                            {/* Challenges (mobile only) */}
+                            {challengeEntries !== undefined &&
+                                challengeEntries.length > 0 && (
+                                    <ShowcaseChallengeEntries
+                                        className="mb-8 lg:hidden"
+                                        challengeEntries={challengeEntries}
+                                    />
+                                )}
 
                             {/* Practice Areas */}
                             {Array.isArray(showcase.practiceAreas) &&

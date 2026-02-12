@@ -33,7 +33,7 @@ class HomeController extends BaseController
             ->get()
             ->groupBy(fn (Showcase $showcase): string => $showcase->submitted_date->format('Y-m'))
             ->map(fn ($showcases) => ShowcaseResource::collect($showcases, DataCollection::class)
-                ->only('id', 'slug', 'title', 'tagline', 'thumbnail_url', 'thumbnail_rect_string', 'upvotes_count', 'has_upvoted')
+                ->only('id', 'slug', 'title', 'tagline', 'thumbnail_url', 'thumbnail_rect_string', 'upvotes_count', 'has_upvoted', 'view_count', 'user')
                 ->toArray()
             )
             ->toArray();

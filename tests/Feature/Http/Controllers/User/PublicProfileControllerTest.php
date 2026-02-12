@@ -220,6 +220,8 @@ test('show returns correct showcase properties', function () {
                 ->has('thumbnail_rect_string')
                 ->has('upvotes_count')
                 ->has('has_upvoted')
+                ->has('view_count')
+                ->has('user')
             )
         );
 });

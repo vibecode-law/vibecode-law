@@ -25,7 +25,7 @@ class ShowcasePracticeAreaIndexController extends BaseController
 
         return Inertia::render('showcase/public/index', [
             'showcases' => ShowcaseResource::collect($showcases, PaginatedDataCollection::class)
-                ->only('id', 'slug', 'title', 'tagline', 'thumbnail_url', 'thumbnail_rect_string', 'upvotes_count', 'has_upvoted'),
+                ->only('id', 'slug', 'title', 'tagline', 'thumbnail_url', 'thumbnail_rect_string', 'upvotes_count', 'has_upvoted', 'view_count', 'user'),
             'availableFilters' => [
                 'practiceAreas' => PracticeAreaResource::collect($this->getPracticeAreas()),
             ],

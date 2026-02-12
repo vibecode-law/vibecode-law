@@ -21,11 +21,15 @@ class ShowcaseStoreController extends BaseController
 
         /** @var Showcase */
         $showcase = $request->user()->showcases()->create([
-            ...$request->safe()->except(['images', 'practice_area_ids', 'thumbnail', 'remove_thumbnail', 'submit']),
+            ...$request->safe()->except(['images', 'practice_area_ids', 'thumbnail', 'remove_thumbnail', 'submit', 'challenge_id']),
             'slug' => $slug,
         ]);
 
         $showcase->practiceAreas()->sync($request->validated()['practice_area_ids']);
+
+        if ($request->validated('challenge_id') !== null) {
+            $showcase->challenges()->attach($request->validated('challenge_id'));
+        }
 
         if ($request->hasFile('thumbnail')) {
             $mediaService->storeThumbnail(

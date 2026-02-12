@@ -8,15 +8,25 @@ import {
     type SimpleCropData,
 } from '@/components/ui/image-crop-modal';
 
+export interface CropConfig {
+    key: string;
+    label: string;
+    aspectRatio: number;
+}
+
 interface ThumbnailSelectorProps {
     name: string;
     removeFieldName?: string;
     currentOriginalUrl?: string | null;
-    currentCropData?: SimpleCropData | null;
+    currentCropData?:
+        | SimpleCropData
+        | Record<string, SimpleCropData>
+        | null;
     error?: string;
     showError?: boolean;
     className?: string;
     aspectRatio?: number;
+    crops?: CropConfig[];
     size?: 'sm' | 'md' | 'lg';
     onCropDataChange?: (cropData: CropData | null) => void;
     onRemove?: () => void;
@@ -69,6 +79,28 @@ async function createCroppedPreview(
     });
 }
 
+function isMultiCropData(
+    data: SimpleCropData | Record<string, SimpleCropData> | null | undefined,
+): data is Record<string, SimpleCropData> {
+    if (data === null || data === undefined) {
+        return false;
+    }
+    return !('x' in data);
+}
+
+function getFirstCropData(
+    data: SimpleCropData | Record<string, SimpleCropData> | null | undefined,
+): SimpleCropData | null {
+    if (data === null || data === undefined) {
+        return null;
+    }
+    if (!isMultiCropData(data)) {
+        return data;
+    }
+    const keys = Object.keys(data);
+    return keys.length > 0 ? data[keys[0]] : null;
+}
+
 export function ThumbnailSelector({
     name,
     removeFieldName = 'remove_thumbnail',
@@ -78,10 +110,13 @@ export function ThumbnailSelector({
     showError = true,
     className,
     aspectRatio = 1,
+    crops,
     size = 'sm',
     onCropDataChange,
     onRemove,
 }: ThumbnailSelectorProps) {
+    const isMultiCrop = crops !== undefined && crops.length > 0;
+
     const [croppedPreviewUrl, setCroppedPreviewUrl] = useState<string | null>(
         null,
     );
@@ -90,7 +125,14 @@ export function ThumbnailSelector({
     >(null);
     const [originalUrl, setOriginalUrl] = useState<string | null>(null);
     const [originalFile, setOriginalFile] = useState<File | null>(null);
+
+    // Single crop state
     const [cropData, setCropData] = useState<CropData | null>(null);
+
+    // Multi-crop state
+    const [cropsData, setCropsData] = useState<Record<string, CropData>>({});
+    const [currentCropIndex, setCurrentCropIndex] = useState(0);
+
     const [modalOpen, setModalOpen] = useState(false);
     const [isRemoved, setIsRemoved] = useState(false);
     const inputRef = useRef<HTMLInputElement>(null);
@@ -101,13 +143,13 @@ export function ThumbnailSelector({
             return;
         }
 
-        // If there's crop data, generate a cropped preview; otherwise just use the original
         const generatePreview = async () => {
-            if (currentCropData !== null && currentCropData !== undefined) {
+            const previewCrop = getFirstCropData(currentCropData);
+            if (previewCrop !== null) {
                 try {
                     const preview = await createCroppedPreview(
                         currentOriginalUrl,
-                        currentCropData,
+                        previewCrop,
                     );
                     setExistingCroppedPreviewUrl(preview);
                 } catch (err) {
@@ -115,7 +157,6 @@ export function ThumbnailSelector({
                     setExistingCroppedPreviewUrl(currentOriginalUrl);
                 }
             } else {
-                // No crop data - simulate async to satisfy lint rule
                 await Promise.resolve();
                 setExistingCroppedPreviewUrl(currentOriginalUrl);
             }
@@ -130,28 +171,36 @@ export function ThumbnailSelector({
             const url = URL.createObjectURL(selectedFile);
             setOriginalUrl(url);
             setOriginalFile(selectedFile);
+            if (isMultiCrop) {
+                setCurrentCropIndex(0);
+                setCropsData({});
+            }
             setModalOpen(true);
         }
-        // Reset the input so the same file can be selected again
         if (inputRef.current !== null) {
             inputRef.current.value = '';
         }
     };
 
     const handleClick = () => {
-        // If thumbnail was removed, open file dialog to select a new one
         if (isRemoved === true) {
             inputRef.current?.click();
             return;
         }
-        // If we have a new original image (user selected a file), re-open the crop modal
         if (originalUrl !== null) {
+            if (isMultiCrop) {
+                setCurrentCropIndex(0);
+            }
             setModalOpen(true);
-        } else if (currentOriginalUrl !== null && currentOriginalUrl !== undefined) {
-            // If we have an existing original image from the server, open crop modal with it
+        } else if (
+            currentOriginalUrl !== null &&
+            currentOriginalUrl !== undefined
+        ) {
+            if (isMultiCrop) {
+                setCurrentCropIndex(0);
+            }
             setModalOpen(true);
         } else {
-            // Otherwise, open the file dialog
             inputRef.current?.click();
         }
     };
@@ -160,14 +209,39 @@ export function ThumbnailSelector({
         croppedPreviewFile: File,
         newCropData: CropData,
     ) => {
-        setCroppedPreviewUrl(URL.createObjectURL(croppedPreviewFile));
-        setCropData(newCropData);
-        onCropDataChange?.(newCropData);
+        if (isMultiCrop && crops !== undefined) {
+            const currentKey = crops[currentCropIndex].key;
+            const updatedCrops = { ...cropsData, [currentKey]: newCropData };
+            setCropsData(updatedCrops);
+
+            if (currentCropIndex < crops.length - 1) {
+                // Move to next crop
+                setCurrentCropIndex(currentCropIndex + 1);
+            } else {
+                // All crops done - generate preview from first crop
+                setCroppedPreviewUrl(
+                    URL.createObjectURL(croppedPreviewFile),
+                );
+                onCropDataChange?.(newCropData);
+                setModalOpen(false);
+            }
+        } else {
+            setCroppedPreviewUrl(URL.createObjectURL(croppedPreviewFile));
+            setCropData(newCropData);
+            onCropDataChange?.(newCropData);
+            setModalOpen(false);
+        }
+    };
+
+    const handleBack = () => {
+        if (isMultiCrop && currentCropIndex > 0) {
+            setCurrentCropIndex(currentCropIndex - 1);
+            setModalOpen(true);
+        }
     };
 
     const handleChangeImage = () => {
         setModalOpen(false);
-        // Use setTimeout to ensure the modal is closed before opening the file dialog
         setTimeout(() => {
             inputRef.current?.click();
         }, 100);
@@ -179,12 +253,12 @@ export function ThumbnailSelector({
         setOriginalUrl(null);
         setOriginalFile(null);
         setCropData(null);
+        setCropsData({});
         onCropDataChange?.(null);
         onRemove?.();
         setModalOpen(false);
     };
 
-    // When a new file is selected or crop is made, the thumbnail is no longer "removed"
     const handleFileChangeWithReset = (
         event: React.ChangeEvent<HTMLInputElement>,
     ) => {
@@ -200,13 +274,45 @@ export function ThumbnailSelector({
         handleCropComplete(croppedPreviewFile, newCropData);
     };
 
-    const displayUrl = isRemoved === true ? null : (croppedPreviewUrl ?? existingCroppedPreviewUrl);
+    const displayUrl =
+        isRemoved === true
+            ? null
+            : (croppedPreviewUrl ?? existingCroppedPreviewUrl);
 
-    // Use the new original URL if set (user selected a file), otherwise fall back to existing
     const modalImageUrl = originalUrl ?? currentOriginalUrl ?? null;
 
-    // Determine if we have new crop data or should use existing
+    // For single-crop mode
     const hasNewCropData = cropData !== null;
+    const singleCurrentCropData = !isMultiCropData(currentCropData)
+        ? currentCropData
+        : null;
+
+    // Multi-crop: determine which existing crop data to pass as initial
+    const multiCurrentCropData = isMultiCropData(currentCropData)
+        ? currentCropData
+        : null;
+
+    // Current crop config for multi-crop mode
+    const currentCrop = isMultiCrop && crops !== undefined ? crops[currentCropIndex] : null;
+
+    // Get initial crop data for the current modal
+    const getInitialCropData = (): SimpleCropData | null | undefined => {
+        if (originalUrl !== null) {
+            // New file selected - check if we already cropped this key
+            if (isMultiCrop && currentCrop !== null) {
+                return cropsData[currentCrop.key] ?? null;
+            }
+            return null;
+        }
+        // Existing image - use saved data
+        if (isMultiCrop && currentCrop !== null && multiCurrentCropData !== null) {
+            return multiCurrentCropData[currentCrop.key] ?? null;
+        }
+        if (isMultiCrop && currentCrop !== null) {
+            return cropsData[currentCrop.key] ?? null;
+        }
+        return singleCurrentCropData;
+    };
 
     return (
         <div className={cn('shrink-0', className)}>
@@ -263,31 +369,86 @@ export function ThumbnailSelector({
                     }}
                 />
             )}
-            {/* Hidden inputs for crop data - use new crop data if available, otherwise existing */}
-            {(hasNewCropData || (currentCropData !== null && currentCropData !== undefined)) && (
-                <>
-                    <input
-                        type="hidden"
-                        name={`${name}_crop[x]`}
-                        value={Math.round((hasNewCropData ? cropData : currentCropData)!.x)}
-                    />
-                    <input
-                        type="hidden"
-                        name={`${name}_crop[y]`}
-                        value={Math.round((hasNewCropData ? cropData : currentCropData)!.y)}
-                    />
-                    <input
-                        type="hidden"
-                        name={`${name}_crop[width]`}
-                        value={Math.round((hasNewCropData ? cropData : currentCropData)!.width)}
-                    />
-                    <input
-                        type="hidden"
-                        name={`${name}_crop[height]`}
-                        value={Math.round((hasNewCropData ? cropData : currentCropData)!.height)}
-                    />
-                </>
-            )}
+            {/* Hidden inputs for crop data */}
+            {isMultiCrop === true && crops !== undefined
+                ? // Multi-crop hidden inputs
+                  crops.map((cropConfig) => {
+                      const data =
+                          cropsData[cropConfig.key] ??
+                          (multiCurrentCropData !== null
+                              ? multiCurrentCropData[cropConfig.key]
+                              : null);
+                      if (data === null || data === undefined) {
+                          return null;
+                      }
+                      return (
+                          <div key={cropConfig.key}>
+                              <input
+                                  type="hidden"
+                                  name={`${name}_crops[${cropConfig.key}][x]`}
+                                  value={Math.round(data.x)}
+                              />
+                              <input
+                                  type="hidden"
+                                  name={`${name}_crops[${cropConfig.key}][y]`}
+                                  value={Math.round(data.y)}
+                              />
+                              <input
+                                  type="hidden"
+                                  name={`${name}_crops[${cropConfig.key}][width]`}
+                                  value={Math.round(data.width)}
+                              />
+                              <input
+                                  type="hidden"
+                                  name={`${name}_crops[${cropConfig.key}][height]`}
+                                  value={Math.round(data.height)}
+                              />
+                          </div>
+                      );
+                  })
+                : // Single-crop hidden inputs
+                  (hasNewCropData ||
+                      (singleCurrentCropData !== null &&
+                          singleCurrentCropData !== undefined)) && (
+                      <>
+                          <input
+                              type="hidden"
+                              name={`${name}_crop[x]`}
+                              value={Math.round(
+                                  (hasNewCropData
+                                      ? cropData
+                                      : singleCurrentCropData)!.x,
+                              )}
+                          />
+                          <input
+                              type="hidden"
+                              name={`${name}_crop[y]`}
+                              value={Math.round(
+                                  (hasNewCropData
+                                      ? cropData
+                                      : singleCurrentCropData)!.y,
+                              )}
+                          />
+                          <input
+                              type="hidden"
+                              name={`${name}_crop[width]`}
+                              value={Math.round(
+                                  (hasNewCropData
+                                      ? cropData
+                                      : singleCurrentCropData)!.width,
+                              )}
+                          />
+                          <input
+                              type="hidden"
+                              name={`${name}_crop[height]`}
+                              value={Math.round(
+                                  (hasNewCropData
+                                      ? cropData
+                                      : singleCurrentCropData)!.height,
+                              )}
+                          />
+                      </>
+                  )}
             {showError === true && error !== undefined && (
                 <p className="mt-1 text-sm text-red-500 dark:text-red-400">
                     {error}
@@ -301,12 +462,12 @@ export function ThumbnailSelector({
                 open={modalOpen}
                 onOpenChange={setModalOpen}
                 imageUrl={modalImageUrl}
-                aspectRatio={aspectRatio}
-                initialCropData={
-                    // Only pass initial crop data when using the existing original URL
-                    // (not when user has selected a new file)
-                    originalUrl === null ? currentCropData : null
+                aspectRatio={
+                    currentCrop !== null
+                        ? currentCrop.aspectRatio
+                        : aspectRatio
                 }
+                initialCropData={getInitialCropData()}
                 onCropComplete={handleCropCompleteWithReset}
                 onChangeImage={handleChangeImage}
                 onRemove={handleRemove}
@@ -314,6 +475,20 @@ export function ThumbnailSelector({
                     originalUrl !== null ||
                     (currentOriginalUrl !== null &&
                         currentOriginalUrl !== undefined)
+                }
+                stepInfo={
+                    isMultiCrop && currentCrop !== null && crops !== undefined
+                        ? {
+                              current: currentCropIndex + 1,
+                              total: crops.length,
+                              label: currentCrop.label,
+                          }
+                        : undefined
+                }
+                onBack={
+                    isMultiCrop && currentCropIndex > 0
+                        ? handleBack
+                        : undefined
                 }
             />
         </div>
