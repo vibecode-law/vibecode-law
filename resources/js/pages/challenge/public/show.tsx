@@ -5,6 +5,7 @@ import { ProjectItem } from '@/components/showcase/showcase-item';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
+import { EmptyState } from '@/components/ui/empty-state';
 import PublicLayout from '@/layouts/public-layout';
 import {
     getChallengeStatus,
@@ -375,12 +376,19 @@ export default function ChallengeShow({
                                 ))}
                             </div>
                         ) : (
-                            <div className="mt-4 py-12 text-center">
-                                <p className="text-neutral-500 dark:text-neutral-400">
-                                    No entries yet. Be the first to submit a
-                                    project!
-                                </p>
-                            </div>
+                            <EmptyState
+                                icon={Trophy}
+                                title="Vibing in Progress"
+                                description="Entries will go live soon. Be one of the first!"
+                                action={{
+                                    label: 'Submit',
+                                    href:
+                                        ShowcaseCreateController.url() +
+                                        '?challenge=' +
+                                        challenge.slug,
+                                }}
+                                className="mt-4"
+                            />
                         )}
                     </div>
                 </div>

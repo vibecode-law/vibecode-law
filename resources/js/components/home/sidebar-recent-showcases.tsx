@@ -1,6 +1,7 @@
 import ShowcaseShowController from '@/actions/App/Http/Controllers/Showcase/Public/ShowcaseShowController';
 import { ThumbnailImage } from '@/components/ui/thumbnail-image';
 import { Link } from '@inertiajs/react';
+import { TrendingUp } from 'lucide-react';
 
 interface SidebarRecentShowcasesProps {
     showcases: App.Http.Resources.Showcase.ShowcaseResource[];
@@ -15,7 +16,8 @@ export function SidebarRecentShowcases({
 
     return (
         <div>
-            <h3 className="mb-2 text-sm font-medium tracking-wide text-neutral-500 uppercase dark:text-neutral-400">
+            <h3 className="mb-2 flex items-center gap-1.5 text-sm font-medium tracking-wide text-neutral-500 uppercase dark:text-neutral-400">
+                <TrendingUp className="size-4" />
                 Recently Added
             </h3>
             <div className="divide-y divide-neutral-100 dark:divide-neutral-800">
