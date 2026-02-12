@@ -101,7 +101,7 @@ export default function Home({
 
             {/* Projects */}
             <section className="bg-white dark:bg-neutral-950">
-                <div className="mx-auto flex max-w-6xl flex-col gap-8 px-4 lg:flex-row">
+                <div className="mx-auto flex max-w-6xl flex-col gap-8 px-4 lg:flex-row xl:gap-12">
                     <div className="min-w-0 flex-1">
                         {months.length > 0 ? (
                             months.map((month) => (
