@@ -21,7 +21,7 @@ export default function TabNavLayout({
     return (
         <PublicLayout>
             <div className="bg-white py-8 dark:bg-neutral-950">
-                <div className="mx-auto max-w-5xl px-4">
+                <div className="mx-auto max-w-6xl px-4">
                     <Heading title={title} />
 
                     <TabNav items={items} ariaLabel={ariaLabel} />
@@ -29,7 +29,9 @@ export default function TabNavLayout({
                     <div
                         className={cn(
                             'mt-8',
-                            fullWidth === false && 'max-w-xl',
+                            fullWidth === true
+                                ? 'mx-auto max-w-5xl'
+                                : 'max-w-2xl',
                         )}
                     >
                         {children}

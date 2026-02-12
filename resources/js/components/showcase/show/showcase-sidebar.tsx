@@ -33,7 +33,7 @@ export function ShowcaseSidebar({
     challengeEntries,
 }: ShowcaseSidebarProps) {
     return (
-        <div className="w-full lg:w-72">
+        <div className="w-full lg:w-72 xl:w-80 2xl:w-88">
             <div className="lg:sticky lg:top-4">
                 <Card className="py-4 lg:py-6">
                     <CardContent className="flex flex-row items-center justify-between gap-4 lg:flex-col">

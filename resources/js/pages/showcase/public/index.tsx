@@ -152,7 +152,7 @@ export default function PublicIndex({
             </Head>
 
             <section className="bg-white py-8 dark:bg-neutral-950">
-                <div className="mx-auto max-w-5xl px-4">
+                <div className="mx-auto max-w-6xl px-4">
                     <div className="mb-6">
                         <h1 className="text-3xl font-bold tracking-tight text-neutral-900 dark:text-white">
                             {getTitle()}

@@ -133,7 +133,7 @@ export default function HowItWorks() {
 
             {/* Hero Section */}
             <section className="bg-white py-16 dark:bg-neutral-950">
-                <div className="mx-auto max-w-5xl px-4 text-center">
+                <div className="mx-auto max-w-6xl px-4 text-center">
                     <h1 className="text-4xl font-bold tracking-tight text-neutral-900 sm:text-5xl dark:text-white">
                         How it works
                     </h1>
@@ -146,7 +146,7 @@ export default function HowItWorks() {
 
             {/* Steps Section */}
             <section className="bg-white pb-12 dark:bg-neutral-950">
-                <div className="mx-auto max-w-5xl px-4">
+                <div className="mx-auto max-w-6xl px-4">
                     <div className="grid gap-6 md:grid-cols-3">
                         {steps.map((step) => (
                             <div
@@ -191,7 +191,7 @@ export default function HowItWorks() {
 
             {/* CTA Section */}
             <section className="bg-white pb-12 dark:bg-neutral-950">
-                <div className="mx-auto max-w-3xl px-4 text-center">
+                <div className="mx-auto max-w-4xl px-4 text-center">
                     <Button asChild size="xl">
                         <Link href={ShowcaseCreateController.url()}>
                             Submit Your Project
@@ -202,7 +202,7 @@ export default function HowItWorks() {
 
             {/* FAQs Section */}
             <section className="bg-white pb-20 dark:bg-neutral-950">
-                <div className="mx-auto max-w-4xl px-4">
+                <div className="mx-auto max-w-5xl px-4">
                     <div className="mb-6 flex items-center gap-3 border-b border-neutral-200 pb-4 dark:border-neutral-800">
                         <div className="flex size-9 items-center justify-center rounded-full bg-amber-100 dark:bg-amber-950/50">
                             <CircleHelp className="size-5 text-amber-600 dark:text-amber-400" />

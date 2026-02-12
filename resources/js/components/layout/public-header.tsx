@@ -37,7 +37,7 @@ export function PublicHeader() {
 
     return (
         <header className="border-b border-neutral-100 bg-white dark:border-neutral-900 dark:bg-neutral-950">
-            <div className="mx-auto flex h-14 max-w-5xl items-center justify-between px-4">
+            <div className="mx-auto flex h-14 max-w-6xl items-center justify-between px-4">
                 <AppLogo />
 
                 <nav className="flex items-center gap-2 lg:gap-4">

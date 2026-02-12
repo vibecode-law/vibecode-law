@@ -51,11 +51,11 @@ export default function WallOfLove({
 
             {/* Hero Section */}
             <section className="bg-white py-16 lg:py-24 dark:bg-neutral-950">
-                <div className="mx-auto max-w-5xl px-4 text-center">
+                <div className="mx-auto max-w-6xl px-4 text-center">
                     <h1 className="text-4xl font-bold tracking-tight text-neutral-900 sm:text-5xl dark:text-white">
                         Wall of Love
                     </h1>
-                    <p className="mx-auto mt-6 max-w-2xl text-lg text-neutral-600 dark:text-neutral-400">
+                    <p className="mx-auto mt-6 max-w-3xl text-lg text-neutral-600 dark:text-neutral-400">
                         What the community and press are saying about
                         vibecode.law
                     </p>
@@ -65,7 +65,7 @@ export default function WallOfLove({
             {/* Testimonials Section */}
             {testimonials.length > 0 && (
                 <section className="border-t border-neutral-200 bg-neutral-50 py-16 dark:border-neutral-800 dark:bg-neutral-900">
-                    <div className="mx-auto max-w-5xl px-4">
+                    <div className="mx-auto max-w-6xl px-4">
                         <div className="mb-10 text-center">
                             <h2 className="text-3xl font-bold text-neutral-900 dark:text-white">
                                 Community Testimonials
@@ -129,7 +129,7 @@ export default function WallOfLove({
             {/* Press Coverage Section */}
             {pressCoverage.length > 0 && (
                 <section className="border-t border-neutral-200 bg-white py-16 dark:border-neutral-800 dark:bg-neutral-950">
-                    <div className="mx-auto max-w-5xl px-4">
+                    <div className="mx-auto max-w-6xl px-4">
                         <div className="mb-10 text-center">
                             <h2 className="text-3xl font-bold text-neutral-900 dark:text-white">
                                 Press Coverage
@@ -203,7 +203,7 @@ export default function WallOfLove({
 
             {/* Media CTA Section */}
             <section className="border-t border-neutral-200 bg-neutral-50 py-16 dark:border-neutral-800 dark:bg-neutral-900">
-                <div className="mx-auto max-w-3xl px-4 text-center">
+                <div className="mx-auto max-w-4xl px-4 text-center">
                     <h2 className="text-2xl font-bold text-neutral-900 dark:text-white">
                         Want to feature vibecode.law?
                     </h2>

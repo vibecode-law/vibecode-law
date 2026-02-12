@@ -280,11 +280,11 @@ export default function ChallengeIndex({
 
             {/* Hero Section */}
             <section className="bg-white py-10 lg:py-16 dark:bg-neutral-950">
-                <div className="mx-auto max-w-5xl px-4 text-center">
+                <div className="mx-auto max-w-6xl px-4 text-center">
                     <h1 className="text-4xl font-bold tracking-tight text-neutral-900 sm:text-5xl dark:text-white">
                         Inspiration.
                     </h1>
-                    <p className="mx-auto mt-4 max-w-2xl text-lg text-neutral-600 dark:text-neutral-400">
+                    <p className="mx-auto mt-4 max-w-3xl text-lg text-neutral-600 dark:text-neutral-400">
                         Staring at a blank prompt window? We've got you! Here
                         are some ideas and community projects to help get you
                         moving.
@@ -307,7 +307,7 @@ export default function ChallengeIndex({
             {/* Featured Challenges */}
             {featuredChallenges.length > 0 && (
                 <section className="bg-white pb-8 dark:bg-neutral-950">
-                    <div className="mx-auto max-w-5xl px-4">
+                    <div className="mx-auto max-w-6xl px-4">
                         <div className="grid gap-4 sm:grid-cols-2">
                             {featuredChallenges.map((challenge) => (
                                 <FeaturedChallengeCard
@@ -323,7 +323,7 @@ export default function ChallengeIndex({
             {/* Active Challenges */}
             {activeChallenges.length > 0 && (
                 <section className="bg-white pb-16 dark:bg-neutral-950">
-                    <div className="mx-auto max-w-5xl px-4">
+                    <div className="mx-auto max-w-6xl px-4">
                         <div className="divide-y divide-neutral-100 dark:divide-neutral-800">
                             {activeChallenges.map((challenge) => (
                                 <ActiveChallengeItem

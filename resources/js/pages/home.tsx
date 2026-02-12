@@ -2,6 +2,8 @@ import HomeController from '@/actions/App/Http/Controllers/HomeController';
 import ResourcesShowController from '@/actions/App/Http/Controllers/Resources/ResourcesShowController';
 import HowItWorksController from '@/actions/App/Http/Controllers/Showcase/Help/HowItWorksController';
 import ShowcaseCreateController from '@/actions/App/Http/Controllers/Showcase/ManageShowcase/ShowcaseCreateController';
+import { SidebarActiveChallenges } from '@/components/home/sidebar-active-challenges';
+import { SidebarRecentShowcases } from '@/components/home/sidebar-recent-showcases';
 import { ProjectMonthSection } from '@/components/showcase/showcase-month-section';
 import { Button } from '@/components/ui/button';
 import PublicLayout from '@/layouts/public-layout';
@@ -14,10 +16,16 @@ interface HomeProps {
         string,
         App.Http.Resources.Showcase.ShowcaseResource[]
     >;
+    recentShowcases?: App.Http.Resources.Showcase.ShowcaseResource[];
+    activeChallenges?: App.Http.Resources.Challenge.ChallengeResource[];
 }
 
-export default function Home({ showcasesByMonth }: HomeProps) {
-    const { name, appUrl, defaultMetaDescription } =
+export default function Home({
+    showcasesByMonth,
+    recentShowcases,
+    activeChallenges,
+}: HomeProps) {
+    const { name, appUrl, defaultMetaDescription, challengesEnabled } =
         usePage<SharedData>().props;
 
     const months = showcasesByMonth ? Object.keys(showcasesByMonth) : [];
@@ -51,11 +59,11 @@ export default function Home({ showcasesByMonth }: HomeProps) {
 
             {/* Hero Section */}
             <section className="bg bg-white py-10 lg:py-16 dark:bg-neutral-950">
-                <div className="mx-auto max-w-5xl px-4 text-center">
+                <div className="mx-auto max-w-6xl px-4 text-center">
                     <h1 className="text-4xl font-bold tracking-tight text-neutral-900 sm:text-5xl lg:text-6xl dark:text-white">
                         Learn. Share. Discover.
                     </h1>
-                    <div className="mx-auto mt-8 max-w-4xl space-y-6 text-lg text-neutral-600 dark:text-neutral-400">
+                    <div className="mx-auto mt-8 max-w-5xl space-y-6 text-lg text-neutral-600 dark:text-neutral-400">
                         <p className="text-lg text-neutral-600 sm:text-xl dark:text-neutral-400">
                             An open platform for legal professionals building
                             with AI.
@@ -93,20 +101,45 @@ export default function Home({ showcasesByMonth }: HomeProps) {
 
             {/* Projects */}
             <section className="bg-white dark:bg-neutral-950">
-                <div className="mx-auto max-w-5xl px-4">
-                    {months.length > 0 ? (
-                        months.map((month) => (
-                            <ProjectMonthSection
-                                key={month}
-                                month={month}
-                                showcases={showcasesByMonth![month]}
-                            />
-                        ))
-                    ) : (
-                        <div className="py-16 text-center">
-                            <p className="text-neutral-500 dark:text-neutral-400">
-                                No projects yet. Be the first to submit one!
-                            </p>
+                <div className="mx-auto flex max-w-6xl flex-col gap-8 px-4 lg:flex-row">
+                    <div className="min-w-0 flex-1">
+                        {months.length > 0 ? (
+                            months.map((month) => (
+                                <ProjectMonthSection
+                                    key={month}
+                                    month={month}
+                                    showcases={showcasesByMonth![month]}
+                                />
+                            ))
+                        ) : (
+                            <div className="py-16 text-center">
+                                <p className="text-neutral-500 dark:text-neutral-400">
+                                    No projects yet. Be the first to submit one!
+                                </p>
+                            </div>
+                        )}
+                    </div>
+
+                    {((recentShowcases && recentShowcases.length > 0) ||
+                        (challengesEnabled === true &&
+                            activeChallenges &&
+                            activeChallenges.length > 0)) && (
+                        <div className="mb-12 w-full lg:mb-0 lg:w-72 xl:w-80 2xl:w-88">
+                            <div className="space-y-8 lg:sticky lg:top-4">
+                                {recentShowcases &&
+                                    recentShowcases.length > 0 && (
+                                        <SidebarRecentShowcases
+                                            showcases={recentShowcases}
+                                        />
+                                    )}
+                                {challengesEnabled === true &&
+                                    activeChallenges &&
+                                    activeChallenges.length > 0 && (
+                                        <SidebarActiveChallenges
+                                            challenges={activeChallenges}
+                                        />
+                                    )}
+                            </div>
                         </div>
                     )}
                 </div>

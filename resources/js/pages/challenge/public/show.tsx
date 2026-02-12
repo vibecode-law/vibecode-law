@@ -191,7 +191,7 @@ export default function ChallengeShow({
 
             {/* Header + Description + Aside */}
             <section className="bg-white dark:bg-neutral-950">
-                <div className="mx-auto max-w-5xl px-4 py-8">
+                <div className="mx-auto max-w-5xl border-b border-neutral-200 px-4 py-8 dark:border-neutral-800">
                     <div className="flex flex-col gap-x-12 gap-y-4 lg:flex-row">
                         {/* Main content */}
                         <div className="min-w-0 flex-1">
@@ -299,7 +299,7 @@ export default function ChallengeShow({
                         {(challenge.organisation ||
                             thumbnailSrc ||
                             participants.length > 0) && (
-                            <aside className="shrink-0 lg:w-64">
+                            <aside className="shrink-0 lg:w-64 xl:w-68 2xl:w-72">
                                 {challenge.organisation ? (
                                     <div>
                                         <p className="mb-3 text-xs font-medium tracking-wide text-neutral-500 uppercase dark:text-neutral-400">
@@ -357,8 +357,8 @@ export default function ChallengeShow({
 
             {/* Leaderboard Section */}
             <section className="bg-white pb-16 dark:bg-neutral-950">
-                <div className="mx-auto max-w-5xl px-4">
-                    <div className="border-t border-neutral-200 pt-8 dark:border-neutral-800">
+                <div className="mx-auto max-w-4xl px-4">
+                    <div className="pt-8">
                         <h2 className="flex items-center gap-2 text-xl font-semibold text-neutral-900 dark:text-white">
                             <Trophy className="size-5" />
                             Leaderboard

@@ -59,7 +59,7 @@ export default function NewsletterIndex() {
             </Head>
 
             <section className="bg-white py-10 lg:py-16 dark:bg-neutral-950">
-                <div className="mx-auto max-w-xl px-4 text-center">
+                <div className="mx-auto max-w-2xl px-4 text-center">
                     <h1 className="text-4xl font-bold tracking-tight text-neutral-900 sm:text-5xl dark:text-white">
                         Stay in the loop.
                     </h1>

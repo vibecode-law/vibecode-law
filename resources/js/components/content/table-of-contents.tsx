@@ -167,7 +167,7 @@ export function TableOfContents({
     return (
         <>
             {/* Desktop: Sticky sidebar */}
-            <aside className="hidden w-64 shrink-0 lg:block">
+            <aside className="hidden w-64 shrink-0 lg:block xl:w-70 2xl:w-76">
                 <DesktopTableOfContents navigation={navigation} title={title} />
             </aside>
 

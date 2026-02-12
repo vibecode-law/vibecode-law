@@ -158,7 +158,7 @@ export function ShowcaseForm({
                                 ),
                             );
                             return (
-                                <div className="mx-auto max-w-5xl px-4 py-8">
+                                <div className="mx-auto max-w-6xl px-4 py-8">
                                     {/* Breadcrumbs */}
                                     <div className="mb-6">
                                         <Breadcrumbs items={breadcrumbs} />
@@ -253,7 +253,7 @@ export function ShowcaseForm({
                                         />
                                     </div>
 
-                                    <div className="mx-auto mt-8 max-w-3xl space-y-8">
+                                    <div className="mx-auto mt-8 max-w-4xl space-y-8">
                                         {/* Challenge tip */}
                                         {activeChallenge !== undefined && (
                                             <InfoBox
@@ -640,7 +640,7 @@ export function ShowcaseForm({
                                     </div>
 
                                     {/* Bottom Save Button - Mobile */}
-                                    <div className="mx-auto max-w-3xl">
+                                    <div className="mx-auto max-w-4xl">
                                         <SaveButtonGroup
                                             recentlySuccessful={
                                                 recentlySuccessful
