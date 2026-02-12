@@ -304,37 +304,38 @@ export default function ChallengeIndex({
                 </div>
             </section>
 
-            {/* Featured Challenges */}
-            {featuredChallenges.length > 0 && (
-                <section className="bg-white pb-8 dark:bg-neutral-950">
-                    <div className="mx-auto max-w-6xl px-4">
-                        <div className="grid gap-4 sm:grid-cols-2">
-                            {featuredChallenges.map((challenge) => (
-                                <FeaturedChallengeCard
-                                    key={challenge.id}
-                                    challenge={challenge}
-                                />
-                            ))}
+            <div className="pb-8">
+                {/* Featured Challenges */}
+                {featuredChallenges.length > 0 && (
+                    <section className="bg-white pb-8 dark:bg-neutral-950">
+                        <div className="mx-auto max-w-6xl px-4">
+                            <div className="grid gap-4 sm:grid-cols-2">
+                                {featuredChallenges.map((challenge) => (
+                                    <FeaturedChallengeCard
+                                        key={challenge.id}
+                                        challenge={challenge}
+                                    />
+                                ))}
+                            </div>
                         </div>
-                    </div>
-                </section>
-            )}
-
-            {/* Active Challenges */}
-            {activeChallenges.length > 0 && (
-                <section className="bg-white pb-16 dark:bg-neutral-950">
-                    <div className="mx-auto max-w-6xl px-4">
-                        <div className="divide-y divide-neutral-100 dark:divide-neutral-800">
-                            {activeChallenges.map((challenge) => (
-                                <ActiveChallengeItem
-                                    key={challenge.id}
-                                    challenge={challenge}
-                                />
-                            ))}
+                    </section>
+                )}
+                {/* Active Challenges */}
+                {activeChallenges.length > 0 && (
+                    <section className="bg-white pb-8 dark:bg-neutral-950">
+                        <div className="mx-auto max-w-6xl px-4">
+                            <div className="divide-y divide-neutral-100 dark:divide-neutral-800">
+                                {activeChallenges.map((challenge) => (
+                                    <ActiveChallengeItem
+                                        key={challenge.id}
+                                        challenge={challenge}
+                                    />
+                                ))}
+                            </div>
                         </div>
-                    </div>
-                </section>
-            )}
+                    </section>
+                )}
+            </div>
         </PublicLayout>
     );
 }
