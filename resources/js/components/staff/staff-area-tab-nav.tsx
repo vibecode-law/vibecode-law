@@ -1,5 +1,6 @@
 import { TabNav, type TabNavItem } from '@/components/navigation/tab-nav';
 import { usePermissions } from '@/hooks/use-permissions';
+import { index as challengesIndex } from '@/routes/staff/challenges';
 import { index as practiceAreasIndex } from '@/routes/staff/practice-areas';
 import { index as pressCoverageIndex } from '@/routes/staff/press-coverage';
 import { index as showcaseModerationIndex } from '@/routes/staff/showcase-moderation';
@@ -31,6 +32,11 @@ const allStaffAreaNavItems: StaffNavItem[] = [
         title: 'Press Coverage',
         href: pressCoverageIndex().url,
         permission: 'press-coverage.view',
+    },
+    {
+        title: 'Challenges',
+        href: challengesIndex().url,
+        adminOnly: true,
     },
     {
         title: 'Users',

@@ -1,5 +1,12 @@
 <?php
 
+use App\Http\Controllers\Staff\Challenges\CreateController as ChallengeCreateController;
+use App\Http\Controllers\Staff\Challenges\EditController as ChallengeEditController;
+use App\Http\Controllers\Staff\Challenges\IndexController as ChallengeIndexController;
+use App\Http\Controllers\Staff\Challenges\StoreController as ChallengeStoreController;
+use App\Http\Controllers\Staff\Challenges\UpdateController as ChallengeUpdateController;
+use App\Http\Controllers\Staff\Organisations\StoreController as OrganisationStoreController;
+use App\Http\Controllers\Staff\Organisations\UpdateController as OrganisationUpdateController;
 use App\Http\Controllers\Staff\PracticeAreaController;
 use App\Http\Controllers\Staff\PressCoverage\DestroyController as PressCoverageDestroyController;
 use App\Http\Controllers\Staff\PressCoverage\IndexController as PressCoverageIndexController;
@@ -62,6 +69,19 @@ Route::middleware(['can:access-staff'])->prefix('staff')->name('staff.')->group(
         Route::post('/reorder', TestimonialReorderController::class)->name('reorder');
         Route::match(['put', 'patch'], '/{testimonial}', TestimonialUpdateController::class)->name('update');
         Route::delete('/{testimonial}', TestimonialDestroyController::class)->name('destroy');
+    });
+
+    Route::prefix('organisations')->name('organisations.')->group(function () {
+        Route::post('/', OrganisationStoreController::class)->name('store');
+        Route::patch('/{organisation}', OrganisationUpdateController::class)->name('update');
+    });
+
+    Route::prefix('challenges')->name('challenges.')->group(function () {
+        Route::get('/', ChallengeIndexController::class)->name('index');
+        Route::get('/create', ChallengeCreateController::class)->name('create');
+        Route::post('/', ChallengeStoreController::class)->name('store');
+        Route::get('/{challenge}/edit', ChallengeEditController::class)->name('edit');
+        Route::patch('/{challenge}', ChallengeUpdateController::class)->name('update');
     });
 
     Route::prefix('press-coverage')->name('press-coverage.')->group(function () {

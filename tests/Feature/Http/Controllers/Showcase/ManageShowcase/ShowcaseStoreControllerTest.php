@@ -4,6 +4,7 @@ use App\Actions\Showcase\SubmitShowcaseAction;
 use App\Enums\ShowcaseStatus;
 use App\Enums\SourceStatus;
 use App\Jobs\MarketingEmail\AddShowcaseTagToSubscriberJob;
+use App\Models\Challenge\Challenge;
 use App\Models\PracticeArea;
 use App\Models\Showcase\Showcase;
 use App\Models\User;
@@ -1068,5 +1069,245 @@ describe('marketing tag', function () {
         ]);
 
         Queue::assertNotPushed(AddShowcaseTagToSubscriberJob::class);
+    });
+});
+
+describe('challenge attachment', function () {
+    test('attaches challenge to showcase when challenge_id is provided', function () {
+        $practiceArea = PracticeArea::factory()->create();
+        $challenge = Challenge::factory()->active()->create();
+
+        /** @var User */
+        $user = User::factory()->create();
+
+        actingAs($user);
+
+        post(route('showcase.manage.store'), [
+            'practice_area_ids' => [$practiceArea->id],
+            'title' => 'My Challenge Project',
+            'tagline' => 'A great project tagline',
+            'description' => 'This is a great project description',
+            'key_features' => 'Some key features',
+            'url' => 'https://example.com',
+            'source_status' => SourceStatus::NotAvailable->value,
+            'images' => [UploadedFile::fake()->image('test.jpg', 1280, 720)],
+            'thumbnail' => UploadedFile::fake()->image('thumbnail.jpg', 500, 500),
+            'thumbnail_crop' => ['x' => 0, 'y' => 0, 'width' => 500, 'height' => 500],
+            'challenge_id' => $challenge->id,
+        ]);
+
+        $showcase = Showcase::where('title', 'My Challenge Project')->first();
+
+        assertDatabaseHas('challenge_showcase', [
+            'challenge_id' => $challenge->id,
+            'showcase_id' => $showcase->id,
+        ]);
+    });
+
+    test('does not create pivot row when challenge_id is not provided', function () {
+        $practiceArea = PracticeArea::factory()->create();
+
+        /** @var User */
+        $user = User::factory()->create();
+
+        actingAs($user);
+
+        post(route('showcase.manage.store'), [
+            'practice_area_ids' => [$practiceArea->id],
+            'title' => 'My Project Without Challenge',
+            'tagline' => 'A great project tagline',
+            'description' => 'This is a great project description',
+            'key_features' => 'Some key features',
+            'url' => 'https://example.com',
+            'source_status' => SourceStatus::NotAvailable->value,
+            'images' => [UploadedFile::fake()->image('test.jpg', 1280, 720)],
+            'thumbnail' => UploadedFile::fake()->image('thumbnail.jpg', 500, 500),
+            'thumbnail_crop' => ['x' => 0, 'y' => 0, 'width' => 500, 'height' => 500],
+        ]);
+
+        $showcase = Showcase::where('title', 'My Project Without Challenge')->first();
+
+        expect($showcase->challenges)->toHaveCount(0);
+    });
+
+    test('rejects challenge_id for an inactive challenge', function () {
+        $practiceArea = PracticeArea::factory()->create();
+        $challenge = Challenge::factory()->create(['is_active' => false]);
+
+        /** @var User */
+        $user = User::factory()->create();
+
+        actingAs($user);
+
+        post(route('showcase.manage.store'), [
+            'practice_area_ids' => [$practiceArea->id],
+            'title' => 'My Challenge Project',
+            'tagline' => 'A great project tagline',
+            'description' => 'This is a great project description',
+            'key_features' => 'Some key features',
+            'url' => 'https://example.com',
+            'source_status' => SourceStatus::NotAvailable->value,
+            'images' => [UploadedFile::fake()->image('test.jpg', 1280, 720)],
+            'thumbnail' => UploadedFile::fake()->image('thumbnail.jpg', 500, 500),
+            'thumbnail_crop' => ['x' => 0, 'y' => 0, 'width' => 500, 'height' => 500],
+            'challenge_id' => $challenge->id,
+        ])->assertInvalid(['challenge_id']);
+    });
+
+    test('rejects challenge_id for a non-existent challenge', function () {
+        $practiceArea = PracticeArea::factory()->create();
+
+        /** @var User */
+        $user = User::factory()->create();
+
+        actingAs($user);
+
+        post(route('showcase.manage.store'), [
+            'practice_area_ids' => [$practiceArea->id],
+            'title' => 'My Challenge Project',
+            'tagline' => 'A great project tagline',
+            'description' => 'This is a great project description',
+            'key_features' => 'Some key features',
+            'url' => 'https://example.com',
+            'source_status' => SourceStatus::NotAvailable->value,
+            'images' => [UploadedFile::fake()->image('test.jpg', 1280, 720)],
+            'thumbnail' => UploadedFile::fake()->image('thumbnail.jpg', 500, 500),
+            'thumbnail_crop' => ['x' => 0, 'y' => 0, 'width' => 500, 'height' => 500],
+            'challenge_id' => 99999,
+        ])->assertInvalid(['challenge_id']);
+    });
+
+    test('rejects challenge_id when challenge has not opened yet', function () {
+        $practiceArea = PracticeArea::factory()->create();
+        $challenge = Challenge::factory()->active()->create([
+            'starts_at' => now()->addWeek(),
+            'ends_at' => now()->addMonth(),
+        ]);
+
+        /** @var User */
+        $user = User::factory()->create();
+
+        actingAs($user);
+
+        post(route('showcase.manage.store'), [
+            'practice_area_ids' => [$practiceArea->id],
+            'title' => 'My Challenge Project',
+            'tagline' => 'A great project tagline',
+            'description' => 'This is a great project description',
+            'key_features' => 'Some key features',
+            'url' => 'https://example.com',
+            'source_status' => SourceStatus::NotAvailable->value,
+            'images' => [UploadedFile::fake()->image('test.jpg', 1280, 720)],
+            'thumbnail' => UploadedFile::fake()->image('thumbnail.jpg', 500, 500),
+            'thumbnail_crop' => ['x' => 0, 'y' => 0, 'width' => 500, 'height' => 500],
+            'challenge_id' => $challenge->id,
+        ])->assertInvalid(['challenge_id' => 'not opened yet']);
+    });
+
+    test('rejects challenge_id when challenge has already closed', function () {
+        $practiceArea = PracticeArea::factory()->create();
+        $challenge = Challenge::factory()->active()->create([
+            'starts_at' => now()->subMonth(),
+            'ends_at' => now()->subWeek(),
+        ]);
+
+        /** @var User */
+        $user = User::factory()->create();
+
+        actingAs($user);
+
+        post(route('showcase.manage.store'), [
+            'practice_area_ids' => [$practiceArea->id],
+            'title' => 'My Challenge Project',
+            'tagline' => 'A great project tagline',
+            'description' => 'This is a great project description',
+            'key_features' => 'Some key features',
+            'url' => 'https://example.com',
+            'source_status' => SourceStatus::NotAvailable->value,
+            'images' => [UploadedFile::fake()->image('test.jpg', 1280, 720)],
+            'thumbnail' => UploadedFile::fake()->image('thumbnail.jpg', 500, 500),
+            'thumbnail_crop' => ['x' => 0, 'y' => 0, 'width' => 500, 'height' => 500],
+            'challenge_id' => $challenge->id,
+        ])->assertInvalid(['challenge_id' => 'already closed']);
+    });
+
+    test('accepts challenge_id when within date window', function () {
+        $practiceArea = PracticeArea::factory()->create();
+        $challenge = Challenge::factory()->ongoing()->create();
+
+        /** @var User */
+        $user = User::factory()->create();
+
+        actingAs($user);
+
+        post(route('showcase.manage.store'), [
+            'practice_area_ids' => [$practiceArea->id],
+            'title' => 'My Challenge Project',
+            'tagline' => 'A great project tagline',
+            'description' => 'This is a great project description',
+            'key_features' => 'Some key features',
+            'url' => 'https://example.com',
+            'source_status' => SourceStatus::NotAvailable->value,
+            'images' => [UploadedFile::fake()->image('test.jpg', 1280, 720)],
+            'thumbnail' => UploadedFile::fake()->image('thumbnail.jpg', 500, 500),
+            'thumbnail_crop' => ['x' => 0, 'y' => 0, 'width' => 500, 'height' => 500],
+            'challenge_id' => $challenge->id,
+        ])->assertValid('challenge_id');
+    });
+
+    test('accepts challenge_id when dates are null', function () {
+        $practiceArea = PracticeArea::factory()->create();
+        $challenge = Challenge::factory()->active()->create([
+            'starts_at' => null,
+            'ends_at' => null,
+        ]);
+
+        /** @var User */
+        $user = User::factory()->create();
+
+        actingAs($user);
+
+        post(route('showcase.manage.store'), [
+            'practice_area_ids' => [$practiceArea->id],
+            'title' => 'My Challenge Project',
+            'tagline' => 'A great project tagline',
+            'description' => 'This is a great project description',
+            'key_features' => 'Some key features',
+            'url' => 'https://example.com',
+            'source_status' => SourceStatus::NotAvailable->value,
+            'images' => [UploadedFile::fake()->image('test.jpg', 1280, 720)],
+            'thumbnail' => UploadedFile::fake()->image('thumbnail.jpg', 500, 500),
+            'thumbnail_crop' => ['x' => 0, 'y' => 0, 'width' => 500, 'height' => 500],
+            'challenge_id' => $challenge->id,
+        ])->assertValid('challenge_id');
+    });
+
+    test('challenge is linked via pivot not as a column on the showcase', function () {
+        $practiceArea = PracticeArea::factory()->create();
+        $challenge = Challenge::factory()->active()->create();
+
+        /** @var User */
+        $user = User::factory()->create();
+
+        actingAs($user);
+
+        post(route('showcase.manage.store'), [
+            'practice_area_ids' => [$practiceArea->id],
+            'title' => 'My Challenge Project',
+            'tagline' => 'A great project tagline',
+            'description' => 'This is a great project description',
+            'key_features' => 'Some key features',
+            'url' => 'https://example.com',
+            'source_status' => SourceStatus::NotAvailable->value,
+            'images' => [UploadedFile::fake()->image('test.jpg', 1280, 720)],
+            'thumbnail' => UploadedFile::fake()->image('thumbnail.jpg', 500, 500),
+            'thumbnail_crop' => ['x' => 0, 'y' => 0, 'width' => 500, 'height' => 500],
+            'challenge_id' => $challenge->id,
+        ]);
+
+        $showcase = Showcase::where('title', 'My Challenge Project')->first();
+
+        expect($showcase->challenges)->toHaveCount(1);
+        expect($showcase->challenges->first()->id)->toBe($challenge->id);
     });
 });

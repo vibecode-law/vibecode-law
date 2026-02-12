@@ -13,3 +13,4 @@ These guidelines apply in addition to the boost guidelines.
 - When running all tests, use ``php artisan test --compact --parallel` for speed.
 - You shouldn't run migrations. The test-suite will handle this for you. If you run migrations, you may destroy data the developer is currently working with. If you need them to be run (e.g. for ide-helpers), ask whether they'd like to skip that step.
 - Tests should cover both the "happy path" and "unhappy path".
+- Controller tests that affect the database should test the response, load the model(s) and test the model(s) using pest expectations. Avoid using `assertDatabaseHas`.

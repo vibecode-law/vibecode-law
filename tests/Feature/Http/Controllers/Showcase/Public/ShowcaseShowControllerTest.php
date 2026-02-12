@@ -1,9 +1,11 @@
 <?php
 
 use App\Enums\ShowcaseStatus;
+use App\Models\Challenge\Challenge;
 use App\Models\Showcase\Showcase;
 use App\Models\Showcase\ShowcaseImage;
 use App\Models\User;
+use Illuminate\Support\Facades\Config;
 use Inertia\Testing\AssertableInertia;
 
 use function Pest\Laravel\actingAs;
@@ -102,7 +104,7 @@ test('show returns correct showcase data', function () {
             ->where('source_url', null)
             ->where('thumbnail_url', \Illuminate\Support\Facades\Storage::disk('public')->url("showcase/{$showcase->id}/thumbnail.jpg"))
             ->where('thumbnail_rect_string', 'rect=10,20,300,200')
-            ->missing('view_count') // Only visible to owner/admin
+            ->where('view_count', 1) // Incremented by viewing
             ->where('status', ShowcaseStatus::Approved->forFrontend())
             ->has('user', fn (AssertableInertia $userProp) => $userProp
                 ->where('first_name', 'Test')
@@ -295,7 +297,7 @@ test('view_count is visible to admin', function () {
         );
 });
 
-test('view_count is not visible to non-owner users', function () {
+test('view_count is visible to all users', function () {
     /** @var User */
     $user = User::factory()->create();
     $otherUser = User::factory()->create();
@@ -308,7 +310,7 @@ test('view_count is not visible to non-owner users', function () {
 
     get(route('showcase.show', $showcase))
         ->assertInertia(fn (AssertableInertia $page) => $page
-            ->missing('showcase.view_count')
+            ->where('showcase.view_count', 6) // Incremented by viewing
         );
 });
 
@@ -762,6 +764,113 @@ describe('approval celebration', function () {
         get(route('showcase.show', $showcase))
             ->assertInertia(fn (AssertableInertia $page) => $page
                 ->where('showcase.linkedin_share_url', $expectedLinkedInUrl)
+            );
+    });
+});
+
+describe('challengeEntries', function () {
+    test('challengeEntries is not passed when challenges_enabled is false', function () {
+        Config::set('app.challenges_enabled', false);
+
+        $showcase = Showcase::factory()->approved()->create();
+        $challenge = Challenge::factory()->active()->create();
+        $challenge->showcases()->attach($showcase);
+
+        get(route('showcase.show', $showcase))
+            ->assertInertia(fn (AssertableInertia $page) => $page
+                ->missing('challengeEntries')
+            );
+    });
+
+    test('challengeEntries is passed when challenges_enabled is true', function () {
+        Config::set('app.challenges_enabled', true);
+
+        $showcase = Showcase::factory()->approved()->create();
+        $challenge = Challenge::factory()->active()->create();
+        $challenge->showcases()->attach($showcase);
+
+        get(route('showcase.show', $showcase))
+            ->assertInertia(fn (AssertableInertia $page) => $page
+                ->has('challengeEntries', 1)
+            );
+    });
+
+    test('challengeEntries is empty when showcase has no active challenges', function () {
+        Config::set('app.challenges_enabled', true);
+
+        $showcase = Showcase::factory()->approved()->create();
+
+        get(route('showcase.show', $showcase))
+            ->assertInertia(fn (AssertableInertia $page) => $page
+                ->has('challengeEntries', 0)
+            );
+    });
+
+    test('challengeEntries excludes inactive challenges', function () {
+        Config::set('app.challenges_enabled', true);
+
+        $showcase = Showcase::factory()->approved()->create();
+        $activeChallenge = Challenge::factory()->active()->create();
+        $inactiveChallenge = Challenge::factory()->create(['is_active' => false]);
+        $activeChallenge->showcases()->attach($showcase);
+        $inactiveChallenge->showcases()->attach($showcase);
+
+        get(route('showcase.show', $showcase))
+            ->assertInertia(fn (AssertableInertia $page) => $page
+                ->has('challengeEntries', 1)
+                ->where('challengeEntries.0.challenge.id', $activeChallenge->id)
+            );
+    });
+
+    test('challengeEntries contains correct challenge data and rank', function () {
+        Config::set('app.challenges_enabled', true);
+
+        $upvoters = User::factory()->count(3)->create();
+
+        $showcase = Showcase::factory()->approved()->create(['submitted_date' => '2025-01-15']);
+        $showcase->upvoters()->attach($upvoters->take(3)); // 3 upvotes
+
+        $otherShowcase = Showcase::factory()->approved()->create(['submitted_date' => '2025-01-10']);
+        $otherShowcase->upvoters()->attach($upvoters->take(1)); // 1 upvote
+
+        $challenge = Challenge::factory()->active()->create([
+            'title' => 'Test Challenge',
+            'thumbnail_extension' => null,
+        ]);
+        $challenge->showcases()->attach([$showcase->id, $otherShowcase->id]);
+
+        get(route('showcase.show', $showcase))
+            ->assertInertia(fn (AssertableInertia $page) => $page
+                ->has('challengeEntries', 1, fn (AssertableInertia $entry) => $entry
+                    ->where('rank', 1)
+                    ->has('challenge', fn (AssertableInertia $challengeProp) => $challengeProp
+                        ->where('id', $challenge->id)
+                        ->where('slug', $challenge->slug)
+                        ->where('title', 'Test Challenge')
+                        ->where('thumbnail_url', null)
+                        ->where('thumbnail_rect_strings', null)
+                    )
+                )
+            );
+    });
+
+    test('challengeEntries shows correct rank for lower-ranked showcase', function () {
+        Config::set('app.challenges_enabled', true);
+
+        $upvoters = User::factory()->count(5)->create();
+
+        $topShowcase = Showcase::factory()->approved()->create(['submitted_date' => '2025-01-10']);
+        $topShowcase->upvoters()->attach($upvoters->take(5)); // 5 upvotes
+
+        $lowerShowcase = Showcase::factory()->approved()->create(['submitted_date' => '2025-01-15']);
+        $lowerShowcase->upvoters()->attach($upvoters->take(2)); // 2 upvotes
+
+        $challenge = Challenge::factory()->active()->create();
+        $challenge->showcases()->attach([$topShowcase->id, $lowerShowcase->id]);
+
+        get(route('showcase.show', $lowerShowcase))
+            ->assertInertia(fn (AssertableInertia $page) => $page
+                ->where('challengeEntries.0.rank', 2)
             );
     });
 });

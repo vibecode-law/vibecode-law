@@ -79,6 +79,15 @@ export interface ShowcaseFormData {
 }
 
 /**
+ * Minimal challenge context for associating a showcase with a challenge
+ */
+export interface ChallengeContext {
+    id: number;
+    title: string;
+    slug: string;
+}
+
+/**
  * Props for the ShowcaseForm component
  */
 export interface ShowcaseFormProps {
@@ -94,6 +103,7 @@ export interface ShowcaseFormProps {
     pageTitle: string;
     showSlugField: boolean;
     canSubmit: boolean;
+    challenge?: ChallengeContext;
 }
 
 /**

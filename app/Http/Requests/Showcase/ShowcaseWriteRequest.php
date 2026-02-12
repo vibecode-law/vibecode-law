@@ -3,6 +3,7 @@
 namespace App\Http\Requests\Showcase;
 
 use App\Enums\SourceStatus;
+use App\Models\Challenge\Challenge;
 use App\Models\PracticeArea;
 use App\Models\Showcase\Showcase;
 use Illuminate\Foundation\Http\FormRequest;
@@ -132,6 +133,7 @@ class ShowcaseWriteRequest extends FormRequest
             'removed_images' => ['nullable', 'array'],
             'removed_images.*' => ['integer', Rule::exists('showcase_images', 'id')->where('showcase_id', $showcase?->id)],
             'submit' => ['nullable', 'boolean'],
+            'challenge_id' => ['nullable', 'integer', Rule::exists('challenges', 'id')->where('is_active', true)],
         ];
     }
 
@@ -140,6 +142,8 @@ class ShowcaseWriteRequest extends FormRequest
         $validator->after(function (Validator $validator) {
             /** @var ?Showcase $showcase */
             $showcase = $this->route('showcase');
+
+            $this->validateChallengeDateWindow(validator: $validator, showcase: $showcase);
 
             $existingImagesCount = $showcase?->images()->count() ?? 0;
             $removedImagesCount = count($this->input('removed_images', []));
@@ -167,6 +171,38 @@ class ShowcaseWriteRequest extends FormRequest
                 'name' => Auth::user()->first_name.' '.Auth::user()->last_name,
             ]);
         });
+    }
+
+    private function validateChallengeDateWindow(Validator $validator, ?Showcase $showcase): void
+    {
+        $challengeId = $this->input('challenge_id');
+
+        if ($challengeId === null) {
+            return;
+        }
+
+        /** @var int|null $existingChallengeId */
+        $existingChallengeId = $showcase?->challenges()->first()?->getKey();
+
+        if ($existingChallengeId !== null && (int) $challengeId === $existingChallengeId) {
+            return;
+        }
+
+        $challenge = Challenge::find($challengeId);
+
+        if ($challenge === null) {
+            return;
+        }
+
+        $now = now();
+
+        if ($challenge->starts_at !== null && $now->isBefore($challenge->starts_at)) {
+            $validator->errors()->add('challenge_id', 'This challenge has not opened yet.');
+        }
+
+        if ($challenge->ends_at !== null && $now->isAfter($challenge->ends_at)) {
+            $validator->errors()->add('challenge_id', 'This challenge has already closed.');
+        }
     }
 
     public function messages(): array

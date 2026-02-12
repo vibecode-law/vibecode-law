@@ -3,6 +3,7 @@
 use App\Actions\Showcase\SubmitShowcaseAction;
 use App\Enums\ShowcaseStatus;
 use App\Enums\SourceStatus;
+use App\Models\Challenge\Challenge;
 use App\Models\Showcase\Showcase;
 use App\Models\Showcase\ShowcaseImage;
 use App\Models\User;
@@ -13,6 +14,7 @@ use Illuminate\Support\Facades\Storage;
 
 use function Pest\Laravel\actingAs;
 use function Pest\Laravel\assertDatabaseHas;
+use function Pest\Laravel\assertDatabaseMissing;
 use function Pest\Laravel\put;
 
 describe('auth', function () {
@@ -1400,5 +1402,186 @@ describe('markdown cache clearing', function () {
         ])->assertRedirect();
 
         expect(Cache::has(key: $fullKey))->toBeFalse();
+    });
+});
+
+describe('challenge attachment', function () {
+    test('attaches challenge when challenge_id is provided', function () {
+        $challenge = Challenge::factory()->active()->create();
+
+        /** @var User */
+        $user = User::factory()->create();
+        $showcase = Showcase::factory()->has(ShowcaseImage::factory(), 'images')->for($user, 'user')->create();
+
+        actingAs($user);
+
+        put(route('showcase.manage.update', $showcase), [
+            'practice_area_ids' => $showcase->practiceAreas->pluck('id')->toArray(),
+            'title' => 'Updated Title',
+            'tagline' => 'Updated tagline',
+            'description' => 'Updated description',
+            'key_features' => 'Updated key features',
+            'url' => 'https://updated.com',
+            'source_status' => SourceStatus::NotAvailable->value,
+            'challenge_id' => $challenge->id,
+        ])->assertRedirect();
+
+        assertDatabaseHas('challenge_showcase', [
+            'challenge_id' => $challenge->id,
+            'showcase_id' => $showcase->id,
+        ]);
+    });
+
+    test('removes challenge when challenge_id is not provided', function () {
+        $challenge = Challenge::factory()->active()->create();
+
+        /** @var User */
+        $user = User::factory()->create();
+        $showcase = Showcase::factory()->has(ShowcaseImage::factory(), 'images')->for($user, 'user')->create();
+        $showcase->challenges()->attach($challenge);
+
+        actingAs($user);
+
+        put(route('showcase.manage.update', $showcase), [
+            'practice_area_ids' => $showcase->practiceAreas->pluck('id')->toArray(),
+            'title' => 'Updated Title',
+            'tagline' => 'Updated tagline',
+            'description' => 'Updated description',
+            'key_features' => 'Updated key features',
+            'url' => 'https://updated.com',
+            'source_status' => SourceStatus::NotAvailable->value,
+        ])->assertRedirect();
+
+        assertDatabaseMissing('challenge_showcase', [
+            'challenge_id' => $challenge->id,
+            'showcase_id' => $showcase->id,
+        ]);
+    });
+
+    test('replaces existing challenge with a new one', function () {
+        $oldChallenge = Challenge::factory()->active()->create();
+        $newChallenge = Challenge::factory()->active()->create();
+
+        /** @var User */
+        $user = User::factory()->create();
+        $showcase = Showcase::factory()->has(ShowcaseImage::factory(), 'images')->for($user, 'user')->create();
+        $showcase->challenges()->attach($oldChallenge);
+
+        actingAs($user);
+
+        put(route('showcase.manage.update', $showcase), [
+            'practice_area_ids' => $showcase->practiceAreas->pluck('id')->toArray(),
+            'title' => 'Updated Title',
+            'tagline' => 'Updated tagline',
+            'description' => 'Updated description',
+            'key_features' => 'Updated key features',
+            'url' => 'https://updated.com',
+            'source_status' => SourceStatus::NotAvailable->value,
+            'challenge_id' => $newChallenge->id,
+        ])->assertRedirect();
+
+        assertDatabaseMissing('challenge_showcase', [
+            'challenge_id' => $oldChallenge->id,
+            'showcase_id' => $showcase->id,
+        ]);
+
+        assertDatabaseHas('challenge_showcase', [
+            'challenge_id' => $newChallenge->id,
+            'showcase_id' => $showcase->id,
+        ]);
+    });
+
+    test('rejects inactive challenge_id', function () {
+        $challenge = Challenge::factory()->create(['is_active' => false]);
+
+        /** @var User */
+        $user = User::factory()->create();
+        $showcase = Showcase::factory()->has(ShowcaseImage::factory(), 'images')->for($user, 'user')->create();
+
+        actingAs($user);
+
+        put(route('showcase.manage.update', $showcase), [
+            'practice_area_ids' => $showcase->practiceAreas->pluck('id')->toArray(),
+            'title' => 'Updated Title',
+            'tagline' => 'Updated tagline',
+            'description' => 'Updated description',
+            'key_features' => 'Updated key features',
+            'url' => 'https://updated.com',
+            'source_status' => SourceStatus::NotAvailable->value,
+            'challenge_id' => $challenge->id,
+        ])->assertInvalid(['challenge_id']);
+    });
+
+    test('rejects challenge_id when challenge has not opened yet', function () {
+        $challenge = Challenge::factory()->active()->create([
+            'starts_at' => now()->addWeek(),
+            'ends_at' => now()->addMonth(),
+        ]);
+
+        /** @var User */
+        $user = User::factory()->create();
+        $showcase = Showcase::factory()->has(ShowcaseImage::factory(), 'images')->for($user, 'user')->create();
+
+        actingAs($user);
+
+        put(route('showcase.manage.update', $showcase), [
+            'practice_area_ids' => $showcase->practiceAreas->pluck('id')->toArray(),
+            'title' => 'Updated Title',
+            'tagline' => 'Updated tagline',
+            'description' => 'Updated description',
+            'key_features' => 'Updated key features',
+            'url' => 'https://updated.com',
+            'source_status' => SourceStatus::NotAvailable->value,
+            'challenge_id' => $challenge->id,
+        ])->assertInvalid(['challenge_id' => 'not opened yet']);
+    });
+
+    test('rejects challenge_id when challenge has already closed', function () {
+        $challenge = Challenge::factory()->active()->create([
+            'starts_at' => now()->subMonth(),
+            'ends_at' => now()->subWeek(),
+        ]);
+
+        /** @var User */
+        $user = User::factory()->create();
+        $showcase = Showcase::factory()->has(ShowcaseImage::factory(), 'images')->for($user, 'user')->create();
+
+        actingAs($user);
+
+        put(route('showcase.manage.update', $showcase), [
+            'practice_area_ids' => $showcase->practiceAreas->pluck('id')->toArray(),
+            'title' => 'Updated Title',
+            'tagline' => 'Updated tagline',
+            'description' => 'Updated description',
+            'key_features' => 'Updated key features',
+            'url' => 'https://updated.com',
+            'source_status' => SourceStatus::NotAvailable->value,
+            'challenge_id' => $challenge->id,
+        ])->assertInvalid(['challenge_id' => 'already closed']);
+    });
+
+    test('allows keeping the same challenge even if it has closed', function () {
+        $challenge = Challenge::factory()->active()->create([
+            'starts_at' => now()->subMonth(),
+            'ends_at' => now()->subWeek(),
+        ]);
+
+        /** @var User */
+        $user = User::factory()->create();
+        $showcase = Showcase::factory()->has(ShowcaseImage::factory(), 'images')->for($user, 'user')->create();
+        $showcase->challenges()->attach($challenge);
+
+        actingAs($user);
+
+        put(route('showcase.manage.update', $showcase), [
+            'practice_area_ids' => $showcase->practiceAreas->pluck('id')->toArray(),
+            'title' => 'Updated Title',
+            'tagline' => 'Updated tagline',
+            'description' => 'Updated description',
+            'key_features' => 'Updated key features',
+            'url' => 'https://updated.com',
+            'source_status' => SourceStatus::NotAvailable->value,
+            'challenge_id' => $challenge->id,
+        ])->assertValid('challenge_id');
     });
 });

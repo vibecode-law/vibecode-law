@@ -134,10 +134,7 @@ class ShowcaseResource extends Resource
             'source_status' => $showcase->source_status->forFrontend(),
             'source_url' => $showcase->source_url,
             'status' => $showcase->status->forFrontend(),
-            'view_count' => Lazy::when(
-                condition: fn () => $canViewOwnerFields,
-                value: fn () => $showcase->view_count,
-            ),
+            'view_count' => Lazy::create(fn () => $showcase->view_count)->defaultIncluded(),
             'created_at' => $showcase->created_at,
             'updated_at' => $showcase->updated_at,
             'user' => Lazy::whenLoaded('user', $showcase, fn () => UserResource::from($showcase->user)),

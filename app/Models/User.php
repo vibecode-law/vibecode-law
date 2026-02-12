@@ -5,6 +5,7 @@ namespace App\Models;
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
 use App\Enums\ShowcaseStatus;
 use App\Enums\TeamType;
+use App\Models\Challenge\Challenge;
 use App\Models\Showcase\Showcase;
 use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Attributes\Scope;
@@ -104,6 +105,11 @@ class User extends Authenticatable implements MustVerifyEmail
     public function upvotedShowcases(): BelongsToMany
     {
         return $this->belongsToMany(Showcase::class, 'showcase_upvotes')->withTimestamps();
+    }
+
+    public function hostedChallenges(): HasMany
+    {
+        return $this->hasMany(Challenge::class);
     }
 
     //

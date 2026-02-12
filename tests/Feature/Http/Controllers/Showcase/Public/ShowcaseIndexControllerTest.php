@@ -84,6 +84,7 @@ test('index returns correct data structure', function () {
         'tagline' => 'A test project tagline',
         'thumbnail_extension' => 'jpg',
         'thumbnail_crop' => ['x' => 50, 'y' => 75, 'width' => 200, 'height' => 150],
+        'view_count' => 42,
     ]);
 
     get(route('showcase.index'))
@@ -105,9 +106,18 @@ test('index returns correct data structure', function () {
                 ->missing('submitted_date')
                 ->missing('created_at')
                 ->missing('updated_at')
-                ->missing('user')
+                ->has('user', fn (AssertableInertia $userProp) => $userProp
+                    ->where('first_name', $user->first_name)
+                    ->where('last_name', $user->last_name)
+                    ->where('handle', $user->handle)
+                    ->where('organisation', $user->organisation)
+                    ->where('job_title', $user->job_title)
+                    ->where('avatar', null)
+                    ->where('linkedin_url', $user->linkedin_url)
+                    ->where('team_role', null)
+                )
                 ->missing('practiceAreas')
-                ->missing('view_count')
+                ->where('view_count', 42)
                 ->missing('rejection_reason')
                 ->missing('approved_at')
                 ->missing('is_featured')

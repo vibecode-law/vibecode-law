@@ -10,10 +10,17 @@ import { usePermissions } from '@/hooks/use-permissions';
 import { home } from '@/routes';
 import { type FrontendEnum } from '@/types';
 
+interface ChallengeContext {
+    id: number;
+    title: string;
+    slug: string;
+}
+
 interface CreateProps {
     showcase?: App.Http.Resources.Showcase.ShowcaseResource;
     practiceAreas: App.Http.Resources.PracticeAreaResource[];
     sourceStatuses: FrontendEnum<number>[];
+    challenge?: ChallengeContext | null;
 }
 
 export default function Create(props: CreateProps) {
@@ -25,6 +32,7 @@ function CreateWrapper({
     showcase,
     practiceAreas,
     sourceStatuses,
+    challenge,
 }: CreateProps) {
     const { hasPermission } = usePermissions();
     const isEditing = showcase !== undefined;
@@ -102,6 +110,7 @@ function CreateWrapper({
             pageTitle={pageTitle}
             showSlugField={canEditSlug}
             canSubmit={canSubmit}
+            challenge={challenge ?? undefined}
         />
     );
 }

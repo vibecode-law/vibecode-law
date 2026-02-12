@@ -32,6 +32,7 @@ Route::post('/newsletter/signup', NewsletterSignupController::class)->name('news
 Route::get('/wall-of-love', WallOfLoveController::class)->name('wall-of-love');
 
 require __DIR__.'/guest/showcase.php';
+require __DIR__.'/guest/inspiration.php';
 require __DIR__.'/guest/user.php';
 
 Route::middleware(['auth', 'verified'])->group(function () {

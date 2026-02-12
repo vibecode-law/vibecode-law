@@ -30,6 +30,7 @@ export interface FlashMessage {
 
 export interface FlashData {
     message?: FlashMessage | null;
+    created_organisation?: { id: number; name: string } | null;
 }
 
 export interface LegalPage {
@@ -45,6 +46,7 @@ export interface SharedData {
     flash: FlashData;
     legalPages: LegalPage[];
     transformImages: boolean;
+    challengesEnabled: boolean;
     [key: string]: unknown;
 }
 

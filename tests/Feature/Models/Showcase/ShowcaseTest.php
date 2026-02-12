@@ -1,5 +1,7 @@
 <?php
 
+use App\Models\Challenge\Challenge;
+use App\Models\Challenge\ChallengeShowcase;
 use App\Models\Showcase\Showcase;
 use App\Services\Markdown\MarkdownService;
 use Illuminate\Support\Collection;
@@ -150,5 +152,38 @@ describe('markdown cache clearing on model events', function () {
             $fullKey = $markdownService->getCacheKey(cacheKey: $cacheKey);
             expect(Cache::has(key: $fullKey))->toBeFalse();
         }
+    });
+});
+
+describe('challenges relationship', function () {
+    test('showcase can have many challenges', function () {
+        $showcase = Showcase::factory()->create();
+        $challenges = Challenge::factory()->count(3)->create();
+
+        $showcase->challenges()->attach($challenges);
+
+        expect($showcase->challenges)->toHaveCount(3);
+        expect($showcase->challenges->first())->toBeInstanceOf(Challenge::class);
+    });
+
+    test('challenges relationship uses ChallengeShowcase pivot model', function () {
+        $showcase = Showcase::factory()->create();
+        $challenge = Challenge::factory()->create();
+
+        $showcase->challenges()->attach($challenge);
+
+        expect($showcase->challenges->first()->pivot)->toBeInstanceOf(ChallengeShowcase::class);
+    });
+
+    test('challenges relationship includes timestamps on pivot', function () {
+        $showcase = Showcase::factory()->create();
+        $challenge = Challenge::factory()->create();
+
+        $showcase->challenges()->attach($challenge);
+
+        $pivot = $showcase->challenges->first()->pivot;
+
+        expect($pivot->created_at)->not->toBeNull();
+        expect($pivot->updated_at)->not->toBeNull();
     });
 });

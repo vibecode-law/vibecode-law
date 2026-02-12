@@ -2,6 +2,7 @@
 
 namespace Database\Seeders;
 
+use Database\Seeders\DemoSeeders\ChallengeSeeder;
 use Database\Seeders\DemoSeeders\PracticeAreasSeeder;
 use Database\Seeders\DemoSeeders\PressCoverageSeeder;
 use Database\Seeders\DemoSeeders\ShowcaseSeeder;
@@ -20,6 +21,7 @@ class DemoSeeder extends Seeder
             ShowcaseSeeder::class,
             TestimonialsSeeder::class,
             PressCoverageSeeder::class,
+            ChallengeSeeder::class,
         ]);
     }
 }

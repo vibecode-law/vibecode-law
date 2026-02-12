@@ -1,4 +1,4 @@
-import { useCallback, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import Cropper from 'react-easy-crop';
 import type { Area, Point } from 'react-easy-crop';
 import { ImagePlus, Minus, Plus, Trash2 } from 'lucide-react';
@@ -30,6 +30,12 @@ export interface SimpleCropData {
     height: number;
 }
 
+interface StepInfo {
+    current: number;
+    total: number;
+    label: string;
+}
+
 interface ImageCropModalProps {
     open: boolean;
     onOpenChange: (open: boolean) => void;
@@ -40,6 +46,8 @@ interface ImageCropModalProps {
     onChangeImage: () => void;
     onRemove?: () => void;
     showRemoveButton?: boolean;
+    stepInfo?: StepInfo;
+    onBack?: () => void;
 }
 
 async function createCroppedImage(
@@ -107,6 +115,8 @@ export function ImageCropModal({
     onChangeImage,
     onRemove,
     showRemoveButton = false,
+    stepInfo,
+    onBack,
 }: ImageCropModalProps) {
     const [crop, setCrop] = useState<Point>({ x: 0, y: 0 });
     const [zoom, setZoom] = useState(1);
@@ -118,6 +128,16 @@ export function ImageCropModal({
         height: number;
     } | null>(null);
     const [isSaving, setIsSaving] = useState(false);
+
+    // Reset cropper state when step or aspect ratio changes
+    const cropperKey = stepInfo
+        ? `${stepInfo.current}-${aspectRatio}`
+        : `single-${aspectRatio}`;
+
+    useEffect(() => {
+        setCrop({ x: 0, y: 0 });
+        setZoom(1);
+    }, [cropperKey]);
 
     const handleCropComplete = useCallback(
         (_croppedArea: Area, croppedAreaPixels: Area) => {
@@ -160,7 +180,6 @@ export function ImageCropModal({
                 naturalHeight: naturalSize.height,
             };
             onCropComplete(croppedFile, cropData);
-            onOpenChange(false);
         } catch (error) {
             console.error('Failed to crop image:', error);
         } finally {
@@ -196,7 +215,11 @@ export function ImageCropModal({
         <Dialog open={open} onOpenChange={onOpenChange}>
             <DialogContent className="sm:max-w-xl">
                 <DialogHeader>
-                    <DialogTitle>Crop Image</DialogTitle>
+                    <DialogTitle>
+                        {stepInfo
+                            ? `${stepInfo.label} (${stepInfo.current}/${stepInfo.total})`
+                            : 'Crop Image'}
+                    </DialogTitle>
                     <DialogDescription>
                         Drag to reposition and use the slider to zoom in or out.
                     </DialogDescription>
@@ -205,6 +228,7 @@ export function ImageCropModal({
                 <div className="relative h-75 overflow-hidden rounded-md bg-neutral-100 sm:h-100 dark:bg-neutral-900">
                     {imageUrl !== null ? (
                         <Cropper
+                            key={cropperKey}
                             image={imageUrl}
                             crop={crop}
                             zoom={zoom}
@@ -257,6 +281,16 @@ export function ImageCropModal({
 
                 <DialogFooter className="flex-col gap-2 sm:flex-row sm:justify-between">
                     <div className="flex w-full gap-2 sm:mr-auto sm:w-auto">
+                        {onBack !== undefined && (
+                            <Button
+                                type="button"
+                                variant="outline"
+                                onClick={onBack}
+                                className="flex-1 sm:flex-none"
+                            >
+                                Back
+                            </Button>
+                        )}
                         <Button
                             type="button"
                             variant="outline"
@@ -298,7 +332,12 @@ export function ImageCropModal({
                             }
                             className="flex-1 sm:flex-none"
                         >
-                            {isSaving === true ? 'Saving...' : 'Save'}
+                            {isSaving === true
+                                ? 'Saving...'
+                                : stepInfo !== undefined &&
+                                    stepInfo.current < stepInfo.total
+                                  ? 'Next'
+                                  : 'Save'}
                         </Button>
                     </div>
                 </DialogFooter>
