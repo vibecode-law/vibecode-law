@@ -53,8 +53,8 @@ export function ProjectItem({ showcase, rank }: ProjectItemProps) {
                             )}
                         {showcase.view_count !== null &&
                             showcase.view_count !== undefined && (
-                                <span className="inline-flex items-center gap-1">
-                                    <Eye className="size-3" />
+                                <span className="inline-flex items-center gap-1 font-semibold">
+                                    <Eye className="size-3" strokeWidth={3} />
                                     {showcase.view_count.toLocaleString()}
                                 </span>
                             )}
