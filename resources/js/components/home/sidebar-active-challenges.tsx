@@ -31,10 +31,6 @@ export function SidebarActiveChallenges({
                         })}
                         className="flex items-center gap-4 py-4 transition-transform duration-200 ease-out hover:scale-[1.01]"
                     >
-                        <ChallengeThumbnail
-                            challenge={challenge}
-                            transformImages={transformImages}
-                        />
                         <div className="min-w-0 flex-1">
                             <div className="truncate font-medium text-neutral-900 dark:text-white">
                                 {challenge.title}
@@ -53,6 +49,10 @@ export function SidebarActiveChallenges({
                                     )}
                             </div>
                         </div>
+                        <ChallengeThumbnail
+                            challenge={challenge}
+                            transformImages={transformImages}
+                        />
                     </Link>
                 ))}
             </div>

@@ -29,12 +29,6 @@ export function SidebarRecentShowcases({
                         })}
                         className="flex items-center gap-4 py-4 transition-transform duration-200 ease-out hover:scale-[1.01]"
                     >
-                        <ThumbnailImage
-                            url={showcase.thumbnail_url}
-                            fallbackText={showcase.title}
-                            alt={showcase.title}
-                            rectString={showcase.thumbnail_rect_string}
-                        />
                         <div className="min-w-0 flex-1">
                             <div className="truncate font-medium text-neutral-900 dark:text-white">
                                 {showcase.title}
@@ -46,6 +40,12 @@ export function SidebarRecentShowcases({
                                 </div>
                             )}
                         </div>
+                        <ThumbnailImage
+                            url={showcase.thumbnail_url}
+                            fallbackText={showcase.title}
+                            alt={showcase.title}
+                            rectString={showcase.thumbnail_rect_string}
+                        />
                     </Link>
                 ))}
             </div>
