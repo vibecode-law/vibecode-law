@@ -9,7 +9,7 @@ import { Button } from '@/components/ui/button';
 import PublicLayout from '@/layouts/public-layout';
 import { type SharedData } from '@/types';
 import { Head, Link, usePage } from '@inertiajs/react';
-import { PlayCircle } from 'lucide-react';
+import { Medal, PlayCircle } from 'lucide-react';
 
 interface HomeProps {
     showcasesByMonth?: Record<
@@ -101,8 +101,12 @@ export default function Home({
 
             {/* Projects */}
             <section className="bg-white dark:bg-neutral-950">
-                <div className="mx-auto flex max-w-6xl flex-col gap-8 px-4 lg:flex-row lg:gap-12 xl:gap-16 2xl:gap-24">
+                <div className="mx-auto flex max-w-6xl flex-col gap-8 px-4 lg:flex-row lg:gap-12 xl:gap-16">
                     <div className="min-w-0 flex-1">
+                        <h3 className="flex items-center gap-1.5 text-sm font-medium tracking-wide text-neutral-500 uppercase dark:text-neutral-400">
+                            <Medal className="size-4" />
+                            Leaderboard
+                        </h3>
                         {months.map((month) => (
                             <ProjectMonthSection
                                 key={month}
@@ -116,7 +120,7 @@ export default function Home({
                         (challengesEnabled === true &&
                             activeChallenges &&
                             activeChallenges.length > 0)) && (
-                        <div className="mb-12 w-full lg:mb-0 lg:w-72 xl:w-80 2xl:w-88">
+                        <div className="mb-12 w-full lg:mb-0 lg:w-72 2xl:w-80">
                             <div className="space-y-8 lg:sticky lg:top-4">
                                 {recentShowcases &&
                                     recentShowcases.length > 0 && (
