@@ -113,7 +113,11 @@ class ProfileService
             return;
         }
 
-        CreateExternalSubscriberJob::dispatch(user: $user, skipConfirmation: true);
+        CreateExternalSubscriberJob::dispatch(
+            user: $user,
+            tags: $this->getTagsForNewSubscriber(user: $user),
+            skipConfirmation: true,
+        );
     }
 
     protected function onEmailChanged(User $user): void
@@ -161,6 +165,12 @@ class ProfileService
     private function getTagsForNewSubscriber(User $user): array
     {
         $tags = [];
+
+        $isUserTagUuid = Config::get('marketing.is_user_tag_uuid');
+
+        if ($isUserTagUuid !== null) {
+            $tags[] = $isUserTagUuid;
+        }
 
         if ($user->showcases()->exists() === true) {
             $showcaseTagUuid = Config::get('marketing.has_showcase_tag_uuid');

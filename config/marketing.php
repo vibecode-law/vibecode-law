@@ -8,4 +8,6 @@ return [
     'main_list_uuid' => env('MARKETING_MAIN_LIST_UUID', 'test-main-list-uuid'),
 
     'has_showcase_tag_uuid' => env('MARKETING_HAS_SHOWCASE_TAG_UUID', 'test-has-showcase-tag-uuid'),
+
+    'is_user_tag_uuid' => env('MARKETING_IS_USER_TAG_UUID', 'test-is-user-tag-uuid'),
 ];

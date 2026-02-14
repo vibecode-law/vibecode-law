@@ -9,6 +9,7 @@ use Illuminate\Support\Facades\Queue;
 beforeEach(function () {
     Queue::fake();
     Config::set('marketing.has_showcase_tag_uuid', 'showcase-tag-uuid');
+    Config::set('marketing.is_user_tag_uuid', 'is-user-tag-uuid');
 });
 
 it('fails if users already have subscriber uuids', function () {
@@ -37,7 +38,7 @@ it('dispatches jobs for verified users without marketing opt out', function () {
     Queue::assertPushed(
         job: CreateExternalSubscriberJob::class,
         callback: fn (CreateExternalSubscriberJob $job) => $job->user->is($user)
-            && $job->tags === []
+            && $job->tags === ['is-user-tag-uuid']
             && $job->skipConfirmation === true,
     );
 });
@@ -85,7 +86,7 @@ it('includes showcase tag for users with showcases', function () {
     Queue::assertPushed(
         job: CreateExternalSubscriberJob::class,
         callback: fn (CreateExternalSubscriberJob $job) => $job->user->is($user)
-            && $job->tags === ['showcase-tag-uuid']
+            && $job->tags === ['is-user-tag-uuid', 'showcase-tag-uuid']
             && $job->skipConfirmation === true,
     );
 });
@@ -100,6 +101,26 @@ it('does not include showcase tag when tag uuid is not configured', function () 
     ]);
 
     Showcase::factory()->for($user)->create();
+
+    $this->artisan('app:sync-marketing-recipients')
+        ->assertSuccessful();
+
+    Queue::assertPushed(
+        job: CreateExternalSubscriberJob::class,
+        callback: fn (CreateExternalSubscriberJob $job) => $job->user->is($user)
+            && $job->tags === ['is-user-tag-uuid']
+            && $job->skipConfirmation === true,
+    );
+});
+
+it('does not include is_user tag when is_user tag uuid is not configured', function () {
+    Config::set('marketing.is_user_tag_uuid', null);
+
+    $user = User::factory()->create([
+        'email_verified_at' => now(),
+        'marketing_opt_out_at' => null,
+        'external_subscriber_uuid' => null,
+    ]);
 
     $this->artisan('app:sync-marketing-recipients')
         ->assertSuccessful();

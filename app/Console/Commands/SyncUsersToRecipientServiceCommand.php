@@ -44,6 +44,7 @@ class SyncUsersToRecipientServiceCommand extends Command
             return Command::SUCCESS;
         }
 
+        $isUserTagUuid = Config::get('marketing.is_user_tag_uuid');
         $showcaseTagUuid = Config::get('marketing.has_showcase_tag_uuid');
 
         $this->components->info(string: "Syncing {$users->count()} user(s) to recipient service...");
@@ -53,6 +54,10 @@ class SyncUsersToRecipientServiceCommand extends Command
 
         foreach ($users as $user) {
             $tags = [];
+
+            if ($isUserTagUuid !== null) {
+                $tags[] = $isUserTagUuid;
+            }
 
             if ($showcaseTagUuid !== null && $user->showcases()->exists()) {
                 $tags[] = $showcaseTagUuid;
