@@ -83,6 +83,172 @@ namespace App\Models\Challenge{
 	class IdeHelperChallengeShowcase {}
 }
 
+namespace App\Models\Course{
+/**
+ * @property int $id
+ * @property string $title
+ * @property string $slug
+ * @property string $tagline
+ * @property string $description
+ * @property int $order
+ * @property \App\Enums\ExperienceLevel|null $experience_level
+ * @property int $started_count
+ * @property int $completed_count
+ * @property int|null $user_id
+ * @property \Illuminate\Support\Carbon|null $created_at
+ * @property \Illuminate\Support\Carbon|null $updated_at
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\Course\Lesson> $lessons
+ * @property-read int|null $lessons_count
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\Course\CourseTag> $tags
+ * @property-read int|null $tags_count
+ * @property-read \App\Models\User|null $user
+ * @property-read \App\Models\Course\CourseUser|null $pivot
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\User> $users
+ * @property-read int|null $users_count
+ * @method static \Database\Factories\Course\CourseFactory factory($count = null, $state = [])
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Course newModelQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Course newQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Course query()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Course whereCompletedCount($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Course whereCreatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Course whereDescription($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Course whereExperienceLevel($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Course whereId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Course whereOrder($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Course whereSlug($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Course whereStartedCount($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Course whereTagline($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Course whereTitle($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Course whereUpdatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Course whereUserId($value)
+ * @mixin \Eloquent
+ */
+	#[\AllowDynamicProperties]
+	class IdeHelperCourse {}
+}
+
+namespace App\Models\Course{
+/**
+ * @property int $id
+ * @property string $name
+ * @property string $slug
+ * @property \Illuminate\Support\Carbon|null $created_at
+ * @property \Illuminate\Support\Carbon|null $updated_at
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\Course\Course> $courses
+ * @property-read int|null $courses_count
+ * @method static \Database\Factories\Course\CourseTagFactory factory($count = null, $state = [])
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|CourseTag newModelQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|CourseTag newQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|CourseTag query()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|CourseTag whereCreatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|CourseTag whereId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|CourseTag whereName($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|CourseTag whereSlug($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|CourseTag whereUpdatedAt($value)
+ * @mixin \Eloquent
+ */
+	#[\AllowDynamicProperties]
+	class IdeHelperCourseTag {}
+}
+
+namespace App\Models\Course{
+/**
+ * @property int $id
+ * @property int $course_id
+ * @property int $user_id
+ * @property \Illuminate\Support\Carbon|null $viewed_at
+ * @property \Illuminate\Support\Carbon|null $started_at
+ * @property \Illuminate\Support\Carbon|null $completed_at
+ * @property \Illuminate\Support\Carbon|null $created_at
+ * @property \Illuminate\Support\Carbon|null $updated_at
+ * @method static \Database\Factories\Course\CourseUserFactory factory($count = null, $state = [])
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|CourseUser newModelQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|CourseUser newQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|CourseUser query()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|CourseUser whereCompletedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|CourseUser whereCourseId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|CourseUser whereCreatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|CourseUser whereId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|CourseUser whereStartedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|CourseUser whereUpdatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|CourseUser whereUserId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|CourseUser whereViewedAt($value)
+ * @mixin \Eloquent
+ */
+	#[\AllowDynamicProperties]
+	class IdeHelperCourseUser {}
+}
+
+namespace App\Models\Course{
+/**
+ * @property int $id
+ * @property string $title
+ * @property string $slug
+ * @property string $tagline
+ * @property string $description
+ * @property string|null $copy
+ * @property string|null $transcript
+ * @property string $embed
+ * @property \App\Enums\VideoHost $host
+ * @property int $order
+ * @property int $course_id
+ * @property \Illuminate\Support\Carbon|null $created_at
+ * @property \Illuminate\Support\Carbon|null $updated_at
+ * @property-read \App\Models\Course\Course $course
+ * @property-read \App\Models\Course\LessonUser|null $pivot
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\User> $users
+ * @property-read int|null $users_count
+ * @method static \Database\Factories\Course\LessonFactory factory($count = null, $state = [])
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Lesson newModelQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Lesson newQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Lesson query()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Lesson whereCopy($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Lesson whereCourseId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Lesson whereCreatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Lesson whereDescription($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Lesson whereEmbed($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Lesson whereHost($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Lesson whereId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Lesson whereOrder($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Lesson whereSlug($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Lesson whereTagline($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Lesson whereTitle($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Lesson whereTranscript($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Lesson whereUpdatedAt($value)
+ * @mixin \Eloquent
+ */
+	#[\AllowDynamicProperties]
+	class IdeHelperLesson {}
+}
+
+namespace App\Models\Course{
+/**
+ * @property int $id
+ * @property int $user_id
+ * @property int $lesson_id
+ * @property \Illuminate\Support\Carbon|null $viewed_at
+ * @property \Illuminate\Support\Carbon|null $started_at
+ * @property \Illuminate\Support\Carbon|null $completed_at
+ * @property \Illuminate\Support\Carbon|null $created_at
+ * @property \Illuminate\Support\Carbon|null $updated_at
+ * @method static \Database\Factories\Course\LessonUserFactory factory($count = null, $state = [])
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|LessonUser newModelQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|LessonUser newQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|LessonUser query()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|LessonUser whereCompletedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|LessonUser whereCreatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|LessonUser whereId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|LessonUser whereLessonId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|LessonUser whereStartedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|LessonUser whereUpdatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|LessonUser whereUserId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|LessonUser whereViewedAt($value)
+ * @mixin \Eloquent
+ */
+	#[\AllowDynamicProperties]
+	class IdeHelperLessonUser {}
+}
+
 namespace App\Models\Organisation{
 /**
  * @property array<string, array{x: int, y: int, width: int, height: int}>|null $thumbnail_crops
@@ -478,8 +644,13 @@ namespace App\Models{
  * @property \Illuminate\Support\Carbon|null $two_factor_confirmed_at
  * @property string|null $external_subscriber_uuid
  * @property-read string|null $avatar
+ * @property-read \App\Models\Course\LessonUser|\App\Models\Course\CourseUser|null $pivot
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\Course\Course> $courses
+ * @property-read int|null $courses_count
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\Challenge\Challenge> $hostedChallenges
  * @property-read int|null $hosted_challenges_count
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\Course\Lesson> $lessons
+ * @property-read int|null $lessons_count
  * @property-read \Illuminate\Notifications\DatabaseNotificationCollection<int, \Illuminate\Notifications\DatabaseNotification> $notifications
  * @property-read int|null $notifications_count
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \Spatie\Permission\Models\Permission> $permissions
