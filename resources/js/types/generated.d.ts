@@ -1,9 +1,11 @@
 declare namespace App.Enums {
+    export type ExperienceLevel = 1 | 2 | 3 | 4;
     export type MarkdownProfile = 'basic' | 'full';
     export type ShowcaseDraftStatus = 1 | 2 | 3;
     export type ShowcaseStatus = 1 | 2 | 3 | 4;
     export type SourceStatus = 1 | 2 | 3;
     export type TeamType = 1 | 2;
+    export type VideoHost = 1;
 }
 declare namespace App.Http.Resources {
     export type PracticeAreaResource = {

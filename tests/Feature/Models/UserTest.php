@@ -1,6 +1,8 @@
 <?php
 
 use App\Models\Challenge\Challenge;
+use App\Models\Course\Course;
+use App\Models\Course\Lesson;
 use App\Models\User;
 use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\Storage;
@@ -41,5 +43,63 @@ describe('hostedChallenges relationship', function () {
         $user = User::factory()->create();
 
         expect($user->hostedChallenges)->toBeEmpty();
+    });
+});
+
+describe('courses relationship', function () {
+    test('user belongs to many courses', function () {
+        $user = User::factory()->create();
+        $courses = Course::factory()->count(3)->create();
+
+        $user->courses()->attach($courses);
+
+        expect($user->courses)->toHaveCount(3)
+            ->each->toBeInstanceOf(Course::class);
+    });
+
+    test('pivot timestamps are accessible', function () {
+        $user = User::factory()->create();
+        $course = Course::factory()->create();
+
+        $user->courses()->attach($course, [
+            'viewed_at' => now(),
+            'started_at' => null,
+            'completed_at' => now(),
+        ]);
+
+        $pivot = $user->courses->first()->pivot;
+
+        expect($pivot->viewed_at)->not->toBeNull()
+            ->and($pivot->started_at)->toBeNull()
+            ->and($pivot->completed_at)->not->toBeNull();
+    });
+});
+
+describe('lessons relationship', function () {
+    test('user belongs to many lessons', function () {
+        $user = User::factory()->create();
+        $lessons = Lesson::factory()->count(3)->create();
+
+        $user->lessons()->attach($lessons);
+
+        expect($user->lessons)->toHaveCount(3)
+            ->each->toBeInstanceOf(Lesson::class);
+    });
+
+    test('pivot timestamps are accessible', function () {
+        $user = User::factory()->create();
+        $lesson = Lesson::factory()->create();
+
+        $user->lessons()->attach($lesson, [
+            'viewed_at' => now(),
+            'started_at' => null,
+            'completed_at' => now(),
+        ]);
+
+        $pivot = $user->lessons->first()->pivot;
+
+        expect($pivot->viewed_at)->not->toBeNull()
+            ->and($pivot->started_at)->toBeNull()
+            ->and($pivot->completed_at)->not->toBeNull();
     });
 });
