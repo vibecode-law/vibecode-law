@@ -14,5 +14,7 @@ class RateLimitServiceProvider extends ServiceProvider
     public function boot(): void
     {
         RateLimiter::for('mailer', fn (object $job): Limit => new MailerRateLimit()->handle($job));
+
+        RateLimiter::for('marketing-api', fn (object $job): Limit => Limit::perSecond(maxAttempts: 3));
     }
 }
