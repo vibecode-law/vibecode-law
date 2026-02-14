@@ -13,6 +13,16 @@ class AddIsUserTagToSubscriberJob implements ShouldQueue
 {
     use Queueable;
 
+    /**
+     * @var int
+     */
+    public $tries = 0;
+
+    /**
+     * @var int
+     */
+    public $maxExceptions = 1;
+
     public function __construct(
         public User $user,
     ) {}
