@@ -27,6 +27,8 @@ class LessonResource extends Resource
 
     public Lazy|string|null $learning_objectives;
 
+    public Lazy|string|null $learning_objectives_html;
+
     public Lazy|string|null $copy;
 
     public Lazy|string|null $copy_html;
@@ -74,6 +76,10 @@ class LessonResource extends Resource
                 cacheKey: "lesson|{$lesson->id}|description",
             )),
             'learning_objectives' => Lazy::create(fn () => $lesson->learning_objectives),
+            'learning_objectives_html' => Lazy::create(fn () => $lesson->learning_objectives !== null ? $markdown->render(
+                markdown: $lesson->learning_objectives,
+                cacheKey: "lesson|{$lesson->id}|learning_objectives",
+            ) : null),
             'copy' => Lazy::create(fn () => $lesson->copy),
             'copy_html' => Lazy::create(fn () => $lesson->copy !== null ? $markdown->render(
                 markdown: $lesson->copy,

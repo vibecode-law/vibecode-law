@@ -105,6 +105,7 @@ declare namespace App.Http.Resources.Course {
         description?: string;
         description_html?: string;
         learning_objectives?: string | null;
+        learning_objectives_html?: string | null;
         copy?: string | null;
         copy_html?: string | null;
         transcript?: string | null;
