@@ -80,7 +80,7 @@ export default function GuidesIndex({
                 <meta
                     head-key="description"
                     name="description"
-                    content="Documentation and guides to help you master vibecoding."
+                    content={content}
                 />
                 <meta head-key="og-type" property="og:type" content="article" />
                 <meta
@@ -101,7 +101,7 @@ export default function GuidesIndex({
                 <meta
                     head-key="og-description"
                     property="og:description"
-                    content="Documentation and guides to help you master vibecoding."
+                    content={content}
                 />
             </Head>
 

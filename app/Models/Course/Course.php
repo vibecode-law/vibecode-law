@@ -116,6 +116,20 @@ class Course extends Model
         );
     }
 
+    protected function startedCount(): Attribute
+    {
+        return Attribute::make(
+            get: fn () => $this->users()->whereNotNull('started_at')->count()
+        );
+    }
+
+    protected function completedCount(): Attribute
+    {
+        return Attribute::make(
+            get: fn () => $this->users()->whereNotNull('completed_at')->count()
+        );
+    }
+
     //
     // Relationships
     //
