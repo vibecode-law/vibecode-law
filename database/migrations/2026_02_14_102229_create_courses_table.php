@@ -17,10 +17,17 @@ return new class extends Migration
             $table->string('slug')->unique();
             $table->string('tagline');
             $table->text('description');
+            $table->text('learning_objectives')->nullable();
             $table->unsignedInteger('order')->default(0);
             $table->unsignedTinyInteger('experience_level')->nullable();
+            $table->unsignedInteger('duration_seconds')->nullable();
             $table->unsignedInteger('started_count')->default(0);
             $table->unsignedInteger('completed_count')->default(0);
+            $table->boolean('visible')->default(false);
+            $table->boolean('is_featured')->default(false);
+            $table->date('publish_date')->nullable();
+            $table->string('thumbnail_extension')->nullable();
+            $table->json('thumbnail_crops')->nullable();
             $table->foreignId(column: 'user_id')->nullable()->constrained()->nullOnDelete();
             $table->timestamps();
         });

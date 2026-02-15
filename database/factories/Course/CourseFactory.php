@@ -5,7 +5,9 @@ namespace Database\Factories\Course;
 use App\Enums\ExperienceLevel;
 use App\Models\Course\Course;
 use App\Models\User;
+use Database\Factories\Concerns\HasStockImages;
 use Illuminate\Database\Eloquent\Factories\Factory;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 
 /**
@@ -13,6 +15,8 @@ use Illuminate\Support\Str;
  */
 class CourseFactory extends Factory
 {
+    use HasStockImages;
+
     protected $model = Course::class;
 
     public function definition(): array
@@ -25,8 +29,31 @@ class CourseFactory extends Factory
             'slug' => Str::slug($title).'-'.fake()->lexify('???'),
             'tagline' => fake()->sentence(),
             'description' => fake()->paragraphs(nb: 3, asText: true),
+            'learning_objectives' => fake()->optional()->paragraphs(nb: 2, asText: true),
+            'duration_seconds' => fake()->optional()->numberBetween(300, 7200),
             'order' => fake()->numberBetween(0, 20),
             'experience_level' => fake()->randomElement(ExperienceLevel::cases()),
+            'visible' => fake()->boolean(),
+            'is_featured' => false,
+            'publish_date' => fake()->optional()->date(),
+            'thumbnail_extension' => null,
+            'thumbnail_crops' => null,
         ];
+    }
+
+    public function withStockThumbnail(): static
+    {
+        return $this->afterCreating(function (Course $course): void {
+            $imagePath = $this->getRandomStockImagePath();
+            $extension = Str::afterLast($imagePath, '.');
+
+            $path = "course/{$course->id}/thumbnail.{$extension}";
+
+            Storage::disk('public')->put($path, Storage::get($imagePath));
+
+            $course->update([
+                'thumbnail_extension' => $extension,
+            ]);
+        });
     }
 }

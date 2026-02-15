@@ -17,12 +17,16 @@ return new class extends Migration
             $table->string('slug')->unique();
             $table->string('tagline');
             $table->text('description');
+            $table->text('learning_objectives')->nullable();
             $table->text('copy')->nullable();
             $table->text('transcript')->nullable();
             $table->string('track_id')->nullable();
             $table->string('embed');
             $table->unsignedTinyInteger('host');
+            $table->unsignedInteger('duration_seconds')->nullable();
             $table->boolean('gated')->default(true);
+            $table->string('thumbnail_extension')->nullable();
+            $table->json('thumbnail_crops')->nullable();
             $table->unsignedInteger('order')->default(0);
             $table->foreignId(column: 'course_id')->constrained()->cascadeOnDelete();
             $table->timestamps();

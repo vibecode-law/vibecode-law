@@ -5,7 +5,9 @@ namespace Database\Factories\Course;
 use App\Enums\VideoHost;
 use App\Models\Course\Course;
 use App\Models\Course\Lesson;
+use Database\Factories\Concerns\HasStockImages;
 use Illuminate\Database\Eloquent\Factories\Factory;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 
 /**
@@ -13,6 +15,8 @@ use Illuminate\Support\Str;
  */
 class LessonFactory extends Factory
 {
+    use HasStockImages;
+
     protected $model = Lesson::class;
 
     public function definition(): array
@@ -30,8 +34,28 @@ class LessonFactory extends Factory
             'track_id' => fake()->optional()->uuid(),
             'embed' => fake()->url(),
             'host' => VideoHost::Mux,
+            'learning_objectives' => fake()->optional()->paragraphs(nb: 2, asText: true),
+            'duration_seconds' => fake()->optional()->numberBetween(60, 3600),
             'gated' => true,
             'order' => fake()->numberBetween(0, 20),
+            'thumbnail_extension' => null,
+            'thumbnail_crops' => null,
         ];
+    }
+
+    public function withStockThumbnail(): static
+    {
+        return $this->afterCreating(function (Lesson $lesson): void {
+            $imagePath = $this->getRandomStockImagePath();
+            $extension = Str::afterLast($imagePath, '.');
+
+            $path = "lesson/{$lesson->id}/thumbnail.{$extension}";
+
+            Storage::disk('public')->put($path, Storage::get($imagePath));
+
+            $lesson->update([
+                'thumbnail_extension' => $extension,
+            ]);
+        });
     }
 }

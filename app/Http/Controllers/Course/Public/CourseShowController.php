@@ -16,7 +16,7 @@ class CourseShowController extends BaseController
 
         return Inertia::render('learn/courses/show', [
             'course' => CourseResource::from($course)
-                ->include('description', 'description_html', 'experience_level', 'lessons', 'tags', 'user', 'started_count', 'completed_count'),
+                ->include('description', 'description_html', 'learning_objectives', 'duration_seconds', 'experience_level', 'publish_date', 'lessons', 'tags', 'user', 'started_count', 'completed_count'),
         ]);
     }
 }

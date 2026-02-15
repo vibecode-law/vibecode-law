@@ -6,6 +6,8 @@ use App\Http\Resources\User\UserResource;
 use App\Models\Course\Course;
 use App\Services\Markdown\MarkdownService;
 use App\ValueObjects\FrontendEnum;
+use App\ValueObjects\ImageCrop;
+use Illuminate\Support\Carbon;
 use Spatie\LaravelData\Lazy;
 use Spatie\LaravelData\Resource;
 use Spatie\TypeScriptTransformer\Attributes\TypeScript;
@@ -25,7 +27,25 @@ class CourseResource extends Resource
 
     public Lazy|string $description_html;
 
+    public Lazy|string|null $learning_objectives;
+
+    public Lazy|int|null $duration_seconds;
+
     public Lazy|FrontendEnum|null $experience_level;
+
+    public ?string $thumbnail_url;
+
+    /** @var array<string, string>|null */
+    public ?array $thumbnail_rect_strings;
+
+    /** @var array<string, ImageCrop>|null */
+    public Lazy|array|null $thumbnail_crops;
+
+    public bool $visible;
+
+    public bool $is_featured;
+
+    public Lazy|string|null $publish_date;
 
     public int $order;
 
@@ -55,7 +75,20 @@ class CourseResource extends Resource
                 markdown: $course->description,
                 cacheKey: "course|{$course->id}|description",
             )),
+            'thumbnail_url' => $course->thumbnail_url,
+            'thumbnail_rect_strings' => $course->thumbnail_rect_strings,
+            'thumbnail_crops' => Lazy::create(fn () => $course->thumbnail_crops !== null
+                ? array_map(
+                    fn (array $crop) => ImageCrop::fromArray($crop),
+                    $course->thumbnail_crops
+                )
+                : null),
+            'learning_objectives' => Lazy::create(fn () => $course->learning_objectives),
+            'duration_seconds' => Lazy::create(fn () => $course->duration_seconds),
             'experience_level' => Lazy::create(fn () => $course->experience_level?->forFrontend()),
+            'visible' => $course->visible,
+            'is_featured' => $course->is_featured,
+            'publish_date' => Lazy::create(fn () => $course->publish_date instanceof Carbon ? $course->publish_date->toDateString() : null),
             'order' => $course->order,
             'lessons_count' => Lazy::when(
                 condition: fn () => $course->hasAttribute('lessons_count'),

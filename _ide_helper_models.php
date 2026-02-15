@@ -85,6 +85,7 @@ namespace App\Models\Challenge{
 
 namespace App\Models\Course{
 /**
+ * @property array<string, array{x: int, y: int, width: int, height: int}>|null $thumbnail_crops
  * @property int $id
  * @property string $title
  * @property string $slug
@@ -101,6 +102,8 @@ namespace App\Models\Course{
  * @property-read int|null $lessons_count
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\Course\CourseTag> $tags
  * @property-read int|null $tags_count
+ * @property-read array|null $thumbnail_rect_strings
+ * @property-read string|null $thumbnail_url
  * @property-read \App\Models\User|null $user
  * @property-read \App\Models\Course\CourseUser|null $pivot
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\User> $users
@@ -181,6 +184,7 @@ namespace App\Models\Course{
 
 namespace App\Models\Course{
 /**
+ * @property array<string, array{x: int, y: int, width: int, height: int}>|null $thumbnail_crops
  * @property int $id
  * @property string $title
  * @property string $slug
@@ -188,13 +192,17 @@ namespace App\Models\Course{
  * @property string $description
  * @property string|null $copy
  * @property string|null $transcript
+ * @property string|null $track_id
  * @property string $embed
  * @property \App\Enums\VideoHost $host
+ * @property bool $gated
  * @property int $order
  * @property int $course_id
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
  * @property-read \App\Models\Course\Course $course
+ * @property-read array|null $thumbnail_rect_strings
+ * @property-read string|null $thumbnail_url
  * @property-read \App\Models\Course\LessonUser|null $pivot
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\User> $users
  * @property-read int|null $users_count
@@ -207,12 +215,14 @@ namespace App\Models\Course{
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Lesson whereCreatedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Lesson whereDescription($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Lesson whereEmbed($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Lesson whereGated($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Lesson whereHost($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Lesson whereId($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Lesson whereOrder($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Lesson whereSlug($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Lesson whereTagline($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Lesson whereTitle($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Lesson whereTrackId($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Lesson whereTranscript($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Lesson whereUpdatedAt($value)
  * @mixin \Eloquent

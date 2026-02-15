@@ -61,15 +61,20 @@ php artisan boost:install
 
 For troubleshooting, see the [Laravel Boost Github Readme](https://github.com/laravel/boost).
 
-## Code Quality & Testing
+## Useful commands
+
 
 ```bash
-composer format      # Format backend code
-composer types       # Static analysis & type checks
-composer test        # Run full test suite
+## Development workflow
+composer fresh-demo     # Wipe existing database and rebuild database with fresh demo data
 
-composer lint-test   # Run code quality checks and tests
-composer format-test # Run formatter, static analysis and then tests
+## Code quality & testing
+composer format         # Format backend code
+composer types          # Static analysis & type checks
+composer test           # Run full test suite
+
+composer lint-test      # Run code quality checks and tests
+composer format-test    # Run formatter, static analysis and then tests
 
 npm run format          # Auto format frontend code
 npm run lint            # Check for frontend code quality issues
