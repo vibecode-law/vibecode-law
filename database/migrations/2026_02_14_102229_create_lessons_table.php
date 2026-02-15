@@ -20,9 +20,10 @@ return new class extends Migration
             $table->text('learning_objectives')->nullable();
             $table->text('copy')->nullable();
             $table->text('transcript')->nullable();
-            $table->string('track_id')->nullable();
-            $table->string('embed');
-            $table->unsignedTinyInteger('host');
+            $table->string('asset_id')->nullable();
+            $table->string('playback_id')->nullable();
+            $table->string('caption_track_id')->nullable();
+            $table->unsignedTinyInteger('host')->nullable();
             $table->unsignedInteger('duration_seconds')->nullable();
             $table->boolean('gated')->default(true);
             $table->string('thumbnail_extension')->nullable();
