@@ -14,7 +14,7 @@ return new class extends Migration
         Schema::create('lessons', function (Blueprint $table) {
             $table->id();
             $table->string('title');
-            $table->string('slug')->unique();
+            $table->string('slug');
             $table->string('tagline');
             $table->text('description');
             $table->text('learning_objectives')->nullable();
@@ -29,8 +29,12 @@ return new class extends Migration
             $table->string('thumbnail_extension')->nullable();
             $table->json('thumbnail_crops')->nullable();
             $table->unsignedInteger('order')->default(0);
+            $table->boolean('visible')->default(false);
+            $table->date('publish_date')->nullable();
             $table->foreignId(column: 'course_id')->constrained()->cascadeOnDelete();
             $table->timestamps();
+
+            $table->unique(['course_id', 'slug']);
         });
     }
 

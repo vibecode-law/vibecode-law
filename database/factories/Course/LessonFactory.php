@@ -39,6 +39,8 @@ class LessonFactory extends Factory
             'duration_seconds' => fake()->optional()->numberBetween(60, 3600),
             'gated' => true,
             'order' => fake()->numberBetween(0, 20),
+            'visible' => fake()->boolean(),
+            'publish_date' => fake()->optional()->date(),
             'thumbnail_extension' => null,
             'thumbnail_crops' => null,
         ];

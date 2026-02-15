@@ -112,9 +112,12 @@ declare namespace App.Http.Resources.Course {
         thumbnail_rect_strings: { [key: string]: string } | null;
         thumbnail_crops?: { [key: string]: App.ValueObjects.ImageCrop } | null;
         duration_seconds?: number | null;
-        embed?: string;
+        asset_id?: string;
+        playback_id?: string;
         host?: App.ValueObjects.FrontendEnum;
         gated: boolean;
+        visible: boolean;
+        publish_date: string | null;
         order: number;
         course?: App.Http.Resources.Course.CourseResource;
     };

@@ -48,7 +48,7 @@ export function CreateTestimonialModal({
     const [selectedUser, setSelectedUser] = useState<{
         id: number;
         name: string;
-        email: string;
+        email?: string | null;
         job_title?: string | null;
         organisation?: string | null;
     } | null>(null);

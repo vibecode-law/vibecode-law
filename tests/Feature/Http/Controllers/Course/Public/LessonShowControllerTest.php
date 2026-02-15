@@ -67,6 +67,8 @@ test('show includes lesson details with description_html and copy_html', functio
                 ->has('playback_id')
                 ->has('host')
                 ->where('gated', $lesson->gated)
+                ->where('visible', $lesson->visible)
+                ->where('publish_date', $lesson->publish_date?->format('Y-m-d'))
                 ->where('order', $lesson->order)
                 ->has('course')
             )

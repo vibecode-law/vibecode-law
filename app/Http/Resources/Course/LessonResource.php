@@ -51,6 +51,10 @@ class LessonResource extends Resource
 
     public bool $gated;
 
+    public bool $visible;
+
+    public ?string $publish_date;
+
     public int $order;
 
     public Lazy|CourseResource $course;
@@ -89,6 +93,8 @@ class LessonResource extends Resource
             'playback_id' => Lazy::create(fn () => $lesson->playback_id),
             'host' => Lazy::create(fn () => $lesson->host->forFrontend()),
             'gated' => $lesson->gated,
+            'visible' => $lesson->visible,
+            'publish_date' => $lesson->publish_date?->format('Y-m-d'),
             'order' => $lesson->order,
             'course' => Lazy::whenLoaded('course', $lesson, fn () => CourseResource::from($lesson->course)),
         ]);
