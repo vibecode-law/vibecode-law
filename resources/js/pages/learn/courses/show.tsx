@@ -1,6 +1,7 @@
 import CourseIndexController from '@/actions/App/Http/Controllers/Course/Public/CourseIndexController';
 import LessonShowController from '@/actions/App/Http/Controllers/Course/Public/LessonShowController';
-import { RichTextContent } from '@/components/showcase/rich-text-content';
+import { CourseAboutSection } from '@/components/course/course-about-section';
+import { CourseLearningObjectives } from '@/components/course/course-learning-objectives';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
@@ -9,14 +10,18 @@ import { cn } from '@/lib/utils';
 import { home } from '@/routes';
 import { type SharedData } from '@/types';
 import { Head, Link, usePage } from '@inertiajs/react';
-import { BookOpen, Clock, Users } from 'lucide-react';
+import { BookOpen, Check, Clock, Users } from 'lucide-react';
 
 interface CourseShowProps {
     course: App.Http.Resources.Course.CourseResource & {
         lessons?: App.Http.Resources.Course.LessonResource[];
         tags?: App.Http.Resources.Course.CourseTagResource[];
     };
-    firstLessonSlug: string | null;
+    nextLessonSlug: string | null;
+    isEnrolled: boolean;
+    completedLessonIds: number[];
+    totalLessons: number;
+    completedLessonsCount: number;
 }
 
 function formatDuration(seconds: number | null | undefined): string | null {
@@ -55,7 +60,11 @@ function getExperienceLevelColor(level: number): string {
 
 export default function CourseShow({
     course,
-    firstLessonSlug,
+    nextLessonSlug,
+    isEnrolled,
+    completedLessonIds,
+    totalLessons,
+    completedLessonsCount,
 }: CourseShowProps) {
     const { name, appUrl, transformImages } = usePage<SharedData>().props;
 
@@ -165,31 +174,88 @@ export default function CourseShow({
                                 </div>
                             </div>
 
-                            {/* Description */}
-                            {course.description_html && (
-                                <div className="mt-8">
-                                    <h2 className="text-xl font-semibold text-neutral-900 dark:text-white">
-                                        About This Course
-                                    </h2>
-                                    <div className="mt-4">
-                                        <RichTextContent
-                                            html={course.description_html}
-                                            className="rich-text-content"
+                            {/* Mobile: Progress Bar - shown after stats */}
+                            {isEnrolled && totalLessons > 0 && (
+                                <div className="mt-6 rounded-lg border border-neutral-200 bg-white p-4 lg:hidden dark:border-neutral-800 dark:bg-neutral-900">
+                                    <div className="mb-2 flex items-center justify-between text-sm">
+                                        <span className="font-medium text-neutral-900 dark:text-white">
+                                            Your Progress
+                                        </span>
+                                        <span className="text-neutral-600 dark:text-neutral-400">
+                                            {completedLessonsCount} of{' '}
+                                            {totalLessons}
+                                        </span>
+                                    </div>
+                                    <div className="h-2 overflow-hidden rounded-full bg-neutral-100 dark:bg-neutral-800">
+                                        <div
+                                            className="h-full bg-gradient-to-r from-blue-500 to-blue-600 transition-all duration-300"
+                                            style={{
+                                                width: `${(completedLessonsCount / totalLessons) * 100}%`,
+                                            }}
                                         />
+                                    </div>
+                                    {completedLessonsCount === totalLessons && (
+                                        <p className="mt-2 text-xs font-medium text-green-600 dark:text-green-400">
+                                            ✨ Course completed!
+                                        </p>
+                                    )}
+                                </div>
+                            )}
+
+                            {/* Mobile: Instructor - shown after progress */}
+                            {course.user && (
+                                <div className="mt-6 lg:hidden">
+                                    <p className="mb-3 text-xs font-medium tracking-wide text-neutral-500 uppercase dark:text-neutral-400">
+                                        Instructor
+                                    </p>
+                                    <div className="flex items-start gap-3">
+                                        <Avatar className="size-12">
+                                            {authorAvatarSrc ? (
+                                                <AvatarImage
+                                                    src={authorAvatarSrc}
+                                                    alt={`${course.user.first_name} ${course.user.last_name}`}
+                                                />
+                                            ) : null}
+                                            <AvatarFallback className="bg-neutral-100 text-lg font-semibold text-neutral-700 dark:bg-neutral-800 dark:text-neutral-300">
+                                                {course.user.first_name.charAt(
+                                                    0,
+                                                )}
+                                            </AvatarFallback>
+                                        </Avatar>
+                                        <div className="min-w-0 flex-1">
+                                            <p className="font-semibold text-neutral-900 dark:text-white">
+                                                {course.user.first_name}{' '}
+                                                {course.user.last_name}
+                                            </p>
+                                            {course.user.job_title && (
+                                                <p className="text-sm text-neutral-600 dark:text-neutral-400">
+                                                    {course.user.job_title}
+                                                </p>
+                                            )}
+                                            {course.user.organisation && (
+                                                <p className="text-sm text-neutral-500 dark:text-neutral-500">
+                                                    {course.user.organisation}
+                                                </p>
+                                            )}
+                                        </div>
                                     </div>
                                 </div>
                             )}
 
+                            {/* Description */}
+                            {course.description_html && (
+                                <CourseAboutSection
+                                    html={course.description_html}
+                                    truncateOnMobile={true}
+                                />
+                            )}
+
                             {/* Learning Objectives */}
                             {course.learning_objectives && (
-                                <div className="mt-8">
-                                    <h2 className="text-xl font-semibold text-neutral-900 dark:text-white">
-                                        What You'll Learn
-                                    </h2>
-                                    <div className="mt-4 text-neutral-600 dark:text-neutral-400">
-                                        {course.learning_objectives}
-                                    </div>
-                                </div>
+                                <CourseLearningObjectives
+                                    objectives={course.learning_objectives}
+                                    truncateOnMobile={true}
+                                />
                             )}
 
                             {/* Skills Tags */}
@@ -217,22 +283,52 @@ export default function CourseShow({
                                 <Button asChild size="lg">
                                     <Link
                                         href={
-                                            firstLessonSlug
+                                            nextLessonSlug
                                                 ? LessonShowController.url({
                                                       course: course.slug,
-                                                      lesson: firstLessonSlug,
+                                                      lesson: nextLessonSlug,
                                                   })
                                                 : '#'
                                         }
                                     >
-                                        Start Course
+                                        {isEnrolled && completedLessonsCount > 0
+                                            ? 'Resume Course'
+                                            : 'Start Course'}
                                     </Link>
                                 </Button>
                             </div>
                         </div>
 
-                        {/* Aside */}
-                        <aside className="shrink-0 lg:w-64 xl:w-68 2xl:w-72">
+                        {/* Desktop Aside - hidden on mobile */}
+                        <aside className="hidden shrink-0 lg:block lg:w-64 xl:w-68 2xl:w-72">
+                            {/* Progress Bar */}
+                            {isEnrolled && totalLessons > 0 && (
+                                <div className="mb-8 rounded-lg border border-neutral-200 bg-white p-4 dark:border-neutral-800 dark:bg-neutral-900">
+                                    <div className="mb-2 flex items-center justify-between text-sm">
+                                        <span className="font-medium text-neutral-900 dark:text-white">
+                                            Your Progress
+                                        </span>
+                                        <span className="text-neutral-600 dark:text-neutral-400">
+                                            {completedLessonsCount} of{' '}
+                                            {totalLessons}
+                                        </span>
+                                    </div>
+                                    <div className="h-2 overflow-hidden rounded-full bg-neutral-100 dark:bg-neutral-800">
+                                        <div
+                                            className="h-full bg-gradient-to-r from-blue-500 to-blue-600 transition-all duration-300"
+                                            style={{
+                                                width: `${(completedLessonsCount / totalLessons) * 100}%`,
+                                            }}
+                                        />
+                                    </div>
+                                    {completedLessonsCount === totalLessons && (
+                                        <p className="mt-2 text-xs font-medium text-green-600 dark:text-green-400">
+                                            ✨ Course completed!
+                                        </p>
+                                    )}
+                                </div>
+                            )}
+
                             {/* Course author */}
                             {course.user && (
                                 <div>
@@ -273,7 +369,7 @@ export default function CourseShow({
                                 </div>
                             )}
 
-                            {/* Course thumbnail */}
+                            {/* Course thumbnail - hidden on mobile */}
                             {thumbnailSrc && (
                                 <div className="mt-8">
                                     <img
@@ -299,32 +395,40 @@ export default function CourseShow({
 
                         {course.lessons && course.lessons.length > 0 ? (
                             <div className="mt-6 divide-y divide-neutral-100 dark:divide-neutral-800">
-                                {course.lessons.map((lesson, index) => (
-                                    <Link
-                                        key={lesson.id}
-                                        href={LessonShowController.url({
-                                            course: course.slug,
-                                            lesson: lesson.slug,
-                                        })}
-                                        className="flex items-start gap-4 rounded-lg px-4 py-4 transition-colors hover:bg-neutral-50 dark:hover:bg-neutral-900"
-                                    >
-                                        <div className="flex size-8 shrink-0 items-center justify-center rounded-full bg-neutral-100 text-sm font-semibold text-neutral-700 dark:bg-neutral-800 dark:text-neutral-300">
-                                            {index + 1}
-                                        </div>
-                                        <div className="min-w-0 flex-1">
-                                            <div className="flex items-start justify-between gap-4">
-                                                <div className="min-w-0 flex-1">
-                                                    <h3 className="font-semibold text-neutral-900 dark:text-white">
-                                                        {lesson.title}
-                                                    </h3>
-                                                    <p className="mt-1 text-sm text-neutral-600 dark:text-neutral-400">
-                                                        {lesson.tagline}
-                                                    </p>
+                                {course.lessons.map((lesson, index) => {
+                                    const isComplete =
+                                        completedLessonIds.includes(lesson.id);
+
+                                    return (
+                                        <Link
+                                            key={lesson.id}
+                                            href={LessonShowController.url({
+                                                course: course.slug,
+                                                lesson: lesson.slug,
+                                            })}
+                                            className="flex items-start gap-4 rounded-lg px-4 py-4 transition-colors hover:bg-neutral-50 dark:hover:bg-neutral-900"
+                                        >
+                                            <div className="flex size-8 shrink-0 items-center justify-center rounded-full bg-neutral-100 text-sm font-semibold text-neutral-700 dark:bg-neutral-800 dark:text-neutral-300">
+                                                {index + 1}
+                                            </div>
+                                            <div className="min-w-0 flex-1">
+                                                <div className="flex items-start justify-between gap-4">
+                                                    <div className="min-w-0 flex-1">
+                                                        <h3 className="font-semibold text-neutral-900 dark:text-white">
+                                                            {lesson.title}
+                                                        </h3>
+                                                        <p className="mt-1 text-sm text-neutral-600 dark:text-neutral-400">
+                                                            {lesson.tagline}
+                                                        </p>
+                                                    </div>
+                                                    {isComplete && (
+                                                        <Check className="size-5 shrink-0 text-green-600 dark:text-green-400" />
+                                                    )}
                                                 </div>
                                             </div>
-                                        </div>
-                                    </Link>
-                                ))}
+                                        </Link>
+                                    );
+                                })}
                             </div>
                         ) : (
                             <div className="mt-6 rounded-lg border border-neutral-200 bg-neutral-50 p-8 text-center dark:border-neutral-800 dark:bg-neutral-900">

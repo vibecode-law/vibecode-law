@@ -332,7 +332,7 @@ function FeaturedCourseCard({ course, progress }: FeaturedCourseCardProps) {
                             </AvatarFallback>
                         </Avatar>
                         <span className="text-sm text-neutral-600 dark:text-neutral-400">
-                            {course.user.first_name}
+                            {course.user.first_name} {course.user.last_name}
                         </span>
                     </div>
                 )}
@@ -441,7 +441,7 @@ export default function CourseIndex({
             {activeTab === 'courses' && (
                 <section className="bg-white pt-8 pb-8 dark:bg-neutral-950">
                     <div className="mx-auto max-w-6xl px-4">
-                        <div className="grid gap-4 sm:grid-cols-2">
+                        <div className="grid gap-6 sm:grid-cols-2">
                             {featuredCourses.map((course) => (
                                 <FeaturedCourseCard
                                     key={course.id}

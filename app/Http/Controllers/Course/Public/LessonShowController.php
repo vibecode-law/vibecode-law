@@ -56,26 +56,55 @@ class LessonShowController extends BaseController
             // Auto-mark viewed_at and started_at if enrolled
             if ($isEnrolled === true) {
                 // Mark lesson as viewed/started
-                DB::table(table: 'lesson_user')
-                    ->updateOrInsert(
-                        attributes: [
-                            'user_id' => $user->id,
-                            'lesson_id' => $lesson->id,
-                        ],
-                        values: [
-                            'viewed_at' => DB::raw('COALESCE(viewed_at, NOW())'),
-                            'started_at' => DB::raw('COALESCE(started_at, NOW())'),
-                            'updated_at' => Carbon::now(),
-                        ]
-                    );
+                $lessonUserRecord = DB::table(table: 'lesson_user')
+                    ->where(column: 'user_id', operator: '=', value: $user->id)
+                    ->where(column: 'lesson_id', operator: '=', value: $lesson->id)
+                    ->first();
 
-                // Mark course as viewed if not already
-                DB::table(table: 'course_user')
+                if ($lessonUserRecord === null) {
+                    DB::table(table: 'lesson_user')->insert([
+                        'user_id' => $user->id,
+                        'lesson_id' => $lesson->id,
+                        'viewed_at' => Carbon::now(),
+                        'started_at' => Carbon::now(),
+                        'created_at' => Carbon::now(),
+                        'updated_at' => Carbon::now(),
+                    ]);
+                } else {
+                    DB::table(table: 'lesson_user')
+                        ->where(column: 'user_id', operator: '=', value: $user->id)
+                        ->where(column: 'lesson_id', operator: '=', value: $lesson->id)
+                        ->update([
+                            'viewed_at' => $lessonUserRecord->viewed_at ?? Carbon::now(),
+                            'started_at' => $lessonUserRecord->started_at ?? Carbon::now(),
+                            'updated_at' => Carbon::now(),
+                        ]);
+                }
+
+                // Mark course as viewed/started if not already
+                $courseUserRecord = DB::table(table: 'course_user')
                     ->where(column: 'course_id', operator: '=', value: $course->id)
                     ->where(column: 'user_id', operator: '=', value: $user->id)
-                    ->update(values: [
-                        'viewed_at' => DB::raw('COALESCE(viewed_at, NOW())'),
-                    ]);
+                    ->first();
+
+                if ($courseUserRecord !== null) {
+                    $updates = [];
+
+                    if ($courseUserRecord->viewed_at === null) {
+                        $updates['viewed_at'] = Carbon::now();
+                    }
+
+                    if ($courseUserRecord->started_at === null) {
+                        $updates['started_at'] = Carbon::now();
+                    }
+
+                    if (count($updates) > 0) {
+                        DB::table(table: 'course_user')
+                            ->where(column: 'course_id', operator: '=', value: $course->id)
+                            ->where(column: 'user_id', operator: '=', value: $user->id)
+                            ->update(values: $updates);
+                    }
+                }
             }
         }
 
@@ -90,7 +119,6 @@ class LessonShowController extends BaseController
 
         // Get completed lesson IDs for progress indicators
         $completedLessonIds = [];
-        $isLessonComplete = false;
 
         if ($user !== null && $isEnrolled === true) {
             $completedLessonIds = DB::table(table: 'lesson_user')
@@ -98,8 +126,6 @@ class LessonShowController extends BaseController
                 ->whereNotNull(columns: 'completed_at')
                 ->pluck(column: 'lesson_id')
                 ->toArray();
-
-            $isLessonComplete = in_array($lesson->id, $completedLessonIds, true);
         }
 
         return Inertia::render('learn/courses/lessons/show', [
@@ -118,7 +144,6 @@ class LessonShowController extends BaseController
             ] : null,
             'isEnrolled' => $isEnrolled,
             'completedLessonIds' => $completedLessonIds,
-            'isLessonComplete' => $isLessonComplete,
         ]);
     }
 }

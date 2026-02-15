@@ -27,11 +27,11 @@ _If you are just playing around, and don't intend to contribute a PR later, you 
 
 In the Github web UI, create a fork from the top right context menu:
 
-![Fork menu](./images/fork-contextmenu.png "Fork menu")
+![Fork menu](./images/fork-contextmenu.png 'Fork menu')
 
 On the page that opens, you don't need to fill anything out - just hit "Create fork" in the bottom right:
 
-![Create fork screen](./images/create-fork.png "Create form screen")
+![Create fork screen](./images/create-fork.png 'Create form screen')
 
 After creating, you'll be redirected to your new fork.
 
