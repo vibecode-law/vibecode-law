@@ -1,12 +1,13 @@
+import { RichTextContent } from '@/components/showcase/rich-text-content';
 import { useState } from 'react';
 
 interface CourseLearningObjectivesProps {
-    objectives: string;
+    html: string;
     truncateOnMobile?: boolean;
 }
 
 export function CourseLearningObjectives({
-    objectives,
+    html,
     truncateOnMobile = false,
 }: CourseLearningObjectivesProps) {
     const [isExpanded, setIsExpanded] = useState(false);
@@ -17,8 +18,11 @@ export function CourseLearningObjectives({
                 <h2 className="text-xl font-semibold text-neutral-900 dark:text-white">
                     What You'll Learn
                 </h2>
-                <div className="mt-4 text-neutral-600 dark:text-neutral-400">
-                    {objectives}
+                <div className="prose dark:prose-invert mt-4 max-w-none">
+                    <RichTextContent
+                        html={html}
+                        className="rich-text-content"
+                    />
                 </div>
             </div>
         );
@@ -33,11 +37,14 @@ export function CourseLearningObjectives({
                 <div
                     className={
                         isExpanded
-                            ? 'text-neutral-600 dark:text-neutral-400'
-                            : 'line-clamp-3 text-neutral-600 md:line-clamp-none dark:text-neutral-400'
+                            ? 'prose dark:prose-invert max-w-none'
+                            : 'prose dark:prose-invert line-clamp-3 max-w-none overflow-hidden md:line-clamp-none'
                     }
                 >
-                    {objectives}
+                    <RichTextContent
+                        html={html}
+                        className="rich-text-content"
+                    />
                 </div>
                 {!isExpanded && (
                     <button

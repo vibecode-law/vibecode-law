@@ -2,8 +2,10 @@
 
 namespace App\Models\Course;
 
+use App\Enums\MarkdownProfile;
 use App\Enums\VideoHost;
 use App\Models\User;
+use App\Services\Markdown\MarkdownService;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -55,6 +57,43 @@ class Lesson extends Model
             'publish_date' => 'date',
             'thumbnail_crops' => 'array',
         ];
+    }
+
+    protected static function booted(): void
+    {
+        static::updated(function (Lesson $lesson): void {
+            $cached = $lesson->getCachedFields();
+
+            foreach ($lesson->changes as $field => $value) {
+                if (in_array($field, $cached) === false) {
+                    continue;
+                }
+
+                app(MarkdownService::class)->clearCacheByKey(
+                    cacheKey: "lesson|{$lesson->id}|$field",
+                    profile: MarkdownProfile::Basic
+                );
+            }
+        });
+
+        static::deleted(function (Lesson $lesson): void {
+            $markdownService = app(MarkdownService::class);
+
+            foreach ($lesson->getCachedFields() as $cacheKey) {
+                $markdownService->clearCacheByKey(
+                    cacheKey: "lesson|{$lesson->id}|$cacheKey",
+                    profile: MarkdownProfile::Basic
+                );
+            }
+        });
+    }
+
+    /**
+     * @return array<int, string>
+     */
+    public function getCachedFields(): array
+    {
+        return ['description', 'learning_objectives', 'copy'];
     }
 
     public function getRouteKeyName(): string

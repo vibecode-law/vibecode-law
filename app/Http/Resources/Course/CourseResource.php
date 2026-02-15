@@ -29,6 +29,8 @@ class CourseResource extends Resource
 
     public Lazy|string|null $learning_objectives;
 
+    public Lazy|string|null $learning_objectives_html;
+
     public Lazy|int|null $duration_seconds;
 
     public Lazy|FrontendEnum|null $experience_level;
@@ -84,6 +86,10 @@ class CourseResource extends Resource
                 )
                 : null),
             'learning_objectives' => Lazy::create(fn () => $course->learning_objectives),
+            'learning_objectives_html' => Lazy::create(fn () => $course->learning_objectives !== null ? $markdown->render(
+                markdown: $course->learning_objectives,
+                cacheKey: "course|{$course->id}|learning_objectives",
+            ) : null),
             'duration_seconds' => Lazy::create(fn () => $course->duration_seconds),
             'experience_level' => Lazy::create(fn () => $course->experience_level?->forFrontend()),
             'visible' => $course->visible,

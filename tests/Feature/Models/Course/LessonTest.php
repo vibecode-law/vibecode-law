@@ -4,6 +4,9 @@ use App\Enums\VideoHost;
 use App\Models\Course\Course;
 use App\Models\Course\Lesson;
 use App\Models\User;
+use App\Services\Markdown\MarkdownService;
+use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\Cache;
 
 test('uses slug as route key name', function () {
     $lesson = Lesson::factory()->create();
@@ -62,5 +65,77 @@ describe('users relationship', function () {
         expect($pivot->viewed_at)->not->toBeNull()
             ->and($pivot->started_at)->not->toBeNull()
             ->and($pivot->completed_at)->toBeNull();
+    });
+});
+
+describe('markdown cache clearing on model events', function () {
+    beforeEach(function () {
+        Cache::flush();
+    });
+
+    it('clears a specific markdown cache when that field is updated', function (string $field) {
+        $lesson = Lesson::factory()->create();
+        $markdownService = app(MarkdownService::class);
+
+        $cacheKey = "lesson|{$lesson->id}|$field";
+
+        $markdownService->render(
+            markdown: '**test content**',
+            cacheKey: $cacheKey
+        );
+
+        $fullKey = $markdownService->getCacheKey(cacheKey: $cacheKey);
+
+        expect(Cache::has(key: $fullKey))->toBeTrue();
+
+        $lesson->update([$field => 'Updated content']);
+
+        expect(Cache::has(key: $fullKey))->toBeFalse();
+    })->with(['description', 'learning_objectives', 'copy']);
+
+    it('does not clear markdown cache when non-markdown fields are updated', function () {
+        $lesson = Lesson::factory()->create();
+        $markdownService = app(MarkdownService::class);
+
+        $cacheKey = "lesson|{$lesson->id}|description";
+
+        $markdownService->render(
+            markdown: '**test content**',
+            cacheKey: $cacheKey
+        );
+
+        $fullKey = $markdownService->getCacheKey(cacheKey: $cacheKey);
+
+        expect(Cache::has(key: $fullKey))->toBeTrue();
+
+        $lesson->update(['title' => 'Updated Title']);
+
+        expect(Cache::has(key: $fullKey))->toBeTrue();
+    });
+
+    it('clears markdown cache when lesson is deleted', function () {
+        $lesson = Lesson::factory()->create();
+        $markdownService = app(MarkdownService::class);
+
+        $cacheKeys = new Collection($lesson->getCachedFields())->map(fn (string $field) => "lesson|{$lesson->id}|$field");
+
+        foreach ($cacheKeys as $cacheKey) {
+            $markdownService->render(
+                markdown: '**test content**',
+                cacheKey: $cacheKey
+            );
+        }
+
+        foreach ($cacheKeys as $cacheKey) {
+            $fullKey = $markdownService->getCacheKey(cacheKey: $cacheKey);
+            expect(Cache::has(key: $fullKey))->toBeTrue();
+        }
+
+        $lesson->delete();
+
+        foreach ($cacheKeys as $cacheKey) {
+            $fullKey = $markdownService->getCacheKey(cacheKey: $cacheKey);
+            expect(Cache::has(key: $fullKey))->toBeFalse();
+        }
     });
 });
