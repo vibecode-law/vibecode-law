@@ -67,6 +67,45 @@ declare namespace App.Http.Resources.Challenge {
         total_upvotes_count?: number | null;
     };
 }
+declare namespace App.Http.Resources.Course {
+    export type CourseResource = {
+        id: number;
+        slug: string;
+        title: string;
+        tagline: string;
+        description?: string;
+        description_html?: string;
+        experience_level?: App.ValueObjects.FrontendEnum | null;
+        order: number;
+        lessons_count?: number;
+        lessons?: App.Http.Resources.Course.LessonResource;
+        tags?: App.Http.Resources.Course.CourseTagResource;
+        user?: App.Http.Resources.User.UserResource | null;
+        started_count?: number;
+        completed_count?: number;
+    };
+    export type CourseTagResource = {
+        id: number;
+        name: string;
+        slug: string;
+    };
+    export type LessonResource = {
+        id: number;
+        slug: string;
+        title: string;
+        tagline: string;
+        description?: string;
+        description_html?: string;
+        copy?: string | null;
+        copy_html?: string | null;
+        transcript?: string | null;
+        embed?: string;
+        host?: App.ValueObjects.FrontendEnum;
+        gated: boolean;
+        order: number;
+        course?: App.Http.Resources.Course.CourseResource;
+    };
+}
 declare namespace App.Http.Resources.Organisation {
     export type OrganisationResource = {
         id: number;

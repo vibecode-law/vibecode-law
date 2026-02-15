@@ -2,8 +2,11 @@
 
 namespace App\Enums;
 
+use App\Concerns\FrontendTransformable;
+
 enum ExperienceLevel: int
 {
+    use FrontendTransformable;
     case Beginner = 1;
     case Intermediate = 2;
     case Advanced = 3;
