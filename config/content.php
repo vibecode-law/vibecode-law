@@ -52,11 +52,7 @@ return [
         ],
     ],
 
-    'resources' => [
-        'index' => [
-            'title' => 'Resources',
-            'slug' => null,
-        ],
+    'guides' => [
         'children' => [
             [
                 'title' => 'What is Vibecoding?',

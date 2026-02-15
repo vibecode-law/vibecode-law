@@ -1,7 +1,7 @@
 import AboutIndexController from '@/actions/App/Http/Controllers/About/AboutIndexController';
 import ChallengeIndexController from '@/actions/App/Http/Controllers/Challenge/Public/ChallengeIndexController';
-import CourseIndexController from '@/actions/App/Http/Controllers/Course/Public/CourseIndexController';
 import HomeController from '@/actions/App/Http/Controllers/HomeController';
+import LearnIndexController from '@/actions/App/Http/Controllers/Learn/LearnIndexController';
 import NewsletterIndexController from '@/actions/App/Http/Controllers/Newsletter/NewsletterIndexController';
 import ShowcaseCreateController from '@/actions/App/Http/Controllers/Showcase/ManageShowcase/ShowcaseCreateController';
 import WallOfLoveController from '@/actions/App/Http/Controllers/WallOfLove/WallOfLoveController';
@@ -52,7 +52,7 @@ export function PublicHeader() {
                             </Link>
                         )}
                         <Link
-                            href={CourseIndexController.url()}
+                            href={LearnIndexController.url()}
                             className="text-sm font-medium text-neutral-600 hover:text-neutral-900 dark:text-neutral-400 dark:hover:text-white"
                         >
                             Learn
@@ -168,7 +168,7 @@ export function PublicHeader() {
 
                                     <SheetClose asChild>
                                         <Link
-                                            href={CourseIndexController.url()}
+                                            href={LearnIndexController.url()}
                                             className="group flex items-center justify-between py-3"
                                         >
                                             <div>

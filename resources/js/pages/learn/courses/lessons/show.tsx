@@ -1,6 +1,6 @@
-import CourseIndexController from '@/actions/App/Http/Controllers/Course/Public/CourseIndexController';
-import CourseShowController from '@/actions/App/Http/Controllers/Course/Public/CourseShowController';
-import LessonShowController from '@/actions/App/Http/Controllers/Course/Public/LessonShowController';
+import CourseShowController from '@/actions/App/Http/Controllers/Learn/CourseShowController';
+import LearnIndexController from '@/actions/App/Http/Controllers/Learn/LearnIndexController';
+import LessonShowController from '@/actions/App/Http/Controllers/Learn/LessonShowController';
 import { LessonContent } from '@/components/course/lesson-content';
 import { LessonTranscript } from '@/components/course/lesson-transcript';
 import { LessonWhatWeCover } from '@/components/course/lesson-what-we-cover';
@@ -34,7 +34,7 @@ export default function LessonShow({
         <PublicLayout
             breadcrumbs={[
                 { label: 'Home', href: home.url() },
-                { label: 'Learn', href: CourseIndexController.url() },
+                { label: 'Learn', href: LearnIndexController.url() },
                 {
                     label: course.title,
                     href: CourseShowController.url({
