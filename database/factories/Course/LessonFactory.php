@@ -27,8 +27,10 @@ class LessonFactory extends Factory
             'description' => fake()->paragraphs(nb: 2, asText: true),
             'copy' => fake()->optional()->paragraphs(nb: 4, asText: true),
             'transcript' => fake()->optional()->paragraphs(nb: 5, asText: true),
+            'track_id' => fake()->optional()->uuid(),
             'embed' => fake()->url(),
             'host' => VideoHost::Mux,
+            'gated' => true,
             'order' => fake()->numberBetween(0, 20),
         ];
     }
