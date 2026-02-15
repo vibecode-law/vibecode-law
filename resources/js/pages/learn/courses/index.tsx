@@ -34,9 +34,7 @@ interface CourseIndexProps {
     courseProgress?: Record<
         number,
         {
-            isEnrolled: boolean;
             progressPercentage: number;
-            isComplete: boolean;
         }
     >;
     guides?: ResourceChild[];
@@ -204,9 +202,7 @@ interface FeaturedCourseCardProps {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     course: any;
     progress?: {
-        isEnrolled: boolean;
         progressPercentage: number;
-        isComplete: boolean;
     };
 }
 
@@ -278,12 +274,12 @@ function FeaturedCourseCard({ course, progress }: FeaturedCourseCardProps) {
                 <p className="mt-2 line-clamp-2 flex-1 text-sm text-neutral-600 dark:text-neutral-400">
                     {course.tagline}
                 </p>
-                {/* Progress Bar (if enrolled) */}
-                {progress?.isEnrolled && (
+                {/* Progress Bar */}
+                {progress && progress.progressPercentage > 0 && (
                     <div className="mt-4 border-t border-neutral-100 pt-4 dark:border-neutral-800">
                         <div className="mb-2 flex items-center justify-between text-xs">
                             <span className="font-medium text-neutral-700 dark:text-neutral-300">
-                                {progress.isComplete
+                                {progress.progressPercentage >= 100
                                     ? 'Completed'
                                     : 'In Progress'}
                             </span>
@@ -295,7 +291,7 @@ function FeaturedCourseCard({ course, progress }: FeaturedCourseCardProps) {
                             <div
                                 className={cn(
                                     'h-full rounded-full transition-all',
-                                    progress.isComplete
+                                    progress.progressPercentage >= 100
                                         ? 'bg-green-600 dark:bg-green-500'
                                         : 'bg-blue-600 dark:bg-blue-500',
                                 )}
@@ -312,7 +308,7 @@ function FeaturedCourseCard({ course, progress }: FeaturedCourseCardProps) {
                     <div
                         className={cn(
                             'mt-4 flex items-center gap-2 pt-4',
-                            !progress?.isEnrolled &&
+                            (!progress || progress.progressPercentage <= 0) &&
                                 'border-t border-neutral-100 dark:border-neutral-800',
                         )}
                     >
