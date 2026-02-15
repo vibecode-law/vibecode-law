@@ -91,10 +91,16 @@ namespace App\Models\Course{
  * @property string $slug
  * @property string $tagline
  * @property string $description
+ * @property string|null $learning_objectives
  * @property int $order
  * @property \App\Enums\ExperienceLevel|null $experience_level
+ * @property int|null $duration_seconds
  * @property int $started_count
  * @property int $completed_count
+ * @property bool $visible
+ * @property bool $is_featured
+ * @property \Illuminate\Support\Carbon|null $publish_date
+ * @property string|null $thumbnail_extension
  * @property int|null $user_id
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
@@ -115,15 +121,22 @@ namespace App\Models\Course{
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Course whereCompletedCount($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Course whereCreatedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Course whereDescription($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Course whereDurationSeconds($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Course whereExperienceLevel($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Course whereId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Course whereIsFeatured($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Course whereLearningObjectives($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Course whereOrder($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Course wherePublishDate($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Course whereSlug($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Course whereStartedCount($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Course whereTagline($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Course whereThumbnailCrops($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Course whereThumbnailExtension($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Course whereTitle($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Course whereUpdatedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Course whereUserId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Course whereVisible($value)
  * @mixin \Eloquent
  */
 	#[\AllowDynamicProperties]
@@ -190,13 +203,19 @@ namespace App\Models\Course{
  * @property string $slug
  * @property string $tagline
  * @property string $description
+ * @property string|null $learning_objectives
  * @property string|null $copy
  * @property string|null $transcript
- * @property string|null $track_id
- * @property string $embed
- * @property \App\Enums\VideoHost $host
+ * @property string|null $asset_id
+ * @property string|null $playback_id
+ * @property string|null $caption_track_id
+ * @property \App\Enums\VideoHost|null $host
+ * @property int|null $duration_seconds
  * @property bool $gated
+ * @property string|null $thumbnail_extension
  * @property int $order
+ * @property bool $visible
+ * @property \Illuminate\Support\Carbon|null $publish_date
  * @property int $course_id
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
@@ -210,21 +229,28 @@ namespace App\Models\Course{
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Lesson newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Lesson newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Lesson query()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Lesson whereAssetId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Lesson whereCaptionTrackId($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Lesson whereCopy($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Lesson whereCourseId($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Lesson whereCreatedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Lesson whereDescription($value)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|Lesson whereEmbed($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Lesson whereDurationSeconds($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Lesson whereGated($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Lesson whereHost($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Lesson whereId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Lesson whereLearningObjectives($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Lesson whereOrder($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Lesson wherePlaybackId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Lesson wherePublishDate($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Lesson whereSlug($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Lesson whereTagline($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Lesson whereThumbnailCrops($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Lesson whereThumbnailExtension($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Lesson whereTitle($value)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|Lesson whereTrackId($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Lesson whereTranscript($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Lesson whereUpdatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Lesson whereVisible($value)
  * @mixin \Eloquent
  */
 	#[\AllowDynamicProperties]
@@ -239,6 +265,7 @@ namespace App\Models\Course{
  * @property \Illuminate\Support\Carbon|null $viewed_at
  * @property \Illuminate\Support\Carbon|null $started_at
  * @property \Illuminate\Support\Carbon|null $completed_at
+ * @property int|null $playback_time_milliseconds
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
  * @method static \Database\Factories\Course\LessonUserFactory factory($count = null, $state = [])
@@ -249,6 +276,7 @@ namespace App\Models\Course{
  * @method static \Illuminate\Database\Eloquent\Builder<static>|LessonUser whereCreatedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|LessonUser whereId($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|LessonUser whereLessonId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|LessonUser wherePlaybackTimeMilliseconds($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|LessonUser whereStartedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|LessonUser whereUpdatedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|LessonUser whereUserId($value)

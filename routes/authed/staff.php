@@ -5,6 +5,18 @@ use App\Http\Controllers\Staff\Challenges\EditController as ChallengeEditControl
 use App\Http\Controllers\Staff\Challenges\IndexController as ChallengeIndexController;
 use App\Http\Controllers\Staff\Challenges\StoreController as ChallengeStoreController;
 use App\Http\Controllers\Staff\Challenges\UpdateController as ChallengeUpdateController;
+use App\Http\Controllers\Staff\Courses\CreateController as CourseCreateController;
+use App\Http\Controllers\Staff\Courses\EditController as CourseEditController;
+use App\Http\Controllers\Staff\Courses\IndexController as CourseIndexController;
+use App\Http\Controllers\Staff\Courses\Lessons\CreateController as LessonCreateController;
+use App\Http\Controllers\Staff\Courses\Lessons\EditController as LessonEditController;
+use App\Http\Controllers\Staff\Courses\Lessons\IndexController as LessonIndexController;
+use App\Http\Controllers\Staff\Courses\Lessons\ReorderController as LessonReorderController;
+use App\Http\Controllers\Staff\Courses\Lessons\StoreController as LessonStoreController;
+use App\Http\Controllers\Staff\Courses\Lessons\UpdateController as LessonUpdateController;
+use App\Http\Controllers\Staff\Courses\ReorderController as CourseReorderController;
+use App\Http\Controllers\Staff\Courses\StoreController as CourseStoreController;
+use App\Http\Controllers\Staff\Courses\UpdateController as CourseUpdateController;
 use App\Http\Controllers\Staff\Organisations\StoreController as OrganisationStoreController;
 use App\Http\Controllers\Staff\Organisations\UpdateController as OrganisationUpdateController;
 use App\Http\Controllers\Staff\PracticeAreaController;
@@ -74,6 +86,24 @@ Route::middleware(['can:access-staff'])->prefix('staff')->name('staff.')->group(
     Route::prefix('organisations')->name('organisations.')->group(function () {
         Route::post('/', OrganisationStoreController::class)->name('store');
         Route::patch('/{organisation}', OrganisationUpdateController::class)->name('update');
+    });
+
+    Route::prefix('courses')->name('courses.')->group(function () {
+        Route::get('/', CourseIndexController::class)->name('index');
+        Route::get('/create', CourseCreateController::class)->name('create');
+        Route::post('/', CourseStoreController::class)->name('store');
+        Route::post('/reorder', CourseReorderController::class)->name('reorder');
+        Route::get('/{course}/edit', CourseEditController::class)->name('edit');
+        Route::patch('/{course}', CourseUpdateController::class)->name('update');
+
+        Route::prefix('{course}/lessons')->name('lessons.')->scopeBindings()->group(function () {
+            Route::get('/', LessonIndexController::class)->name('index');
+            Route::get('/create', LessonCreateController::class)->name('create');
+            Route::post('/', LessonStoreController::class)->name('store');
+            Route::post('/reorder', LessonReorderController::class)->name('reorder');
+            Route::get('/{lesson}/edit', LessonEditController::class)->name('edit');
+            Route::patch('/{lesson}', LessonUpdateController::class)->name('update');
+        });
     });
 
     Route::prefix('challenges')->name('challenges.')->group(function () {

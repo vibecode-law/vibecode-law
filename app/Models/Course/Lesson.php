@@ -38,6 +38,8 @@ class Lesson extends Model
         'gated',
         'order',
         'course_id',
+        'visible',
+        'publish_date',
         'thumbnail_extension',
         'thumbnail_crops',
     ];
@@ -49,6 +51,8 @@ class Lesson extends Model
             'gated' => 'boolean',
             'duration_seconds' => 'integer',
             'order' => 'integer',
+            'visible' => 'boolean',
+            'publish_date' => 'date',
             'thumbnail_crops' => 'array',
         ];
     }
