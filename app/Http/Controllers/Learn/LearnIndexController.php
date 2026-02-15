@@ -5,8 +5,12 @@ namespace App\Http\Controllers\Learn;
 use App\Http\Controllers\BaseController;
 use App\Http\Resources\Course\CourseResource;
 use App\Models\Course\Course;
+use App\Models\Course\CourseUser;
+use App\Models\Course\LessonUser;
+use App\Models\User;
+use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Config;
-use Illuminate\Support\Facades\DB;
 use Inertia\Inertia;
 use Inertia\Response;
 use Spatie\LaravelData\DataCollection;
@@ -16,66 +20,61 @@ class LearnIndexController extends BaseController
     public function __invoke(): Response
     {
         $courses = Course::query()
-            ->with('user', 'tags')
+            ->select('id', 'slug', 'title', 'tagline', 'order', 'experience_level', 'duration_seconds', 'visible', 'is_featured', 'thumbnail_extension', 'thumbnail_crops', 'user_id')
+            ->with('user')
             ->withCount('lessons')
             ->orderBy('order')
             ->get();
 
-        // Get total unique users who have ever enrolled in any course
-        $totalEnrolledUsers = DB::table(table: 'course_user')
+        $totalEnrolledUsers = CourseUser::query()
             ->distinct()
             ->count(columns: 'user_id');
 
-        $user = auth()->user();
-        $courseProgress = [];
-
-        // If user is authenticated, get their progress for each course
-        if ($user !== null) {
-            $enrollments = DB::table(table: 'course_user')
-                ->where(column: 'user_id', operator: '=', value: $user->id)
-                ->get()
-                ->keyBy('course_id');
-
-            foreach ($courses as $course) {
-                $enrollment = $enrollments->get($course->id);
-
-                if ($enrollment !== null) {
-                    // Get completed lessons count for this course
-                    $completedCount = DB::table(table: 'lesson_user')
-                        ->join(table: 'lessons', first: 'lesson_user.lesson_id', operator: '=', second: 'lessons.id')
-                        ->where(column: 'lessons.course_id', operator: '=', value: $course->id)
-                        ->where(column: 'lesson_user.user_id', operator: '=', value: $user->id)
-                        ->whereNotNull(columns: 'lesson_user.completed_at')
-                        ->count();
-
-                    $totalLessons = $course->lessons_count;
-                    $progressPercentage = $totalLessons > 0
-                        ? round(($completedCount / $totalLessons) * 100)
-                        : 0;
-
-                    $courseProgress[$course->id] = [
-                        'isEnrolled' => true,
-                        'progressPercentage' => $progressPercentage,
-                        'isComplete' => $enrollment->completed_at !== null,
-                    ];
-                } else {
-                    $courseProgress[$course->id] = [
-                        'isEnrolled' => false,
-                        'progressPercentage' => 0,
-                        'isComplete' => false,
-                    ];
-                }
-            }
-        }
-
         return Inertia::render('learn/courses/index', [
             'courses' => CourseResource::collect($courses, DataCollection::class)
-                ->include('experience_level', 'lessons_count', 'tags', 'user', 'started_count', 'duration_seconds')
-                ->only('id', 'slug', 'title', 'tagline', 'experience_level', 'order', 'lessons_count', 'tags', 'user', 'started_count', 'duration_seconds', 'thumbnail_url', 'thumbnail_rect_strings'),
-            'courseProgress' => $courseProgress,
+                ->include('experience_level', 'lessons_count', 'user', 'started_count', 'duration_seconds')
+                ->only('id', 'slug', 'title', 'tagline', 'experience_level', 'order', 'lessons_count', 'user', 'started_count', 'duration_seconds', 'thumbnail_url', 'thumbnail_rect_strings'),
+            'courseProgress' => $this->getCourseProgress($courses),
             'guides' => $this->getGuides(),
             'totalEnrolledUsers' => $totalEnrolledUsers,
         ]);
+    }
+
+    /**
+     * @param  Collection<int, Course>  $courses
+     * @return array<int, array{progressPercentage: int|float}>
+     */
+    private function getCourseProgress(Collection $courses): array
+    {
+        /** @var User|null $user */
+        $user = Auth::user();
+
+        if ($user === null) {
+            return [];
+        }
+
+        $completedCounts = LessonUser::query()
+            ->join(table: 'lessons', first: 'lesson_user.lesson_id', operator: '=', second: 'lessons.id')
+            ->where(column: 'lesson_user.user_id', operator: '=', value: $user->id)
+            ->whereNotNull(columns: 'lesson_user.completed_at')
+            ->selectRaw('lessons.course_id, COUNT(*) as completed_count')
+            ->groupBy('lessons.course_id')
+            ->pluck('completed_count', 'lessons.course_id');
+
+        $courseProgress = [];
+
+        foreach ($courses as $course) {
+            $completedCount = $completedCounts->get($course->id, 0);
+            $totalLessons = $course->lessons_count;
+
+            $courseProgress[$course->id] = [
+                'progressPercentage' => $totalLessons > 0
+                    ? round(($completedCount / $totalLessons) * 100)
+                    : 0,
+            ];
+        }
+
+        return $courseProgress;
     }
 
     /**
