@@ -19,8 +19,10 @@ return new class extends Migration
             $table->text('description');
             $table->text('copy')->nullable();
             $table->text('transcript')->nullable();
+            $table->string('track_id')->nullable();
             $table->string('embed');
             $table->unsignedTinyInteger('host');
+            $table->boolean('gated')->default(true);
             $table->unsignedInteger('order')->default(0);
             $table->foreignId(column: 'course_id')->constrained()->cascadeOnDelete();
             $table->timestamps();

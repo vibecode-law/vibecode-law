@@ -24,8 +24,10 @@ class Lesson extends Model
         'description',
         'copy',
         'transcript',
+        'track_id',
         'embed',
         'host',
+        'gated',
         'order',
         'course_id',
     ];
@@ -34,6 +36,7 @@ class Lesson extends Model
     {
         return [
             'host' => VideoHost::class,
+            'gated' => 'boolean',
             'order' => 'integer',
         ];
     }
