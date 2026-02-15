@@ -3,7 +3,9 @@
 namespace App\Models\Course;
 
 use App\Enums\ExperienceLevel;
+use App\Enums\MarkdownProfile;
 use App\Models\User;
+use App\Services\Markdown\MarkdownService;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -53,6 +55,43 @@ class Course extends Model
             'completed_count' => 'integer',
             'thumbnail_crops' => 'array',
         ];
+    }
+
+    protected static function booted(): void
+    {
+        static::updated(function (Course $course): void {
+            $cached = $course->getCachedFields();
+
+            foreach ($course->changes as $field => $value) {
+                if (in_array($field, $cached) === false) {
+                    continue;
+                }
+
+                app(MarkdownService::class)->clearCacheByKey(
+                    cacheKey: "course|{$course->id}|$field",
+                    profile: MarkdownProfile::Basic
+                );
+            }
+        });
+
+        static::deleted(function (Course $course): void {
+            $markdownService = app(MarkdownService::class);
+
+            foreach ($course->getCachedFields() as $cacheKey) {
+                $markdownService->clearCacheByKey(
+                    cacheKey: "course|{$course->id}|$cacheKey",
+                    profile: MarkdownProfile::Basic
+                );
+            }
+        });
+    }
+
+    /**
+     * @return array<int, string>
+     */
+    public function getCachedFields(): array
+    {
+        return ['description', 'learning_objectives'];
     }
 
     public function getRouteKeyName(): string

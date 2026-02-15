@@ -76,6 +76,7 @@ declare namespace App.Http.Resources.Course {
         description?: string;
         description_html?: string;
         learning_objectives?: string | null;
+        learning_objectives_html?: string | null;
         duration_seconds?: number | null;
         experience_level?: App.ValueObjects.FrontendEnum | null;
         thumbnail_url: string | null;

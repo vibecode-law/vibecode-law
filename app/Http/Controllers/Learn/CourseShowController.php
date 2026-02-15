@@ -26,7 +26,7 @@ class CourseShowController extends BaseController
 
         return Inertia::render('learn/courses/show', [
             'course' => CourseResource::from($course)
-                ->include('description_html', 'learning_objectives', 'duration_seconds', 'experience_level', 'publish_date', 'lessons', 'user', 'started_count'),
+                ->include('description_html', 'learning_objectives_html', 'duration_seconds', 'experience_level', 'publish_date', 'lessons', 'user', 'started_count'),
             'nextLessonSlug' => $this->getNextLessonSlug(course: $course, completedLessonIds: $completedLessonIds),
             'completedLessonIds' => $completedLessonIds,
             'totalLessons' => $course->lessons->count(),

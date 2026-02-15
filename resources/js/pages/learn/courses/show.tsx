@@ -248,9 +248,9 @@ export default function CourseShow({
                             )}
 
                             {/* Learning Objectives */}
-                            {course.learning_objectives && (
+                            {course.learning_objectives_html && (
                                 <CourseLearningObjectives
-                                    objectives={course.learning_objectives}
+                                    html={course.learning_objectives_html}
                                     truncateOnMobile={true}
                                 />
                             )}

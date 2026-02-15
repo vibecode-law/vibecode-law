@@ -30,10 +30,11 @@ test('show renders the correct inertia component', function () {
         );
 });
 
-test('show includes course details with description_html', function () {
+test('show includes course details with description_html and learning_objectives_html', function () {
     $user = User::factory()->create();
     $course = Course::factory()->for($user)->create([
         'description' => "Hello World\n\nThis is **bold** text.",
+        'learning_objectives' => 'Learn **important** things.',
     ])->fresh();
     $lesson = Lesson::factory()->for($course)->create()->fresh();
 
@@ -49,7 +50,7 @@ test('show includes course details with description_html', function () {
                 )
                 ->where('thumbnail_url', $course->thumbnail_url)
                 ->where('thumbnail_rect_strings', $course->thumbnail_rect_strings)
-                ->where('learning_objectives', $course->learning_objectives)
+                ->where('learning_objectives_html', fn (string $html) => str_contains($html, '<strong>important</strong>'))
                 ->where('duration_seconds', $course->duration_seconds)
                 ->where('visible', $course->visible)
                 ->where('is_featured', $course->is_featured)
