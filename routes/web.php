@@ -38,6 +38,7 @@ require __DIR__.'/guest/user.php';
 
 Route::middleware(['auth', 'verified'])->group(function () {
     require __DIR__.'/authed/showcase.php';
+    require __DIR__.'/authed/learn.php';
     require __DIR__.'/authed/staff.php';
 });
 
