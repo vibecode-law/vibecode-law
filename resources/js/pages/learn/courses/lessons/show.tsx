@@ -18,7 +18,6 @@ interface LessonShowProps {
     };
     previousLesson: { slug: string; title: string } | null;
     nextLesson: { slug: string; title: string } | null;
-    isEnrolled: boolean;
     completedLessonIds: number[];
 }
 
@@ -27,7 +26,6 @@ export default function LessonShow({
     course,
     previousLesson,
     nextLesson,
-    isEnrolled,
     completedLessonIds,
 }: LessonShowProps) {
     return (
@@ -83,9 +81,9 @@ export default function LessonShow({
                             </div>
 
                             {/* What We Cover */}
-                            {lesson.learning_objectives && (
+                            {lesson.learning_objectives_html && (
                                 <LessonWhatWeCover
-                                    html={lesson.learning_objectives}
+                                    html={lesson.learning_objectives_html}
                                     truncateOnMobile={true}
                                 />
                             )}
@@ -178,8 +176,7 @@ export default function LessonShow({
                                                 const isCurrent =
                                                     navLesson.id === lesson.id;
                                                 const isLocked =
-                                                    navLesson.gated &&
-                                                    !isEnrolled;
+                                                    navLesson.gated;
                                                 const isComplete =
                                                     completedLessonIds.includes(
                                                         navLesson.id,
