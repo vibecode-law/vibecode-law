@@ -9,7 +9,7 @@ use function Pest\Laravel\get;
 
 test('show returns 200 for valid course and lesson pair', function () {
     $course = Course::factory()->create();
-    $lesson = Lesson::factory()->for($course)->create();
+    $lesson = Lesson::factory()->for($course)->create(['gated' => false]);
 
     get(route('learn.courses.lessons.show', [$course, $lesson]))
         ->assertOk();
@@ -33,7 +33,7 @@ test('show returns 404 when lesson does not belong to the course', function () {
 
 test('show renders the correct inertia component', function () {
     $course = Course::factory()->create();
-    $lesson = Lesson::factory()->for($course)->create();
+    $lesson = Lesson::factory()->for($course)->create(['gated' => false]);
 
     get(route('learn.courses.lessons.show', [$course, $lesson]))
         ->assertInertia(fn (AssertableInertia $page) => $page
@@ -45,6 +45,7 @@ test('show includes lesson details with description_html and copy_html', functio
     $course = Course::factory()->create();
     $lesson = Lesson::factory()->for($course)->create([
         'copy' => 'Some **copy** content',
+        'gated' => false,
     ])->fresh();
 
     get(route('learn.courses.lessons.show', [$course, $lesson]))
@@ -77,8 +78,8 @@ test('show includes lesson details with description_html and copy_html', functio
 
 test('show includes parent course with sibling lessons for navigation', function () {
     $course = Course::factory()->create();
-    $lessonA = Lesson::factory()->for($course)->create(['order' => 1]);
-    $lessonB = Lesson::factory()->for($course)->create(['order' => 2]);
+    $lessonA = Lesson::factory()->for($course)->create(['order' => 1, 'gated' => false]);
+    $lessonB = Lesson::factory()->for($course)->create(['order' => 2, 'gated' => false]);
     $tag = CourseTag::factory()->create();
     $course->tags()->attach($tag);
 

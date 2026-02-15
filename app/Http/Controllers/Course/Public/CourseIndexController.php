@@ -5,7 +5,6 @@ namespace App\Http\Controllers\Course\Public;
 use App\Http\Controllers\BaseController;
 use App\Http\Resources\Course\CourseResource;
 use App\Models\Course\Course;
-use App\Services\Content\ContentService;
 use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\DB;
 use Inertia\Inertia;
@@ -14,10 +13,6 @@ use Spatie\LaravelData\DataCollection;
 
 class CourseIndexController extends BaseController
 {
-    public function __construct(
-        private ContentService $contentService,
-    ) {}
-
     public function __invoke(): Response
     {
         $courses = Course::query()
