@@ -1,5 +1,5 @@
-import CourseIndexController from '@/actions/App/Http/Controllers/Course/Public/CourseIndexController';
-import LessonShowController from '@/actions/App/Http/Controllers/Course/Public/LessonShowController';
+import LearnIndexController from '@/actions/App/Http/Controllers/Learn/LearnIndexController';
+import LessonShowController from '@/actions/App/Http/Controllers/Learn/LessonShowController';
 import { CourseAboutSection } from '@/components/course/course-about-section';
 import { CourseLearningObjectives } from '@/components/course/course-learning-objectives';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
@@ -85,7 +85,7 @@ export default function CourseShow({
         <PublicLayout
             breadcrumbs={[
                 { label: 'Home', href: home.url() },
-                { label: 'Learn', href: CourseIndexController.url() },
+                { label: 'Learn', href: LearnIndexController.url() },
                 { label: course.title },
             ]}
         >

@@ -1,5 +1,5 @@
-import ResourcesIndexController from '@/actions/App/Http/Controllers/Resources/ResourcesIndexController';
-import ResourcesShowController from '@/actions/App/Http/Controllers/Resources/ResourcesShowController';
+import GuideShowController from '@/actions/App/Http/Controllers/Learn/GuideShowController';
+import LearnIndexController from '@/actions/App/Http/Controllers/Learn/LearnIndexController';
 import { ContentLayout } from '@/components/content/content-layout';
 import { type NavigationItem } from '@/components/content/table-of-contents';
 import PublicLayout from '@/layouts/public-layout';
@@ -7,19 +7,19 @@ import { home } from '@/routes';
 import { type SharedData } from '@/types';
 import { Head, usePage } from '@inertiajs/react';
 
-interface ResourcesShowProps {
+interface GuidesShowProps {
     title: string;
     slug: string;
     content: string;
     navigation: NavigationItem[];
 }
 
-export default function ResourcesShow({
+export default function GuidesShow({
     title,
     slug,
     content,
     navigation,
-}: ResourcesShowProps) {
+}: GuidesShowProps) {
     const { name, appUrl, defaultMetaDescription } =
         usePage<SharedData>().props;
 
@@ -27,7 +27,7 @@ export default function ResourcesShow({
         <PublicLayout
             breadcrumbs={[
                 { label: 'Home', href: home.url() },
-                { label: 'Resources', href: ResourcesIndexController.url() },
+                { label: 'Learn', href: LearnIndexController.url() },
                 { label: title },
             ]}
         >
@@ -51,7 +51,7 @@ export default function ResourcesShow({
                 <meta
                     head-key="og-url"
                     property="og:url"
-                    content={`${appUrl}${ResourcesShowController.url(slug)}`}
+                    content={`${appUrl}${GuideShowController.url(slug)}`}
                 />
                 <meta
                     head-key="og-description"

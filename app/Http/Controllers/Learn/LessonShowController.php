@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Controllers\Course\Public;
+namespace App\Http\Controllers\Learn;
 
 use App\Http\Controllers\BaseController;
 use App\Http\Resources\Course\CourseResource;

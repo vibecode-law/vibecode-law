@@ -25,7 +25,7 @@ export function PublicFooter() {
                         <ul className="space-y-3">
                             <li>
                                 <Link
-                                    href="/resources"
+                                    href="/learn/guides"
                                     className="text-sm text-neutral-600 transition-colors hover:text-neutral-900 dark:text-neutral-400 dark:hover:text-white"
                                 >
                                     Learn

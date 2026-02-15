@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Controllers\Resources;
+namespace App\Http\Controllers\Learn;
 
 use App\Http\Controllers\BaseController;
 use App\Services\Content\ContentNavigationService;
@@ -10,7 +10,7 @@ use Inertia\Inertia;
 use Inertia\Response;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
-class ResourcesShowController extends BaseController
+class GuideShowController extends BaseController
 {
     public function __construct(
         private ContentService $contentService,
@@ -19,9 +19,9 @@ class ResourcesShowController extends BaseController
 
     public function __invoke(string $slug): Response
     {
-        $contentPath = "resources/{$slug}";
+        $contentPath = "guides/{$slug}";
 
-        return Inertia::render(component: 'resources/show', props: [
+        return Inertia::render(component: 'learn/guides/show', props: [
             'title' => $this->getTitle(slug: $slug),
             'slug' => $slug,
             'content' => $this->getContent(contentPath: $contentPath),
@@ -32,7 +32,7 @@ class ResourcesShowController extends BaseController
     private function getTitle(string $slug): string
     {
         /** @var array<int, array{title: string, slug: string}> $childrenConfig */
-        $childrenConfig = Config::get(key: 'content.resources.children', default: []);
+        $childrenConfig = Config::get(key: 'content.guides.children', default: []);
 
         $page = collect($childrenConfig)->firstWhere('slug', $slug);
 
@@ -40,7 +40,7 @@ class ResourcesShowController extends BaseController
             throw new NotFoundHttpException;
         }
 
-        return $page['title'] ?? 'Resources';
+        return $page['title'] ?? 'Guides';
     }
 
     private function getContent(string $contentPath): string

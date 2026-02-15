@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Controllers\Course\Public;
+namespace App\Http\Controllers\Learn;
 
 use App\Http\Controllers\BaseController;
 use App\Http\Resources\Course\CourseResource;
@@ -11,7 +11,7 @@ use Inertia\Inertia;
 use Inertia\Response;
 use Spatie\LaravelData\DataCollection;
 
-class CourseIndexController extends BaseController
+class LearnIndexController extends BaseController
 {
     public function __invoke(): Response
     {
@@ -84,14 +84,14 @@ class CourseIndexController extends BaseController
     private function getGuides(): array
     {
         /** @var array<int, array{title: string, slug: string, summary: string, icon: string}> $childrenConfig */
-        $childrenConfig = Config::get(key: 'content.resources.children', default: []);
+        $childrenConfig = Config::get(key: 'content.guides.children', default: []);
 
         return collect($childrenConfig)->map(fn (array $child): array => [
             'name' => $child['title'],
             'slug' => $child['slug'],
             'summary' => $child['summary'],
             'icon' => $child['icon'],
-            'route' => route(name: 'resources.show', parameters: ['slug' => $child['slug']]),
+            'route' => route(name: 'learn.guides.show', parameters: ['slug' => $child['slug']]),
         ])->all();
     }
 }
