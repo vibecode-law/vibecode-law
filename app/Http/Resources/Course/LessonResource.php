@@ -43,7 +43,9 @@ class LessonResource extends Resource
 
     public Lazy|int|null $duration_seconds;
 
-    public Lazy|string $embed;
+    public Lazy|string $asset_id;
+
+    public Lazy|string $playback_id;
 
     public Lazy|FrontendEnum $host;
 
@@ -83,7 +85,8 @@ class LessonResource extends Resource
                 )
                 : null),
             'duration_seconds' => Lazy::create(fn () => $lesson->duration_seconds),
-            'embed' => Lazy::create(fn () => $lesson->embed),
+            'asset_id' => Lazy::create(fn () => $lesson->asset_id),
+            'playback_id' => Lazy::create(fn () => $lesson->playback_id),
             'host' => Lazy::create(fn () => $lesson->host->forFrontend()),
             'gated' => $lesson->gated,
             'order' => $lesson->order,
