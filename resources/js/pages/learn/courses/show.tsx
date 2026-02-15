@@ -18,10 +18,8 @@ interface CourseShowProps {
         tags?: App.Http.Resources.Course.CourseTagResource[];
     };
     nextLessonSlug: string | null;
-    isEnrolled: boolean;
     completedLessonIds: number[];
     totalLessons: number;
-    completedLessonsCount: number;
 }
 
 function formatDuration(seconds: number | null | undefined): string | null {
@@ -61,11 +59,10 @@ function getExperienceLevelColor(level: number): string {
 export default function CourseShow({
     course,
     nextLessonSlug,
-    isEnrolled,
     completedLessonIds,
     totalLessons,
-    completedLessonsCount,
 }: CourseShowProps) {
+    const completedLessonsCount = completedLessonIds.length;
     const { name, appUrl, transformImages } = usePage<SharedData>().props;
 
     const authorAvatarSrc =
@@ -175,7 +172,7 @@ export default function CourseShow({
                             </div>
 
                             {/* Mobile: Progress Bar - shown after stats */}
-                            {isEnrolled && totalLessons > 0 && (
+                            {completedLessonsCount > 0 && (
                                 <div className="mt-6 rounded-lg border border-neutral-200 bg-white p-4 lg:hidden dark:border-neutral-800 dark:bg-neutral-900">
                                     <div className="mb-2 flex items-center justify-between text-sm">
                                         <span className="font-medium text-neutral-900 dark:text-white">
@@ -188,7 +185,7 @@ export default function CourseShow({
                                     </div>
                                     <div className="h-2 overflow-hidden rounded-full bg-neutral-100 dark:bg-neutral-800">
                                         <div
-                                            className="h-full bg-gradient-to-r from-blue-500 to-blue-600 transition-all duration-300"
+                                            className="h-full bg-linear-to-r from-blue-500 to-blue-600 transition-all duration-300"
                                             style={{
                                                 width: `${(completedLessonsCount / totalLessons) * 100}%`,
                                             }}
@@ -291,7 +288,7 @@ export default function CourseShow({
                                                 : '#'
                                         }
                                     >
-                                        {isEnrolled && completedLessonsCount > 0
+                                        {completedLessonsCount > 0
                                             ? 'Resume Course'
                                             : 'Start Course'}
                                     </Link>
@@ -302,7 +299,7 @@ export default function CourseShow({
                         {/* Desktop Aside - hidden on mobile */}
                         <aside className="hidden shrink-0 lg:block lg:w-64 xl:w-68 2xl:w-72">
                             {/* Progress Bar */}
-                            {isEnrolled && totalLessons > 0 && (
+                            {completedLessonsCount > 0 && (
                                 <div className="mb-8 rounded-lg border border-neutral-200 bg-white p-4 dark:border-neutral-800 dark:bg-neutral-900">
                                     <div className="mb-2 flex items-center justify-between text-sm">
                                         <span className="font-medium text-neutral-900 dark:text-white">
@@ -315,7 +312,7 @@ export default function CourseShow({
                                     </div>
                                     <div className="h-2 overflow-hidden rounded-full bg-neutral-100 dark:bg-neutral-800">
                                         <div
-                                            className="h-full bg-gradient-to-r from-blue-500 to-blue-600 transition-all duration-300"
+                                            className="h-full bg-linear-to-r from-blue-500 to-blue-600 transition-all duration-300"
                                             style={{
                                                 width: `${(completedLessonsCount / totalLessons) * 100}%`,
                                             }}
