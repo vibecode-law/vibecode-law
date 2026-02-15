@@ -48,7 +48,7 @@ class CourseShowController extends BaseController
                     ->sortBy('order')
                     ->first(fn ($lesson) => ! in_array($lesson->id, $completedLessonIds, true));
 
-                $nextLessonSlug = $nextLesson?->slug ?? $firstLessonSlug;
+                $nextLessonSlug = $nextLesson->slug ?? $firstLessonSlug;
             }
         }
 
