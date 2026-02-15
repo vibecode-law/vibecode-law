@@ -108,6 +108,9 @@
         ],
         "pre-package-uninstall": [
             "Illuminate\\Foundation\\ComposerScripts::prePackageUninstall"
+        ],
+        "fresh-demo": [
+            "@php artisan migrate:fresh --seed --seeder=DemoSeeder"
         ]
     },
     "extra": {
