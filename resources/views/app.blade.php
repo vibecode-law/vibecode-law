@@ -48,12 +48,8 @@
         @vite(['resources/js/app.tsx', "resources/js/pages/{$page['component']}.tsx"])
         @inertiaHead
 
-        @if(app()->environment() === 'production' && config('services.plausible_script_id') !== null)
-            <script async src="https://plausible.io/js/{{ config('services.plausible_script_id') }}.js"></script>
-            <script>
-                window.plausible=window.plausible||function(){(plausible.q=plausible.q||[]).push(arguments)},plausible.init=plausible.init||function(i){plausible.o=i||{}};
-                plausible.init()
-            </script>
+        @if(app()->environment() === 'production' && config('services.fathom_site_id') !== null)
+            <script src="https://cdn.usefathom.com/script.js" data-spa="auto" data-site="{{ config('services.fathom_site_id') }}" defer></script>
         @endif
     </head>
     <body class="font-sans antialiased">

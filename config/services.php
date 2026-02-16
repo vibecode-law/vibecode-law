@@ -46,5 +46,5 @@ return [
         'base_url' => env('IMAGE_TRANSFORM_BASE_URL', null),
     ],
 
-    'plausible_script_id' => env('PLAUSIBLE_SCRIPT_ID', null),
+    'fathom_site_id' => env('FATHOM_SITE_ID', null),
 ];
