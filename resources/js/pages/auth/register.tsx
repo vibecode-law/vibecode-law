@@ -90,21 +90,6 @@ export default function Register() {
                             </div>
 
                             <FormField
-                                label="Handle"
-                                htmlFor="handle"
-                                error={errors.handle}
-                            >
-                                <Input
-                                    id="handle"
-                                    type="text"
-                                    required
-                                    tabIndex={3}
-                                    name="handle"
-                                    placeholder="john-doe"
-                                />
-                            </FormField>
-
-                            <FormField
                                 label="Organisation"
                                 htmlFor="organisation"
                                 error={errors.organisation}
@@ -113,7 +98,7 @@ export default function Register() {
                                 <Input
                                     id="organisation"
                                     type="text"
-                                    tabIndex={4}
+                                    tabIndex={3}
                                     autoComplete="organization"
                                     name="organisation"
                                     placeholder="Organisation"
@@ -129,7 +114,7 @@ export default function Register() {
                                 <Input
                                     id="job_title"
                                     type="text"
-                                    tabIndex={5}
+                                    tabIndex={4}
                                     autoComplete="organization-title"
                                     name="job_title"
                                     placeholder="Job title"
@@ -145,7 +130,7 @@ export default function Register() {
                                 <Input
                                     id="linkedin_url"
                                     type="url"
-                                    tabIndex={6}
+                                    tabIndex={5}
                                     name="linkedin_url"
                                     placeholder="https://www.linkedin.com/in/john-doe"
                                 />
@@ -160,7 +145,7 @@ export default function Register() {
                                     id="email"
                                     type="email"
                                     required
-                                    tabIndex={7}
+                                    tabIndex={6}
                                     autoComplete="email"
                                     name="email"
                                     placeholder="email@example.com"
@@ -176,7 +161,7 @@ export default function Register() {
                                     id="password"
                                     type="password"
                                     required
-                                    tabIndex={8}
+                                    tabIndex={7}
                                     autoComplete="new-password"
                                     name="password"
                                     placeholder="Password"
@@ -192,7 +177,7 @@ export default function Register() {
                                     id="password_confirmation"
                                     type="password"
                                     required
-                                    tabIndex={9}
+                                    tabIndex={8}
                                     autoComplete="new-password"
                                     name="password_confirmation"
                                     placeholder="Confirm password"
@@ -201,7 +186,7 @@ export default function Register() {
 
                             <SubmitButton
                                 className="mt-2 w-full"
-                                tabIndex={10}
+                                tabIndex={9}
                                 processing={processing}
                                 data-test="register-user-button"
                             >
@@ -211,7 +196,7 @@ export default function Register() {
 
                         <div className="text-center text-sm text-muted-foreground">
                             Already have an account?{' '}
-                            <TextLink href={login()} tabIndex={11}>
+                            <TextLink href={login()} tabIndex={10}>
                                 Log in
                             </TextLink>
                         </div>

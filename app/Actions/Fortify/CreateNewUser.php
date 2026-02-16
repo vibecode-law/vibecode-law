@@ -3,6 +3,7 @@
 namespace App\Actions\Fortify;
 
 use App\Actions\Fortify\Concerns\PasswordValidationRules;
+use App\Actions\User\GenerateUniqueUserHandleAction;
 use App\Models\User;
 use App\Services\User\ProfileService;
 use App\Services\User\UserAvatarService;
@@ -18,6 +19,7 @@ class CreateNewUser implements CreatesNewUsers
 
     public function __construct(
         private ProfileService $profileService,
+        private GenerateUniqueUserHandleAction $handleAction,
     ) {}
 
     /**
@@ -30,13 +32,6 @@ class CreateNewUser implements CreatesNewUsers
         Validator::make($input, [
             'first_name' => ['required', 'string', 'max:60'],
             'last_name' => ['required', 'string', 'max:60'],
-            'handle' => [
-                'required',
-                'string',
-                'max:255',
-                'regex:/^[a-z0-9]+(?:-[a-z0-9]+)*$/',
-                Rule::unique(User::class),
-            ],
             'organisation' => ['nullable', 'string', 'max:255'],
             'job_title' => ['nullable', 'string', 'max:255'],
             'linkedin_url' => ['nullable', 'url', 'max:255', 'regex:/^https:\/\/[a-z]+\.linkedin\.com\/in\//i'],
@@ -54,7 +49,10 @@ class CreateNewUser implements CreatesNewUsers
         $user = $this->profileService->create(data: [
             'first_name' => $input['first_name'],
             'last_name' => $input['last_name'],
-            'handle' => $input['handle'],
+            'handle' => $this->handleAction->generate(
+                firstName: $input['first_name'],
+                lastName: $input['last_name'],
+            ),
             'organisation' => $input['organisation'] ?? null,
             'job_title' => $input['job_title'] ?? null,
             'linkedin_url' => $input['linkedin_url'] ?? null,

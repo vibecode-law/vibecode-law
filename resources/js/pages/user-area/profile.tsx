@@ -93,20 +93,6 @@ export default function Profile({
                             </div>
 
                             <FormField
-                                label="Handle"
-                                htmlFor="handle"
-                                error={errors.handle}
-                            >
-                                <Input
-                                    id="handle"
-                                    defaultValue={auth.user.handle}
-                                    name="handle"
-                                    required
-                                    placeholder="john-doe"
-                                />
-                            </FormField>
-
-                            <FormField
                                 label="Organisation"
                                 htmlFor="organisation"
                                 error={errors.organisation}

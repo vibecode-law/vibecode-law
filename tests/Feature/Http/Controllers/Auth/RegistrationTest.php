@@ -25,7 +25,6 @@ class RegistrationTest extends TestCase
         $response = $this->post(route('register.store'), [
             'first_name' => 'Test',
             'last_name' => 'User',
-            'handle' => 'test-user',
             'email' => 'test@example.com',
             'password' => 'password',
             'password_confirmation' => 'password',
@@ -38,6 +37,28 @@ class RegistrationTest extends TestCase
         $this->assertSame('test-user', $user->handle);
     }
 
+    public function test_handle_is_unique_when_auto_generated()
+    {
+        Notification::fake();
+
+        User::factory()->create(['handle' => 'test-user']);
+
+        $response = $this->post(route('register.store'), [
+            'first_name' => 'Test',
+            'last_name' => 'User',
+            'email' => 'test@example.com',
+            'password' => 'password',
+            'password_confirmation' => 'password',
+        ]);
+
+        $this->assertAuthenticated();
+        $response->assertRedirect(route('home', absolute: false));
+
+        $user = User::where(column: 'email', operator: 'test@example.com')->first();
+        $this->assertNotSame('test-user', $user->handle);
+        $this->assertStringStartsWith('test-user-', $user->handle);
+    }
+
     public function test_new_users_can_register_with_linkedin_url()
     {
         Notification::fake();
@@ -45,7 +66,6 @@ class RegistrationTest extends TestCase
         $response = $this->post(route('register.store'), [
             'first_name' => 'Test',
             'last_name' => 'User',
-            'handle' => 'test-user',
             'email' => 'test@example.com',
             'linkedin_url' => 'https://www.linkedin.com/in/test-user',
             'password' => 'password',
@@ -66,7 +86,6 @@ class RegistrationTest extends TestCase
         $response = $this->post(route('register.store'), [
             'first_name' => 'Test',
             'last_name' => 'User',
-            'handle' => 'test-user',
             'email' => 'test@example.com',
             'linkedin_url' => 'https://uk.linkedin.com/in/test-user',
             'password' => 'password',
@@ -87,7 +106,6 @@ class RegistrationTest extends TestCase
         $response = $this->post(route('register.store'), [
             'first_name' => 'Test',
             'last_name' => 'User',
-            'handle' => 'test-user',
             'email' => 'test@example.com',
             'linkedin_url' => 'not-a-valid-url',
             'password' => 'password',
@@ -105,7 +123,6 @@ class RegistrationTest extends TestCase
         $response = $this->post(route('register.store'), [
             'first_name' => 'Test',
             'last_name' => 'User',
-            'handle' => 'test-user',
             'email' => 'test@example.com',
             'linkedin_url' => 'https://example.com/in/john-doe',
             'password' => 'password',
@@ -123,7 +140,6 @@ class RegistrationTest extends TestCase
         $response = $this->post(route('register.store'), [
             'first_name' => 'Test',
             'last_name' => 'User',
-            'handle' => 'test-user',
             'email' => 'test@example.com',
             'linkedin_url' => 'https://www.linkedin.com/company/acme',
             'password' => 'password',
@@ -141,7 +157,6 @@ class RegistrationTest extends TestCase
         $response = $this->post(route('register.store'), [
             'first_name' => 'Test',
             'last_name' => 'User',
-            'handle' => 'test-user',
             'email' => 'test@example.com',
             'linkedin_url' => '',
             'password' => 'password',
@@ -153,57 +168,5 @@ class RegistrationTest extends TestCase
 
         $user = User::where(column: 'email', operator: 'test@example.com')->first();
         $this->assertNull($user->linkedin_url);
-    }
-
-    public function test_handle_is_required()
-    {
-        Notification::fake();
-
-        $response = $this->post(route('register.store'), [
-            'first_name' => 'Test',
-            'last_name' => 'User',
-            'email' => 'test@example.com',
-            'password' => 'password',
-            'password_confirmation' => 'password',
-        ]);
-
-        $response->assertSessionHasErrors('handle');
-        $this->assertGuest();
-    }
-
-    public function test_handle_must_be_valid_slug_format()
-    {
-        Notification::fake();
-
-        $response = $this->post(route('register.store'), [
-            'first_name' => 'Test',
-            'last_name' => 'User',
-            'handle' => 'Invalid Handle!',
-            'email' => 'test@example.com',
-            'password' => 'password',
-            'password_confirmation' => 'password',
-        ]);
-
-        $response->assertSessionHasErrors('handle');
-        $this->assertGuest();
-    }
-
-    public function test_handle_must_be_unique()
-    {
-        Notification::fake();
-
-        User::factory()->create(['handle' => 'existing-handle']);
-
-        $response = $this->post(route('register.store'), [
-            'first_name' => 'Test',
-            'last_name' => 'User',
-            'handle' => 'existing-handle',
-            'email' => 'test@example.com',
-            'password' => 'password',
-            'password_confirmation' => 'password',
-        ]);
-
-        $response->assertSessionHasErrors('handle');
-        $this->assertGuest();
     }
 }

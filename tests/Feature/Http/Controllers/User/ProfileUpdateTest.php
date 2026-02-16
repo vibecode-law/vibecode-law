@@ -34,7 +34,6 @@ class ProfileUpdateTest extends TestCase
             ->patch(route('user-area.profile.update'), [
                 'first_name' => 'Test',
                 'last_name' => 'User',
-                'handle' => 'new-handle',
                 'email' => 'test@example.com',
             ]);
 
@@ -46,7 +45,6 @@ class ProfileUpdateTest extends TestCase
 
         $this->assertSame('Test', $user->first_name);
         $this->assertSame('User', $user->last_name);
-        $this->assertSame('new-handle', $user->handle);
         $this->assertSame('test@example.com', $user->email);
         $this->assertNull($user->email_verified_at);
     }
@@ -63,7 +61,6 @@ class ProfileUpdateTest extends TestCase
             ->patch(route('user-area.profile.update'), [
                 'first_name' => $user->first_name,
                 'last_name' => $user->last_name,
-                'handle' => $user->handle,
                 'email' => $user->email,
                 'linkedin_url' => 'https://www.linkedin.com/in/test-user',
             ]);
@@ -89,7 +86,6 @@ class ProfileUpdateTest extends TestCase
             ->patch(route('user-area.profile.update'), [
                 'first_name' => $user->first_name,
                 'last_name' => $user->last_name,
-                'handle' => $user->handle,
                 'email' => $user->email,
                 'linkedin_url' => 'https://uk.linkedin.com/in/test-user',
             ]);
@@ -113,7 +109,6 @@ class ProfileUpdateTest extends TestCase
             ->patch(route('user-area.profile.update'), [
                 'first_name' => $user->first_name,
                 'last_name' => $user->last_name,
-                'handle' => $user->handle,
                 'email' => $user->email,
                 'linkedin_url' => 'not-a-valid-url',
             ]);
@@ -131,7 +126,6 @@ class ProfileUpdateTest extends TestCase
             ->patch(route('user-area.profile.update'), [
                 'first_name' => $user->first_name,
                 'last_name' => $user->last_name,
-                'handle' => $user->handle,
                 'email' => $user->email,
                 'linkedin_url' => 'https://example.com/in/john-doe',
             ]);
@@ -149,7 +143,6 @@ class ProfileUpdateTest extends TestCase
             ->patch(route('user-area.profile.update'), [
                 'first_name' => $user->first_name,
                 'last_name' => $user->last_name,
-                'handle' => $user->handle,
                 'email' => $user->email,
                 'linkedin_url' => 'https://www.linkedin.com/company/acme',
             ]);
@@ -169,7 +162,6 @@ class ProfileUpdateTest extends TestCase
             ->patch(route('user-area.profile.update'), [
                 'first_name' => $user->first_name,
                 'last_name' => $user->last_name,
-                'handle' => $user->handle,
                 'email' => $user->email,
                 'linkedin_url' => '',
             ]);
@@ -195,7 +187,6 @@ class ProfileUpdateTest extends TestCase
             ->patch(route('user-area.profile.update'), [
                 'first_name' => $user->first_name,
                 'last_name' => $user->last_name,
-                'handle' => $user->handle,
                 'email' => $user->email,
                 'bio' => '# Hello World\n\nThis is my **bio** with markdown.',
             ]);
@@ -221,7 +212,6 @@ class ProfileUpdateTest extends TestCase
             ->patch(route('user-area.profile.update'), [
                 'first_name' => $user->first_name,
                 'last_name' => $user->last_name,
-                'handle' => $user->handle,
                 'email' => $user->email,
                 'bio' => '<script>alert("xss")</script>Hello <b>World</b>',
             ])
@@ -245,7 +235,6 @@ class ProfileUpdateTest extends TestCase
             ->patch(route('user-area.profile.update'), [
                 'first_name' => $user->first_name,
                 'last_name' => $user->last_name,
-                'handle' => $user->handle,
                 'email' => $user->email,
                 'bio' => '',
             ]);
@@ -269,7 +258,6 @@ class ProfileUpdateTest extends TestCase
             ->patch(route('user-area.profile.update'), [
                 'first_name' => $user->first_name,
                 'last_name' => $user->last_name,
-                'handle' => $user->handle,
                 'email' => $user->email,
                 'bio' => str_repeat('a', 5001),
             ]);
@@ -287,7 +275,6 @@ class ProfileUpdateTest extends TestCase
             ->patch(route('user-area.profile.update'), [
                 'first_name' => 'Test',
                 'last_name' => 'User',
-                'handle' => $user->handle,
                 'email' => $user->email,
             ]);
 
@@ -298,74 +285,25 @@ class ProfileUpdateTest extends TestCase
         $this->assertNotNull($user->refresh()->email_verified_at);
     }
 
-    public function test_profile_handle_is_required()
+    public function test_profile_handle_cannot_be_changed()
     {
         /** @var User */
-        $user = User::factory()->create();
+        $user = User::factory()->create(['handle' => 'original-handle']);
 
-        $response = $this
+        $this
             ->actingAs($user)
             ->patch(route('user-area.profile.update'), [
                 'first_name' => $user->first_name,
                 'last_name' => $user->last_name,
+                'handle' => 'new-handle',
                 'email' => $user->email,
-            ]);
-
-        $response->assertSessionHasErrors('handle');
-    }
-
-    public function test_profile_handle_must_be_valid_slug_format()
-    {
-        /** @var User */
-        $user = User::factory()->create();
-
-        $response = $this
-            ->actingAs($user)
-            ->patch(route('user-area.profile.update'), [
-                'first_name' => $user->first_name,
-                'last_name' => $user->last_name,
-                'handle' => 'Invalid Handle!',
-                'email' => $user->email,
-            ]);
-
-        $response->assertSessionHasErrors('handle');
-    }
-
-    public function test_profile_handle_must_be_unique()
-    {
-        /** @var User */
-        $user = User::factory()->create();
-        User::factory()->create(['handle' => 'taken-handle']);
-
-        $response = $this
-            ->actingAs($user)
-            ->patch(route('user-area.profile.update'), [
-                'first_name' => $user->first_name,
-                'last_name' => $user->last_name,
-                'handle' => 'taken-handle',
-                'email' => $user->email,
-            ]);
-
-        $response->assertSessionHasErrors('handle');
-    }
-
-    public function test_profile_handle_can_keep_same_value()
-    {
-        /** @var User */
-        $user = User::factory()->create(['handle' => 'my-handle']);
-
-        $response = $this
-            ->actingAs($user)
-            ->patch(route('user-area.profile.update'), [
-                'first_name' => $user->first_name,
-                'last_name' => $user->last_name,
-                'handle' => 'my-handle',
-                'email' => $user->email,
-            ]);
-
-        $response
+            ])
             ->assertSessionHasNoErrors()
             ->assertRedirect(route('user-area.profile.edit'));
+
+        $user->refresh();
+
+        $this->assertSame('original-handle', $user->handle);
     }
 
     public function test_user_can_delete_their_account()
