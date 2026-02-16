@@ -18,7 +18,6 @@ it('allows new user to upload avatar during registration', function () {
     post(route('register.store'), [
         'first_name' => 'Test',
         'last_name' => 'User',
-        'handle' => 'test-user',
         'email' => 'test@example.com',
         'password' => 'password',
         'password_confirmation' => 'password',
@@ -35,7 +34,6 @@ it('stores registration avatar in users/avatars directory', function () {
     post(route('register.store'), [
         'first_name' => 'Test',
         'last_name' => 'User',
-        'handle' => 'test-user',
         'email' => 'test@example.com',
         'password' => 'password',
         'password_confirmation' => 'password',
@@ -52,7 +50,6 @@ it('allows registration without avatar', function () {
     post(route('register.store'), [
         'first_name' => 'Test',
         'last_name' => 'User',
-        'handle' => 'test-user',
         'email' => 'test@example.com',
         'password' => 'password',
         'password_confirmation' => 'password',
@@ -67,7 +64,6 @@ it('validates registration avatar is an image', function () {
     post(route('register.store'), [
         'first_name' => 'Test',
         'last_name' => 'User',
-        'handle' => 'test-user',
         'email' => 'test@example.com',
         'password' => 'password',
         'password_confirmation' => 'password',
@@ -79,7 +75,6 @@ it('validates registration avatar max size of 2MB', function () {
     post(route('register.store'), [
         'first_name' => 'Test',
         'last_name' => 'User',
-        'handle' => 'test-user',
         'email' => 'test@example.com',
         'password' => 'password',
         'password_confirmation' => 'password',
@@ -91,7 +86,6 @@ it('accepts valid image types during registration', function (string $extension)
     post(route('register.store'), [
         'first_name' => 'Test',
         'last_name' => 'User',
-        'handle' => "test-user-{$extension}",
         'email' => "test-{$extension}@example.com",
         'password' => 'password',
         'password_confirmation' => 'password',
