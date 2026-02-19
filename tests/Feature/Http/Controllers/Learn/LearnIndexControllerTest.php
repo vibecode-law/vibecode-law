@@ -5,10 +5,15 @@ use App\Models\Course\CourseUser;
 use App\Models\Course\Lesson;
 use App\Models\Course\LessonUser;
 use App\Models\User;
+use Illuminate\Support\Facades\Config;
 use Inertia\Testing\AssertableInertia;
 
 use function Pest\Laravel\actingAs;
 use function Pest\Laravel\get;
+
+beforeEach(function () {
+    Config::set('app.learn_enabled', true);
+});
 
 test('index returns 200 for guests', function () {
     get(route('learn.index'))
@@ -224,6 +229,53 @@ describe('course progress for authenticated users', function () {
             ->assertInertia(fn (AssertableInertia $page) => $page
                 ->where("courseProgress.{$course1->id}.progressPercentage", 50)
                 ->where("courseProgress.{$course2->id}.progressPercentage", 0)
+            );
+    });
+});
+
+describe('learn disabled', function () {
+    test('index returns 200 when learn is disabled', function () {
+        Config::set('app.learn_enabled', false);
+
+        get(route('learn.index'))
+            ->assertOk();
+    });
+
+    test('index returns empty courses when learn is disabled', function () {
+        Config::set('app.learn_enabled', false);
+
+        Course::factory()->published()->create();
+
+        get(route('learn.index'))
+            ->assertInertia(fn (AssertableInertia $page) => $page
+                ->where('courses', [])
+                ->where('courseProgress', [])
+                ->where('totalEnrolledUsers', 0)
+            );
+    });
+
+    test('index still returns guides when learn is disabled', function () {
+        Config::set('app.learn_enabled', false);
+
+        $guidesConfig = config('content.guides.children');
+
+        get(route('learn.index'))
+            ->assertInertia(fn (AssertableInertia $page) => $page
+                ->has('guides', count($guidesConfig))
+            );
+    });
+
+    test('index returns courses for admins when learn is disabled', function () {
+        Config::set('app.learn_enabled', false);
+
+        Course::factory()->published()->create();
+
+        $admin = User::factory()->admin()->create();
+
+        actingAs($admin)
+            ->get(route('learn.index'))
+            ->assertInertia(fn (AssertableInertia $page) => $page
+                ->has('courses', 1)
             );
     });
 });

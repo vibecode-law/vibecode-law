@@ -47,6 +47,7 @@ export interface SharedData {
     legalPages: LegalPage[];
     transformImages: boolean;
     challengesEnabled: boolean;
+    learnEnabled: boolean;
     [key: string]: unknown;
 }
 

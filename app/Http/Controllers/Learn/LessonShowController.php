@@ -12,6 +12,7 @@ use App\Models\Course\LessonUser;
 use App\Models\User;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\Session;
 use Inertia\Inertia;
 use Inertia\Response;
@@ -31,6 +32,11 @@ class LessonShowController extends BaseController
     public function __invoke(Course $course, Lesson $lesson, LogLessonProgressAction $logProgress): Response|HttpResponse
     {
         $this->user = Auth::user();
+
+        if (Config::get('app.learn_enabled') === false && $this->user?->is_admin !== true) {
+            abort(404);
+        }
+
         $this->course = $course;
         $this->lesson = $lesson;
 

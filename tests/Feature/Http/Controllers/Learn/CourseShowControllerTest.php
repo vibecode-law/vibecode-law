@@ -6,11 +6,36 @@ use App\Models\Course\Lesson;
 use App\Models\Course\LessonUser;
 use App\Models\Tag;
 use App\Models\User;
+use Illuminate\Support\Facades\Config;
 use Inertia\Testing\AssertableInertia;
 
 use function Pest\Laravel\actingAs;
 use function Pest\Laravel\get;
 use function Pest\Laravel\mock;
+
+beforeEach(function () {
+    Config::set('app.learn_enabled', true);
+});
+
+test('show returns 404 when learn is disabled', function () {
+    Config::set('app.learn_enabled', false);
+
+    $course = Course::factory()->published()->create();
+
+    get(route('learn.courses.show', $course))
+        ->assertNotFound();
+});
+
+test('show allows admins when learn is disabled', function () {
+    Config::set('app.learn_enabled', false);
+
+    $course = Course::factory()->published()->create();
+    $admin = User::factory()->admin()->create();
+
+    actingAs($admin)
+        ->get(route('learn.courses.show', $course))
+        ->assertOk();
+});
 
 test('show returns 200 for guests with valid published course slug', function () {
     $course = Course::factory()->published()->create();

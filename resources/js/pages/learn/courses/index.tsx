@@ -27,8 +27,10 @@ export default function CourseIndex({
     guides = [],
     totalEnrolledUsers = 0,
 }: CourseIndexProps) {
-    const { name, appUrl } = usePage<SharedData>().props;
-    const [activeTab, setActiveTab] = useState<'courses' | 'guides'>('courses');
+    const { name, appUrl, learnEnabled } = usePage<SharedData>().props;
+    const [activeTab, setActiveTab] = useState<'courses' | 'guides'>(
+        learnEnabled ? 'courses' : 'guides',
+    );
 
     const allCourses = propCourses ?? [];
     const featuredCourses = allCourses.filter((c) => c.is_featured === true);
@@ -81,13 +83,15 @@ export default function CourseIndex({
                         Start with the foundations and progress to master skills
                         through structured, hands-on courses.
                     </p>
-                    <p className="mt-8 flex flex-col items-center justify-center gap-2 text-sm text-neutral-600 md:flex-row md:text-base dark:text-neutral-400">
-                        <span className="flex items-center justify-start gap-2">
-                            <Users className="size-5" />
-                            Join {totalEnrolledUsers.toLocaleString()} others
-                            who are learning to build.
-                        </span>
-                    </p>
+                    {learnEnabled && (
+                        <p className="mt-8 flex flex-col items-center justify-center gap-2 text-sm text-neutral-600 md:flex-row md:text-base dark:text-neutral-400">
+                            <span className="flex items-center justify-start gap-2">
+                                <Users className="size-5" />
+                                Join {totalEnrolledUsers.toLocaleString()}{' '}
+                                others who are learning to build.
+                            </span>
+                        </p>
+                    )}
                 </div>
             </section>
 
@@ -96,11 +100,16 @@ export default function CourseIndex({
                 <div className="mx-auto max-w-6xl px-4">
                     <TabNav
                         items={[
-                            {
-                                title: 'Courses',
-                                onClick: () => setActiveTab('courses'),
-                                isActive: activeTab === 'courses',
-                            },
+                            ...(learnEnabled
+                                ? [
+                                      {
+                                          title: 'Courses',
+                                          onClick: () =>
+                                              setActiveTab('courses'),
+                                          isActive: activeTab === 'courses',
+                                      },
+                                  ]
+                                : []),
                             {
                                 title: 'Guides',
                                 onClick: () => setActiveTab('guides'),
