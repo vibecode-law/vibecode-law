@@ -25,15 +25,16 @@ Contributions are welcome and will be fully credited.
 git checkout -b feat/your-feature-name  # Feature
 ```
 4. Make your changes.
-5. Re-generate definitions and run code quality checks & tests:
+5. Run the `/full-code-review` skill asking it to review all changes made in your feature branch.
+6. Re-generate definitions and run code quality checks & tests:
 ```bash
 composer definitions    # Auto-generate IDE-helpers and frontend types.
 composer format-test    # Backend formating, linting and tests
 npm run format-lint     # Frontend formatting and linting
 ```
-6. Fix any flagged issues and re-run.
-7. Commit your changes and push them to Github.
-8. Create a pull request in `vibecode-law/vibecode-law`.
+7. Fix any flagged issues and re-run.
+8. Commit your changes and push them to Github.
+9. Create a pull request in `vibecode-law/vibecode-law`.
 
 For a more detailed guide, please see our [Pull Requests for Beginners Guide](../docs/PULL_REQUEST_GUIDE.md).
 

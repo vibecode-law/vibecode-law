@@ -3,6 +3,8 @@
 use App\Enums\VideoHost;
 use App\Models\Course\Course;
 use App\Models\Course\Lesson;
+use App\Models\Course\LessonTranscriptLine;
+use App\Models\Tag;
 use App\Models\User;
 use App\Services\Markdown\MarkdownService;
 use Illuminate\Support\Collection;
@@ -36,6 +38,114 @@ describe('course relationship', function () {
         $course->delete();
 
         expect(Lesson::query()->find($lesson->id))->toBeNull();
+    });
+});
+
+describe('tags relationship', function () {
+    test('lesson can have many tags', function () {
+        $lesson = Lesson::factory()->create();
+        $tags = Tag::factory()->count(3)->create();
+
+        $lesson->tags()->attach($tags);
+
+        expect($lesson->tags)->toHaveCount(3);
+        expect($lesson->tags->first())->toBeInstanceOf(Tag::class);
+    });
+
+    test('detaching tag removes pivot record', function () {
+        $lesson = Lesson::factory()->create();
+        $tag = Tag::factory()->create();
+
+        $lesson->tags()->attach($tag);
+
+        expect($lesson->tags)->toHaveCount(1);
+
+        $lesson->tags()->detach($tag);
+
+        expect($lesson->fresh()->tags)->toHaveCount(0);
+    });
+
+    test('deleting lesson removes pivot records', function () {
+        $lesson = Lesson::factory()->create();
+        $tags = Tag::factory()->count(2)->create();
+
+        $lesson->tags()->attach($tags);
+
+        $lesson->delete();
+
+        expect(
+            Tag::query()
+                ->whereHas('lessons', fn ($q) => $q->where('lesson_id', $lesson->id))
+                ->count()
+        )->toBe(0);
+    });
+});
+
+describe('instructors relationship', function () {
+    test('lesson can have many instructors', function () {
+        $lesson = Lesson::factory()->create();
+        $instructors = User::factory()->count(3)->create();
+
+        $lesson->instructors()->attach($instructors);
+
+        expect($lesson->instructors)->toHaveCount(3)
+            ->each->toBeInstanceOf(User::class);
+    });
+
+    test('detaching instructor removes pivot record', function () {
+        $lesson = Lesson::factory()->create();
+        $instructor = User::factory()->create();
+
+        $lesson->instructors()->attach($instructor);
+
+        expect($lesson->instructors)->toHaveCount(1);
+
+        $lesson->instructors()->detach($instructor);
+
+        expect($lesson->fresh()->instructors)->toHaveCount(0);
+    });
+
+    test('deleting lesson removes instructor pivot records', function () {
+        $lesson = Lesson::factory()->create();
+        $instructors = User::factory()->count(2)->create();
+
+        $lesson->instructors()->attach($instructors);
+
+        $lessonId = $lesson->id;
+        $lesson->delete();
+
+        expect(
+            \Illuminate\Support\Facades\DB::table('instructor_lesson')
+                ->where('lesson_id', $lessonId)
+                ->count()
+        )->toBe(0);
+    });
+});
+
+describe('transcriptLines relationship', function () {
+    test('lesson has many transcript lines', function () {
+        $lesson = Lesson::factory()->create();
+        $lines = LessonTranscriptLine::factory()->count(3)->for($lesson)->create();
+
+        expect($lesson->transcriptLines)->toHaveCount(3)
+            ->each->toBeInstanceOf(LessonTranscriptLine::class);
+    });
+
+    test('transcript line belongs to a lesson', function () {
+        $lesson = Lesson::factory()->create();
+        $line = LessonTranscriptLine::factory()->for($lesson)->create();
+
+        expect($line->lesson)->toBeInstanceOf(Lesson::class)
+            ->and($line->lesson->id)->toBe($lesson->id);
+    });
+
+    test('deleting lesson cascades to transcript lines', function () {
+        $lesson = Lesson::factory()->create();
+        LessonTranscriptLine::factory()->count(3)->for($lesson)->create();
+
+        $lesson->delete();
+
+        expect(LessonTranscriptLine::query()->where('lesson_id', $lesson->id)->count())->toBe(0);
     });
 });
 

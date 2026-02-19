@@ -2,7 +2,6 @@
 
 namespace Database\Factories\Course;
 
-use App\Enums\VideoHost;
 use App\Models\Course\Course;
 use App\Models\Course\Lesson;
 use Database\Factories\Concerns\HasStockImages;
@@ -30,20 +29,49 @@ class LessonFactory extends Factory
             'tagline' => fake()->sentence(),
             'description' => fake()->paragraphs(nb: 2, asText: true),
             'copy' => fake()->optional()->paragraphs(nb: 4, asText: true),
-            'transcript' => fake()->optional()->paragraphs(nb: 5, asText: true),
-            'caption_track_id' => fake()->optional()->uuid(),
-            'asset_id' => fake()->uuid(),
-            'playback_id' => fake()->uuid(),
-            'host' => VideoHost::Mux,
+            'asset_id' => null,
+            'playback_id' => null,
+            'host' => null,
             'learning_objectives' => fake()->optional()->paragraphs(nb: 2, asText: true),
             'duration_seconds' => fake()->optional()->numberBetween(60, 3600),
             'gated' => true,
             'order' => fake()->numberBetween(0, 20),
-            'visible' => fake()->boolean(),
+            'allow_preview' => fake()->boolean(),
             'publish_date' => fake()->optional()->date(),
-            'thumbnail_extension' => null,
+            'thumbnail_filename' => null,
             'thumbnail_crops' => null,
         ];
+    }
+
+    public function published(): static
+    {
+        return $this->state(fn (): array => [
+            'publish_date' => fake()->dateTimeBetween(startDate: '-1 year', endDate: '-1 day'),
+            'allow_preview' => false,
+        ]);
+    }
+
+    public function previewable(): static
+    {
+        return $this->state(fn (): array => [
+            'publish_date' => null,
+            'allow_preview' => true,
+        ]);
+    }
+
+    public function draft(): static
+    {
+        return $this->state(fn (): array => [
+            'publish_date' => null,
+            'allow_preview' => false,
+        ]);
+    }
+
+    public function ungated(): static
+    {
+        return $this->state(fn (): array => [
+            'gated' => false,
+        ]);
     }
 
     public function withStockThumbnail(): static
@@ -51,13 +79,14 @@ class LessonFactory extends Factory
         return $this->afterCreating(function (Lesson $lesson): void {
             $imagePath = $this->getRandomStockImagePath();
             $extension = Str::afterLast($imagePath, '.');
+            $filename = Str::random(40).'.'.$extension;
 
-            $path = "lesson/{$lesson->id}/thumbnail.{$extension}";
+            $path = "lesson/{$lesson->id}/{$filename}";
 
             Storage::disk('public')->put($path, Storage::get($imagePath));
 
             $lesson->update([
-                'thumbnail_extension' => $extension,
+                'thumbnail_filename' => $filename,
             ]);
         });
     }

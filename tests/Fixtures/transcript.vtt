@@ -1,0 +1,3665 @@
+WEBVTT
+
+1
+00:00:00.000 --> 00:00:01.120
+[MUSIC PLAYING]
+
+2
+00:00:01.120 --> 00:00:04.080
+Part of the philosophy of Shaka is to be the easy button
+
+3
+00:00:04.080 --> 00:00:06.120
+and to be the everything player.
+
+4
+00:00:06.120 --> 00:00:07.480
+It's designed to be extensible.
+
+5
+00:00:07.480 --> 00:00:08.960
+It's designed to be flexible.
+
+6
+00:00:08.960 --> 00:00:12.840
+And for the easy stuff, it's designed to be easy to use.
+
+7
+00:00:12.840 --> 00:00:15.000
+If you want to have one interface that
+
+8
+00:00:15.000 --> 00:00:17.080
+plays dash and plays HLS.
+
+9
+00:00:17.080 --> 00:00:20.600
+And when you're stuck with native HLS on an old iPhone
+
+10
+00:00:20.600 --> 00:00:22.960
+version, then it'll do that too.
+
+11
+00:00:22.960 --> 00:00:25.560
+If you just want one API for all of those things,
+
+12
+00:00:25.560 --> 00:00:28.360
+that is what Shaka is.
+
+13
+00:00:28.360 --> 00:00:32.000
+I'm Matt, the organizer of the SF Video Technology Meetup
+
+14
+00:00:32.000 --> 00:00:33.720
+and the Demux conference.
+
+15
+00:00:33.720 --> 00:00:36.320
+And I'm Steve, creator of Video.js,
+
+16
+00:00:36.320 --> 00:00:38.160
+the open source video player.
+
+17
+00:00:38.160 --> 00:00:41.200
+And I am Phil, the organizer of the London Video Technology
+
+18
+00:00:41.200 --> 00:00:44.600
+Meetup and co-organizer of Demux alongside Matt.
+
+19
+00:00:44.600 --> 00:00:46.960
+And you're listening to Demux, a podcast
+
+20
+00:00:46.960 --> 00:00:49.800
+for and by engineers working with video.
+
+21
+00:00:49.800 --> 00:00:51.560
+Demux is brought to you by HeavyBit,
+
+22
+00:00:51.560 --> 00:00:54.400
+a program dedicated to helping startups take their developer
+
+23
+00:00:54.400 --> 00:00:55.800
+products to market.
+
+24
+00:00:55.800 --> 00:00:58.320
+For more information, visit heavybit.com.
+
+25
+00:00:58.320 --> 00:00:59.880
+We're always looking for topics.
+
+26
+00:00:59.880 --> 00:01:02.040
+So if you have any suggestions or just want to tell us
+
+27
+00:01:02.040 --> 00:01:06.320
+how wrong we are, you can find us on Twitter at demuxed.
+
+28
+00:01:06.320 --> 00:01:11.160
+Yeah, everyone, welcome to the next episode of the Demux
+
+29
+00:01:11.160 --> 00:01:12.840
+podcast.
+
+30
+00:01:12.840 --> 00:01:14.080
+I was looking earlier today.
+
+31
+00:01:14.080 --> 00:01:16.600
+And this is one of the rare times
+
+32
+00:01:16.600 --> 00:01:20.480
+that we've had multiple in a year, I think, at this point.
+
+33
+00:01:20.480 --> 00:01:22.840
+Officially, somebody was saying that as long as you have one
+
+34
+00:01:22.840 --> 00:01:25.000
+a year, we're not dead.
+
+35
+00:01:25.000 --> 00:01:26.880
+And so I looked in the history.
+
+36
+00:01:26.880 --> 00:01:30.840
+And in 2023, we technically died.
+
+37
+00:01:30.840 --> 00:01:31.560
+But we're back.
+
+38
+00:01:31.560 --> 00:01:32.400
+Briefly.
+
+39
+00:01:32.400 --> 00:01:33.520
+Briefly died.
+
+40
+00:01:33.520 --> 00:01:34.440
+Briefly died.
+
+41
+00:01:34.440 --> 00:01:36.360
+It is Halloween like next week.
+
+42
+00:01:36.360 --> 00:01:39.920
+So we're basically zombies now.
+
+43
+00:01:39.920 --> 00:01:42.840
+No, no, we're fully back alive because of the podcast
+
+44
+00:01:42.840 --> 00:01:45.280
+that we released relatively recently.
+
+45
+00:01:45.280 --> 00:01:46.520
+Pre-demuxed.
+
+46
+00:01:46.520 --> 00:01:47.760
+We've got a good thing going here.
+
+47
+00:01:47.760 --> 00:01:48.520
+Let's keep it going.
+
+48
+00:01:48.520 --> 00:01:49.160
+Yeah.
+
+49
+00:01:49.160 --> 00:01:51.320
+All right, today we got Joey from Shocker Player.
+
+50
+00:01:51.320 --> 00:01:52.560
+Yay.
+
+51
+00:01:52.560 --> 00:01:53.720
+Hi, everybody.
+
+52
+00:01:53.720 --> 00:01:55.440
+We just finished Demuxed.
+
+53
+00:01:55.440 --> 00:01:57.960
+Yeah, so the genesis of being able to even do this recording
+
+54
+00:01:57.960 --> 00:02:00.320
+is we figured we've got Phil in town.
+
+55
+00:02:00.320 --> 00:02:02.640
+We've got all these great attendees in town.
+
+56
+00:02:02.640 --> 00:02:05.440
+And people from the community here
+
+57
+00:02:05.440 --> 00:02:06.800
+is anybody flying out late enough
+
+58
+00:02:06.800 --> 00:02:09.440
+that we could pop in and do a quick recording.
+
+59
+00:02:09.440 --> 00:02:15.200
+So Phil is very excited to pull the recording equipment that
+
+60
+00:02:15.200 --> 00:02:17.440
+was still in boxes from getting into the office
+
+61
+00:02:17.440 --> 00:02:19.160
+from Demuxed last night.
+
+62
+00:02:19.160 --> 00:02:21.360
+And Joey doesn't fly out for another couple of hours.
+
+63
+00:02:21.360 --> 00:02:24.680
+So we figured, yeah, let's have a chat.
+
+64
+00:02:24.680 --> 00:02:29.720
+So yeah, we just finished up about 2024, the 10th one,
+
+65
+00:02:29.720 --> 00:02:34.280
+which the days are long, but the years are short and all that.
+
+66
+00:02:34.280 --> 00:02:35.920
+Yeah, congrats to you and Phil.
+
+67
+00:02:35.920 --> 00:02:38.640
+That is real accomplishment.
+
+68
+00:02:38.640 --> 00:02:40.320
+10 years.
+
+69
+00:02:40.320 --> 00:02:41.640
+I can't believe it's still going.
+
+70
+00:02:41.640 --> 00:02:42.760
+I know.
+
+71
+00:02:42.760 --> 00:02:45.600
+I wouldn't have guessed this nine years ago.
+
+72
+00:02:45.600 --> 00:02:48.120
+11 years, technically.
+
+73
+00:02:48.120 --> 00:02:49.680
+Oh, because of Demuxed.
+
+74
+00:02:49.680 --> 00:02:51.320
+Oh, because of Demuxed.
+
+75
+00:02:51.320 --> 00:02:52.120
+Yes.
+
+76
+00:02:52.120 --> 00:02:54.280
+I can't wait to field questions about whether or not
+
+77
+00:02:54.280 --> 00:02:56.240
+that was real for the next 10 years.
+
+78
+00:02:56.240 --> 00:02:59.960
+Which is weird because it's half real.
+
+79
+00:02:59.960 --> 00:03:03.120
+All the best lies are half real.
+
+80
+00:03:03.120 --> 00:03:04.160
+And also, huge shout-outs.
+
+81
+00:03:04.160 --> 00:03:08.000
+I mean, Phil did a ton of work on this thing.
+
+82
+00:03:08.000 --> 00:03:10.200
+But Victoria really held this thing together
+
+83
+00:03:10.200 --> 00:03:12.960
+with duct tape and zip ties there, especially down the stretch.
+
+84
+00:03:12.960 --> 00:03:16.000
+So huge shout-out for her part in this.
+
+85
+00:03:16.000 --> 00:03:18.520
+If you missed the conference and you want to see it,
+
+86
+00:03:18.520 --> 00:03:22.120
+or even if you were there, you want to catch up on a talk
+
+87
+00:03:22.120 --> 00:03:23.600
+that you missed, you stepped out for a little bit,
+
+88
+00:03:23.600 --> 00:03:25.760
+whatever else, as long as you have a ticket,
+
+89
+00:03:25.760 --> 00:03:27.600
+you can go watch the recordings.
+
+90
+00:03:27.600 --> 00:03:31.720
+You have exclusive access as a ticket holder through.
+
+91
+00:03:31.720 --> 00:03:36.120
+It's sad that we sometimes are scrambling hard
+
+92
+00:03:36.120 --> 00:03:38.120
+to get them up by Christmas.
+
+93
+00:03:38.120 --> 00:03:39.320
+But we try and have them all.
+
+94
+00:03:39.320 --> 00:03:40.520
+We'll send them to editors.
+
+95
+00:03:40.520 --> 00:03:43.560
+We'll get like a nice final cut of all of the talks
+
+96
+00:03:43.560 --> 00:03:44.560
+with some light editing.
+
+97
+00:03:44.560 --> 00:03:47.400
+And then we'll have them on our YouTube channel.
+
+98
+00:03:47.400 --> 00:03:51.520
+And our internal drop-down date is Christmas.
+
+99
+00:03:51.520 --> 00:03:56.240
+But if you do have a ticket, Dylan and crew have actually,
+
+100
+00:03:56.240 --> 00:04:00.280
+and Justin, do a great job of like at least getting in
+
+101
+00:04:00.280 --> 00:04:04.040
+a quick clip along with chapters for each of the talks
+
+102
+00:04:04.040 --> 00:04:06.760
+you can go through and watch, at least easily find
+
+103
+00:04:06.760 --> 00:04:08.400
+and watch any of the talks you make missed.
+
+104
+00:04:08.400 --> 00:04:11.760
+It's got a cute new media chrome chapter selector as well.
+
+105
+00:04:11.760 --> 00:04:13.640
+It's really cool.
+
+106
+00:04:13.640 --> 00:04:15.520
+I was happy that got in there.
+
+107
+00:04:15.520 --> 00:04:16.360
+Me too.
+
+108
+00:04:16.360 --> 00:04:20.240
+So live.demux.com, just use your ticket code.
+
+109
+00:04:20.240 --> 00:04:23.360
+So you go to live.demux.com to get the vods.
+
+110
+00:04:23.360 --> 00:04:26.640
+Yes, it should be at a redirect to vaud.demux.com.
+
+111
+00:04:26.640 --> 00:04:30.120
+(all laughing)
+
+112
+00:04:30.120 --> 00:04:32.960
+Any favorite moments from the show this year?
+
+113
+00:04:32.960 --> 00:04:35.720
+Definitely the video tribute at the end.
+
+114
+00:04:35.720 --> 00:04:37.520
+That was incredible.
+
+115
+00:04:37.520 --> 00:04:38.840
+Yeah, yeah.
+
+116
+00:04:38.840 --> 00:04:41.040
+I really want to buy that on Blu-ray.
+
+117
+00:04:41.040 --> 00:04:42.520
+(all laughing)
+
+118
+00:04:42.520 --> 00:04:45.280
+Well, for the low-low cost of $9.99.
+
+119
+00:04:45.280 --> 00:04:48.880
+Yeah, for those who haven't seen it yet,
+
+120
+00:04:48.880 --> 00:04:52.400
+some of the demux team put together quite an impressive
+
+121
+00:04:52.400 --> 00:04:55.040
+behind the conference mockumentary.
+
+122
+00:04:55.040 --> 00:04:56.000
+Is that a mockumentary?
+
+123
+00:04:56.000 --> 00:04:57.200
+Is that the term?
+
+124
+00:04:57.200 --> 00:04:58.840
+Sure. Documentary.
+
+125
+00:04:58.840 --> 00:05:01.000
+It's like the spinal tap of video conferences.
+
+126
+00:05:01.000 --> 00:05:02.920
+Yeah, yeah, yeah.
+
+127
+00:05:02.920 --> 00:05:07.240
+Of the last 10 years and it was impressive.
+
+128
+00:05:07.240 --> 00:05:08.440
+Yeah, that was a highlight for me too.
+
+129
+00:05:08.440 --> 00:05:13.440
+And Phil made Blu-rays of every past year's demuxed,
+
+130
+00:05:13.440 --> 00:05:17.640
+including like a delightful box that has the details
+
+131
+00:05:17.640 --> 00:05:20.640
+even down to like the little tiny lettering
+
+132
+00:05:20.640 --> 00:05:22.680
+that you can barely see that talks about
+
+133
+00:05:22.680 --> 00:05:24.880
+like the producers and actors, all this sort of stuff.
+
+134
+00:05:24.880 --> 00:05:26.760
+Like has all the speakers of the, it's like,
+
+135
+00:05:26.760 --> 00:05:27.600
+oh my gosh.
+
+136
+00:05:27.600 --> 00:05:29.680
+The attention to detail is very impressive.
+
+137
+00:05:29.680 --> 00:05:31.520
+Apparently the Blu-ray menus too.
+
+138
+00:05:31.520 --> 00:05:34.240
+Oh, for the news, a fully branded,
+
+139
+00:05:34.240 --> 00:05:35.320
+all of the logos it did.
+
+140
+00:05:35.320 --> 00:05:36.160
+Yeah, everything.
+
+141
+00:05:36.160 --> 00:05:38.800
+I'm literally going like this afternoon.
+
+142
+00:05:38.800 --> 00:05:40.600
+I'm literally planning on going to GameStop
+
+143
+00:05:40.600 --> 00:05:43.480
+and buying a PlayStation 5 so I can have a Blu-ray player.
+
+144
+00:05:43.480 --> 00:05:45.120
+I've been wanting a PlayStation 5 anyway
+
+145
+00:05:45.120 --> 00:05:46.680
+and Alex has been like, do you really need one?
+
+146
+00:05:46.680 --> 00:05:51.680
+And now I can officially say, yes, I really need one.
+
+147
+00:05:51.680 --> 00:05:55.120
+I will show you later on how that font works
+
+148
+00:05:55.120 --> 00:05:57.200
+that generates all that stuff at the bottom.
+
+149
+00:05:57.200 --> 00:06:00.520
+There's a font called a universal accreditation
+
+150
+00:06:00.520 --> 00:06:02.840
+that has all those ligatures in it.
+
+151
+00:06:02.840 --> 00:06:06.840
+It's all done as like different ASCII character numbers
+
+152
+00:06:06.840 --> 00:06:08.720
+after an ASCII character code.
+
+153
+00:06:08.720 --> 00:06:11.240
+So like certain ASCII character codes will map to like
+
+154
+00:06:11.240 --> 00:06:15.040
+produced by and starring and all those sorts of things.
+
+155
+00:06:15.040 --> 00:06:18.240
+And then you have to type people's names in uppercase
+
+156
+00:06:18.240 --> 00:06:21.200
+otherwise you just get like based on a concept
+
+157
+00:06:21.200 --> 00:06:23.800
+for Star Wars and things like that in the font.
+
+158
+00:06:23.800 --> 00:06:27.480
+It's a very cool font and I will definitely use it again.
+
+159
+00:06:27.480 --> 00:06:28.920
+But yeah, I'll show you later on.
+
+160
+00:06:28.920 --> 00:06:30.080
+It's really weird.
+
+161
+00:06:30.080 --> 00:06:31.080
+Cool.
+
+162
+00:06:31.080 --> 00:06:34.200
+Are there any like talks that stood out to folks?
+
+163
+00:06:34.200 --> 00:06:37.120
+Yeah, I really enjoyed YouTube's talk about TVs
+
+164
+00:06:37.120 --> 00:06:38.480
+eating your frames.
+
+165
+00:06:38.480 --> 00:06:42.920
+I loved NBCU talking about test automation.
+
+166
+00:06:42.920 --> 00:06:47.240
+The super res stuff that John presented was really cool.
+
+167
+00:06:47.240 --> 00:06:49.640
+And I've got a whole list of things that I'm going to go back
+
+168
+00:06:49.640 --> 00:06:55.160
+and watch on live.demux.com because I was downstairs
+
+169
+00:06:55.160 --> 00:07:00.000
+in the socializing area just like making
+
+170
+00:07:00.000 --> 00:07:02.200
+so many incredible connections with so many people.
+
+171
+00:07:02.200 --> 00:07:06.400
+Like during these just these two days it's amazing.
+
+172
+00:07:06.400 --> 00:07:08.480
+Seeing old people that I've known from years past
+
+173
+00:07:08.480 --> 00:07:11.280
+and meeting new people and everybody's full of ideas
+
+174
+00:07:11.280 --> 00:07:13.600
+and wants to collaborate and everybody wants to make this
+
+175
+00:07:13.600 --> 00:07:17.200
+the best community and as much as I want to see the talks
+
+176
+00:07:17.200 --> 00:07:19.920
+like it's those connections that are irreplaceable.
+
+177
+00:07:19.920 --> 00:07:22.280
+And that's what demux really is I think.
+
+178
+00:07:22.280 --> 00:07:24.840
+The hallway track is critical.
+
+179
+00:07:24.840 --> 00:07:29.040
+I think strobes like hate to say it like every is cheating
+
+180
+00:07:29.040 --> 00:07:30.040
+to say strobes talk.
+
+181
+00:07:30.040 --> 00:07:31.440
+It's cheating to say strobes.
+
+182
+00:07:31.440 --> 00:07:34.040
+Like I feel like I think I said this to you backstage
+
+183
+00:07:34.040 --> 00:07:36.760
+I was like that just feels like the straight up
+
+184
+00:07:36.760 --> 00:07:39.440
+the best audio talk we've ever had.
+
+185
+00:07:39.440 --> 00:07:43.080
+Yeah, you must have understood a lot more of it than I did.
+
+186
+00:07:43.080 --> 00:07:45.320
+(laughing)
+
+187
+00:07:45.320 --> 00:07:48.560
+I think it was Mike saying this morning.
+
+188
+00:07:48.560 --> 00:07:51.000
+Yeah, it would have taken me three hours to explain
+
+189
+00:07:51.000 --> 00:07:54.760
+like half of what strobes covered in that sort.
+
+190
+00:07:54.760 --> 00:07:55.920
+(laughing)
+
+191
+00:07:55.920 --> 00:07:59.680
+It's just a pace he moves out my brain can't quite handle that
+
+192
+00:07:59.680 --> 00:08:00.520
+sometimes.
+
+193
+00:08:00.520 --> 00:08:02.520
+I think if strobes going to do another audio talk though
+
+194
+00:08:02.520 --> 00:08:05.600
+you need to like, you know, not film him
+
+195
+00:08:05.600 --> 00:08:06.960
+and just make him say it all.
+
+196
+00:08:06.960 --> 00:08:09.920
+I'm like, it's an audio talk about audio, right?
+
+197
+00:08:09.920 --> 00:08:12.080
+We should get him on the pod is really what we should do.
+
+198
+00:08:12.080 --> 00:08:13.400
+That's better than my thing.
+
+199
+00:08:13.400 --> 00:08:14.240
+Yeah.
+
+200
+00:08:14.240 --> 00:08:16.720
+(laughing)
+
+201
+00:08:16.720 --> 00:08:18.440
+That's better than putting a behind a black curtain
+
+202
+00:08:18.440 --> 00:08:19.280
+on stage.
+
+203
+00:08:19.280 --> 00:08:21.000
+(laughing)
+
+204
+00:08:21.000 --> 00:08:23.160
+I also really liked yinyu right?
+
+205
+00:08:23.160 --> 00:08:24.000
+Yeah.
+
+206
+00:08:24.000 --> 00:08:24.840
+Yeah.
+
+207
+00:08:24.840 --> 00:08:28.440
+And his talk on the TPZ in your frames was really fantastic.
+
+208
+00:08:28.440 --> 00:08:31.080
+I really loved that he was at Crunchyroll
+
+209
+00:08:31.080 --> 00:08:32.320
+for one of the first demux.
+
+210
+00:08:32.320 --> 00:08:35.080
+So he was talking about that like in the speaker dinner.
+
+211
+00:08:35.080 --> 00:08:36.480
+And then before we go on stage he was telling me
+
+212
+00:08:36.480 --> 00:08:38.840
+this is his first, like his first talk,
+
+213
+00:08:38.840 --> 00:08:41.360
+this is his first public speaking thing ever.
+
+214
+00:08:41.360 --> 00:08:42.360
+And that was actually the case.
+
+215
+00:08:42.360 --> 00:08:45.400
+I think there were four, at least four talks
+
+216
+00:08:45.400 --> 00:08:49.800
+where it was the speaker's first ever public speaking.
+
+217
+00:08:49.800 --> 00:08:51.600
+And every time they'd get off and be like,
+
+218
+00:08:51.600 --> 00:08:53.240
+I was so nervous it was terrible.
+
+219
+00:08:53.240 --> 00:08:54.760
+And they all killed it.
+
+220
+00:08:54.760 --> 00:08:56.280
+They all were so poised on stage.
+
+221
+00:08:56.280 --> 00:08:59.680
+I was so proud of folks executing that well
+
+222
+00:08:59.680 --> 00:09:01.960
+and like a pretty high, I mean, that's like,
+
+223
+00:09:01.960 --> 00:09:02.840
+that's not a meetup talk.
+
+224
+00:09:02.840 --> 00:09:05.000
+That's like, you know, you're sitting in front of 400 people
+
+225
+00:09:05.000 --> 00:09:06.960
+plus like, it's really cool.
+
+226
+00:09:06.960 --> 00:09:08.880
+Here, here, you haven't gone yet.
+
+227
+00:09:08.880 --> 00:09:10.960
+What's your, what was your favorite?
+
+228
+00:09:10.960 --> 00:09:12.640
+I was just thinking like what the themes were,
+
+229
+00:09:12.640 --> 00:09:14.080
+I definitely felt the theme.
+
+230
+00:09:14.080 --> 00:09:16.240
+There was at least a couple around storage,
+
+231
+00:09:16.240 --> 00:09:18.840
+like storage optimization that I thought was interesting
+
+232
+00:09:18.840 --> 00:09:22.280
+especially as like, I'm thinking about UGC content
+
+233
+00:09:22.280 --> 00:09:24.360
+a lot more and like the value of content.
+
+234
+00:09:24.360 --> 00:09:28.880
+And there is one on like very advanced optimization
+
+235
+00:09:28.880 --> 00:09:30.560
+and smart cold storage.
+
+236
+00:09:30.560 --> 00:09:34.960
+And yes, the more maths that I completely understood
+
+237
+00:09:34.960 --> 00:09:37.160
+on those equations on the stage, yeah?
+
+238
+00:09:37.160 --> 00:09:38.600
+Yeah, mm-hmm.
+
+239
+00:09:38.600 --> 00:09:41.440
+Then there was kind of a theme around noise,
+
+240
+00:09:41.440 --> 00:09:45.800
+like noise insertion, like film grain noise,
+
+241
+00:09:45.800 --> 00:09:48.920
+like I don't know, or not losing noise was another big one.
+
+242
+00:09:48.920 --> 00:09:50.160
+Like so even in like the upscale,
+
+243
+00:09:50.160 --> 00:09:52.400
+we're like, yeah, that was interesting.
+
+244
+00:09:52.400 --> 00:09:55.720
+It was weird that there was like a theme around that, but yeah.
+
+245
+00:09:55.720 --> 00:09:56.560
+Well, cool.
+
+246
+00:09:56.560 --> 00:09:59.120
+So, you know, the win here this week was getting
+
+247
+00:09:59.120 --> 00:10:03.240
+to get in a room with Joey, which is always a pleasure.
+
+248
+00:10:03.240 --> 00:10:04.720
+But this is especially fun.
+
+249
+00:10:04.720 --> 00:10:08.360
+I mean, we've got, I think, two of probably the
+
+250
+00:10:08.360 --> 00:10:12.080
+biggest online video, open source video players,
+
+251
+00:10:12.080 --> 00:10:14.400
+two originators in the same room on a podcast.
+
+252
+00:10:14.400 --> 00:10:15.680
+That's kind of neat.
+
+253
+00:10:15.680 --> 00:10:19.360
+So yeah, Joey's the creator of Shaka Player.
+
+254
+00:10:19.360 --> 00:10:20.480
+Why don't you introduce yourself, Joey?
+
+255
+00:10:20.480 --> 00:10:21.640
+Sure.
+
+256
+00:10:21.640 --> 00:10:22.560
+I'm Joey Parrish.
+
+257
+00:10:22.560 --> 00:10:27.560
+I have been working on Shaka Player for 10 years now.
+
+258
+00:10:27.560 --> 00:10:32.680
+And we started the project under Widevine
+
+259
+00:10:32.680 --> 00:10:35.680
+where Widevine had been getting a lot of feedback
+
+260
+00:10:35.680 --> 00:10:39.200
+from partners that all this newfangled dash stuff
+
+261
+00:10:39.200 --> 00:10:40.560
+was just kind of complicated.
+
+262
+00:10:40.560 --> 00:10:44.040
+And they didn't want to stop using proprietary plugins
+
+263
+00:10:44.040 --> 00:10:48.040
+when we were trying to get rid of all of those in browsers.
+
+264
+00:10:48.040 --> 00:10:50.920
+So Widevine offered to, you know, build something for that.
+
+265
+00:10:50.920 --> 00:10:54.400
+And that's where the Shaka project came from.
+
+266
+00:10:54.400 --> 00:10:59.400
+So there was actually a kind of a bigger effort proposed.
+
+267
+00:11:00.120 --> 00:11:03.640
+So I forget exactly what his title was.
+
+268
+00:11:03.640 --> 00:11:06.200
+One of our muckity mucks higher up the chain
+
+269
+00:11:06.200 --> 00:11:08.240
+had been from South Africa.
+
+270
+00:11:08.240 --> 00:11:11.080
+And he said, we need to unify all of these
+
+271
+00:11:11.080 --> 00:11:13.080
+different aspects of the media ecosystem.
+
+272
+00:11:13.080 --> 00:11:16.280
+And, you know, so for him it was inspiring
+
+273
+00:11:16.280 --> 00:11:19.520
+that Shaka had been the unifier of the Zulu people.
+
+274
+00:11:19.520 --> 00:11:22.480
+And so there was this codename Shaka project.
+
+275
+00:11:22.480 --> 00:11:24.880
+And there were three different sub projects within that
+
+276
+00:11:24.880 --> 00:11:27.400
+that were gonna like bring the easy button
+
+277
+00:11:27.400 --> 00:11:29.720
+to all these different aspects of media.
+
+278
+00:11:29.720 --> 00:11:32.000
+And so there was the player, there was the packager,
+
+279
+00:11:32.000 --> 00:11:35.880
+and there was a third project that actually never came out.
+
+280
+00:11:35.880 --> 00:11:39.360
+So got canceled and probably shouldn't say too much about it
+
+281
+00:11:39.360 --> 00:11:41.960
+because of that, but not bad.
+
+282
+00:11:41.960 --> 00:11:44.240
+So how did you get to Widevine in the,
+
+283
+00:11:44.240 --> 00:11:45.240
+like how did you come to Widevine?
+
+284
+00:11:45.240 --> 00:11:46.360
+How did I come to Widevine?
+
+285
+00:11:46.360 --> 00:11:51.040
+Yeah, so I started my Google career almost 13 years ago
+
+286
+00:11:51.040 --> 00:11:52.440
+at YouTube.
+
+287
+00:11:52.440 --> 00:11:55.200
+So I was here in the Bay Area and working on
+
+288
+00:11:55.200 --> 00:11:58.200
+the YouTube game consoles team.
+
+289
+00:11:58.200 --> 00:12:01.600
+And so that was my professional entry into video,
+
+290
+00:12:01.600 --> 00:12:04.320
+but I'd been doing some open source hacking
+
+291
+00:12:04.320 --> 00:12:07.520
+before that, Emplayer and things like that.
+
+292
+00:12:07.520 --> 00:12:09.080
+Yeah, cool.
+
+293
+00:12:09.080 --> 00:12:10.160
+I remember Emplayer.
+
+294
+00:12:10.160 --> 00:12:12.280
+Yeah, yeah, that was a good project.
+
+295
+00:12:12.280 --> 00:12:15.200
+Emplayer was my entry into video space because I,
+
+296
+00:12:15.200 --> 00:12:19.920
+in college in like 2000, 2001 type timeframe,
+
+297
+00:12:19.920 --> 00:12:21.760
+I was really desperate to turn a DVD
+
+298
+00:12:21.760 --> 00:12:23.200
+and do an animated GIF.
+
+299
+00:12:23.200 --> 00:12:25.920
+And there just was not a tool for that.
+
+300
+00:12:25.920 --> 00:12:30.640
+And my minimal research seemed like Emplayer
+
+301
+00:12:30.640 --> 00:12:32.600
+was the right tool to add that to.
+
+302
+00:12:32.600 --> 00:12:37.120
+And so that was my first open source commit as a GIF output
+
+303
+00:12:37.120 --> 00:12:39.200
+module for Emplayer.
+
+304
+00:12:39.200 --> 00:12:43.120
+But eventually, after working at some non-video startup
+
+305
+00:12:43.120 --> 00:12:44.840
+in Texas, I wound up at YouTube.
+
+306
+00:12:44.840 --> 00:12:49.800
+And then from there, I wound up at Widevine primarily
+
+307
+00:12:49.800 --> 00:12:51.880
+because I did not think I could afford
+
+308
+00:12:51.880 --> 00:12:54.160
+to buy a house in the Bay Area.
+
+309
+00:12:54.160 --> 00:12:56.360
+And Widevine was near Seattle.
+
+310
+00:12:56.360 --> 00:12:58.960
+So it was more about a place for me
+
+311
+00:12:58.960 --> 00:13:01.320
+to move where I could afford things.
+
+312
+00:13:01.320 --> 00:13:04.520
+But I ended up being at Widevine for eight years.
+
+313
+00:13:04.520 --> 00:13:07.560
+And that was where we started, the Shaka Project.
+
+314
+00:13:07.560 --> 00:13:11.640
+And as I said before, there were three different prongs
+
+315
+00:13:11.640 --> 00:13:13.680
+of this project.
+
+316
+00:13:13.680 --> 00:13:16.160
+There was the player, the packager, and this other thing.
+
+317
+00:13:16.160 --> 00:13:20.160
+And the packager actually, I think, came out first.
+
+318
+00:13:20.160 --> 00:13:22.080
+And they decided, when they went public,
+
+319
+00:13:22.080 --> 00:13:27.800
+to name it the e-packager, which was maybe not the name
+
+320
+00:13:27.800 --> 00:13:29.400
+that everybody liked in the end.
+
+321
+00:13:29.400 --> 00:13:34.520
+But e-packager, e-dash, like little e-capital dash,
+
+322
+00:13:34.520 --> 00:13:36.240
+I guess that stood for embedded.
+
+323
+00:13:36.240 --> 00:13:42.160
+But it was my teammate KQ, who was involved in that.
+
+324
+00:13:42.160 --> 00:13:45.080
+And then when it was my turn to publish,
+
+325
+00:13:45.080 --> 00:13:47.040
+we had been racking our brains for six months
+
+326
+00:13:47.040 --> 00:13:49.000
+about what are we going to call this thing.
+
+327
+00:13:49.000 --> 00:13:50.640
+And we just couldn't come up with a better name
+
+328
+00:13:50.640 --> 00:13:51.440
+than the code name.
+
+329
+00:13:51.440 --> 00:13:54.160
+So we just launched it as Shaka Player.
+
+330
+00:13:54.160 --> 00:13:57.560
+And yeah, eventually, e-dash packager
+
+331
+00:13:57.560 --> 00:14:00.400
+decided to rebrand as Shaka Packager.
+
+332
+00:14:00.400 --> 00:14:03.320
+But initially, I was not involved in the packager,
+
+333
+00:14:03.320 --> 00:14:09.440
+but over several years, needs within--
+
+334
+00:14:09.440 --> 00:14:11.520
+Widevine, within Chrome Media changed.
+
+335
+00:14:11.520 --> 00:14:18.880
+And that ended up coming over to my team as well, so.
+
+336
+00:14:18.880 --> 00:14:24.080
+And then about two and change years ago,
+
+337
+00:14:24.080 --> 00:14:27.880
+we moved the project over to Chromecast.
+
+338
+00:14:27.880 --> 00:14:31.000
+And that is the new home of that.
+
+339
+00:14:31.000 --> 00:14:32.920
+But as part of that process, also,
+
+340
+00:14:32.920 --> 00:14:35.920
+we didn't have quite so many resources
+
+341
+00:14:35.920 --> 00:14:39.120
+to work across all these different open source projects.
+
+342
+00:14:39.120 --> 00:14:41.840
+Chromecast is primarily concerned with playback.
+
+343
+00:14:41.840 --> 00:14:44.880
+And so we went through this transition phase
+
+344
+00:14:44.880 --> 00:14:49.640
+where it wasn't just bringing packager under the same team.
+
+345
+00:14:49.640 --> 00:14:51.720
+It was more about bringing packager in
+
+346
+00:14:51.720 --> 00:14:55.440
+and sort of trying to revive it, and then open it up,
+
+347
+00:14:55.440 --> 00:14:57.440
+and open the doors on all these projects
+
+348
+00:14:57.440 --> 00:15:00.360
+to more active contribution.
+
+349
+00:15:00.360 --> 00:15:03.280
+And it wasn't that we hadn't taken contributions before,
+
+350
+00:15:03.280 --> 00:15:07.920
+but it hadn't really been a thoughtful process before.
+
+351
+00:15:07.920 --> 00:15:11.480
+And there were days when someone
+
+352
+00:15:11.480 --> 00:15:14.160
+would have something they wanted to do in Shaka Player,
+
+353
+00:15:14.160 --> 00:15:17.800
+and I would just say, no.
+
+354
+00:15:17.800 --> 00:15:20.720
+That's not the direction that I personally want to go.
+
+355
+00:15:20.720 --> 00:15:22.840
+And that was a little short-sighted.
+
+356
+00:15:22.840 --> 00:15:27.320
+And the plan now is to really make all of these projects
+
+357
+00:15:27.320 --> 00:15:30.120
+as open and community-based as possible.
+
+358
+00:15:30.120 --> 00:15:33.680
+Now we have as many non-Google maintainers in Shaka Player
+
+359
+00:15:33.680 --> 00:15:35.560
+as we do Googlers working on the project.
+
+360
+00:15:35.560 --> 00:15:37.440
+So that's awesome.
+
+361
+00:15:37.440 --> 00:15:40.440
+And we went through this transition where we said, OK,
+
+362
+00:15:40.440 --> 00:15:44.720
+all this weird private Google-only stuff we're doing,
+
+363
+00:15:44.720 --> 00:15:46.440
+let's replace that, let's change that,
+
+364
+00:15:46.440 --> 00:15:50.360
+let's build on GitHub actions, let's--
+
+365
+00:15:50.360 --> 00:15:53.200
+we even have, if you're a maintainer in Shaka Player,
+
+366
+00:15:53.200 --> 00:15:56.760
+you have rights to run test passes in the private lab
+
+367
+00:15:56.760 --> 00:15:59.560
+that we run in the Kirkland office.
+
+368
+00:15:59.560 --> 00:16:03.200
+So we have real devices instead of VMs.
+
+369
+00:16:03.200 --> 00:16:06.120
+And yeah, so just really tried to open everything up
+
+370
+00:16:06.120 --> 00:16:11.040
+and democratize everything as much as possible, because not
+
+371
+00:16:11.040 --> 00:16:13.920
+only was I kind of a benevolent dictator before,
+
+372
+00:16:13.920 --> 00:16:17.480
+but that also makes you a bottleneck.
+
+373
+00:16:17.480 --> 00:16:20.560
+And that just wasn't going to cut it.
+
+374
+00:16:20.560 --> 00:16:24.320
+So now the Packager, I believe we only
+
+375
+00:16:24.320 --> 00:16:28.320
+have one non-Google maintainer, the Shaka Packager,
+
+376
+00:16:28.320 --> 00:16:30.880
+and that has caused me in at meta.
+
+377
+00:16:30.880 --> 00:16:32.880
+And so we're still looking for more people
+
+378
+00:16:32.880 --> 00:16:34.880
+who want to contribute there and be more active
+
+379
+00:16:34.880 --> 00:16:37.640
+and choosing the direction of that project.
+
+380
+00:16:37.640 --> 00:16:40.040
+But in general, we're just trying
+
+381
+00:16:40.040 --> 00:16:44.640
+to be more community-oriented, and not just in terms
+
+382
+00:16:44.640 --> 00:16:48.200
+of who's writing code, but in terms of who's making decisions
+
+383
+00:16:48.200 --> 00:16:49.440
+and who's generating ideas.
+
+384
+00:16:49.440 --> 00:16:51.480
+And where are we going next?
+
+385
+00:16:51.480 --> 00:16:53.360
+Well, I was going to say, I have a general idea
+
+386
+00:16:53.360 --> 00:16:55.320
+of where the Shaka Player gets used,
+
+387
+00:16:55.320 --> 00:16:57.400
+but it might be worth kind of just kind of rounding that out.
+
+388
+00:16:57.400 --> 00:16:59.920
+They're like the major platforms where Shaka gets used.
+
+389
+00:16:59.920 --> 00:17:00.760
+Sure.
+
+390
+00:17:00.760 --> 00:17:02.840
+But I don't have a good idea of necessarily where
+
+391
+00:17:02.840 --> 00:17:04.520
+the Shaka Packager gets used.
+
+392
+00:17:04.520 --> 00:17:06.160
+So it'd be interesting to hear that.
+
+393
+00:17:06.160 --> 00:17:07.560
+Yeah, me neither.
+
+394
+00:17:07.560 --> 00:17:08.600
+OK.
+
+395
+00:17:08.600 --> 00:17:09.880
+That's fair.
+
+396
+00:17:09.880 --> 00:17:13.560
+I'm sure there are people with more history
+
+397
+00:17:13.560 --> 00:17:16.520
+who were involved over more of those years.
+
+398
+00:17:16.520 --> 00:17:21.200
+But so the Packager can run in two different modes.
+
+399
+00:17:21.200 --> 00:17:23.560
+You can build it as a shared library
+
+400
+00:17:23.560 --> 00:17:28.160
+and integrate it into your pipelines in C++ interface,
+
+401
+00:17:28.160 --> 00:17:32.680
+or you can build a command line and run it one off or script it.
+
+402
+00:17:32.680 --> 00:17:35.280
+So I imagine if you are building Shaka Packager
+
+403
+00:17:35.280 --> 00:17:37.520
+into your backend infrastructure somewhere,
+
+404
+00:17:37.520 --> 00:17:39.760
+you're going the library route and you're
+
+405
+00:17:39.760 --> 00:17:41.400
+connecting it to a bunch of other components,
+
+406
+00:17:41.400 --> 00:17:44.320
+maybe libaby codec, maybe other things.
+
+407
+00:17:44.320 --> 00:17:46.160
+Whereas the way that I tend to use it
+
+408
+00:17:46.160 --> 00:17:49.480
+is generating test content or things like that
+
+409
+00:17:49.480 --> 00:17:54.280
+where it's absolutely command line running on one machine,
+
+410
+00:17:54.280 --> 00:17:56.680
+haven't heard of the cloud.
+
+411
+00:17:56.680 --> 00:18:00.160
+But yeah, I definitely had it anecdotally
+
+412
+00:18:00.160 --> 00:18:02.120
+that there were media partners.
+
+413
+00:18:02.120 --> 00:18:04.000
+Back when KQ was running the project,
+
+414
+00:18:04.000 --> 00:18:06.120
+there were media partners who were integrating Shaka Packager
+
+415
+00:18:06.120 --> 00:18:07.680
+into their backends.
+
+416
+00:18:07.680 --> 00:18:09.360
+Unfortunately, I don't have relationships
+
+417
+00:18:09.360 --> 00:18:11.160
+with those companies on that thing.
+
+418
+00:18:11.160 --> 00:18:14.360
+So that kind of context has unfortunately
+
+419
+00:18:14.360 --> 00:18:18.120
+been lost in the transfer of ownership.
+
+420
+00:18:18.120 --> 00:18:20.320
+It's the unfortunate thing about open source
+
+421
+00:18:20.320 --> 00:18:23.760
+is that unless you are really particular about building
+
+422
+00:18:23.760 --> 00:18:25.560
+in some sort of tracking or analytics,
+
+423
+00:18:25.560 --> 00:18:28.280
+you just don't know who's using it or how.
+
+424
+00:18:28.280 --> 00:18:32.040
+And none of the Shaka projects report back to us.
+
+425
+00:18:32.040 --> 00:18:35.880
+So until someone gets a bug and needs help with something.
+
+426
+00:18:35.880 --> 00:18:36.720
+Yes.
+
+427
+00:18:36.720 --> 00:18:37.560
+And then they pop in and it's like,
+
+428
+00:18:37.560 --> 00:18:38.880
+whoa, you're using this?
+
+429
+00:18:38.880 --> 00:18:39.720
+Yeah, great.
+
+430
+00:18:39.720 --> 00:18:40.920
+Good to know.
+
+431
+00:18:40.920 --> 00:18:44.280
+Yeah, I'll sit back and tell the story without naming names.
+
+432
+00:18:44.280 --> 00:18:48.640
+But I got an email once from somebody on their Gmail account
+
+433
+00:18:48.640 --> 00:18:51.800
+and they were like, hey, I need help with this Shaka player
+
+434
+00:18:51.800 --> 00:18:53.480
+thing, I don't like this, I don't like that.
+
+435
+00:18:53.480 --> 00:18:56.680
+I don't think it should go like this, yada, yada, yada.
+
+436
+00:18:56.680 --> 00:19:02.240
+And I read it and I thought about it and I replied and I said,
+
+437
+00:19:02.240 --> 00:19:04.440
+those are all really great ideas.
+
+438
+00:19:04.440 --> 00:19:06.080
+I actually love all of this feedback.
+
+439
+00:19:06.080 --> 00:19:09.320
+I agree with you about all of these things.
+
+440
+00:19:09.320 --> 00:19:13.040
+But yeah, we can't, there's, I don't have the time to do that.
+
+441
+00:19:13.040 --> 00:19:15.040
+And then they replied back from their corporate account
+
+442
+00:19:15.040 --> 00:19:16.840
+and they were like, well, I'm with this company.
+
+443
+00:19:16.840 --> 00:19:17.920
+How about now?
+
+444
+00:19:17.920 --> 00:19:19.440
+And I was like, oh, it's so amazing.
+
+445
+00:19:19.440 --> 00:19:21.120
+I had no idea you guys were our users.
+
+446
+00:19:21.120 --> 00:19:22.720
+But no, I mean, you're not paying us.
+
+447
+00:19:22.720 --> 00:19:24.120
+It doesn't change anything.
+
+448
+00:19:24.120 --> 00:19:27.680
+I know.
+
+449
+00:19:27.680 --> 00:19:30.920
+Yeah, people are people are real funny and cagey around this stuff,
+
+450
+00:19:30.920 --> 00:19:34.680
+especially when all the Shaka projects started under wide
+
+451
+00:19:34.680 --> 00:19:37.360
+vine really being promoted by wide vine.
+
+452
+00:19:37.360 --> 00:19:41.360
+There's sort of a culture of secrecy around DRM and premium
+
+453
+00:19:41.360 --> 00:19:41.880
+content.
+
+454
+00:19:41.880 --> 00:19:44.840
+So people report bugs and you say, well,
+
+455
+00:19:44.840 --> 00:19:46.160
+how do I reproduce your bug?
+
+456
+00:19:46.160 --> 00:19:49.000
+And they're like, well, we can't tell you.
+
+457
+00:19:49.000 --> 00:19:51.440
+Like, well, that's going to be fun.
+
+458
+00:19:51.440 --> 00:19:53.440
+My gosh.
+
+459
+00:19:53.440 --> 00:19:55.000
+You're talking about a little, kind of,
+
+460
+00:19:55.000 --> 00:19:56.880
+mentioned like finding packages, hard to use.
+
+461
+00:19:56.880 --> 00:19:59.720
+But I guess one interesting place that Shaka is now really
+
+462
+00:19:59.720 --> 00:20:03.240
+signed to be used is a replacement on Chromecast, right?
+
+463
+00:20:03.240 --> 00:20:03.960
+Right.
+
+464
+00:20:03.960 --> 00:20:04.240
+Yeah.
+
+465
+00:20:04.240 --> 00:20:10.280
+So Shaka is the default player for dash content on Chromecast.
+
+466
+00:20:10.280 --> 00:20:14.800
+And there's a proprietary player that's still the default for HLS.
+
+467
+00:20:14.800 --> 00:20:17.600
+But we're going to be changing that soon.
+
+468
+00:20:17.600 --> 00:20:21.360
+So you can already opt in if you have a Chromecast receiver app.
+
+469
+00:20:21.360 --> 00:20:23.560
+You can opt in to use Shaka for HLS.
+
+470
+00:20:23.560 --> 00:20:27.440
+And we'd really encourage everyone to do that at the very
+
+471
+00:20:27.440 --> 00:20:30.560
+least on a staging instance or something like that.
+
+472
+00:20:30.560 --> 00:20:34.200
+So you can find out if there are problems that maybe we don't
+
+473
+00:20:34.200 --> 00:20:34.680
+know about.
+
+474
+00:20:34.680 --> 00:20:38.400
+You can report them before this becomes the global default.
+
+475
+00:20:38.400 --> 00:20:43.360
+But we will be doing a sort of a staged rollout, experiment,
+
+476
+00:20:43.360 --> 00:20:47.080
+gather some data, and see what will actually happen when we
+
+477
+00:20:47.080 --> 00:20:48.600
+change the default.
+
+478
+00:20:48.600 --> 00:20:53.200
+And either then or now, in addition to opting in early, you
+
+479
+00:20:53.200 --> 00:20:54.600
+can opt out early.
+
+480
+00:20:54.600 --> 00:20:58.840
+If you know there's problems, you can say, I insist on holding
+
+481
+00:20:58.840 --> 00:21:00.280
+off on this change.
+
+482
+00:21:00.280 --> 00:21:03.440
+But as long as your app sets an explicit flag, we're not
+
+483
+00:21:03.440 --> 00:21:05.080
+going to change that.
+
+484
+00:21:05.080 --> 00:21:08.360
+But the default, if you don't set that flag, will be changing
+
+485
+00:21:08.360 --> 00:21:11.600
+in the next, I'm going to guess six months.
+
+486
+00:21:11.600 --> 00:21:13.840
+Does that mean you're going to be maintaining two different
+
+487
+00:21:13.840 --> 00:21:15.960
+ways moving forward?
+
+488
+00:21:15.960 --> 00:21:17.360
+Play HLS?
+
+489
+00:21:17.360 --> 00:21:19.080
+No, no.
+
+490
+00:21:19.080 --> 00:21:22.080
+The old way is not really going to be maintained anymore.
+
+491
+00:21:22.080 --> 00:21:22.880
+Got it, yeah.
+
+492
+00:21:22.880 --> 00:21:25.760
+That's a big part of the motivation to make this switch
+
+493
+00:21:25.760 --> 00:21:30.320
+is that it allows us to put more of our frankly limited
+
+494
+00:21:30.320 --> 00:21:35.360
+resources into one unified platform.
+
+495
+00:21:35.360 --> 00:21:39.000
+And then there's also an advantage for the customer, too,
+
+496
+00:21:39.000 --> 00:21:42.600
+because the Shaka player is actually decoupled from the
+
+497
+00:21:42.600 --> 00:21:44.240
+Chromecast SDK.
+
+498
+00:21:44.240 --> 00:21:47.920
+So in your receiver app, when you configure the SDK at the
+
+499
+00:21:47.920 --> 00:21:51.620
+very beginning of the startup of your app, one of the flags
+
+500
+00:21:51.620 --> 00:21:54.640
+you can set before it loads anything is what version of
+
+501
+00:21:54.640 --> 00:21:57.080
+Shaka player do you want to load?
+
+502
+00:21:57.080 --> 00:22:01.120
+And so if we fix something in the player, I can push out
+
+503
+00:22:01.120 --> 00:22:03.120
+Shaka player release in a day.
+
+504
+00:22:03.120 --> 00:22:06.520
+And we get maybe two releases a year of the Chromecast SDK.
+
+505
+00:22:06.520 --> 00:22:10.000
+So if the bug is in the player, we can push that out.
+
+506
+00:22:10.000 --> 00:22:13.760
+You can get that fixed in a matter of days.
+
+507
+00:22:13.760 --> 00:22:18.360
+And if we are busy, you can contribute to that player,
+
+508
+00:22:18.360 --> 00:22:20.640
+which you could not do with the old one.
+
+509
+00:22:20.640 --> 00:22:21.400
+Right?
+
+510
+00:22:21.400 --> 00:22:23.000
+Yeah, super cool.
+
+511
+00:22:23.000 --> 00:22:25.520
+Part of what you're saying there, I'm trying to
+
+512
+00:22:25.520 --> 00:22:27.680
+try to grow that tent to be a little bit less Google
+
+513
+00:22:27.680 --> 00:22:29.840
+centric around the contributions.
+
+514
+00:22:29.840 --> 00:22:33.000
+Don't have to put words in Steve's mouth, but I assume
+
+515
+00:22:33.000 --> 00:22:36.760
+he would agree with most of what I'm about to say around.
+
+516
+00:22:36.760 --> 00:22:41.280
+I mean, we tried really hard with Video.js to encourage
+
+517
+00:22:41.280 --> 00:22:44.960
+and foster external contributions.
+
+518
+00:22:44.960 --> 00:22:48.840
+You know, we tried a good first issue tag.
+
+519
+00:22:48.840 --> 00:22:53.840
+We tried to lower that barrier to acceptance as far as possible.
+
+520
+00:22:53.840 --> 00:22:59.080
+I think as far as I could tell, I think the only things
+
+521
+00:22:59.080 --> 00:23:03.280
+that really worked were Steve, just like getting a pull request,
+
+522
+00:23:03.280 --> 00:23:04.480
+be like, great, thank you.
+
+523
+00:23:04.480 --> 00:23:09.200
+And then doing a ton of work to just fix it and make it good
+
+524
+00:23:09.200 --> 00:23:11.040
+enough to pull in and then pull it in.
+
+525
+00:23:11.040 --> 00:23:14.240
+Rather than trying to do the back and forth
+
+526
+00:23:14.240 --> 00:23:17.480
+with the maintainer, that's exactly what attention is.
+
+527
+00:23:17.480 --> 00:23:22.160
+'Cause you want to bring a contributor in deeper
+
+528
+00:23:22.160 --> 00:23:24.400
+and help them navigate the code base,
+
+529
+00:23:24.400 --> 00:23:27.280
+help them learn how to do things, train them.
+
+530
+00:23:27.280 --> 00:23:28.600
+And that is a lot of time.
+
+531
+00:23:28.600 --> 00:23:30.720
+Yeah, it takes a lot of work.
+
+532
+00:23:30.720 --> 00:23:32.120
+But you also want to help them get the win, right?
+
+533
+00:23:32.120 --> 00:23:36.120
+So it's like, okay, if we help them get the first quick win
+
+534
+00:23:36.120 --> 00:23:39.320
+and get a PR merged, well, they stick around
+
+535
+00:23:39.320 --> 00:23:41.400
+and now we can help them do this,
+
+536
+00:23:41.400 --> 00:23:43.080
+self-service more than next time,
+
+537
+00:23:43.080 --> 00:23:47.200
+or just curious, what tax have you been trying
+
+538
+00:23:47.200 --> 00:23:48.600
+and what's been working on that front?
+
+539
+00:23:48.600 --> 00:23:50.360
+All over that map, I've done everything
+
+540
+00:23:50.360 --> 00:23:52.320
+that you've just said at some point.
+
+541
+00:23:52.320 --> 00:23:54.320
+I will probably do it all again at some point,
+
+542
+00:23:54.320 --> 00:23:57.080
+but it's like when you hire somebody
+
+543
+00:23:57.080 --> 00:24:00.920
+and you have a new teammate and you could take the attitude
+
+544
+00:24:00.920 --> 00:24:03.880
+of like, well, I don't have time to teach this person.
+
+545
+00:24:03.880 --> 00:24:05.600
+I have my own stuff to do.
+
+546
+00:24:05.600 --> 00:24:07.320
+But it's like that time you invest in them
+
+547
+00:24:07.320 --> 00:24:09.800
+as a multiplier for your whole organization.
+
+548
+00:24:09.800 --> 00:24:11.480
+It's worth it, you know?
+
+549
+00:24:11.480 --> 00:24:13.960
+And it's the same's true in open source, you know?
+
+550
+00:24:13.960 --> 00:24:16.160
+It's like, if somebody said it would be something
+
+551
+00:24:16.160 --> 00:24:20.080
+that's way off base, but they want to be there,
+
+552
+00:24:20.080 --> 00:24:24.240
+it's worth it long-term for me to teach them if I can.
+
+553
+00:24:24.240 --> 00:24:26.160
+And so I think that, you know, part of being
+
+554
+00:24:26.160 --> 00:24:29.160
+an open source maintainer, in my view,
+
+555
+00:24:29.160 --> 00:24:33.480
+it's one part technical and it's one part organizational
+
+556
+00:24:33.480 --> 00:24:36.440
+and it's also, to some degree, like educational.
+
+557
+00:24:36.440 --> 00:24:40.440
+Like, you need to be a teacher sometimes.
+
+558
+00:24:40.440 --> 00:24:41.800
+Yeah, I totally agree with that.
+
+559
+00:24:41.800 --> 00:24:45.280
+And also, video players are hard in that
+
+560
+00:24:45.280 --> 00:24:48.600
+for a lot of users of video players,
+
+561
+00:24:48.600 --> 00:24:50.440
+they're just trying to get the video working.
+
+562
+00:24:50.440 --> 00:24:52.680
+They might find a bug and contribute it,
+
+563
+00:24:52.680 --> 00:24:54.920
+but then if they're an application developer,
+
+564
+00:24:54.920 --> 00:24:56.640
+then they're just like moving on to the next,
+
+565
+00:24:56.640 --> 00:24:59.240
+like component in their system that might have problems
+
+566
+00:24:59.240 --> 00:25:02.760
+and like, unlikely to continue to be a contributor.
+
+567
+00:25:02.760 --> 00:25:05.800
+Like, fabulous to be like a media streaming platform
+
+568
+00:25:05.800 --> 00:25:08.440
+or something like that, then that's like a clear place
+
+569
+00:25:08.440 --> 00:25:09.640
+where you might, you know,
+
+570
+00:25:09.640 --> 00:25:11.400
+get somebody to contribute on a regular basis.
+
+571
+00:25:11.400 --> 00:25:14.320
+But like, once you get to like the application developer level,
+
+572
+00:25:14.320 --> 00:25:16.800
+like, it's not like a react or something like that,
+
+573
+00:25:16.800 --> 00:25:18.320
+where it's like, you're working in this thing every day,
+
+574
+00:25:18.320 --> 00:25:20.960
+it's like this video player that once you get it working,
+
+575
+00:25:20.960 --> 00:25:22.520
+you're moving on and that could be a challenge
+
+576
+00:25:22.520 --> 00:25:24.920
+in this kind of niche space.
+
+577
+00:25:24.920 --> 00:25:26.600
+Yeah, it's a very niche space.
+
+578
+00:25:26.600 --> 00:25:30.320
+And like a lot of the people who use at least my products
+
+579
+00:25:30.320 --> 00:25:33.000
+are people who work for big streaming media companies.
+
+580
+00:25:33.000 --> 00:25:38.000
+Like, you know, random developers don't need dash, you know.
+
+581
+00:25:38.000 --> 00:25:40.440
+I've had so many people come and say like,
+
+582
+00:25:40.440 --> 00:25:42.120
+hey, I just stumbled across your projects.
+
+583
+00:25:42.120 --> 00:25:43.880
+I'm looking for a video player for my website.
+
+584
+00:25:43.880 --> 00:25:48.120
+And you know, my family videos are like my training video
+
+585
+00:25:48.120 --> 00:25:50.200
+for my employee or whatever.
+
+586
+00:25:50.200 --> 00:25:54.000
+And you know, I try to take time and explain to them like,
+
+587
+00:25:54.000 --> 00:25:56.720
+yeah, I really don't think this is the project you need.
+
+588
+00:25:56.720 --> 00:25:59.520
+Like this is, I'm happy to point you at some resources
+
+589
+00:25:59.520 --> 00:26:02.880
+about HTML5 video, but like, you don't need this.
+
+590
+00:26:02.880 --> 00:26:06.440
+This is a lot of complexity that doesn't serve you.
+
+591
+00:26:06.440 --> 00:26:07.760
+You know, contributors do tend to be
+
+592
+00:26:07.760 --> 00:26:08.760
+from these big companies.
+
+593
+00:26:08.760 --> 00:26:13.600
+And so like there is an opportunity to get them,
+
+594
+00:26:13.600 --> 00:26:16.560
+if you can, you know, influence the not just the people,
+
+595
+00:26:16.560 --> 00:26:18.720
+but the companies to take the attitude of like,
+
+596
+00:26:18.720 --> 00:26:21.480
+well, this is a public good for our whole industry
+
+597
+00:26:21.480 --> 00:26:23.720
+and like we should be, we should be here.
+
+598
+00:26:23.720 --> 00:26:27.400
+So I mean, and this is not intended
+
+599
+00:26:27.400 --> 00:26:29.680
+to be rolling a grenade out of the room or anything,
+
+600
+00:26:29.680 --> 00:26:30.480
+but I'm just curious.
+
+601
+00:26:30.480 --> 00:26:35.280
+I mean, two amazing projects, HLSJS and Shaka,
+
+602
+00:26:35.280 --> 00:26:38.160
+like why would you pull Shaka off the shelf
+
+603
+00:26:38.160 --> 00:26:40.760
+over HLSJS or vice versa?
+
+604
+00:26:40.760 --> 00:26:44.040
+- You know, I'm not sure what the big advantages are
+
+605
+00:26:44.040 --> 00:26:46.600
+of HLSJS over Shaka.
+
+606
+00:26:46.600 --> 00:26:48.280
+I haven't spent a lot of time in their source code
+
+607
+00:26:48.280 --> 00:26:50.120
+and I haven't used it personally.
+
+608
+00:26:50.120 --> 00:26:53.960
+I am sure there are advantages to HLSJS over Shaka.
+
+609
+00:26:53.960 --> 00:26:57.600
+You know, as I'm, as I'm sure there are vice versa.
+
+610
+00:26:57.600 --> 00:27:00.560
+Part of the philosophy of Shaka is to be the easy button
+
+611
+00:27:00.560 --> 00:27:02.760
+and to be the everything player.
+
+612
+00:27:02.760 --> 00:27:05.200
+And so, you know, it's designed to be extensible,
+
+613
+00:27:05.200 --> 00:27:06.680
+it's designed to be flexible
+
+614
+00:27:06.680 --> 00:27:10.720
+and for the easy stuff, it's designed to be easy to use.
+
+615
+00:27:10.720 --> 00:27:12.040
+You know, I'm sure some of those things
+
+616
+00:27:12.040 --> 00:27:14.080
+are also true of the other project.
+
+617
+00:27:14.080 --> 00:27:17.120
+But, you know, if you wanna have one interface
+
+618
+00:27:17.120 --> 00:27:21.000
+that plays dash and plays HLS and when you're, you know,
+
+619
+00:27:21.000 --> 00:27:23.360
+stuck with native, you know, native HLS
+
+620
+00:27:23.360 --> 00:27:26.840
+on an old iPhone version, then you know, it'll do that too.
+
+621
+00:27:26.840 --> 00:27:29.800
+If you just want one API for all of those things,
+
+622
+00:27:29.800 --> 00:27:32.320
+that is what Shaka is.
+
+623
+00:27:32.320 --> 00:27:36.320
+- So, an area that we're getting pushed on lately
+
+624
+00:27:36.320 --> 00:27:40.720
+when we're thinking about players is size, oh yeah.
+
+625
+00:27:40.720 --> 00:27:44.280
+And so, you know, where we've gotten pushed is like,
+
+626
+00:27:44.280 --> 00:27:46.160
+yeah, I mean, this player looks nice and all,
+
+627
+00:27:46.160 --> 00:27:50.160
+but like, it's X kilobytes, G-zipped, blah, blah.
+
+628
+00:27:50.160 --> 00:27:51.480
+That's way too much.
+
+629
+00:27:51.480 --> 00:27:52.320
+- Yeah.
+
+630
+00:27:52.320 --> 00:27:54.280
+- I'm curious, are y'all getting pushed on that at all?
+
+631
+00:27:54.280 --> 00:27:55.680
+Is it a concern? - Oh yeah.
+
+632
+00:27:55.680 --> 00:27:59.680
+- Yeah, I've been hearing people talk about this for years.
+
+633
+00:27:59.680 --> 00:28:01.600
+- Well, it's gone in and out, to be fair, like, you know,
+
+634
+00:28:01.600 --> 00:28:04.520
+I feel like there was a little bit where
+
+635
+00:28:04.520 --> 00:28:06.000
+that was just like a little bit less of a concern.
+
+636
+00:28:06.000 --> 00:28:07.240
+Like, connections had gotten fast.
+
+637
+00:28:07.240 --> 00:28:08.680
+There was the spend as little as possible
+
+638
+00:28:08.680 --> 00:28:10.200
+that it felt like we didn't have the focus on that.
+
+639
+00:28:10.200 --> 00:28:13.080
+Now it feels like we've gone fully back to the,
+
+640
+00:28:13.080 --> 00:28:16.000
+oh yeah, Perf sent as little JavaScript as possible.
+
+641
+00:28:16.000 --> 00:28:19.640
+- Yeah, I think a lot of that has come from accurate
+
+642
+00:28:19.640 --> 00:28:22.000
+or inaccurate, the perception that like,
+
+643
+00:28:22.000 --> 00:28:25.040
+the like, lighthouse metrics have like, dramatic impact
+
+644
+00:28:25.040 --> 00:28:26.760
+on like, page ranks. - Yeah.
+
+645
+00:28:26.760 --> 00:28:28.640
+- And I think like, a lot of people now
+
+646
+00:28:28.640 --> 00:28:30.960
+trying to load video players like above the fold,
+
+647
+00:28:30.960 --> 00:28:33.880
+background videos, you know, aesthetic videos
+
+648
+00:28:33.880 --> 00:28:34.920
+that are part of the page, right?
+
+649
+00:28:34.920 --> 00:28:38.640
+And maybe I'm optimizing those for like a lazy load
+
+650
+00:28:38.640 --> 00:28:40.160
+or that sort of thing, like something we've,
+
+651
+00:28:40.160 --> 00:28:43.280
+we've been now the rabbit hole of extensively.
+
+652
+00:28:43.280 --> 00:28:46.040
+I think that has driven people back to like,
+
+653
+00:28:46.040 --> 00:28:48.520
+reducing play as I, like trying to get her down
+
+654
+00:28:48.520 --> 00:28:50.440
+as low as possible.
+
+655
+00:28:50.440 --> 00:28:53.600
+- Yeah, so I've heard complaints over the years
+
+656
+00:28:53.600 --> 00:28:56.760
+about the size of Shaka, but I haven't done this in a while,
+
+657
+00:28:56.760 --> 00:28:58.560
+but at the time when I went and compared
+
+658
+00:28:58.560 --> 00:29:00.280
+to some other open source players
+
+659
+00:29:00.280 --> 00:29:04.080
+that did similar or same things, they were bigger.
+
+660
+00:29:04.080 --> 00:29:07.360
+And so, you know, yeah, Shaka is big
+
+661
+00:29:07.360 --> 00:29:09.240
+and it's gotten bigger over time
+
+662
+00:29:09.240 --> 00:29:11.520
+because we've added a lot more features.
+
+663
+00:29:11.520 --> 00:29:13.880
+But one of the things we built in kind of early
+
+664
+00:29:13.880 --> 00:29:15.240
+and I'll be the first to admit
+
+665
+00:29:15.240 --> 00:29:16.640
+that our build system is jank,
+
+666
+00:29:16.640 --> 00:29:19.520
+but this custom build system we have,
+
+667
+00:29:19.520 --> 00:29:21.760
+it outputs a monolithic build,
+
+668
+00:29:21.760 --> 00:29:23.440
+but at build time you can customize
+
+669
+00:29:23.440 --> 00:29:25.960
+what pieces go into that model I think build.
+
+670
+00:29:25.960 --> 00:29:27.400
+So it's not modular in the way
+
+671
+00:29:27.400 --> 00:29:28.880
+that you would want it to be modular.
+
+672
+00:29:28.880 --> 00:29:30.240
+That's something we're talking about
+
+673
+00:29:30.240 --> 00:29:32.640
+for the next year to be able to
+
+674
+00:29:32.640 --> 00:29:34.960
+make it more modular, more composable
+
+675
+00:29:34.960 --> 00:29:36.480
+and move to TypeScript.
+
+676
+00:29:36.480 --> 00:29:38.560
+I think all of those things go hand in hand.
+
+677
+00:29:38.560 --> 00:29:40.840
+But, you know, today you can run the build script
+
+678
+00:29:40.840 --> 00:29:44.400
+and say, you know, I want the complete build
+
+679
+00:29:44.400 --> 00:29:46.600
+and then I want you to subtract the UI
+
+680
+00:29:46.600 --> 00:29:47.960
+and I want you to subtract cast
+
+681
+00:29:47.960 --> 00:29:50.120
+and I want you to subtract offline.
+
+682
+00:29:50.120 --> 00:29:51.880
+Or you can just say, I only want dash
+
+683
+00:29:51.880 --> 00:29:53.840
+and I only want, you know, this other thing.
+
+684
+00:29:53.840 --> 00:29:56.080
+I only want this subtitle format, you know.
+
+685
+00:29:56.080 --> 00:29:57.480
+So you can do a custom build today
+
+686
+00:29:57.480 --> 00:29:59.960
+and strip it down to the pieces that you need.
+
+687
+00:29:59.960 --> 00:30:02.000
+And in that sense, it is modular,
+
+688
+00:30:02.000 --> 00:30:03.200
+but we could do a lot more
+
+689
+00:30:03.200 --> 00:30:06.440
+and we could do a lot better and we plan to.
+
+690
+00:30:06.440 --> 00:30:08.400
+Captions, like that's one that comes up a lot
+
+691
+00:30:08.400 --> 00:30:11.160
+when we look at it and it's why I think quite a lot
+
+692
+00:30:11.160 --> 00:30:14.560
+of people that visit video.js build without captions.
+
+693
+00:30:14.560 --> 00:30:16.800
+Just because that's actually a good chunk
+
+694
+00:30:16.800 --> 00:30:18.560
+of a bundle size at this stage.
+
+695
+00:30:18.560 --> 00:30:20.560
+- Yeah, it's always blew my mind.
+
+696
+00:30:20.560 --> 00:30:23.280
+I remember they're like, it's rendering text.
+
+697
+00:30:23.280 --> 00:30:24.120
+How hard could it be?
+
+698
+00:30:24.120 --> 00:30:26.160
+And then like you really look under the hood
+
+699
+00:30:26.160 --> 00:30:28.960
+and there's like basically a video game engine
+
+700
+00:30:28.960 --> 00:30:30.840
+and they're around like collision detection
+
+701
+00:30:30.840 --> 00:30:32.360
+and all this other crazy stuff.
+
+702
+00:30:32.360 --> 00:30:36.160
+So it makes sense once you scratch the surface.
+
+703
+00:30:36.160 --> 00:30:38.800
+But wow, that doesn't remind me though.
+
+704
+00:30:38.800 --> 00:30:41.720
+Shaka has, this is getting pretty technical, I think,
+
+705
+00:30:41.720 --> 00:30:43.320
+but like Shaka has an interesting way.
+
+706
+00:30:43.320 --> 00:30:47.440
+I think of handling text tracks in the absence
+
+707
+00:30:47.440 --> 00:30:51.640
+of the remove text track API and that like other players
+
+708
+00:30:51.640 --> 00:30:54.920
+just like deal with the fact that there's like,
+
+709
+00:30:54.920 --> 00:30:57.040
+once you create a text track, you can't remove them.
+
+710
+00:30:57.040 --> 00:30:59.680
+Whereas I think in Shaka, like you found a nice way
+
+711
+00:30:59.680 --> 00:31:01.920
+to kind of juggle that, reuse them, is that right?
+
+712
+00:31:01.920 --> 00:31:02.840
+- Yeah, yeah.
+
+713
+00:31:02.840 --> 00:31:06.520
+So there's two different ways to display text by default,
+
+714
+00:31:06.520 --> 00:31:09.360
+but it's a plugin interface so you can add your own.
+
+715
+00:31:09.360 --> 00:31:11.560
+But one of them uses the text track interface
+
+716
+00:31:11.560 --> 00:31:13.960
+and just like we take Dash and HLS,
+
+717
+00:31:13.960 --> 00:31:17.440
+we boil it down to an internal sort of intermediate
+
+718
+00:31:17.440 --> 00:31:21.520
+representation that has all the things from both.
+
+719
+00:31:21.520 --> 00:31:22.640
+We do the same with text.
+
+720
+00:31:22.640 --> 00:31:26.680
+So we'll parse VTT, we'll parse TTML, we'll parse.
+
+721
+00:31:26.680 --> 00:31:28.160
+Oh, I can't even remember, Alvaro has added
+
+722
+00:31:28.160 --> 00:31:31.400
+so many subtitle formats now that I had no involvement in,
+
+723
+00:31:31.400 --> 00:31:32.920
+but they all boil down to the same
+
+724
+00:31:32.920 --> 00:31:35.520
+and intermediate internal representation.
+
+725
+00:31:35.520 --> 00:31:38.840
+And then if you are displaying through the text track
+
+726
+00:31:38.840 --> 00:31:41.720
+interface, those all get down converted further
+
+727
+00:31:41.720 --> 00:31:45.720
+into the VTTQ API, which is limited
+
+728
+00:31:45.720 --> 00:31:48.120
+and the implementations of it are even more limited
+
+729
+00:31:48.120 --> 00:31:51.120
+than the spec because even Chrome doesn't implement
+
+730
+00:31:51.120 --> 00:31:53.640
+everything that's in VTTQ.
+
+731
+00:31:53.640 --> 00:31:57.560
+But when we're doing that, the player will basically
+
+732
+00:31:57.560 --> 00:32:00.080
+create a single text track.
+
+733
+00:32:00.080 --> 00:32:02.200
+And if you switch text tracks at the high level,
+
+734
+00:32:02.200 --> 00:32:05.160
+the player, that underlying HTML text track
+
+735
+00:32:05.160 --> 00:32:07.800
+is just getting cleared and reused.
+
+736
+00:32:07.800 --> 00:32:11.200
+And when it starts up, if you're running like player
+
+737
+00:32:11.200 --> 00:32:14.480
+instance after player instance, they're each picking up
+
+738
+00:32:14.480 --> 00:32:17.320
+the same track object on that video element.
+
+739
+00:32:17.320 --> 00:32:18.760
+If you're reusing the video element,
+
+740
+00:32:18.760 --> 00:32:20.240
+you're reusing that text track.
+
+741
+00:32:20.240 --> 00:32:23.800
+So we just don't have a problem with that.
+
+742
+00:32:23.800 --> 00:32:27.000
+And if we find other older text tracks on that video element
+
+743
+00:32:27.000 --> 00:32:29.280
+that somebody else created, we just disable them.
+
+744
+00:32:29.280 --> 00:32:30.040
+Oh, yeah.
+
+745
+00:32:30.040 --> 00:32:33.080
+So it's only the ID on it that says like,
+
+746
+00:32:33.080 --> 00:32:37.040
+Chaka Player, that's ours, we control that.
+
+747
+00:32:37.040 --> 00:32:40.800
+Speaking of text earlier, y'all have
+
+748
+00:32:40.800 --> 00:32:43.120
+done a ton of translation work within Chaka.
+
+749
+00:32:43.120 --> 00:32:43.880
+Yes.
+
+750
+00:32:43.880 --> 00:32:46.240
+What is your favorite translation?
+
+751
+00:32:46.240 --> 00:32:49.160
+Well, I think that's obviously the UI translation
+
+752
+00:32:49.160 --> 00:32:52.240
+into Ancient Elbeish.
+
+753
+00:32:52.240 --> 00:32:55.640
+So somebody's asked me before like what the story is
+
+754
+00:32:55.640 --> 00:32:58.120
+with the one-star track clip that's on there.
+
+755
+00:32:58.120 --> 00:33:00.320
+So I'll do that first because there's a lead in here.
+
+756
+00:33:00.320 --> 00:33:04.160
+But at the time we started the Chaka Player project,
+
+757
+00:33:04.160 --> 00:33:07.880
+I couldn't find any multi-lingual test content,
+
+758
+00:33:07.880 --> 00:33:09.840
+like specifically audio.
+
+759
+00:33:09.840 --> 00:33:11.400
+But I had lived in Germany.
+
+760
+00:33:11.400 --> 00:33:14.760
+And I owned a Region 2 DVD of Star Trek.
+
+761
+00:33:14.760 --> 00:33:19.200
+And it had all the e-figs, audio tracks.
+
+762
+00:33:19.200 --> 00:33:22.120
+And so I said, OK, let me just see
+
+763
+00:33:22.120 --> 00:33:24.360
+if I can figure out what fair use means.
+
+764
+00:33:24.360 --> 00:33:29.160
+And I will take this SD 60 second clip in all the languages.
+
+765
+00:33:29.160 --> 00:33:31.600
+And we'll just add that to our test content
+
+766
+00:33:31.600 --> 00:33:37.240
+and hope that nobody paying attention to this is a lawyer.
+
+767
+00:33:37.240 --> 00:33:40.320
+So we created this test clip with Star Trek.
+
+768
+00:33:40.320 --> 00:33:43.480
+And for me, I'm a giant Trek-y.
+
+769
+00:33:43.480 --> 00:33:46.000
+But then the project grows, the team grows.
+
+770
+00:33:46.000 --> 00:33:47.840
+And at some point, one of my teammates
+
+771
+00:33:47.840 --> 00:33:50.840
+was like, how come everything you're doing is Star Trek?
+
+772
+00:33:50.840 --> 00:33:52.400
+What about my fandoms?
+
+773
+00:33:52.400 --> 00:33:54.960
+[LAUGHTER]
+
+774
+00:33:54.960 --> 00:33:59.880
+And she was the one who was really designing the UI library
+
+775
+00:33:59.880 --> 00:34:01.720
+and working on all the UX stuff.
+
+776
+00:34:01.720 --> 00:34:03.680
+And so when we had to start, we didn't
+
+777
+00:34:03.680 --> 00:34:05.440
+have to think about internationalization
+
+778
+00:34:05.440 --> 00:34:07.000
+when Chaka was just an API.
+
+779
+00:34:07.000 --> 00:34:09.480
+But now we had our own UI.
+
+780
+00:34:09.480 --> 00:34:11.800
+We had our own text showing up in that UI.
+
+781
+00:34:11.800 --> 00:34:18.000
+And even the screen reader text even had to be translated.
+
+782
+00:34:18.000 --> 00:34:20.480
+So as an Easter egg, we had this available,
+
+783
+00:34:20.480 --> 00:34:23.080
+I believe, when we launched the UI in 2018
+
+784
+00:34:23.080 --> 00:34:26.120
+was the Cinder and Translation.
+
+785
+00:34:26.120 --> 00:34:28.160
+It wasn't originally in the repo.
+
+786
+00:34:28.160 --> 00:34:30.800
+Initially, it was only secretly inserted
+
+787
+00:34:30.800 --> 00:34:34.680
+into the AppSpot deployment so that nobody knew it was there.
+
+788
+00:34:34.680 --> 00:34:37.120
+But if you typed in the language code SJN,
+
+789
+00:34:37.120 --> 00:34:40.520
+you would get the UI translated into Cinder.
+
+790
+00:34:40.520 --> 00:34:42.600
+And that is actually the language code for Elvish
+
+791
+00:34:42.600 --> 00:34:45.600
+that has been set aside as an ISO language code for them.
+
+792
+00:34:45.600 --> 00:34:46.240
+Oh, my gosh.
+
+793
+00:34:46.240 --> 00:34:48.320
+Is that BCP47 compliant?
+
+794
+00:34:48.320 --> 00:34:48.960
+Yes, it is.
+
+795
+00:34:48.960 --> 00:34:50.960
+[LAUGHTER]
+
+796
+00:34:50.960 --> 00:34:53.200
+So yeah, as part of the process of getting rid
+
+797
+00:34:53.200 --> 00:34:55.800
+of Google inside baseball for Chaka Player,
+
+798
+00:34:55.800 --> 00:34:59.200
+we put everything in the repo, including all the Easter eggs.
+
+799
+00:34:59.200 --> 00:35:01.200
+And I just recently had to go through an update
+
+800
+00:35:01.200 --> 00:35:03.000
+because we've added a lot of things to the UI.
+
+801
+00:35:03.000 --> 00:35:07.160
+So I had to go update all of our Cinder and Translations.
+
+802
+00:35:07.160 --> 00:35:09.680
+But basically, there's a web font that loads on demand
+
+803
+00:35:09.680 --> 00:35:12.480
+whenever that Unicode range gets hit.
+
+804
+00:35:12.480 --> 00:35:15.720
+And there's an actual Elvish font.
+
+805
+00:35:15.720 --> 00:35:20.160
+So if you're not a Tolkien nerd, the Elvish language,
+
+806
+00:35:20.160 --> 00:35:21.520
+there was like ancient Elvish.
+
+807
+00:35:21.520 --> 00:35:24.800
+And then there was like everyday walking around modern Elvish
+
+808
+00:35:24.800 --> 00:35:27.880
+at the time that the stories take place.
+
+809
+00:35:27.880 --> 00:35:30.920
+And then there's Tanguar, which is the writing system.
+
+810
+00:35:30.920 --> 00:35:32.280
+The writing system is phonetic.
+
+811
+00:35:32.280 --> 00:35:34.680
+You can write English in Tanguar.
+
+812
+00:35:34.680 --> 00:35:37.120
+It's totally divorced from the actual language.
+
+813
+00:35:37.120 --> 00:35:39.400
+So I could have just taken those English strings
+
+814
+00:35:39.400 --> 00:35:42.160
+and rendered them in the Tanguar font.
+
+815
+00:35:42.160 --> 00:35:43.560
+And I did not do that.
+
+816
+00:35:43.560 --> 00:35:47.520
+I actually spent time not being a speaker of Elvish
+
+817
+00:35:47.520 --> 00:35:49.440
+going through finding internet resources,
+
+818
+00:35:49.440 --> 00:35:52.640
+online dictionaries, grammar guides,
+
+819
+00:35:52.640 --> 00:35:58.560
+and doing my level best to actually translate these things.
+
+820
+00:35:58.560 --> 00:36:00.880
+And where I've made mistakes in the Elvish,
+
+821
+00:36:00.880 --> 00:36:03.640
+I'm very happy to have pull requests.
+
+822
+00:36:03.640 --> 00:36:05.400
+The commitment here is amazing.
+
+823
+00:36:05.400 --> 00:36:06.040
+I know.
+
+824
+00:36:06.040 --> 00:36:07.800
+This is fantastic.
+
+825
+00:36:07.800 --> 00:36:10.600
+So it was very hard for me to keep track of all this.
+
+826
+00:36:10.600 --> 00:36:12.240
+At one point, I had a spreadsheet.
+
+827
+00:36:12.240 --> 00:36:15.040
+And then I couldn't get the font surrender in the spreadsheet.
+
+828
+00:36:15.040 --> 00:36:18.040
+But I eventually ended up putting an extra file in the repo
+
+829
+00:36:18.040 --> 00:36:20.600
+that's next to the actual translation file
+
+830
+00:36:20.600 --> 00:36:25.120
+that's much broader and has the original language,
+
+831
+00:36:25.120 --> 00:36:28.480
+the original English string, then a literal translation
+
+832
+00:36:28.480 --> 00:36:32.360
+of that of the words I could find in Elvish.
+
+833
+00:36:32.360 --> 00:36:35.120
+And then those Elvish words in Roman letters
+
+834
+00:36:35.120 --> 00:36:38.160
+and then those in the actual Unicode range
+
+835
+00:36:38.160 --> 00:36:40.360
+for the Tanguar script.
+
+836
+00:36:40.360 --> 00:36:45.760
+And so my favorite translation, someone asked me this week,
+
+837
+00:36:45.760 --> 00:36:47.200
+what's your favorite translation?
+
+838
+00:36:47.200 --> 00:36:51.800
+I said, well, it's the skip add button, which literally says,
+
+839
+00:36:51.800 --> 00:36:53.960
+jump over request for money.
+
+840
+00:36:53.960 --> 00:36:57.520
+[LAUGHTER]
+
+841
+00:36:57.520 --> 00:37:02.080
+So yeah, I got to do a lot of creative translating.
+
+842
+00:37:02.080 --> 00:37:04.320
+I'm looking at the source here.
+
+843
+00:37:04.320 --> 00:37:06.320
+AirPlay is another fun one.
+
+844
+00:37:06.320 --> 00:37:09.320
+It literally says, heavens make play.
+
+845
+00:37:09.320 --> 00:37:11.440
+[LAUGHTER]
+
+846
+00:37:11.440 --> 00:37:13.680
+It's the best we could do.
+
+847
+00:37:13.680 --> 00:37:15.720
+So yeah, you can go to the Shaka demo today
+
+848
+00:37:15.720 --> 00:37:17.960
+and go to the config, pull the config out.
+
+849
+00:37:17.960 --> 00:37:21.840
+And that little drawer, go to UI language and type in SJN.
+
+850
+00:37:21.840 --> 00:37:26.360
+And then I don't think there's any Elvish screen readers.
+
+851
+00:37:26.360 --> 00:37:27.720
+But even those get translated.
+
+852
+00:37:27.720 --> 00:37:29.400
+So amazing.
+
+853
+00:37:29.400 --> 00:37:30.040
+Fantastic.
+
+854
+00:37:30.040 --> 00:37:30.960
+Yeah.
+
+855
+00:37:30.960 --> 00:37:35.680
+So you asked in there, if anybody listening maybe
+
+856
+00:37:35.680 --> 00:37:38.680
+are fluent in Elvish, they could contribute changes.
+
+857
+00:37:38.680 --> 00:37:39.160
+Yeah.
+
+858
+00:37:39.160 --> 00:37:42.760
+Yeah, tell us more about getting on to the contribution train.
+
+859
+00:37:42.760 --> 00:37:45.600
+OK, so there's a very complicated set of command line
+
+860
+00:37:45.600 --> 00:37:47.400
+tools and emails that you have to use.
+
+861
+00:37:47.400 --> 00:37:49.800
+[LAUGHTER]
+
+862
+00:37:49.800 --> 00:37:53.240
+No, we take pull requests on GitHub.
+
+863
+00:37:53.240 --> 00:37:57.080
+It is a relatively straightforward process.
+
+864
+00:37:57.080 --> 00:37:58.920
+We're not strict about file an issue
+
+865
+00:37:58.920 --> 00:38:02.000
+before you send a pull request, although if your pull request
+
+866
+00:38:02.000 --> 00:38:05.000
+is going to be complex, maybe have a conversation with us
+
+867
+00:38:05.000 --> 00:38:07.880
+before you do some big architecture.
+
+868
+00:38:07.880 --> 00:38:09.920
+But we don't have strict rules about that.
+
+869
+00:38:09.920 --> 00:38:12.680
+I know some people like they like to file an issue
+
+870
+00:38:12.680 --> 00:38:14.600
+and then immediately file a PR to close it.
+
+871
+00:38:14.600 --> 00:38:15.200
+That's cool.
+
+872
+00:38:15.200 --> 00:38:16.480
+We love that too.
+
+873
+00:38:16.480 --> 00:38:18.760
+But yeah, just send us pull requests.
+
+874
+00:38:18.760 --> 00:38:20.000
+We like those.
+
+875
+00:38:20.000 --> 00:38:23.520
+Any-- I mean, do you all do-- I know some Google projects
+
+876
+00:38:23.520 --> 00:38:26.360
+have to do the ownership stuff.
+
+877
+00:38:26.360 --> 00:38:27.360
+I'm just curious.
+
+878
+00:38:27.360 --> 00:38:29.880
+So yeah, we do have-- it is Google policy
+
+879
+00:38:29.880 --> 00:38:31.640
+that we have a CLA.
+
+880
+00:38:31.640 --> 00:38:34.800
+There are conscientious objectors in the community
+
+881
+00:38:34.800 --> 00:38:38.320
+who will file issues with little snippets of code
+
+882
+00:38:38.320 --> 00:38:40.160
+and then refuse to send PRs because they
+
+883
+00:38:40.160 --> 00:38:41.960
+don't want to sign a CLA.
+
+884
+00:38:41.960 --> 00:38:45.440
+And I'm not going to fight anybody on that
+
+885
+00:38:45.440 --> 00:38:49.600
+if you don't want to assign this legal document.
+
+886
+00:38:49.600 --> 00:38:52.480
+That is totally between you and Google.
+
+887
+00:38:52.480 --> 00:38:53.400
+It's not my policy.
+
+888
+00:38:53.400 --> 00:38:55.240
+It's Google's policy.
+
+889
+00:38:55.240 --> 00:38:58.240
+But yeah, you do have to sign a CLA technically.
+
+890
+00:38:58.240 --> 00:39:01.880
+And the other maintainers do tend to check.
+
+891
+00:39:01.880 --> 00:39:05.680
+But there's actually a robot like a CI action that comes along
+
+892
+00:39:05.680 --> 00:39:07.840
+and says, hey, I noticed you haven't signed the CLA.
+
+893
+00:39:07.840 --> 00:39:11.680
+So they make it really hard for us to not notice.
+
+894
+00:39:11.680 --> 00:39:12.840
+We're coming up on time here.
+
+895
+00:39:12.840 --> 00:39:15.080
+But anything else you wanted to cover?
+
+896
+00:39:15.080 --> 00:39:16.680
+No, not really.
+
+897
+00:39:16.680 --> 00:39:18.680
+I'm really grateful to be part of this community.
+
+898
+00:39:18.680 --> 00:39:22.720
+And I'm really grateful to be involved in Chaka
+
+899
+00:39:22.720 --> 00:39:24.080
+all these years.
+
+900
+00:39:24.080 --> 00:39:25.120
+I want to keep it going.
+
+901
+00:39:25.120 --> 00:39:26.640
+I want to keep the community going.
+
+902
+00:39:26.640 --> 00:39:29.240
+I want to grow the community aspect as much as possible.
+
+903
+00:39:29.240 --> 00:39:32.560
+And yeah, happy to have everybody involved
+
+904
+00:39:32.560 --> 00:39:34.000
+who wants to be involved.
+
+905
+00:39:34.000 --> 00:39:34.480
+Awesome.
+
+906
+00:39:34.480 --> 00:39:36.560
+Well, Joey, thank you so much for joining us today.
+
+907
+00:39:36.560 --> 00:39:37.520
+It's been a pleasure.
+
+908
+00:39:37.520 --> 00:39:39.480
+Thanks for having me.
+
+909
+00:39:39.480 --> 00:39:40.560
+That's all we have for today.
+
+910
+00:39:40.560 --> 00:39:43.200
+But as always, we'd love to hear what you thought.
+
+911
+00:39:43.200 --> 00:39:47.160
+Even if you disagree, so please reach out on Twitter @demuxed.
+
+912
+00:39:47.160 --> 00:39:49.880
+To learn more about HeavyBit, visit HeavyBit.com.
+
+913
+00:39:49.880 --> 00:39:52.200
+And while you're there, be sure to check out their library.
+
+914
+00:39:52.200 --> 00:39:55.240
+It's packed with amazing talks on sales, marketing,
+
+915
+00:39:55.240 --> 00:39:57.520
+product, and general management, from founders
+
+916
+00:39:57.520 --> 00:40:01.120
+of Developer Tools Companies and other industry leaders.

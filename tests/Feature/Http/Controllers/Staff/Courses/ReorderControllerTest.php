@@ -10,7 +10,7 @@ describe('auth', function () {
     test('requires authentication', function () {
         $course = Course::factory()->create();
 
-        post(route('staff.courses.reorder'), [
+        post(route('staff.academy.courses.reorder'), [
             'items' => [
                 ['id' => $course->id, 'order' => 0],
             ],
@@ -24,7 +24,7 @@ describe('auth', function () {
 
         actingAs($user);
 
-        post(route('staff.courses.reorder'), [
+        post(route('staff.academy.courses.reorder'), [
             'items' => [
                 ['id' => $course->id, 'order' => 0],
             ],
@@ -37,7 +37,7 @@ describe('auth', function () {
 
         actingAs($admin);
 
-        post(route('staff.courses.reorder'), [
+        post(route('staff.academy.courses.reorder'), [
             'items' => [
                 ['id' => $course->id, 'order' => 0],
             ],
@@ -54,7 +54,7 @@ describe('reordering', function () {
 
         actingAs($admin);
 
-        post(route('staff.courses.reorder'), [
+        post(route('staff.academy.courses.reorder'), [
             'items' => [
                 ['id' => $first->id, 'order' => 2],
                 ['id' => $second->id, 'order' => 0],
@@ -74,7 +74,7 @@ describe('validation', function () {
 
         actingAs($admin);
 
-        post(route('staff.courses.reorder'), $data)
+        post(route('staff.academy.courses.reorder'), $data)
             ->assertInvalid($invalidFields);
     })->with([
         'items is required' => [

@@ -6,11 +6,14 @@ use App\Enums\MarkdownProfile;
 use App\Enums\VideoHost;
 use App\Models\User;
 use App\Services\Markdown\MarkdownService;
+use Illuminate\Database\Eloquent\Attributes\Scope;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\Storage;
 
@@ -30,8 +33,6 @@ class Lesson extends Model
         'tagline',
         'description',
         'copy',
-        'transcript',
-        'caption_track_id',
         'asset_id',
         'playback_id',
         'host',
@@ -40,9 +41,9 @@ class Lesson extends Model
         'gated',
         'order',
         'course_id',
-        'visible',
+        'allow_preview',
         'publish_date',
-        'thumbnail_extension',
+        'thumbnail_filename',
         'thumbnail_crops',
     ];
 
@@ -53,7 +54,7 @@ class Lesson extends Model
             'gated' => 'boolean',
             'duration_seconds' => 'integer',
             'order' => 'integer',
-            'visible' => 'boolean',
+            'allow_preview' => 'boolean',
             'publish_date' => 'date',
             'thumbnail_crops' => 'array',
         ];
@@ -102,6 +103,26 @@ class Lesson extends Model
     }
 
     //
+    // Scopes
+    //
+
+    #[Scope]
+    protected function published(Builder $query): void
+    {
+        $query->whereNotNull('publish_date')->where('publish_date', '<=', now());
+    }
+
+    #[Scope]
+    protected function visible(Builder $query): void
+    {
+        $query->where(function (Builder $q): void {
+            $q->where(function (Builder $q): void {
+                $q->whereNotNull('publish_date')->where('publish_date', '<=', now());
+            })->orWhere('allow_preview', true);
+        });
+    }
+
+    //
     // Attributes
     //
 
@@ -109,13 +130,13 @@ class Lesson extends Model
     {
         return Attribute::make(
             get: function (): ?string {
-                if ($this->thumbnail_extension === null) {
+                if ($this->thumbnail_filename === null) {
                     return null;
                 }
 
                 $imageTransformBase = Config::get('services.image-transform.base_url');
 
-                $path = "lesson/{$this->id}/thumbnail.{$this->thumbnail_extension}";
+                $path = "lesson/{$this->id}/{$this->thumbnail_filename}";
 
                 if ($imageTransformBase === null) {
                     return Storage::disk('public')->url($path);
@@ -123,6 +144,20 @@ class Lesson extends Model
 
                 return $imageTransformBase.'/'.$path;
             }
+        );
+    }
+
+    protected function transcriptVtt(): Attribute
+    {
+        return Attribute::make(
+            get: fn (): ?string => once(fn () => Storage::get("lessons/{$this->id}/transcript.vtt")),
+        );
+    }
+
+    protected function transcriptTxt(): Attribute
+    {
+        return Attribute::make(
+            get: fn (): ?string => once(fn () => Storage::get("lessons/{$this->id}/transcript.txt")),
         );
     }
 
@@ -166,11 +201,26 @@ class Lesson extends Model
         return $this->belongsTo(related: Course::class);
     }
 
+    public function instructors(): BelongsToMany
+    {
+        return $this->belongsToMany(related: User::class, table: 'instructor_lesson');
+    }
+
+    public function transcriptLines(): HasMany
+    {
+        return $this->hasMany(related: LessonTranscriptLine::class);
+    }
+
+    public function tags(): BelongsToMany
+    {
+        return $this->belongsToMany(related: \App\Models\Tag::class);
+    }
+
     public function users(): BelongsToMany
     {
         return $this->belongsToMany(related: User::class)
             ->using(LessonUser::class)
-            ->withPivot('viewed_at', 'started_at', 'completed_at', 'playback_time_milliseconds')
+            ->withPivot('viewed_at', 'started_at', 'completed_at', 'playback_time_seconds')
             ->withTimestamps();
     }
 }

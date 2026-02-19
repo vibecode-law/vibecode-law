@@ -23,29 +23,28 @@ class CourseUpdateRequest extends FormRequest
         /** @var Course $course */
         $course = $this->route('course');
 
-        $slugRules = [
-            'required',
-            'string',
-            'max:255',
-            'regex:/^[a-z0-9]+(?:-[a-z0-9]+)*$/',
-            Rule::unique('courses', 'slug')->ignore($course),
-        ];
+        $isPublished = $course->allow_preview === true || $course->publish_date !== null;
 
-        if ($course->visible === true) {
-            $slugRules[] = Rule::in([$course->slug]);
-        }
+        $slugRules = $isPublished
+            ? ['prohibited']
+            : [
+                'required',
+                'string',
+                'max:255',
+                'regex:/^[a-z0-9]+(?:-[a-z0-9]+)*$/',
+                Rule::unique('courses', 'slug')->ignore($course),
+            ];
+
+        $requiredOrNullable = $isPublished ? 'required' : 'nullable';
 
         return [
             'title' => ['required', 'string', 'max:255'],
             'slug' => $slugRules,
-            'tagline' => ['required', 'string', 'max:255'],
-            'description' => ['required', 'string'],
-            'learning_objectives' => ['required', 'string'],
-            'experience_level' => ['required', 'integer', Rule::in(array_column(ExperienceLevel::cases(), 'value'))],
-            'visible' => ['required', 'boolean'],
+            'tagline' => [$requiredOrNullable, 'string', 'max:255'],
+            'description' => [$requiredOrNullable, 'string'],
+            'learning_objectives' => [$requiredOrNullable, 'string'],
+            'experience_level' => [$requiredOrNullable, 'integer', Rule::in(array_column(ExperienceLevel::cases(), 'value'))],
             'is_featured' => ['required', 'boolean'],
-            'publish_date' => ['nullable', 'date'],
-            'user_id' => ['nullable', Rule::exists('users', 'id')],
             'thumbnail' => ['nullable', 'image', 'mimes:png,jpg,jpeg,gif,webp', 'max:2048'],
             'thumbnail_crops' => [
                 'nullable',
@@ -58,6 +57,8 @@ class CourseUpdateRequest extends FormRequest
             'thumbnail_crops.*.width' => ['required', 'integer', 'min:1'],
             'thumbnail_crops.*.height' => ['required', 'integer', 'min:1'],
             'remove_thumbnail' => ['nullable', 'boolean'],
+            'tags' => ['nullable', 'array'],
+            'tags.*' => ['integer', Rule::exists('tags', 'id')],
         ];
     }
 
@@ -110,10 +111,11 @@ class CourseUpdateRequest extends FormRequest
             'slug.required' => 'Please provide a slug.',
             'slug.regex' => 'Slug must be lowercase letters, numbers, and hyphens only.',
             'slug.unique' => 'This slug is already in use.',
-            'slug.in' => 'The slug cannot be changed once the course is visible.',
+            'slug.prohibited' => 'The slug cannot be changed once the course allows preview or has a publish date.',
             'tagline.required' => 'Please provide a tagline.',
             'description.required' => 'Please provide a description.',
-            'user_id.exists' => 'The selected user does not exist.',
+            'learning_objectives.required' => 'Please provide the learning objectives.',
+            'experience_level.required' => 'Please select an experience level.',
             'thumbnail.image' => 'The thumbnail must be an image.',
             'thumbnail.mimes' => 'The thumbnail must be a PNG, JPG, GIF, or WebP file.',
             'thumbnail.max' => 'The thumbnail must be less than 2MB.',

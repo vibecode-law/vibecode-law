@@ -16,12 +16,14 @@ class StoreController extends BaseController
         $this->authorize('create', Course::class);
 
         $course = Course::create(
-            $request->safe()->except(['thumbnail', 'thumbnail_crops'])
+            $request->safe()->except(['thumbnail', 'thumbnail_crops', 'tags'])
         );
+
+        $course->tags()->sync($request->validated('tags') ?? []);
 
         $this->handleThumbnail(request: $request, course: $course);
 
-        return Redirect::route('staff.courses.edit', $course)
+        return Redirect::route('staff.academy.courses.edit', $course)
             ->with('flash', [
                 'message' => ['message' => 'Course created successfully.', 'type' => 'success'],
             ]);

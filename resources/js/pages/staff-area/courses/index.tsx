@@ -11,8 +11,8 @@ import {
 import { SortableItem } from '@/components/ui/sortable-item';
 import { SortableList } from '@/components/ui/sortable-list';
 import StaffAreaLayout from '@/layouts/staff-area/layout';
-import { create, edit, reorder } from '@/routes/staff/courses';
-import { index as lessonsIndex } from '@/routes/staff/courses/lessons';
+import { create, edit, reorder } from '@/routes/staff/academy/courses';
+import { index as lessonsIndex } from '@/routes/staff/academy/courses/lessons';
 import { Head, Link, router } from '@inertiajs/react';
 import { BookOpen, Pencil, Plus } from 'lucide-react';
 import { useEffect, useState } from 'react';
@@ -94,10 +94,16 @@ export default function CoursesIndex({ courses }: CoursesIndexProps) {
                                                     <h3 className="font-semibold text-neutral-900 dark:text-white">
                                                         {course.title}
                                                     </h3>
-                                                    {course.visible ===
+                                                    {course.is_previewable ===
                                                         true && (
                                                         <Badge className="bg-green-500 text-white hover:bg-green-500">
-                                                            Visible
+                                                            Preview
+                                                        </Badge>
+                                                    )}
+                                                    {course.is_scheduled ===
+                                                        true && (
+                                                        <Badge variant="secondary">
+                                                            Not Published
                                                         </Badge>
                                                     )}
                                                     {course.is_featured ===

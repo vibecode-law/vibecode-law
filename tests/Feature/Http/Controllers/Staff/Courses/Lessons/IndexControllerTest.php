@@ -12,7 +12,7 @@ describe('auth', function () {
     test('requires authentication', function () {
         $course = Course::factory()->create();
 
-        get(route('staff.courses.lessons.index', $course))
+        get(route('staff.academy.courses.lessons.index', $course))
             ->assertRedirect(route('login'));
     });
 
@@ -22,7 +22,7 @@ describe('auth', function () {
 
         actingAs($admin);
 
-        get(route('staff.courses.lessons.index', $course))
+        get(route('staff.academy.courses.lessons.index', $course))
             ->assertOk();
     });
 
@@ -32,7 +32,7 @@ describe('auth', function () {
 
         actingAs($moderator);
 
-        get(route('staff.courses.lessons.index', $course))
+        get(route('staff.academy.courses.lessons.index', $course))
             ->assertForbidden();
     });
 
@@ -43,7 +43,7 @@ describe('auth', function () {
 
         actingAs($user);
 
-        get(route('staff.courses.lessons.index', $course))
+        get(route('staff.academy.courses.lessons.index', $course))
             ->assertForbidden();
     });
 });
@@ -59,7 +59,7 @@ describe('data', function () {
 
         actingAs($admin);
 
-        get(route('staff.courses.lessons.index', $course))
+        get(route('staff.academy.courses.lessons.index', $course))
             ->assertOk()
             ->assertInertia(fn (AssertableInertia $page) => $page
                 ->component('staff-area/courses/lessons/index', shouldExist: false)
@@ -73,11 +73,13 @@ describe('data', function () {
         $lesson = Lesson::factory()->create([
             'course_id' => $course->id,
             'gated' => true,
+            'allow_preview' => true,
+            'publish_date' => null,
         ]);
 
         actingAs($admin);
 
-        get(route('staff.courses.lessons.index', $course))
+        get(route('staff.academy.courses.lessons.index', $course))
             ->assertOk()
             ->assertInertia(fn (AssertableInertia $page) => $page
                 ->has('lessons.0', fn (AssertableInertia $data) => $data
@@ -86,6 +88,8 @@ describe('data', function () {
                     ->where('title', $lesson->title)
                     ->where('tagline', $lesson->tagline)
                     ->where('gated', true)
+                    ->where('is_previewable', true)
+                    ->where('is_scheduled', false)
                     ->where('order', $lesson->order)
                     ->where('thumbnail_url', null)
                     ->missing('description')
@@ -101,7 +105,7 @@ describe('data', function () {
 
         actingAs($admin);
 
-        get(route('staff.courses.lessons.index', $course))
+        get(route('staff.academy.courses.lessons.index', $course))
             ->assertOk()
             ->assertInertia(fn (AssertableInertia $page) => $page
                 ->has('course', fn (AssertableInertia $data) => $data
@@ -120,7 +124,7 @@ describe('data', function () {
 
         actingAs($admin);
 
-        get(route('staff.courses.lessons.index', $course))
+        get(route('staff.academy.courses.lessons.index', $course))
             ->assertOk()
             ->assertInertia(fn (AssertableInertia $page) => $page
                 ->where('lessons.0.id', $first->id)

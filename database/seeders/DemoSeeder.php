@@ -7,6 +7,7 @@ use Database\Seeders\DemoSeeders\CourseSeeder;
 use Database\Seeders\DemoSeeders\PracticeAreasSeeder;
 use Database\Seeders\DemoSeeders\PressCoverageSeeder;
 use Database\Seeders\DemoSeeders\ShowcaseSeeder;
+use Database\Seeders\DemoSeeders\TagSeeder;
 use Database\Seeders\DemoSeeders\TestimonialsSeeder;
 use Database\Seeders\DemoSeeders\UsersSeeder;
 use Illuminate\Database\Seeder;
@@ -19,6 +20,7 @@ class DemoSeeder extends Seeder
             DatabaseSeeder::class,
             UsersSeeder::class,
             PracticeAreasSeeder::class,
+            TagSeeder::class,
             ShowcaseSeeder::class,
             TestimonialsSeeder::class,
             PressCoverageSeeder::class,

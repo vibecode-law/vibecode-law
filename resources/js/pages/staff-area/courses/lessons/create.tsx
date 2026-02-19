@@ -1,17 +1,21 @@
-import LessonFormFields from '@/components/courses/lesson-form-fields';
+import LessonFormFields from '@/components/courses/staff-area/lesson-form-fields';
 import HeadingSmall from '@/components/heading/heading-small';
 import { Button } from '@/components/ui/button';
 import { SubmitButton } from '@/components/ui/submit-button';
 import StaffAreaLayout from '@/layouts/staff-area/layout';
-import { index, store } from '@/routes/staff/courses/lessons';
+import { index, store } from '@/routes/staff/academy/courses/lessons';
 import { Form, Head, Link } from '@inertiajs/react';
 import { ArrowLeft } from 'lucide-react';
 
 interface LessonsCreateProps {
     course: App.Http.Resources.Course.CourseResource;
+    availableTags: App.Http.Resources.TagResource[];
 }
 
-export default function LessonsCreate({ course }: LessonsCreateProps) {
+export default function LessonsCreate({
+    course,
+    availableTags,
+}: LessonsCreateProps) {
     return (
         <StaffAreaLayout fullWidth>
             <Head title={`Create Lesson - ${course.title}`} />
@@ -42,6 +46,7 @@ export default function LessonsCreate({ course }: LessonsCreateProps) {
                                 <LessonFormFields
                                     processing={processing}
                                     errors={errors}
+                                    availableTags={availableTags}
                                     mode="create"
                                 />
 

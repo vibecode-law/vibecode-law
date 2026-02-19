@@ -4,8 +4,10 @@ declare namespace App.Enums {
     export type ShowcaseDraftStatus = 1 | 2 | 3;
     export type ShowcaseStatus = 1 | 2 | 3 | 4;
     export type SourceStatus = 1 | 2 | 3;
+    export type TagType = 1 | 2 | 3 | 100;
     export type TeamType = 1 | 2;
     export type VideoHost = 1;
+    export type VideoPlayerEvent = 'playing' | 'timeupdate' | 'ended';
 }
 declare namespace App.Http.Resources {
     export type PracticeAreaResource = {
@@ -27,6 +29,12 @@ declare namespace App.Http.Resources {
         thumbnail_crop?: App.ValueObjects.ImageCrop | null;
         is_published: boolean;
         display_order: number;
+    };
+    export type TagResource = {
+        id: number;
+        name: string;
+        slug: string;
+        type: App.ValueObjects.FrontendEnum;
     };
     export type TestimonialResource = {
         id: number;
@@ -72,9 +80,9 @@ declare namespace App.Http.Resources.Course {
         id: number;
         slug: string;
         title: string;
-        tagline: string;
-        description?: string;
-        description_html?: string;
+        tagline: string | null;
+        description?: string | null;
+        description_html?: string | null;
         learning_objectives?: string | null;
         learning_objectives_html?: string | null;
         duration_seconds?: number | null;
@@ -82,46 +90,56 @@ declare namespace App.Http.Resources.Course {
         thumbnail_url: string | null;
         thumbnail_rect_strings: { [key: string]: string } | null;
         thumbnail_crops?: { [key: string]: App.ValueObjects.ImageCrop } | null;
-        visible: boolean;
+        allow_preview: boolean;
+        is_previewable: boolean;
+        is_scheduled: boolean;
         is_featured: boolean;
         publish_date?: string | null;
         order: number;
         lessons_count?: number;
         lessons?: App.Http.Resources.Course.LessonResource;
-        tags?: App.Http.Resources.Course.CourseTagResource;
-        user?: App.Http.Resources.User.UserResource | null;
+        tags?: App.Http.Resources.TagResource;
+        instructors?: Array<App.Http.Resources.User.UserResource>;
         started_count?: number;
         completed_count?: number;
-    };
-    export type CourseTagResource = {
-        id: number;
-        name: string;
-        slug: string;
     };
     export type LessonResource = {
         id: number;
         slug: string;
         title: string;
-        tagline: string;
-        description?: string;
-        description_html?: string;
+        tagline: string | null;
+        description?: string | null;
+        description_html?: string | null;
         learning_objectives?: string | null;
         learning_objectives_html?: string | null;
         copy?: string | null;
         copy_html?: string | null;
-        transcript?: string | null;
+        has_transcript_lines?: boolean;
         thumbnail_url: string | null;
         thumbnail_rect_strings: { [key: string]: string } | null;
         thumbnail_crops?: { [key: string]: App.ValueObjects.ImageCrop } | null;
         duration_seconds?: number | null;
         asset_id?: string;
         playback_id?: string;
-        host?: App.ValueObjects.FrontendEnum;
+        has_vtt_transcript?: boolean;
+        has_txt_transcript?: boolean;
+        host?: App.ValueObjects.FrontendEnum | null;
+        playback_tokens?: { [key: string]: string };
         gated: boolean;
-        visible: boolean;
+        allow_preview: boolean;
+        is_previewable: boolean;
+        is_scheduled: boolean;
         publish_date: string | null;
         order: number;
         course?: App.Http.Resources.Course.CourseResource;
+        tags?: App.Http.Resources.TagResource;
+        transcript_lines?: Array<App.Http.Resources.Course.LessonTranscriptLineResource>;
+        instructors?: Array<App.Http.Resources.User.UserResource>;
+    };
+    export type LessonTranscriptLineResource = {
+        id: number;
+        start_seconds: number;
+        text: string;
     };
 }
 declare namespace App.Http.Resources.Organisation {

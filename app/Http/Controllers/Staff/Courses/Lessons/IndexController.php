@@ -41,6 +41,8 @@ class IndexController extends BaseController
                 'title',
                 'tagline',
                 'gated',
+                'is_previewable',
+                'is_scheduled',
                 'order',
                 'thumbnail_url',
             );

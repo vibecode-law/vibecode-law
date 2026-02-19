@@ -9,5 +9,6 @@ readonly class AssetData
         public ?float $duration = null,
         public ?string $playbackId = null,
         public ?string $captionTrackId = null,
+        public bool $signedPlayback = false,
     ) {}
 }

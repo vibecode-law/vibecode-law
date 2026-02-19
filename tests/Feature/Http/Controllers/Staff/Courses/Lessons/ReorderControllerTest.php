@@ -12,7 +12,7 @@ describe('auth', function () {
         $course = Course::factory()->create();
         $lesson = Lesson::factory()->create(['course_id' => $course->id]);
 
-        post(route('staff.courses.lessons.reorder', ['course' => $course->slug]), [
+        post(route('staff.academy.courses.lessons.reorder', ['course' => $course->slug]), [
             'items' => [
                 ['id' => $lesson->id, 'order' => 0],
             ],
@@ -27,7 +27,7 @@ describe('auth', function () {
 
         actingAs($user);
 
-        post(route('staff.courses.lessons.reorder', ['course' => $course->slug]), [
+        post(route('staff.academy.courses.lessons.reorder', ['course' => $course->slug]), [
             'items' => [
                 ['id' => $lesson->id, 'order' => 0],
             ],
@@ -41,7 +41,7 @@ describe('auth', function () {
 
         actingAs($admin);
 
-        post(route('staff.courses.lessons.reorder', ['course' => $course->slug]), [
+        post(route('staff.academy.courses.lessons.reorder', ['course' => $course->slug]), [
             'items' => [
                 ['id' => $lesson->id, 'order' => 0],
             ],
@@ -59,7 +59,7 @@ describe('reordering', function () {
 
         actingAs($admin);
 
-        post(route('staff.courses.lessons.reorder', ['course' => $course->slug]), [
+        post(route('staff.academy.courses.lessons.reorder', ['course' => $course->slug]), [
             'items' => [
                 ['id' => $first->id, 'order' => 2],
                 ['id' => $second->id, 'order' => 0],
@@ -80,7 +80,7 @@ describe('reordering', function () {
 
         actingAs($admin);
 
-        post(route('staff.courses.lessons.reorder', ['course' => $course->slug]), [
+        post(route('staff.academy.courses.lessons.reorder', ['course' => $course->slug]), [
             'items' => [
                 ['id' => $lesson->id, 'order' => 0],
             ],
@@ -97,7 +97,7 @@ describe('validation', function () {
 
         actingAs($admin);
 
-        post(route('staff.courses.lessons.reorder', ['course' => $course->slug]), $data)
+        post(route('staff.academy.courses.lessons.reorder', ['course' => $course->slug]), $data)
             ->assertInvalid($invalidFields);
     })->with([
         'items is required' => [

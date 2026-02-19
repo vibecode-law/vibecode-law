@@ -4,7 +4,6 @@ namespace Database\Factories\Course;
 
 use App\Enums\ExperienceLevel;
 use App\Models\Course\Course;
-use App\Models\User;
 use Database\Factories\Concerns\HasStockImages;
 use Illuminate\Database\Eloquent\Factories\Factory;
 use Illuminate\Support\Facades\Storage;
@@ -24,7 +23,6 @@ class CourseFactory extends Factory
         $title = fake()->words(nb: 3, asText: true);
 
         return [
-            'user_id' => User::factory(),
             'title' => $title,
             'slug' => Str::slug($title).'-'.fake()->lexify('???'),
             'tagline' => fake()->sentence(),
@@ -33,12 +31,36 @@ class CourseFactory extends Factory
             'duration_seconds' => fake()->optional()->numberBetween(300, 7200),
             'order' => fake()->numberBetween(0, 20),
             'experience_level' => fake()->randomElement(ExperienceLevel::cases()),
-            'visible' => fake()->boolean(),
+            'allow_preview' => fake()->boolean(),
             'is_featured' => false,
             'publish_date' => fake()->optional()->date(),
-            'thumbnail_extension' => null,
+            'thumbnail_filename' => null,
             'thumbnail_crops' => null,
         ];
+    }
+
+    public function published(): static
+    {
+        return $this->state(fn (): array => [
+            'publish_date' => fake()->dateTimeBetween(startDate: '-1 year', endDate: '-1 day'),
+            'allow_preview' => false,
+        ]);
+    }
+
+    public function previewable(): static
+    {
+        return $this->state(fn (): array => [
+            'publish_date' => null,
+            'allow_preview' => true,
+        ]);
+    }
+
+    public function draft(): static
+    {
+        return $this->state(fn (): array => [
+            'publish_date' => null,
+            'allow_preview' => false,
+        ]);
     }
 
     public function withStockThumbnail(): static
@@ -46,13 +68,14 @@ class CourseFactory extends Factory
         return $this->afterCreating(function (Course $course): void {
             $imagePath = $this->getRandomStockImagePath();
             $extension = Str::afterLast($imagePath, '.');
+            $filename = Str::random(40).'.'.$extension;
 
-            $path = "course/{$course->id}/thumbnail.{$extension}";
+            $path = "course/{$course->id}/{$filename}";
 
             Storage::disk('public')->put($path, Storage::get($imagePath));
 
             $course->update([
-                'thumbnail_extension' => $extension,
+                'thumbnail_filename' => $filename,
             ]);
         });
     }

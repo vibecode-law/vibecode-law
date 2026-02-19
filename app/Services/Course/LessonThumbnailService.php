@@ -5,6 +5,7 @@ namespace App\Services\Course;
 use App\Models\Course\Lesson;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Str;
 
 class LessonThumbnailService
 {
@@ -19,12 +20,12 @@ class LessonThumbnailService
      */
     public function fromUploadedFile(UploadedFile $file, ?array $crops = null): void
     {
-        $extension = $file->extension();
-        $path = "lesson/{$this->lesson->id}/thumbnail.{$extension}";
+        $filename = Str::random(40).'.'.$file->extension();
+        $path = "lesson/{$this->lesson->id}/{$filename}";
 
         // Delete old thumbnail if exists
-        if ($this->lesson->thumbnail_extension !== null) {
-            $oldPath = "lesson/{$this->lesson->id}/thumbnail.{$this->lesson->thumbnail_extension}";
+        if ($this->lesson->thumbnail_filename !== null) {
+            $oldPath = "lesson/{$this->lesson->id}/{$this->lesson->thumbnail_filename}";
             Storage::disk('public')->delete($oldPath);
         }
 
@@ -33,8 +34,31 @@ class LessonThumbnailService
             contents: $file->getContent()
         );
 
-        $this->lesson->thumbnail_extension = $extension;
+        $this->lesson->thumbnail_filename = $filename;
         $this->lesson->thumbnail_crops = $crops;
+        $this->lesson->save();
+    }
+
+    /**
+     * Store a thumbnail from raw image contents.
+     */
+    public function fromContents(string $contents, string $extension): void
+    {
+        $filename = Str::random(40).'.'.$extension;
+        $path = "lesson/{$this->lesson->id}/{$filename}";
+
+        if ($this->lesson->thumbnail_filename !== null) {
+            $oldPath = "lesson/{$this->lesson->id}/{$this->lesson->thumbnail_filename}";
+            Storage::disk('public')->delete($oldPath);
+        }
+
+        Storage::disk('public')->put(
+            path: $path,
+            contents: $contents
+        );
+
+        $this->lesson->thumbnail_filename = $filename;
+        $this->lesson->thumbnail_crops = null;
         $this->lesson->save();
     }
 
@@ -54,14 +78,14 @@ class LessonThumbnailService
      */
     public function delete(): void
     {
-        if ($this->lesson->thumbnail_extension === null) {
+        if ($this->lesson->thumbnail_filename === null) {
             return;
         }
 
-        $path = "lesson/{$this->lesson->id}/thumbnail.{$this->lesson->thumbnail_extension}";
+        $path = "lesson/{$this->lesson->id}/{$this->lesson->thumbnail_filename}";
         Storage::disk('public')->delete($path);
 
-        $this->lesson->thumbnail_extension = null;
+        $this->lesson->thumbnail_filename = null;
         $this->lesson->thumbnail_crops = null;
         $this->lesson->save();
     }

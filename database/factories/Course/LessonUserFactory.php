@@ -24,7 +24,7 @@ class LessonUserFactory extends Factory
             'viewed_at' => null,
             'started_at' => null,
             'completed_at' => null,
-            'playback_time_milliseconds' => null,
+            'playback_time_seconds' => null,
         ];
     }
 

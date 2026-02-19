@@ -1,18 +1,20 @@
-import CourseFormFields from '@/components/courses/course-form-fields';
+import CourseFormFields from '@/components/courses/staff-area/course-form-fields';
 import HeadingSmall from '@/components/heading/heading-small';
 import { Button } from '@/components/ui/button';
 import { SubmitButton } from '@/components/ui/submit-button';
 import StaffAreaLayout from '@/layouts/staff-area/layout';
-import { index, store } from '@/routes/staff/courses';
+import { index, store } from '@/routes/staff/academy/courses';
 import { Form, Head, Link } from '@inertiajs/react';
 import { ArrowLeft } from 'lucide-react';
 
 interface CoursesCreateProps {
     experienceLevels: App.ValueObjects.FrontendEnum[];
+    availableTags: App.Http.Resources.TagResource[];
 }
 
 export default function CoursesCreate({
     experienceLevels,
+    availableTags,
 }: CoursesCreateProps) {
     return (
         <StaffAreaLayout fullWidth>
@@ -45,6 +47,7 @@ export default function CoursesCreate({
                                     processing={processing}
                                     errors={errors}
                                     experienceLevels={experienceLevels}
+                                    availableTags={availableTags}
                                     mode="create"
                                 />
 

@@ -17,7 +17,7 @@ class StoreController extends BaseController
     {
         $this->authorize('create', Lesson::class);
 
-        $data = $request->safe()->except(['thumbnail', 'thumbnail_crops']);
+        $data = $request->safe()->except(['thumbnail', 'thumbnail_crops', 'tags', 'instructor_ids']);
         $data['course_id'] = $course->id;
 
         if (isset($data['asset_id']) && $data['asset_id'] !== '') {
@@ -26,9 +26,12 @@ class StoreController extends BaseController
 
         $lesson = Lesson::create($data);
 
+        $lesson->tags()->sync($request->validated('tags') ?? []);
+        $lesson->instructors()->sync($request->validated('instructor_ids') ?? []);
+
         $this->handleThumbnail(request: $request, lesson: $lesson);
 
-        return Redirect::route('staff.courses.lessons.edit', [$course, $lesson])
+        return Redirect::route('staff.academy.courses.lessons.edit', [$course, $lesson])
             ->with('flash', [
                 'message' => ['message' => 'Lesson created successfully.', 'type' => 'success'],
             ]);

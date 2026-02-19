@@ -2,7 +2,6 @@
 
 namespace App\Http\Controllers\Staff\Courses\Lessons;
 
-use App\Enums\VideoHost;
 use App\Http\Controllers\BaseController;
 use App\Http\Requests\Staff\LessonUpdateRequest;
 use App\Models\Course\Course;
@@ -17,17 +16,16 @@ class UpdateController extends BaseController
     {
         $this->authorize('update', $lesson);
 
-        $data = $request->safe()->except(['thumbnail', 'thumbnail_crops', 'remove_thumbnail']);
-
-        if (isset($data['asset_id']) && $data['asset_id'] !== '') {
-            $data['host'] = VideoHost::Mux;
-        }
+        $data = $request->safe()->except(['thumbnail', 'thumbnail_crops', 'remove_thumbnail', 'tags', 'instructor_ids']);
 
         $lesson->update($data);
 
+        $lesson->tags()->sync($request->validated('tags') ?? []);
+        $lesson->instructors()->sync($request->validated('instructor_ids') ?? []);
+
         $this->handleThumbnail(request: $request, lesson: $lesson);
 
-        return Redirect::route('staff.courses.lessons.edit', [$course, $lesson])
+        return Redirect::route('staff.academy.courses.lessons.edit', [$course, $lesson])
             ->with('flash', [
                 'message' => ['message' => 'Lesson updated successfully.', 'type' => 'success'],
             ]);

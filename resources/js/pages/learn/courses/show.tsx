@@ -1,12 +1,13 @@
 import LearnIndexController from '@/actions/App/Http/Controllers/Learn/LearnIndexController';
 import LessonShowController from '@/actions/App/Http/Controllers/Learn/LessonShowController';
-import { CourseAboutSection } from '@/components/course/course-about-section';
-import { CourseCurriculum } from '@/components/course/course-curriculum';
-import { CourseInstructor } from '@/components/course/course-instructor';
-import { CourseLearningObjectives } from '@/components/course/course-learning-objectives';
-import { CourseProgressBar } from '@/components/course/course-progress-bar';
-import { CourseSkillsTags } from '@/components/course/course-skills-tags';
-import { CourseStats } from '@/components/course/course-stats';
+import { CourseAboutSection } from '@/components/courses/course-about-section';
+import { CourseCurriculum } from '@/components/courses/course-curriculum';
+import { CourseLearningObjectives } from '@/components/courses/course-learning-objectives';
+import { CourseProgressBar } from '@/components/courses/course-progress-bar';
+import { CourseStats } from '@/components/courses/course-stats';
+import { InstructorList } from '@/components/courses/instructor-list';
+import { GroupedTagList } from '@/components/grouped-tag-list';
+import { TagList } from '@/components/tag-list';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import PublicLayout from '@/layouts/public-layout';
@@ -19,25 +20,31 @@ import { Head, Link, usePage } from '@inertiajs/react';
 interface CourseShowProps {
     course: App.Http.Resources.Course.CourseResource & {
         lessons?: App.Http.Resources.Course.LessonResource[];
-        tags?: App.Http.Resources.Course.CourseTagResource[];
+        tags?: App.Http.Resources.TagResource[];
     };
     nextLessonSlug: string | null;
     completedLessonIds: number[];
-    totalLessons: number;
 }
 
 export default function CourseShow({
     course,
     nextLessonSlug,
     completedLessonIds,
-    totalLessons,
 }: CourseShowProps) {
+    const totalLessons = (course.lessons ?? []).length;
     const completedLessonsCount = completedLessonIds.length;
     const { name, appUrl, transformImages } = usePage<SharedData>().props;
 
     const thumbnailSrc = course.thumbnail_url
         ? transformImages === true
             ? `${course.thumbnail_url}?w=600`
+            : course.thumbnail_url
+        : null;
+
+    const squareRectString = course.thumbnail_rect_strings?.square ?? null;
+    const sidebarThumbnailSrc = course.thumbnail_url
+        ? transformImages === true
+            ? `${course.thumbnail_url}?w=300${squareRectString !== null ? `&${squareRectString}` : ''}`
             : course.thumbnail_url
         : null;
 
@@ -53,7 +60,7 @@ export default function CourseShow({
                 <meta
                     head-key="description"
                     name="description"
-                    content={course.tagline}
+                    content={course.tagline ?? undefined}
                 />
                 <meta head-key="og-type" property="og:type" content="article" />
                 <meta
@@ -71,7 +78,7 @@ export default function CourseShow({
                 <meta
                     head-key="og-description"
                     property="og:description"
-                    content={course.tagline}
+                    content={course.tagline ?? undefined}
                 />
             </Head>
 
@@ -124,12 +131,15 @@ export default function CourseShow({
                                 </div>
                             )}
 
-                            {/* Mobile: Instructor */}
-                            {course.user && (
-                                <div className="mt-6 lg:hidden">
-                                    <CourseInstructor user={course.user} />
-                                </div>
-                            )}
+                            {/* Mobile: Instructors */}
+                            {course.instructors &&
+                                course.instructors.length > 0 && (
+                                    <div className="mt-6 lg:hidden">
+                                        <InstructorList
+                                            instructors={course.instructors}
+                                        />
+                                    </div>
+                                )}
 
                             {course.description_html && (
                                 <CourseAboutSection
@@ -145,33 +155,61 @@ export default function CourseShow({
                                 />
                             )}
 
+                            {/* Mobile: Tags */}
                             {course.tags && course.tags.length > 0 && (
-                                <CourseSkillsTags tags={course.tags} />
+                                <div className="mt-8 lg:hidden">
+                                    <TagList tags={course.tags} />
+                                </div>
                             )}
 
                             {/* CTA */}
                             <div className="mt-8">
-                                <Button asChild size="lg">
-                                    <Link
-                                        href={
-                                            nextLessonSlug
-                                                ? LessonShowController.url({
-                                                      course: course.slug,
-                                                      lesson: nextLessonSlug,
-                                                  })
-                                                : '#'
-                                        }
-                                    >
-                                        {completedLessonsCount > 0
-                                            ? 'Resume Course'
-                                            : 'Start Course'}
-                                    </Link>
-                                </Button>
+                                {nextLessonSlug &&
+                                course.is_previewable === false ? (
+                                    <Button asChild size="lg">
+                                        <Link
+                                            href={LessonShowController.url({
+                                                course: course.slug,
+                                                lesson: nextLessonSlug,
+                                            })}
+                                        >
+                                            {completedLessonsCount >=
+                                                totalLessons && totalLessons > 0
+                                                ? 'Restart Course'
+                                                : completedLessonsCount > 0
+                                                  ? 'Resume Course'
+                                                  : 'Start Course'}
+                                        </Link>
+                                    </Button>
+                                ) : (
+                                    <Button size="lg" disabled>
+                                        Coming Soon
+                                    </Button>
+                                )}
                             </div>
                         </div>
 
                         {/* Desktop Aside */}
                         <aside className="hidden shrink-0 lg:block lg:w-64 xl:w-68 2xl:w-72">
+                            {sidebarThumbnailSrc && (
+                                <div className="mb-8">
+                                    <img
+                                        src={sidebarThumbnailSrc}
+                                        alt={course.title}
+                                        className="aspect-square w-full rounded-lg object-cover"
+                                    />
+                                </div>
+                            )}
+
+                            {course.instructors &&
+                                course.instructors.length > 0 && (
+                                    <div className="mb-8">
+                                        <InstructorList
+                                            instructors={course.instructors}
+                                        />
+                                    </div>
+                                )}
+
                             {completedLessonsCount > 0 && (
                                 <div className="mb-8">
                                     <p className="mb-3 text-xs font-medium tracking-wide text-neutral-500 uppercase dark:text-neutral-400">
@@ -187,20 +225,8 @@ export default function CourseShow({
                                 </div>
                             )}
 
-                            {course.user && (
-                                <div className="mb-8">
-                                    <CourseInstructor user={course.user} />
-                                </div>
-                            )}
-
-                            {thumbnailSrc && (
-                                <div className="mb-8">
-                                    <img
-                                        src={thumbnailSrc}
-                                        alt={course.title}
-                                        className="aspect-video w-full rounded-lg object-cover"
-                                    />
-                                </div>
+                            {course.tags && course.tags.length > 0 && (
+                                <GroupedTagList tags={course.tags} />
                             )}
                         </aside>
                     </div>
@@ -214,6 +240,7 @@ export default function CourseShow({
                         courseSlug={course.slug}
                         lessons={course.lessons ?? []}
                         completedLessonIds={completedLessonIds}
+                        isComingSoon={course.is_previewable}
                     />
                 </div>
             </section>

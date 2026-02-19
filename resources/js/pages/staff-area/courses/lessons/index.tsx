@@ -11,8 +11,8 @@ import {
 import { SortableItem } from '@/components/ui/sortable-item';
 import { SortableList } from '@/components/ui/sortable-list';
 import StaffAreaLayout from '@/layouts/staff-area/layout';
-import { edit as courseEdit } from '@/routes/staff/courses';
-import { create, edit, reorder } from '@/routes/staff/courses/lessons';
+import { edit as courseEdit } from '@/routes/staff/academy/courses';
+import { create, edit, reorder } from '@/routes/staff/academy/courses/lessons';
 import { Head, Link, router } from '@inertiajs/react';
 import { ArrowLeft, Pencil, Plus } from 'lucide-react';
 import { useEffect, useState } from 'react';
@@ -104,6 +104,18 @@ export default function LessonsIndex({ course, lessons }: LessonsIndexProps) {
                                                     <h3 className="font-semibold text-neutral-900 dark:text-white">
                                                         {lesson.title}
                                                     </h3>
+                                                    {lesson.is_previewable ===
+                                                        true && (
+                                                        <Badge className="bg-green-500 text-white hover:bg-green-500">
+                                                            Preview
+                                                        </Badge>
+                                                    )}
+                                                    {lesson.is_scheduled ===
+                                                        true && (
+                                                        <Badge variant="secondary">
+                                                            Not Published
+                                                        </Badge>
+                                                    )}
                                                     {lesson.gated === true && (
                                                         <Badge className="bg-purple-500 text-white hover:bg-purple-500">
                                                             Gated

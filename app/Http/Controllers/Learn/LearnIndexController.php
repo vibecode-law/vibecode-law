@@ -6,6 +6,7 @@ use App\Http\Controllers\BaseController;
 use App\Http\Resources\Course\CourseResource;
 use App\Models\Course\Course;
 use App\Models\Course\CourseUser;
+use App\Models\Course\Lesson;
 use App\Models\Course\LessonUser;
 use App\Models\User;
 use Illuminate\Support\Collection;
@@ -20,9 +21,9 @@ class LearnIndexController extends BaseController
     public function __invoke(): Response
     {
         $courses = Course::query()
-            ->select('id', 'slug', 'title', 'tagline', 'order', 'experience_level', 'duration_seconds', 'visible', 'is_featured', 'thumbnail_extension', 'thumbnail_crops', 'user_id')
-            ->with('user')
-            ->withCount('lessons')
+            ->select('id', 'slug', 'title', 'tagline', 'order', 'experience_level', 'duration_seconds', 'allow_preview', 'is_featured', 'publish_date', 'thumbnail_filename', 'thumbnail_crops')
+            ->visible()
+            ->withCount('visibleLessons as lessons_count')
             ->orderBy('order')
             ->get();
 
@@ -32,8 +33,8 @@ class LearnIndexController extends BaseController
 
         return Inertia::render('learn/courses/index', [
             'courses' => CourseResource::collect($courses, DataCollection::class)
-                ->include('experience_level', 'lessons_count', 'user', 'started_count', 'duration_seconds')
-                ->only('id', 'slug', 'title', 'tagline', 'experience_level', 'order', 'lessons_count', 'user', 'started_count', 'duration_seconds', 'thumbnail_url', 'thumbnail_rect_strings'),
+                ->include('experience_level', 'lessons_count', 'started_count', 'duration_seconds')
+                ->only('id', 'slug', 'title', 'tagline', 'experience_level', 'order', 'lessons_count', 'started_count', 'duration_seconds', 'thumbnail_url', 'thumbnail_rect_strings', 'is_previewable'),
             'courseProgress' => $this->getCourseProgress($courses),
             'guides' => $this->getGuides(),
             'totalEnrolledUsers' => $totalEnrolledUsers,
@@ -57,6 +58,7 @@ class LearnIndexController extends BaseController
             ->join(table: 'lessons', first: 'lesson_user.lesson_id', operator: '=', second: 'lessons.id')
             ->where(column: 'lesson_user.user_id', operator: '=', value: $user->id)
             ->whereNotNull(columns: 'lesson_user.completed_at')
+            ->whereIn(column: 'lesson_user.lesson_id', values: Lesson::query()->visible()->select('id'))
             ->selectRaw('lessons.course_id, COUNT(*) as completed_count')
             ->groupBy('lessons.course_id')
             ->pluck('completed_count', 'lessons.course_id');

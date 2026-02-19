@@ -9,7 +9,7 @@ use function Pest\Laravel\get;
 
 describe('auth', function () {
     test('requires authentication', function () {
-        get(route('staff.courses.index'))
+        get(route('staff.academy.courses.index'))
             ->assertRedirect(route('login'));
     });
 
@@ -18,7 +18,7 @@ describe('auth', function () {
 
         actingAs($admin);
 
-        get(route('staff.courses.index'))
+        get(route('staff.academy.courses.index'))
             ->assertOk();
     });
 
@@ -27,7 +27,7 @@ describe('auth', function () {
 
         actingAs($moderator);
 
-        get(route('staff.courses.index'))
+        get(route('staff.academy.courses.index'))
             ->assertForbidden();
     });
 
@@ -37,7 +37,7 @@ describe('auth', function () {
 
         actingAs($user);
 
-        get(route('staff.courses.index'))
+        get(route('staff.academy.courses.index'))
             ->assertForbidden();
     });
 });
@@ -49,7 +49,7 @@ describe('data', function () {
 
         actingAs($admin);
 
-        get(route('staff.courses.index'))
+        get(route('staff.academy.courses.index'))
             ->assertOk()
             ->assertInertia(fn (AssertableInertia $page) => $page
                 ->component('staff-area/courses/index', shouldExist: false)
@@ -60,13 +60,14 @@ describe('data', function () {
     test('returns courses with correct structure and values', function () {
         $admin = User::factory()->admin()->create();
         $course = Course::factory()->create([
-            'visible' => true,
+            'allow_preview' => true,
             'is_featured' => true,
+            'publish_date' => null,
         ]);
 
         actingAs($admin);
 
-        get(route('staff.courses.index'))
+        get(route('staff.academy.courses.index'))
             ->assertOk()
             ->assertInertia(fn (AssertableInertia $page) => $page
                 ->component('staff-area/courses/index', shouldExist: false)
@@ -75,7 +76,9 @@ describe('data', function () {
                     ->where('slug', $course->slug)
                     ->where('title', $course->title)
                     ->where('tagline', $course->tagline)
-                    ->where('visible', true)
+                    ->where('allow_preview', true)
+                    ->where('is_previewable', true)
+                    ->where('is_scheduled', false)
                     ->where('is_featured', true)
                     ->where('order', $course->order)
                     ->where('lessons_count', 0)
@@ -94,7 +97,7 @@ describe('data', function () {
 
         actingAs($admin);
 
-        get(route('staff.courses.index'))
+        get(route('staff.academy.courses.index'))
             ->assertOk()
             ->assertInertia(fn (AssertableInertia $page) => $page
                 ->where('courses.0.lessons_count', 3)
@@ -108,7 +111,7 @@ describe('data', function () {
 
         actingAs($admin);
 
-        get(route('staff.courses.index'))
+        get(route('staff.academy.courses.index'))
             ->assertOk()
             ->assertInertia(fn (AssertableInertia $page) => $page
                 ->where('courses.0.id', $first->id)

@@ -8,12 +8,17 @@ use App\Http\Controllers\Staff\Challenges\UpdateController as ChallengeUpdateCon
 use App\Http\Controllers\Staff\Courses\CreateController as CourseCreateController;
 use App\Http\Controllers\Staff\Courses\EditController as CourseEditController;
 use App\Http\Controllers\Staff\Courses\IndexController as CourseIndexController;
+use App\Http\Controllers\Staff\Courses\Lessons\AllowPreviewController as LessonAllowPreviewController;
 use App\Http\Controllers\Staff\Courses\Lessons\CreateController as LessonCreateController;
 use App\Http\Controllers\Staff\Courses\Lessons\EditController as LessonEditController;
+use App\Http\Controllers\Staff\Courses\Lessons\GenerateCopywriterController as LessonGenerateCopywriterController;
 use App\Http\Controllers\Staff\Courses\Lessons\IndexController as LessonIndexController;
+use App\Http\Controllers\Staff\Courses\Lessons\PublishDateController as LessonPublishDateController;
 use App\Http\Controllers\Staff\Courses\Lessons\ReorderController as LessonReorderController;
 use App\Http\Controllers\Staff\Courses\Lessons\StoreController as LessonStoreController;
+use App\Http\Controllers\Staff\Courses\Lessons\SyncVideoHostController as LessonSyncVideoHostController;
 use App\Http\Controllers\Staff\Courses\Lessons\UpdateController as LessonUpdateController;
+use App\Http\Controllers\Staff\Courses\PublishDateController as CoursePublishDateController;
 use App\Http\Controllers\Staff\Courses\ReorderController as CourseReorderController;
 use App\Http\Controllers\Staff\Courses\StoreController as CourseStoreController;
 use App\Http\Controllers\Staff\Courses\UpdateController as CourseUpdateController;
@@ -31,6 +36,10 @@ use App\Http\Controllers\Staff\ShowcaseModeration\IndexController as ShowcaseMod
 use App\Http\Controllers\Staff\ShowcaseModeration\RejectController as ShowcaseModerationRejectController;
 use App\Http\Controllers\Staff\ShowcaseModeration\RejectDraftController as ShowcaseModerationRejectDraftController;
 use App\Http\Controllers\Staff\ShowcaseModeration\ToggleFeaturedController as ShowcaseModerationToggleFeaturedController;
+use App\Http\Controllers\Staff\Tags\DestroyController as TagDestroyController;
+use App\Http\Controllers\Staff\Tags\IndexController as TagIndexController;
+use App\Http\Controllers\Staff\Tags\StoreController as TagStoreController;
+use App\Http\Controllers\Staff\Tags\UpdateController as TagUpdateController;
 use App\Http\Controllers\Staff\Testimonials\DestroyController as TestimonialDestroyController;
 use App\Http\Controllers\Staff\Testimonials\IndexController as TestimonialIndexController;
 use App\Http\Controllers\Staff\Testimonials\ReorderController as TestimonialReorderController;
@@ -47,10 +56,19 @@ use App\Http\Controllers\Staff\UserManagement\UpdateController as UserUpdateCont
 use Illuminate\Support\Facades\Route;
 
 Route::middleware(['can:access-staff'])->prefix('staff')->name('staff.')->group(function () {
-    Route::prefix('practice-areas')->name('practice-areas.')->group(function () {
-        Route::get('/', [PracticeAreaController::class, 'index'])->name('index');
-        Route::post('/', [PracticeAreaController::class, 'store'])->name('store');
-        Route::put('/{practiceArea}', [PracticeAreaController::class, 'update'])->name('update');
+    Route::prefix('metadata')->name('metadata.')->group(function () {
+        Route::prefix('practice-areas')->name('practice-areas.')->group(function () {
+            Route::get('/', [PracticeAreaController::class, 'index'])->name('index');
+            Route::post('/', [PracticeAreaController::class, 'store'])->name('store');
+            Route::put('/{practiceArea}', [PracticeAreaController::class, 'update'])->name('update');
+        });
+
+        Route::prefix('tags')->name('tags.')->group(function () {
+            Route::get('/', TagIndexController::class)->name('index');
+            Route::post('/', TagStoreController::class)->name('store');
+            Route::patch('/{tag}', TagUpdateController::class)->name('update');
+            Route::delete('/{tag}', TagDestroyController::class)->name('destroy');
+        });
     });
 
     Route::prefix('showcase-moderation')->name('showcase-moderation.')->group(function () {
@@ -88,21 +106,28 @@ Route::middleware(['can:access-staff'])->prefix('staff')->name('staff.')->group(
         Route::patch('/{organisation}', OrganisationUpdateController::class)->name('update');
     });
 
-    Route::prefix('courses')->name('courses.')->group(function () {
-        Route::get('/', CourseIndexController::class)->name('index');
-        Route::get('/create', CourseCreateController::class)->name('create');
-        Route::post('/', CourseStoreController::class)->name('store');
-        Route::post('/reorder', CourseReorderController::class)->name('reorder');
-        Route::get('/{course}/edit', CourseEditController::class)->name('edit');
-        Route::patch('/{course}', CourseUpdateController::class)->name('update');
+    Route::prefix('academy')->name('academy.')->group(function () {
+        Route::prefix('courses')->name('courses.')->group(function () {
+            Route::get('/', CourseIndexController::class)->name('index');
+            Route::get('/create', CourseCreateController::class)->name('create');
+            Route::post('/', CourseStoreController::class)->name('store');
+            Route::post('/reorder', CourseReorderController::class)->name('reorder');
+            Route::get('/{course}/edit', CourseEditController::class)->name('edit');
+            Route::patch('/{course}', CourseUpdateController::class)->name('update');
+            Route::patch('/{course}/publish-date', CoursePublishDateController::class)->name('publish-date');
 
-        Route::prefix('{course}/lessons')->name('lessons.')->scopeBindings()->group(function () {
-            Route::get('/', LessonIndexController::class)->name('index');
-            Route::get('/create', LessonCreateController::class)->name('create');
-            Route::post('/', LessonStoreController::class)->name('store');
-            Route::post('/reorder', LessonReorderController::class)->name('reorder');
-            Route::get('/{lesson}/edit', LessonEditController::class)->name('edit');
-            Route::patch('/{lesson}', LessonUpdateController::class)->name('update');
+            Route::prefix('{course}/lessons')->name('lessons.')->scopeBindings()->group(function () {
+                Route::get('/', LessonIndexController::class)->name('index');
+                Route::get('/create', LessonCreateController::class)->name('create');
+                Route::post('/', LessonStoreController::class)->name('store');
+                Route::post('/reorder', LessonReorderController::class)->name('reorder');
+                Route::get('/{lesson}/edit', LessonEditController::class)->name('edit');
+                Route::patch('/{lesson}', LessonUpdateController::class)->name('update');
+                Route::patch('/{lesson}/sync-video-host', LessonSyncVideoHostController::class)->name('sync-video-host');
+                Route::patch('/{lesson}/allow-preview', LessonAllowPreviewController::class)->name('allow-preview');
+                Route::patch('/{lesson}/publish-date', LessonPublishDateController::class)->name('publish-date');
+                Route::post('/{lesson}/generate-copywriter', LessonGenerateCopywriterController::class)->name('generate-copywriter');
+            });
         });
     });
 

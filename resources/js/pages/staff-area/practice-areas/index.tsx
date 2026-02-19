@@ -3,8 +3,9 @@ import { CreatePracticeAreaModal } from '@/components/practice-area/create-pract
 import { EditPracticeAreaModal } from '@/components/practice-area/edit-practice-area-modal';
 import { PracticeAreaListItem } from '@/components/practice-area/practice-area-list-item';
 import { ShowcaseSection } from '@/components/showcase/showcase-section';
+import { MetadataSubNav } from '@/components/staff/metadata-sub-nav';
 import StaffAreaLayout from '@/layouts/staff-area/layout';
-import { store, update } from '@/routes/staff/practice-areas';
+import { store, update } from '@/routes/staff/metadata/practice-areas';
 import { Head } from '@inertiajs/react';
 import { useState } from 'react';
 
@@ -21,6 +22,8 @@ export default function PracticeAreasIndex({
     return (
         <StaffAreaLayout fullWidth>
             <Head title="Practice Areas" />
+
+            <MetadataSubNav />
 
             <div className="space-y-6">
                 <div className="flex items-center justify-between">

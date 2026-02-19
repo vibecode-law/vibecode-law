@@ -6,10 +6,11 @@ use App\Enums\ExperienceLevel;
 use App\Enums\MarkdownProfile;
 use App\Models\User;
 use App\Services\Markdown\MarkdownService;
+use Illuminate\Database\Eloquent\Attributes\Scope;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Support\Facades\Config;
@@ -34,11 +35,10 @@ class Course extends Model
         'duration_seconds',
         'order',
         'experience_level',
-        'visible',
+        'allow_preview',
         'is_featured',
         'publish_date',
-        'user_id',
-        'thumbnail_extension',
+        'thumbnail_filename',
         'thumbnail_crops',
     ];
 
@@ -48,7 +48,7 @@ class Course extends Model
             'order' => 'integer',
             'duration_seconds' => 'integer',
             'experience_level' => ExperienceLevel::class,
-            'visible' => 'boolean',
+            'allow_preview' => 'boolean',
             'is_featured' => 'boolean',
             'publish_date' => 'date',
             'started_count' => 'integer',
@@ -100,6 +100,26 @@ class Course extends Model
     }
 
     //
+    // Scopes
+    //
+
+    #[Scope]
+    protected function published(Builder $query): void
+    {
+        $query->whereNotNull('publish_date')->where('publish_date', '<=', now());
+    }
+
+    #[Scope]
+    protected function visible(Builder $query): void
+    {
+        $query->where(function (Builder $q): void {
+            $q->where(function (Builder $q): void {
+                $q->whereNotNull('publish_date')->where('publish_date', '<=', now());
+            })->orWhere('allow_preview', true);
+        });
+    }
+
+    //
     // Attributes
     //
 
@@ -107,13 +127,13 @@ class Course extends Model
     {
         return Attribute::make(
             get: function (): ?string {
-                if ($this->thumbnail_extension === null) {
+                if ($this->thumbnail_filename === null) {
                     return null;
                 }
 
                 $imageTransformBase = Config::get('services.image-transform.base_url');
 
-                $path = "course/{$this->id}/thumbnail.{$this->thumbnail_extension}";
+                $path = "course/{$this->id}/{$this->thumbnail_filename}";
 
                 if ($imageTransformBase === null) {
                     return Storage::disk('public')->url($path);
@@ -173,19 +193,24 @@ class Course extends Model
     // Relationships
     //
 
-    public function user(): BelongsTo
-    {
-        return $this->belongsTo(related: User::class);
-    }
-
     public function lessons(): HasMany
     {
         return $this->hasMany(related: Lesson::class)->orderBy('order');
     }
 
+    public function visibleLessons(): HasMany
+    {
+        return $this->hasMany(related: Lesson::class)->visible()->orderBy('order');
+    }
+
+    public function publishedLessons(): HasMany
+    {
+        return $this->hasMany(related: Lesson::class)->published()->orderBy('order');
+    }
+
     public function tags(): BelongsToMany
     {
-        return $this->belongsToMany(related: CourseTag::class)->withTimestamps();
+        return $this->belongsToMany(related: \App\Models\Tag::class);
     }
 
     public function users(): BelongsToMany

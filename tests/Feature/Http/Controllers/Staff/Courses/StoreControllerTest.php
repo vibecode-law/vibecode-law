@@ -2,6 +2,7 @@
 
 use App\Enums\ExperienceLevel;
 use App\Models\Course\Course;
+use App\Models\Tag;
 use App\Models\User;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Storage;
@@ -11,7 +12,7 @@ use function Pest\Laravel\post;
 
 describe('auth', function () {
     test('requires authentication', function () {
-        post(route('staff.courses.store'), [
+        post(route('staff.academy.courses.store'), [
             'title' => 'Test Course',
             'slug' => 'test-course',
             'tagline' => 'A test tagline',
@@ -24,16 +25,14 @@ describe('auth', function () {
 
         actingAs($admin);
 
-        post(route('staff.courses.store'), [
+        post(route('staff.academy.courses.store'), [
             'title' => 'Test Course',
             'slug' => 'test-course',
             'tagline' => 'A test tagline',
             'description' => 'A test description',
             'learning_objectives' => 'Test objectives',
             'experience_level' => ExperienceLevel::Beginner->value,
-            'visible' => false,
             'is_featured' => false,
-            'publish_date' => '2026-03-01',
         ])->assertRedirect();
     });
 
@@ -42,16 +41,12 @@ describe('auth', function () {
 
         actingAs($moderator);
 
-        post(route('staff.courses.store'), [
+        post(route('staff.academy.courses.store'), [
             'title' => 'Test Course',
             'slug' => 'test-course',
             'tagline' => 'A test tagline',
             'description' => 'A test description',
-            'learning_objectives' => 'Test objectives',
-            'experience_level' => ExperienceLevel::Beginner->value,
-            'visible' => false,
             'is_featured' => false,
-            'publish_date' => '2026-03-01',
         ])->assertForbidden();
     });
 
@@ -61,16 +56,12 @@ describe('auth', function () {
 
         actingAs($user);
 
-        post(route('staff.courses.store'), [
+        post(route('staff.academy.courses.store'), [
             'title' => 'Test Course',
             'slug' => 'test-course',
             'tagline' => 'A test tagline',
             'description' => 'A test description',
-            'learning_objectives' => 'Test objectives',
-            'experience_level' => ExperienceLevel::Beginner->value,
-            'visible' => false,
             'is_featured' => false,
-            'publish_date' => '2026-03-01',
         ])->assertForbidden();
     });
 });
@@ -81,38 +72,32 @@ describe('store', function () {
 
         actingAs($admin);
 
-        post(route('staff.courses.store'), [
+        post(route('staff.academy.courses.store'), [
             'title' => 'AI Legal Course',
             'slug' => 'ai-legal-course',
             'tagline' => 'Learn about legal AI',
             'description' => 'A comprehensive course.',
             'learning_objectives' => 'Test objectives',
             'experience_level' => ExperienceLevel::Beginner->value,
-            'visible' => false,
             'is_featured' => false,
-            'publish_date' => '2026-03-01',
         ])->assertRedirect(
-            route('staff.courses.edit', Course::query()->where('slug', 'ai-legal-course')->firstOrFail())
+            route('staff.academy.courses.edit', Course::query()->where('slug', 'ai-legal-course')->firstOrFail())
         );
     });
 
     test('creates course with all fields', function () {
         $admin = User::factory()->admin()->create();
-        $author = User::factory()->create();
 
         actingAs($admin);
 
-        post(route('staff.courses.store'), [
+        post(route('staff.academy.courses.store'), [
             'title' => 'Full Course',
             'slug' => 'full-course',
             'tagline' => 'A full course',
             'description' => 'Description here.',
             'learning_objectives' => 'Learn everything.',
             'experience_level' => ExperienceLevel::Intermediate->value,
-            'visible' => true,
             'is_featured' => true,
-            'publish_date' => '2026-03-01',
-            'user_id' => $author->id,
         ])->assertRedirect();
 
         $course = Course::query()->where('slug', 'full-course')->firstOrFail();
@@ -122,10 +107,9 @@ describe('store', function () {
             ->and($course->description)->toBe('Description here.')
             ->and($course->learning_objectives)->toBe('Learn everything.')
             ->and($course->experience_level)->toBe(ExperienceLevel::Intermediate)
-            ->and($course->visible)->toBeTrue()
+            ->and($course->allow_preview)->toBeFalse()
             ->and($course->is_featured)->toBeTrue()
-            ->and($course->publish_date->format('Y-m-d'))->toBe('2026-03-01')
-            ->and($course->user_id)->toBe($author->id);
+            ->and($course->publish_date)->toBeNull();
     });
 
     test('handles thumbnail upload', function () {
@@ -137,23 +121,21 @@ describe('store', function () {
 
         $thumbnail = UploadedFile::fake()->image(name: 'thumbnail.jpg', width: 400, height: 300);
 
-        post(route('staff.courses.store'), [
+        post(route('staff.academy.courses.store'), [
             'title' => 'Thumb Course',
             'slug' => 'thumb-course',
             'tagline' => 'A thumbnail course',
             'description' => 'Description here.',
             'learning_objectives' => 'Test objectives',
             'experience_level' => ExperienceLevel::Beginner->value,
-            'visible' => false,
             'is_featured' => false,
-            'publish_date' => '2026-03-01',
             'thumbnail' => $thumbnail,
         ])->assertRedirect();
 
         $course = Course::query()->where('slug', 'thumb-course')->firstOrFail();
 
-        expect($course->thumbnail_extension)->not->toBeNull();
-        Storage::disk('public')->assertExists("course/{$course->id}/thumbnail.{$course->thumbnail_extension}");
+        expect($course->thumbnail_filename)->not->toBeNull();
+        Storage::disk('public')->assertExists("course/{$course->id}/{$course->thumbnail_filename}");
     });
 
     test('handles thumbnail upload with crops', function () {
@@ -165,16 +147,14 @@ describe('store', function () {
 
         $thumbnail = UploadedFile::fake()->image(name: 'thumbnail.jpg', width: 800, height: 600);
 
-        post(route('staff.courses.store'), [
+        post(route('staff.academy.courses.store'), [
             'title' => 'Crop Course',
             'slug' => 'crop-course',
             'tagline' => 'A crop course',
             'description' => 'Description here.',
             'learning_objectives' => 'Test objectives',
             'experience_level' => ExperienceLevel::Beginner->value,
-            'visible' => false,
             'is_featured' => false,
-            'publish_date' => '2026-03-01',
             'thumbnail' => $thumbnail,
             'thumbnail_crops' => [
                 'square' => ['x' => 100, 'y' => 50, 'width' => 400, 'height' => 400],
@@ -195,42 +175,38 @@ describe('store', function () {
 
         actingAs($admin);
 
-        post(route('staff.courses.store'), [
+        post(route('staff.academy.courses.store'), [
             'title' => 'Flash Course',
             'slug' => 'flash-course',
             'tagline' => 'A flash course',
             'description' => 'Description here.',
             'learning_objectives' => 'Test objectives',
             'experience_level' => ExperienceLevel::Beginner->value,
-            'visible' => false,
             'is_featured' => false,
-            'publish_date' => '2026-03-01',
         ])->assertSessionHas('flash.message', [
             'message' => 'Course created successfully.',
             'type' => 'success',
         ]);
     });
 
-    test('creates course with visible and is_featured set to false', function () {
+    test('creates course with is_featured set to false', function () {
         $admin = User::factory()->admin()->create();
 
         actingAs($admin);
 
-        post(route('staff.courses.store'), [
+        post(route('staff.academy.courses.store'), [
             'title' => 'Hidden Course',
             'slug' => 'hidden-course',
             'tagline' => 'Hidden',
             'description' => 'Description here.',
             'learning_objectives' => 'Test objectives',
             'experience_level' => ExperienceLevel::Beginner->value,
-            'visible' => false,
             'is_featured' => false,
-            'publish_date' => '2026-03-01',
         ])->assertRedirect();
 
         $course = Course::query()->where('slug', 'hidden-course')->firstOrFail();
 
-        expect($course->visible)->toBeFalse()
+        expect($course->allow_preview)->toBeFalse()
             ->and($course->is_featured)->toBeFalse();
     });
 });
@@ -241,52 +217,28 @@ describe('validation', function () {
 
         actingAs($admin);
 
-        post(route('staff.courses.store'), $data)
+        post(route('staff.academy.courses.store'), $data)
             ->assertSessionHasErrors($invalid);
     })->with([
         'missing title' => [
-            ['slug' => 'test', 'tagline' => 'Tagline', 'description' => 'Desc', 'learning_objectives' => 'Objectives', 'experience_level' => ExperienceLevel::Beginner->value, 'visible' => false, 'is_featured' => false, 'publish_date' => '2026-03-01'],
+            ['slug' => 'test', 'tagline' => 'Tagline', 'description' => 'Desc', 'is_featured' => false],
             ['title'],
         ],
         'missing slug' => [
-            ['title' => 'Test', 'tagline' => 'Tagline', 'description' => 'Desc', 'learning_objectives' => 'Objectives', 'experience_level' => ExperienceLevel::Beginner->value, 'visible' => false, 'is_featured' => false, 'publish_date' => '2026-03-01'],
+            ['title' => 'Test', 'tagline' => 'Tagline', 'description' => 'Desc', 'is_featured' => false],
             ['slug'],
         ],
-        'missing tagline' => [
-            ['title' => 'Test', 'slug' => 'test', 'description' => 'Desc', 'learning_objectives' => 'Objectives', 'experience_level' => ExperienceLevel::Beginner->value, 'visible' => false, 'is_featured' => false, 'publish_date' => '2026-03-01'],
-            ['tagline'],
-        ],
-        'missing description' => [
-            ['title' => 'Test', 'slug' => 'test', 'tagline' => 'Tagline', 'learning_objectives' => 'Objectives', 'experience_level' => ExperienceLevel::Beginner->value, 'visible' => false, 'is_featured' => false, 'publish_date' => '2026-03-01'],
-            ['description'],
-        ],
-        'missing learning_objectives' => [
-            ['title' => 'Test', 'slug' => 'test', 'tagline' => 'Tagline', 'description' => 'Desc', 'experience_level' => ExperienceLevel::Beginner->value, 'visible' => false, 'is_featured' => false, 'publish_date' => '2026-03-01'],
-            ['learning_objectives'],
-        ],
-        'missing experience_level' => [
-            ['title' => 'Test', 'slug' => 'test', 'tagline' => 'Tagline', 'description' => 'Desc', 'learning_objectives' => 'Objectives', 'visible' => false, 'is_featured' => false, 'publish_date' => '2026-03-01'],
-            ['experience_level'],
-        ],
-        'missing visible' => [
-            ['title' => 'Test', 'slug' => 'test', 'tagline' => 'Tagline', 'description' => 'Desc', 'learning_objectives' => 'Objectives', 'experience_level' => ExperienceLevel::Beginner->value, 'is_featured' => false, 'publish_date' => '2026-03-01'],
-            ['visible'],
-        ],
         'missing is_featured' => [
-            ['title' => 'Test', 'slug' => 'test', 'tagline' => 'Tagline', 'description' => 'Desc', 'learning_objectives' => 'Objectives', 'experience_level' => ExperienceLevel::Beginner->value, 'visible' => false, 'publish_date' => '2026-03-01'],
+            ['title' => 'Test', 'slug' => 'test', 'tagline' => 'Tagline', 'description' => 'Desc', 'is_featured' => null],
             ['is_featured'],
         ],
         'invalid slug format' => [
-            ['title' => 'Test', 'slug' => 'Invalid Slug!', 'tagline' => 'Tagline', 'description' => 'Desc', 'learning_objectives' => 'Objectives', 'experience_level' => ExperienceLevel::Beginner->value, 'visible' => false, 'is_featured' => false, 'publish_date' => '2026-03-01'],
+            ['title' => 'Test', 'slug' => 'Invalid Slug!', 'tagline' => 'Tagline', 'description' => 'Desc', 'is_featured' => false],
             ['slug'],
         ],
         'title too long' => [
-            ['title' => str_repeat('a', 256), 'slug' => 'test', 'tagline' => 'Tagline', 'description' => 'Desc', 'learning_objectives' => 'Objectives', 'experience_level' => ExperienceLevel::Beginner->value, 'visible' => false, 'is_featured' => false, 'publish_date' => '2026-03-01'],
+            ['title' => str_repeat('a', 256), 'slug' => 'test', 'tagline' => 'Tagline', 'description' => 'Desc', 'is_featured' => false],
             ['title'],
-        ],
-        'invalid user_id' => [
-            ['title' => 'Test', 'slug' => 'test', 'tagline' => 'Tagline', 'description' => 'Desc', 'learning_objectives' => 'Objectives', 'experience_level' => ExperienceLevel::Beginner->value, 'visible' => false, 'is_featured' => false, 'publish_date' => '2026-03-01', 'user_id' => 99999],
-            ['user_id'],
         ],
     ]);
 
@@ -296,16 +248,14 @@ describe('validation', function () {
 
         actingAs($admin);
 
-        post(route('staff.courses.store'), [
+        post(route('staff.academy.courses.store'), [
             'title' => 'Test',
             'slug' => 'existing-slug',
             'tagline' => 'Tagline',
             'description' => 'Description',
             'learning_objectives' => 'Objectives',
             'experience_level' => ExperienceLevel::Beginner->value,
-            'visible' => false,
             'is_featured' => false,
-            'publish_date' => '2026-03-01',
         ])->assertSessionHasErrors(['slug']);
     });
 
@@ -316,16 +266,14 @@ describe('validation', function () {
 
         $file = UploadedFile::fake()->create(name: 'document.pdf', mimeType: 'application/pdf');
 
-        post(route('staff.courses.store'), [
+        post(route('staff.academy.courses.store'), [
             'title' => 'Test',
             'slug' => 'test',
             'tagline' => 'Tagline',
             'description' => 'Description',
             'learning_objectives' => 'Objectives',
             'experience_level' => ExperienceLevel::Beginner->value,
-            'visible' => false,
             'is_featured' => false,
-            'publish_date' => '2026-03-01',
             'thumbnail' => $file,
         ])->assertSessionHasErrors(['thumbnail']);
     });
@@ -337,16 +285,14 @@ describe('validation', function () {
 
         $file = UploadedFile::fake()->image(name: 'large.jpg')->size(kilobytes: 3000);
 
-        post(route('staff.courses.store'), [
+        post(route('staff.academy.courses.store'), [
             'title' => 'Test',
             'slug' => 'test',
             'tagline' => 'Tagline',
             'description' => 'Description',
             'learning_objectives' => 'Objectives',
             'experience_level' => ExperienceLevel::Beginner->value,
-            'visible' => false,
             'is_featured' => false,
-            'publish_date' => '2026-03-01',
             'thumbnail' => $file,
         ])->assertSessionHasErrors(['thumbnail']);
     });
@@ -356,20 +302,92 @@ describe('validation', function () {
 
         actingAs($admin);
 
-        post(route('staff.courses.store'), [
+        post(route('staff.academy.courses.store'), [
             'title' => 'Test',
             'slug' => 'test',
             'tagline' => 'Tagline',
             'description' => 'Description',
             'learning_objectives' => 'Objectives',
             'experience_level' => ExperienceLevel::Beginner->value,
-            'visible' => false,
             'is_featured' => false,
-            'publish_date' => '2026-03-01',
             'thumbnail' => UploadedFile::fake()->image(name: 'thumb.jpg', width: 800, height: 600),
             'thumbnail_crops' => [
                 'portrait' => ['x' => 0, 'y' => 0, 'width' => 300, 'height' => 500],
             ],
         ])->assertSessionHasErrors(['thumbnail_crops']);
+    });
+
+    test('validates tags must be an array of valid tag ids', function ($data, $invalid) {
+        $admin = User::factory()->admin()->create();
+
+        actingAs($admin);
+
+        post(route('staff.academy.courses.store'), [
+            'title' => 'Test',
+            'slug' => 'test',
+            'tagline' => 'Tagline',
+            'description' => 'Description',
+            'learning_objectives' => 'Objectives',
+            'experience_level' => ExperienceLevel::Beginner->value,
+            'is_featured' => false,
+            ...$data,
+        ])->assertSessionHasErrors($invalid);
+    })->with([
+        'tags contains non-existent id' => [
+            ['tags' => [99999]],
+            ['tags.0'],
+        ],
+        'tags contains non-integer value' => [
+            ['tags' => ['not-an-id']],
+            ['tags.0'],
+        ],
+    ]);
+});
+
+describe('tags', function () {
+    test('creates course with tags', function () {
+        $admin = User::factory()->admin()->create();
+        $tags = Tag::factory()->count(3)->create();
+
+        actingAs($admin);
+
+        post(route('staff.academy.courses.store'), [
+            'title' => 'Tagged Course',
+            'slug' => 'tagged-course',
+            'tagline' => 'A tagged course',
+            'description' => 'Description here.',
+            'learning_objectives' => 'Test objectives',
+            'experience_level' => ExperienceLevel::Beginner->value,
+            'is_featured' => false,
+            'tags' => $tags->pluck('id')->toArray(),
+        ])->assertRedirect();
+
+        $course = Course::query()->where('slug', 'tagged-course')->firstOrFail();
+        $course->load('tags');
+
+        expect($course->tags)->toHaveCount(3)
+            ->and($course->tags->pluck('id')->sort()->values()->toArray())
+            ->toBe($tags->pluck('id')->sort()->values()->toArray());
+    });
+
+    test('creates course without tags', function () {
+        $admin = User::factory()->admin()->create();
+
+        actingAs($admin);
+
+        post(route('staff.academy.courses.store'), [
+            'title' => 'No Tags Course',
+            'slug' => 'no-tags-course',
+            'tagline' => 'No tags',
+            'description' => 'Description here.',
+            'learning_objectives' => 'Test objectives',
+            'experience_level' => ExperienceLevel::Beginner->value,
+            'is_featured' => false,
+        ])->assertRedirect();
+
+        $course = Course::query()->where('slug', 'no-tags-course')->firstOrFail();
+        $course->load('tags');
+
+        expect($course->tags)->toHaveCount(0);
     });
 });

@@ -23,9 +23,9 @@ test('index renders the correct inertia component', function () {
 });
 
 test('index returns courses ordered by order column', function () {
-    $third = Course::factory()->create(['order' => 3]);
-    $first = Course::factory()->create(['order' => 1]);
-    $second = Course::factory()->create(['order' => 2]);
+    $third = Course::factory()->published()->create(['order' => 3]);
+    $first = Course::factory()->published()->create(['order' => 1]);
+    $second = Course::factory()->published()->create(['order' => 2]);
 
     get(route('learn.index'))
         ->assertInertia(fn (AssertableInertia $page) => $page
@@ -36,9 +36,11 @@ test('index returns courses ordered by order column', function () {
         );
 });
 
-test('index includes lesson counts', function () {
-    $course = Course::factory()->create();
-    Lesson::factory()->count(3)->for($course)->create();
+test('index lesson count only includes visible lessons', function () {
+    $course = Course::factory()->published()->create();
+    Lesson::factory()->published()->count(2)->for($course)->create();
+    Lesson::factory()->previewable()->for($course)->create();
+    Lesson::factory()->draft()->for($course)->create();
 
     get(route('learn.index'))
         ->assertInertia(fn (AssertableInertia $page) => $page
@@ -47,10 +49,8 @@ test('index includes lesson counts', function () {
 });
 
 test('index returns the correct data structure', function () {
-    $course = Course::factory()->create()->fresh();
-    Lesson::factory()->count(2)->for($course)->create();
-
-    $user = $course->user;
+    $course = Course::factory()->published()->create()->fresh();
+    Lesson::factory()->published()->count(2)->for($course)->create();
 
     get(route('learn.index'))
         ->assertInertia(fn (AssertableInertia $page) => $page
@@ -67,16 +67,8 @@ test('index returns the correct data structure', function () {
                 ->where('thumbnail_rect_strings', $course->thumbnail_rect_strings)
                 ->where('experience_level', $course->experience_level->forFrontend()->toArray())
                 ->where('duration_seconds', $course->duration_seconds)
-                ->has('user', fn (AssertableInertia $u) => $u
-                    ->where('first_name', $user->first_name)
-                    ->where('last_name', $user->last_name)
-                    ->where('handle', $user->handle)
-                    ->where('organisation', $user->organisation)
-                    ->where('job_title', $user->job_title)
-                    ->where('avatar', $user->avatar)
-                    ->where('linkedin_url', $user->linkedin_url)
-                    ->where('team_role', $user->team_role)
-                )
+                ->where('is_previewable', false)
+                ->missing('user')
                 ->missing('tags')
                 ->missing('description')
                 ->missing('description_html')
@@ -87,8 +79,8 @@ test('index returns the correct data structure', function () {
 });
 
 test('index returns total enrolled users as distinct count', function () {
-    $course1 = Course::factory()->create();
-    $course2 = Course::factory()->create();
+    $course1 = Course::factory()->published()->create();
+    $course2 = Course::factory()->published()->create();
     $user1 = User::factory()->create();
     $user2 = User::factory()->create();
 
@@ -124,7 +116,7 @@ test('index returns guides from config', function () {
 });
 
 test('index returns empty course progress for guests', function () {
-    Course::factory()->create();
+    Course::factory()->published()->create();
 
     get(route('learn.index'))
         ->assertInertia(fn (AssertableInertia $page) => $page
@@ -132,14 +124,47 @@ test('index returns empty course progress for guests', function () {
         );
 });
 
+describe('course visibility', function () {
+    test('index shows published courses', function () {
+        $course = Course::factory()->published()->create();
+
+        get(route('learn.index'))
+            ->assertInertia(fn (AssertableInertia $page) => $page
+                ->has('courses', 1)
+                ->where('courses.0.id', $course->id)
+                ->where('courses.0.is_previewable', false)
+            );
+    });
+
+    test('index shows previewable courses with is_previewable true', function () {
+        $course = Course::factory()->previewable()->create();
+
+        get(route('learn.index'))
+            ->assertInertia(fn (AssertableInertia $page) => $page
+                ->has('courses', 1)
+                ->where('courses.0.id', $course->id)
+                ->where('courses.0.is_previewable', true)
+            );
+    });
+
+    test('index does not show draft courses', function () {
+        Course::factory()->draft()->create();
+
+        get(route('learn.index'))
+            ->assertInertia(fn (AssertableInertia $page) => $page
+                ->has('courses', 0)
+            );
+    });
+});
+
 describe('course progress for authenticated users', function () {
     test('index returns zero progress when no lessons completed', function () {
-        $course = Course::factory()->create();
+        $course = Course::factory()->published()->create();
 
         /** @var User */
         $user = User::factory()->create();
 
-        Lesson::factory()->count(3)->for($course)->create();
+        Lesson::factory()->published()->count(3)->for($course)->create();
 
         actingAs($user)
             ->get(route('learn.index'))
@@ -149,12 +174,12 @@ describe('course progress for authenticated users', function () {
     });
 
     test('index returns correct progress percentage based on completed lessons', function () {
-        $course = Course::factory()->create();
+        $course = Course::factory()->published()->create();
 
         /** @var User */
         $user = User::factory()->create();
 
-        $lessons = Lesson::factory()->count(4)->for($course)->create();
+        $lessons = Lesson::factory()->published()->count(4)->for($course)->create();
 
         LessonUser::factory()->completed()->create(['lesson_id' => $lessons[0]->id, 'user_id' => $user->id]);
         LessonUser::factory()->completed()->create(['lesson_id' => $lessons[1]->id, 'user_id' => $user->id]);
@@ -167,12 +192,12 @@ describe('course progress for authenticated users', function () {
     });
 
     test('index returns 100 percent when all lessons completed', function () {
-        $course = Course::factory()->create();
+        $course = Course::factory()->published()->create();
 
         /** @var User */
         $user = User::factory()->create();
 
-        $lesson = Lesson::factory()->for($course)->create();
+        $lesson = Lesson::factory()->published()->for($course)->create();
         LessonUser::factory()->completed()->create(['lesson_id' => $lesson->id, 'user_id' => $user->id]);
 
         actingAs($user)
@@ -183,14 +208,14 @@ describe('course progress for authenticated users', function () {
     });
 
     test('index returns progress for multiple courses independently', function () {
-        $course1 = Course::factory()->create(['order' => 1]);
-        $course2 = Course::factory()->create(['order' => 2]);
+        $course1 = Course::factory()->published()->create(['order' => 1]);
+        $course2 = Course::factory()->published()->create(['order' => 2]);
 
         /** @var User */
         $user = User::factory()->create();
 
-        $lessons1 = Lesson::factory()->count(2)->for($course1)->create();
-        Lesson::factory()->count(2)->for($course2)->create();
+        $lessons1 = Lesson::factory()->published()->count(2)->for($course1)->create();
+        Lesson::factory()->published()->count(2)->for($course2)->create();
 
         LessonUser::factory()->completed()->create(['lesson_id' => $lessons1[0]->id, 'user_id' => $user->id]);
 

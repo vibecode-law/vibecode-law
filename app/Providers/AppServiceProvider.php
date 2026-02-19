@@ -24,8 +24,6 @@ use Illuminate\Foundation\AliasLoader;
 use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\ServiceProvider;
-use MuxPhp\Api\AssetsApi;
-use MuxPhp\Configuration as MuxConfiguration;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -54,12 +52,11 @@ class AppServiceProvider extends ServiceProvider
                 return new NullVideoHostService;
             }
 
-            $config = MuxConfiguration::getDefaultConfiguration()
-                ->setUsername(Config::get('video.mux.token_id'))
-                ->setPassword(Config::get('video.mux.token_secret'));
-
             return new MuxVideoHostService(
-                assetsApi: new AssetsApi(config: $config),
+                tokenId: Config::get('video.mux.token_id'),
+                tokenSecret: Config::get('video.mux.token_secret'),
+                signingKeyId: Config::get('video.mux.signing_key_id'),
+                signingPrivateKey: Config::get('video.mux.signing_private_key'),
             );
         });
     }

@@ -1,6 +1,6 @@
 import LearnIndexController from '@/actions/App/Http/Controllers/Learn/LearnIndexController';
-import { CourseCard } from '@/components/course/course-card';
-import { GuideCard, type GuideItem } from '@/components/course/guide-card';
+import { CourseCard } from '@/components/courses/course-card';
+import { GuideCard, type GuideItem } from '@/components/courses/guide-card';
 import { TabNav } from '@/components/navigation/tab-nav';
 import PublicLayout from '@/layouts/public-layout';
 import { home } from '@/routes';
@@ -11,7 +11,6 @@ import { useState } from 'react';
 
 interface CourseIndexProps {
     courses?: App.Http.Resources.Course.CourseResource[];
-    featuredCourses?: App.Http.Resources.Course.CourseResource[];
     courseProgress?: Record<
         number,
         {
@@ -23,7 +22,6 @@ interface CourseIndexProps {
 }
 
 export default function CourseIndex({
-    featuredCourses: propFeaturedCourses,
     courses: propCourses,
     courseProgress = {},
     guides = [],
@@ -33,8 +31,7 @@ export default function CourseIndex({
     const [activeTab, setActiveTab] = useState<'courses' | 'guides'>('courses');
 
     const allCourses = propCourses ?? [];
-    const featuredCourses =
-        propFeaturedCourses ?? allCourses.filter((c) => c.is_featured === true);
+    const featuredCourses = allCourses.filter((c) => c.is_featured === true);
     const displayedCourses = allCourses.filter((c) => c.is_featured !== true);
 
     return (

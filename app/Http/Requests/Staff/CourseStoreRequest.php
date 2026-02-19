@@ -28,14 +28,11 @@ class CourseStoreRequest extends FormRequest
                 'regex:/^[a-z0-9]+(?:-[a-z0-9]+)*$/',
                 Rule::unique('courses', 'slug'),
             ],
-            'tagline' => ['required', 'string', 'max:255'],
-            'description' => ['required', 'string'],
-            'learning_objectives' => ['required', 'string'],
-            'experience_level' => ['required', 'integer', Rule::in(array_column(ExperienceLevel::cases(), 'value'))],
-            'visible' => ['required', 'boolean'],
+            'tagline' => ['nullable', 'string', 'max:255'],
+            'description' => ['nullable', 'string'],
+            'learning_objectives' => ['nullable', 'string'],
+            'experience_level' => ['nullable', 'integer', Rule::in(array_column(ExperienceLevel::cases(), 'value'))],
             'is_featured' => ['required', 'boolean'],
-            'publish_date' => ['nullable', 'date'],
-            'user_id' => ['nullable', Rule::exists('users', 'id')],
             'thumbnail' => ['nullable', 'image', 'mimes:png,jpg,jpeg,gif,webp', 'max:2048'],
             'thumbnail_crops' => [
                 'nullable',
@@ -47,6 +44,8 @@ class CourseStoreRequest extends FormRequest
             'thumbnail_crops.*.y' => ['required', 'integer', 'min:0'],
             'thumbnail_crops.*.width' => ['required', 'integer', 'min:1'],
             'thumbnail_crops.*.height' => ['required', 'integer', 'min:1'],
+            'tags' => ['nullable', 'array'],
+            'tags.*' => ['integer', Rule::exists('tags', 'id')],
         ];
     }
 
@@ -101,7 +100,6 @@ class CourseStoreRequest extends FormRequest
             'slug.unique' => 'This slug is already in use.',
             'tagline.required' => 'Please provide a tagline.',
             'description.required' => 'Please provide a description.',
-            'user_id.exists' => 'The selected user does not exist.',
             'thumbnail.image' => 'The thumbnail must be an image.',
             'thumbnail.mimes' => 'The thumbnail must be a PNG, JPG, GIF, or WebP file.',
             'thumbnail.max' => 'The thumbnail must be less than 2MB.',

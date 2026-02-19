@@ -4,7 +4,9 @@ namespace App\Http\Controllers\Staff\Courses;
 
 use App\Enums\ExperienceLevel;
 use App\Http\Controllers\BaseController;
+use App\Http\Resources\TagResource;
 use App\Models\Course\Course;
+use App\Models\Tag;
 use Inertia\Inertia;
 use Inertia\Response;
 
@@ -18,6 +20,9 @@ class CreateController extends BaseController
             'experienceLevels' => array_map(
                 fn (ExperienceLevel $level) => $level->forFrontend(),
                 ExperienceLevel::cases()
+            ),
+            'availableTags' => TagResource::collect(
+                Tag::query()->orderBy('type')->orderBy('name')->get()
             ),
         ]);
     }

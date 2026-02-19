@@ -128,7 +128,7 @@ class User extends Authenticatable implements MustVerifyEmail
     {
         return $this->belongsToMany(Lesson::class)
             ->using(LessonUser::class)
-            ->withPivot('viewed_at', 'started_at', 'completed_at')
+            ->withPivot('viewed_at', 'started_at', 'completed_at', 'playback_time_seconds')
             ->withTimestamps();
     }
 

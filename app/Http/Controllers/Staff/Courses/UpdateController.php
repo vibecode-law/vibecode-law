@@ -16,12 +16,14 @@ class UpdateController extends BaseController
         $this->authorize('update', $course);
 
         $course->update(
-            $request->safe()->except(['thumbnail', 'thumbnail_crops', 'remove_thumbnail'])
+            $request->safe()->except(['thumbnail', 'thumbnail_crops', 'remove_thumbnail', 'tags'])
         );
+
+        $course->tags()->sync($request->validated('tags') ?? []);
 
         $this->handleThumbnail(request: $request, course: $course);
 
-        return Redirect::route('staff.courses.edit', $course)
+        return Redirect::route('staff.academy.courses.edit', $course)
             ->with('flash', [
                 'message' => ['message' => 'Course updated successfully.', 'type' => 'success'],
             ]);

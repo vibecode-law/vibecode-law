@@ -15,29 +15,27 @@ return new class extends Migration
             $table->id();
             $table->string('title');
             $table->string('slug')->unique();
-            $table->string('tagline');
-            $table->text('description');
+            $table->string('tagline')->nullable();
+            $table->text('description')->nullable();
             $table->text('learning_objectives')->nullable();
             $table->unsignedInteger('order')->default(0);
             $table->unsignedTinyInteger('experience_level')->nullable();
             $table->unsignedInteger('duration_seconds')->nullable();
             $table->unsignedInteger('started_count')->default(0);
             $table->unsignedInteger('completed_count')->default(0);
-            $table->boolean('visible')->default(false);
+            $table->boolean('allow_preview')->default(false);
             $table->boolean('is_featured')->default(false);
             $table->date('publish_date')->nullable();
-            $table->string('thumbnail_extension')->nullable();
+            $table->string('thumbnail_filename')->nullable();
             $table->json('thumbnail_crops')->nullable();
-            $table->foreignId(column: 'user_id')->nullable()->constrained()->nullOnDelete();
             $table->timestamps();
         });
 
-        Schema::create('course_course_tag', function (Blueprint $table) {
+        Schema::create('course_tag', function (Blueprint $table) {
+            $table->foreignId(column: 'tag_id')->constrained()->cascadeOnDelete();
             $table->foreignId(column: 'course_id')->constrained()->cascadeOnDelete();
-            $table->foreignId(column: 'course_tag_id')->constrained()->cascadeOnDelete();
-            $table->timestamps();
 
-            $table->primary(columns: ['course_id', 'course_tag_id']);
+            $table->primary(columns: ['tag_id', 'course_id']);
         });
     }
 
@@ -46,7 +44,7 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('course_course_tag');
+        Schema::dropIfExists('course_tag');
         Schema::dropIfExists('courses');
     }
 };

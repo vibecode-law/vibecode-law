@@ -22,29 +22,28 @@ class LessonUpdateRequest extends FormRequest
         /** @var Lesson $lesson */
         $lesson = $this->route('lesson');
 
-        $slugRules = [
-            'required',
-            'string',
-            'max:255',
-            'regex:/^[a-z0-9]+(?:-[a-z0-9]+)*$/',
-            Rule::unique('lessons', 'slug')->where('course_id', $this->route('course')->id)->ignore($lesson),
-        ];
+        $isPublished = $lesson->allow_preview === true || $lesson->publish_date !== null;
 
-        if ($lesson->visible === true) {
-            $slugRules[] = Rule::in([$lesson->slug]);
-        }
+        $slugRules = $isPublished
+            ? ['prohibited']
+            : [
+                'required',
+                'string',
+                'max:255',
+                'regex:/^[a-z0-9]+(?:-[a-z0-9]+)*$/',
+                Rule::unique('lessons', 'slug')->where('course_id', $this->route('course')->id)->ignore($lesson),
+            ];
+
+        $requiredOrNullable = $isPublished ? 'required' : 'nullable';
 
         return [
             'title' => ['required', 'string', 'max:255'],
             'slug' => $slugRules,
-            'tagline' => ['required', 'string', 'max:255'],
-            'description' => ['required', 'string'],
-            'learning_objectives' => ['required', 'string'],
+            'tagline' => [$requiredOrNullable, 'string', 'max:255'],
+            'description' => [$requiredOrNullable, 'string'],
+            'learning_objectives' => [$requiredOrNullable, 'string'],
             'copy' => ['nullable', 'string'],
-            'gated' => ['required', 'boolean'],
-            'visible' => ['required', 'boolean'],
-            'publish_date' => ['nullable', 'date'],
-            'asset_id' => ['nullable', 'string', 'max:255'],
+            'gated' => ['nullable', 'boolean'],
             'thumbnail' => ['nullable', 'image', 'mimes:png,jpg,jpeg,gif,webp', 'max:2048'],
             'thumbnail_crops' => [
                 'nullable',
@@ -57,6 +56,10 @@ class LessonUpdateRequest extends FormRequest
             'thumbnail_crops.*.width' => ['required', 'integer', 'min:1'],
             'thumbnail_crops.*.height' => ['required', 'integer', 'min:1'],
             'remove_thumbnail' => ['nullable', 'boolean'],
+            'tags' => ['nullable', 'array'],
+            'tags.*' => ['integer', Rule::exists('tags', 'id')],
+            'instructor_ids' => ['nullable', 'array'],
+            'instructor_ids.*' => ['integer', Rule::exists('users', 'id')],
         ];
     }
 
@@ -66,7 +69,6 @@ class LessonUpdateRequest extends FormRequest
     private function validateCropKeysAndAspectRatios(): Closure
     {
         $expectedRatios = [
-            'square' => 1.0,
             'landscape' => 16 / 9,
         ];
 
@@ -78,7 +80,7 @@ class LessonUpdateRequest extends FormRequest
             $invalidKeys = array_diff(array_keys($value), array_keys($expectedRatios));
 
             if (count($invalidKeys) > 0) {
-                $fail('Only square and landscape crops are accepted.');
+                $fail('Only landscape crops are accepted.');
 
                 return;
             }
@@ -109,9 +111,10 @@ class LessonUpdateRequest extends FormRequest
             'slug.required' => 'Please provide a slug.',
             'slug.regex' => 'Slug must be lowercase letters, numbers, and hyphens only.',
             'slug.unique' => 'This slug is already in use.',
-            'slug.in' => 'The slug cannot be changed once the lesson is visible.',
             'tagline.required' => 'Please provide a tagline.',
             'description.required' => 'Please provide a description.',
+            'learning_objectives.required' => 'Please provide the learning objectives.',
+            'slug.prohibited' => 'The slug cannot be changed once the lesson allows preview or has a publish date.',
             'thumbnail.image' => 'The thumbnail must be an image.',
             'thumbnail.mimes' => 'The thumbnail must be a PNG, JPG, GIF, or WebP file.',
             'thumbnail.max' => 'The thumbnail must be less than 2MB.',

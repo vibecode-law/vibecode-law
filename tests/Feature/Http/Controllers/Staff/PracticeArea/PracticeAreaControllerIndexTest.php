@@ -9,7 +9,7 @@ use function Pest\Laravel\get;
 
 describe('auth', function () {
     test('requires authentication', function () {
-        $response = get(route('staff.practice-areas.index'));
+        $response = get(route('staff.metadata.practice-areas.index'));
 
         $response->assertRedirect(route('login'));
     });
@@ -20,7 +20,7 @@ describe('auth', function () {
 
         actingAs($admin);
 
-        $response = get(route('staff.practice-areas.index'));
+        $response = get(route('staff.metadata.practice-areas.index'));
 
         $response->assertOk();
     });
@@ -31,7 +31,7 @@ describe('auth', function () {
 
         actingAs($user);
 
-        get(route('staff.practice-areas.index'))
+        get(route('staff.metadata.practice-areas.index'))
             ->assertForbidden();
     });
 });
@@ -43,7 +43,7 @@ describe('data', function () {
 
         actingAs($admin);
 
-        $response = get(route('staff.practice-areas.index'));
+        $response = get(route('staff.metadata.practice-areas.index'));
 
         $response->assertOk();
         $response->assertInertia(fn (AssertableInertia $page) => $page
@@ -58,7 +58,7 @@ describe('data', function () {
 
         actingAs($admin);
 
-        $response = get(route('staff.practice-areas.index'));
+        $response = get(route('staff.metadata.practice-areas.index'));
 
         $response->assertOk();
         $response->assertInertia(fn (AssertableInertia $page) => $page
@@ -79,7 +79,7 @@ describe('data', function () {
 
         actingAs($admin);
 
-        $response = get(route('staff.practice-areas.index'));
+        $response = get(route('staff.metadata.practice-areas.index'));
 
         $response->assertInertia(fn (AssertableInertia $page) => $page
             ->where('practiceAreas.0.name', 'Alpha')

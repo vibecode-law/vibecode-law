@@ -9,7 +9,7 @@ use function Pest\Laravel\post;
 
 describe('auth', function () {
     test('requires authentication', function () {
-        $response = post(route('staff.practice-areas.store'), [
+        $response = post(route('staff.metadata.practice-areas.store'), [
             'name' => 'Test Practice Area',
             'slug' => 'test-practice-area',
         ]);
@@ -23,7 +23,7 @@ describe('auth', function () {
 
         actingAs($user);
 
-        $response = post(route('staff.practice-areas.store'), [
+        $response = post(route('staff.metadata.practice-areas.store'), [
             'name' => 'Test Practice Area',
             'slug' => 'test-practice-area',
         ]);
@@ -36,12 +36,12 @@ describe('auth', function () {
 
         actingAs($admin);
 
-        $response = post(route('staff.practice-areas.store'), [
+        $response = post(route('staff.metadata.practice-areas.store'), [
             'name' => 'Test Practice Area',
             'slug' => 'test-practice-area',
         ]);
 
-        $response->assertRedirect(route('staff.practice-areas.index'));
+        $response->assertRedirect(route('staff.metadata.practice-areas.index'));
     });
 });
 
@@ -56,7 +56,7 @@ describe('validation', function () {
 
         actingAs($admin);
 
-        $response = post(route('staff.practice-areas.store'), $data);
+        $response = post(route('staff.metadata.practice-areas.store'), $data);
 
         $response->assertInvalid($invalidFields);
     })->with([
@@ -101,7 +101,7 @@ describe('creation', function () {
 
         actingAs($admin);
 
-        post(route('staff.practice-areas.store'), [
+        post(route('staff.metadata.practice-areas.store'), [
             'name' => 'Healthcare Law',
             'slug' => 'health-law',
         ]);
@@ -119,12 +119,12 @@ describe('response', function () {
 
         actingAs($admin);
 
-        $response = post(route('staff.practice-areas.store'), [
+        $response = post(route('staff.metadata.practice-areas.store'), [
             'name' => 'Test Practice Area',
             'slug' => 'test-practice-area',
         ]);
 
-        $response->assertRedirect(route('staff.practice-areas.index'));
+        $response->assertRedirect(route('staff.metadata.practice-areas.index'));
     });
 
     test('includes success message in session', function () {
@@ -132,7 +132,7 @@ describe('response', function () {
 
         actingAs($admin);
 
-        $response = post(route('staff.practice-areas.store'), [
+        $response = post(route('staff.metadata.practice-areas.store'), [
             'name' => 'Test Practice Area',
             'slug' => 'test-practice-area',
         ]);

@@ -2,63 +2,92 @@
 
 namespace App\Http\Controllers\Learn;
 
+use App\Actions\Course\LogCourseViewAction;
 use App\Http\Controllers\BaseController;
 use App\Http\Resources\Course\CourseResource;
 use App\Models\Course\Course;
+use App\Models\Course\Lesson;
 use App\Models\Course\LessonUser;
 use App\Models\User;
+use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Auth;
 use Inertia\Inertia;
 use Inertia\Response;
+use Symfony\Component\HttpFoundation\Response as HttpResponse;
 
 class CourseShowController extends BaseController
 {
-    public function __invoke(Course $course): Response
-    {
-        $course->load('lessons', 'user');
+    private bool $isAdminPreview = false;
 
+    public function __invoke(Course $course, LogCourseViewAction $logCourseView): Response|HttpResponse
+    {
         /** @var User|null $user */
         $user = Auth::user();
 
+        $this->abortUnlessAccessible(course: $course, user: $user);
+
+        if ($this->isAdminPreview === false && $user !== null) {
+            $logCourseView->handle(course: $course, user: $user);
+        }
+
+        $course->load('visibleLessons.instructors', 'tags');
+        $course->setRelation('lessons', $course->visibleLessons);
+
+        $publishedLessons = $course->visibleLessons
+            ->filter(fn (Lesson $lesson) => $lesson->publish_date !== null && $lesson->publish_date->isPast());
+
         $completedLessonIds = $user !== null
-            ? $this->getCompletedLessonIds(course: $course, user: $user)
+            ? $this->getCompletedLessonIds(publishedLessons: $publishedLessons, user: $user)
             : [];
 
         return Inertia::render('learn/courses/show', [
             'course' => CourseResource::from($course)
-                ->include('description_html', 'learning_objectives_html', 'duration_seconds', 'experience_level', 'publish_date', 'lessons', 'user', 'started_count'),
-            'nextLessonSlug' => $this->getNextLessonSlug(course: $course, completedLessonIds: $completedLessonIds),
+                ->include('description_html', 'learning_objectives_html', 'duration_seconds', 'experience_level', 'publish_date', 'lessons', 'lessons.instructors', 'tags', 'instructors', 'started_count'),
+            'nextLessonSlug' => $this->getNextLessonSlug(publishedLessons: $publishedLessons, completedLessonIds: $completedLessonIds),
             'completedLessonIds' => $completedLessonIds,
-            'totalLessons' => $course->lessons->count(),
         ]);
     }
 
+    private function abortUnlessAccessible(Course $course, ?User $user): void
+    {
+        $isPublished = $course->publish_date !== null && $course->publish_date->isPast();
+        $isPreviewable = $course->allow_preview === true && $isPublished === false;
+
+        if ($isPublished === false && $isPreviewable === false && $user?->is_admin !== true) {
+            abort(404);
+        }
+
+        $this->isAdminPreview = $user?->is_admin === true && $isPublished === false && $isPreviewable === false;
+    }
+
     /**
+     * @param  Collection<int, Lesson>  $publishedLessons
      * @return array<int, int>
      */
-    private function getCompletedLessonIds(Course $course, User $user): array
+    private function getCompletedLessonIds(Collection $publishedLessons, User $user): array
     {
         return LessonUser::query()
-            ->where('user_id', $user->id)
-            ->whereIn('lesson_id', $course->lessons->pluck('id'))
-            ->whereNotNull('completed_at')
-            ->pluck('lesson_id')
+            ->where(column: 'user_id', operator: '=', value: $user->id)
+            ->whereIn(column: 'lesson_id', values: $publishedLessons->pluck('id'))
+            ->whereNotNull(columns: 'completed_at')
+            ->pluck(column: 'lesson_id')
             ->toArray();
     }
 
     /**
+     * @param  Collection<int, Lesson>  $publishedLessons
      * @param  array<int, int>  $completedLessonIds
      */
-    private function getNextLessonSlug(Course $course, array $completedLessonIds): ?string
+    private function getNextLessonSlug(Collection $publishedLessons, array $completedLessonIds): ?string
     {
-        $firstLessonSlug = $course->lessons->first()?->slug;
+        $firstLessonSlug = $publishedLessons->first()?->slug;
 
         if (count($completedLessonIds) === 0) {
             return $firstLessonSlug;
         }
 
-        $nextLesson = $course->lessons
-            ->first(fn ($lesson) => ! in_array($lesson->id, $completedLessonIds, true));
+        $nextLesson = $publishedLessons
+            ->first(fn (Lesson $lesson) => in_array($lesson->id, $completedLessonIds, true) === false);
 
         return $nextLesson->slug ?? $firstLessonSlug;
     }

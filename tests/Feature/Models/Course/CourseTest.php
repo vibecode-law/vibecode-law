@@ -1,8 +1,8 @@
 <?php
 
 use App\Models\Course\Course;
-use App\Models\Course\CourseTag;
 use App\Models\Course\Lesson;
+use App\Models\Tag;
 use App\Models\User;
 use App\Services\Markdown\MarkdownService;
 use Illuminate\Support\Collection;
@@ -12,25 +12,6 @@ test('uses slug as route key name', function () {
     $course = Course::factory()->create();
 
     expect($course->getRouteKeyName())->toBe('slug');
-});
-
-describe('user relationship', function () {
-    test('course belongs to a user', function () {
-        $user = User::factory()->create();
-        $course = Course::factory()->for($user)->create();
-
-        expect($course->user)->toBeInstanceOf(User::class);
-        expect($course->user->id)->toBe($user->id);
-    });
-
-    test('deleting user nulls course user_id', function () {
-        $user = User::factory()->create();
-        $course = Course::factory()->for($user)->create();
-
-        $user->delete();
-
-        expect(Course::query()->find($course->id)->user_id)->toBeNull();
-    });
 });
 
 describe('lessons relationship', function () {
@@ -63,29 +44,17 @@ describe('lessons relationship', function () {
 describe('tags relationship', function () {
     test('course can have many tags', function () {
         $course = Course::factory()->create();
-        $tags = CourseTag::factory()->count(3)->create();
+        $tags = Tag::factory()->count(3)->create();
 
         $course->tags()->attach($tags);
 
         expect($course->tags)->toHaveCount(3);
-        expect($course->tags->first())->toBeInstanceOf(CourseTag::class);
-    });
-
-    test('tags relationship includes timestamps on pivot', function () {
-        $course = Course::factory()->create();
-        $tag = CourseTag::factory()->create();
-
-        $course->tags()->attach($tag);
-
-        $pivot = $course->tags->first()->pivot;
-
-        expect($pivot->created_at)->not->toBeNull();
-        expect($pivot->updated_at)->not->toBeNull();
+        expect($course->tags->first())->toBeInstanceOf(Tag::class);
     });
 
     test('detaching tag removes pivot record', function () {
         $course = Course::factory()->create();
-        $tag = CourseTag::factory()->create();
+        $tag = Tag::factory()->create();
 
         $course->tags()->attach($tag);
 
@@ -98,14 +67,14 @@ describe('tags relationship', function () {
 
     test('deleting course removes pivot records', function () {
         $course = Course::factory()->create();
-        $tags = CourseTag::factory()->count(2)->create();
+        $tags = Tag::factory()->count(2)->create();
 
         $course->tags()->attach($tags);
 
         $course->delete();
 
         expect(
-            CourseTag::query()
+            Tag::query()
                 ->whereHas('courses', fn ($q) => $q->where('course_id', $course->id))
                 ->count()
         )->toBe(0);

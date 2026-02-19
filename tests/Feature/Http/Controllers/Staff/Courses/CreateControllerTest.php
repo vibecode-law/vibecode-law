@@ -9,7 +9,7 @@ use function Pest\Laravel\get;
 
 describe('auth', function () {
     test('requires authentication', function () {
-        get(route('staff.courses.create'))
+        get(route('staff.academy.courses.create'))
             ->assertRedirect(route('login'));
     });
 
@@ -18,7 +18,7 @@ describe('auth', function () {
 
         actingAs($admin);
 
-        get(route('staff.courses.create'))
+        get(route('staff.academy.courses.create'))
             ->assertOk();
     });
 
@@ -27,7 +27,7 @@ describe('auth', function () {
 
         actingAs($moderator);
 
-        get(route('staff.courses.create'))
+        get(route('staff.academy.courses.create'))
             ->assertForbidden();
     });
 
@@ -37,7 +37,7 @@ describe('auth', function () {
 
         actingAs($user);
 
-        get(route('staff.courses.create'))
+        get(route('staff.academy.courses.create'))
             ->assertForbidden();
     });
 });
@@ -48,7 +48,7 @@ describe('data', function () {
 
         actingAs($admin);
 
-        get(route('staff.courses.create'))
+        get(route('staff.academy.courses.create'))
             ->assertOk()
             ->assertInertia(fn (AssertableInertia $page) => $page
                 ->component('staff-area/courses/create', shouldExist: false)

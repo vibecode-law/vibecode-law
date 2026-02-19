@@ -2,6 +2,7 @@
 
 namespace App\Http\Resources\Course;
 
+use App\Http\Resources\TagResource;
 use App\Http\Resources\User\UserResource;
 use App\Models\Course\Course;
 use App\Services\Markdown\MarkdownService;
@@ -21,11 +22,11 @@ class CourseResource extends Resource
 
     public string $title;
 
-    public string $tagline;
+    public ?string $tagline;
 
-    public Lazy|string $description;
+    public Lazy|string|null $description;
 
-    public Lazy|string $description_html;
+    public Lazy|string|null $description_html;
 
     public Lazy|string|null $learning_objectives;
 
@@ -43,7 +44,11 @@ class CourseResource extends Resource
     /** @var array<string, ImageCrop>|null */
     public Lazy|array|null $thumbnail_crops;
 
-    public bool $visible;
+    public bool $allow_preview;
+
+    public bool $is_previewable;
+
+    public bool $is_scheduled;
 
     public bool $is_featured;
 
@@ -55,9 +60,10 @@ class CourseResource extends Resource
 
     public Lazy|LessonResource $lessons;
 
-    public Lazy|CourseTagResource $tags;
+    public Lazy|TagResource $tags;
 
-    public Lazy|UserResource|null $user;
+    /** @var Lazy|UserResource[] */
+    public Lazy|array $instructors;
 
     public Lazy|int $started_count;
 
@@ -73,10 +79,10 @@ class CourseResource extends Resource
             'title' => $course->title,
             'tagline' => $course->tagline,
             'description' => Lazy::create(fn () => $course->description),
-            'description_html' => Lazy::create(fn () => $markdown->render(
+            'description_html' => Lazy::create(fn () => $course->description !== null ? $markdown->render(
                 markdown: $course->description,
                 cacheKey: "course|{$course->id}|description",
-            )),
+            ) : null),
             'thumbnail_url' => $course->thumbnail_url,
             'thumbnail_rect_strings' => $course->thumbnail_rect_strings,
             'thumbnail_crops' => Lazy::create(fn () => $course->thumbnail_crops !== null
@@ -92,7 +98,9 @@ class CourseResource extends Resource
             ) : null),
             'duration_seconds' => Lazy::create(fn () => $course->duration_seconds),
             'experience_level' => Lazy::create(fn () => $course->experience_level?->forFrontend()),
-            'visible' => $course->visible,
+            'allow_preview' => $course->allow_preview,
+            'is_previewable' => $course->allow_preview === true && ($course->publish_date === null || $course->publish_date->isFuture()),
+            'is_scheduled' => $course->allow_preview === false && ($course->publish_date === null || $course->publish_date->isFuture()),
             'is_featured' => $course->is_featured,
             'publish_date' => Lazy::create(fn () => $course->publish_date instanceof Carbon ? $course->publish_date->toDateString() : null),
             'order' => $course->order,
@@ -101,8 +109,15 @@ class CourseResource extends Resource
                 value: fn () => $course->lessons_count,
             ),
             'lessons' => Lazy::whenLoaded('lessons', $course, fn () => LessonResource::collect($course->lessons)),
-            'tags' => Lazy::whenLoaded('tags', $course, fn () => CourseTagResource::collect($course->tags)),
-            'user' => Lazy::whenLoaded('user', $course, fn () => $course->user !== null ? UserResource::from($course->user) : null),
+            'tags' => Lazy::whenLoaded('tags', $course, fn () => TagResource::collect($course->tags)),
+            'instructors' => Lazy::whenLoaded('lessons', $course, function () use ($course) {
+                $uniqueInstructors = $course->lessons
+                    ->flatMap(fn ($lesson) => $lesson->relationLoaded('instructors') ? $lesson->instructors : collect())
+                    ->unique('id')
+                    ->values();
+
+                return UserResource::collect($uniqueInstructors);
+            }),
             'started_count' => Lazy::create(fn () => $course->started_count),
             'completed_count' => Lazy::create(fn () => $course->completed_count),
         ]);

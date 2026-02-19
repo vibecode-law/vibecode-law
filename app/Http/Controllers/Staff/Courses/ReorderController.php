@@ -6,6 +6,7 @@ use App\Http\Controllers\BaseController;
 use App\Models\Course\Course;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Redirect;
 
 class ReorderController extends BaseController
 {
@@ -13,18 +14,18 @@ class ReorderController extends BaseController
     {
         $this->authorize('create', Course::class);
 
-        $request->validate([
+        $validated = $request->validate([
             'items' => 'required|array',
             'items.*.id' => 'required|exists:courses,id',
             'items.*.order' => 'required|integer|min:0',
         ]);
 
-        foreach ($request->items as $item) {
+        foreach ($validated['items'] as $item) {
             Course::where('id', $item['id'])->update([
                 'order' => $item['order'],
             ]);
         }
 
-        return redirect()->back();
+        return Redirect::back();
     }
 }

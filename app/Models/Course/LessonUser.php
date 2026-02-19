@@ -23,7 +23,7 @@ class LessonUser extends Pivot
             'viewed_at' => 'datetime',
             'started_at' => 'datetime',
             'completed_at' => 'datetime',
-            'playback_time_milliseconds' => 'integer',
+            'playback_time_seconds' => 'integer',
         ];
     }
 }

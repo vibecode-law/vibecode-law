@@ -11,7 +11,7 @@ describe('auth', function () {
     test('requires authentication', function () {
         $course = Course::factory()->create();
 
-        get(route('staff.courses.lessons.create', $course))
+        get(route('staff.academy.courses.lessons.create', $course))
             ->assertRedirect(route('login'));
     });
 
@@ -21,7 +21,7 @@ describe('auth', function () {
 
         actingAs($admin);
 
-        get(route('staff.courses.lessons.create', $course))
+        get(route('staff.academy.courses.lessons.create', $course))
             ->assertOk();
     });
 
@@ -31,7 +31,7 @@ describe('auth', function () {
 
         actingAs($moderator);
 
-        get(route('staff.courses.lessons.create', $course))
+        get(route('staff.academy.courses.lessons.create', $course))
             ->assertForbidden();
     });
 
@@ -42,7 +42,7 @@ describe('auth', function () {
 
         actingAs($user);
 
-        get(route('staff.courses.lessons.create', $course))
+        get(route('staff.academy.courses.lessons.create', $course))
             ->assertForbidden();
     });
 });
@@ -54,7 +54,7 @@ describe('data', function () {
 
         actingAs($admin);
 
-        get(route('staff.courses.lessons.create', $course))
+        get(route('staff.academy.courses.lessons.create', $course))
             ->assertOk()
             ->assertInertia(fn (AssertableInertia $page) => $page
                 ->component('staff-area/courses/lessons/create', shouldExist: false)

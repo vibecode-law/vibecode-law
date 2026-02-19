@@ -5,6 +5,7 @@ namespace App\Services\Course;
 use App\Models\Course\Course;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Str;
 
 class CourseThumbnailService
 {
@@ -19,12 +20,12 @@ class CourseThumbnailService
      */
     public function fromUploadedFile(UploadedFile $file, ?array $crops = null): void
     {
-        $extension = $file->extension();
-        $path = "course/{$this->course->id}/thumbnail.{$extension}";
+        $filename = Str::random(40).'.'.$file->extension();
+        $path = "course/{$this->course->id}/{$filename}";
 
         // Delete old thumbnail if exists
-        if ($this->course->thumbnail_extension !== null) {
-            $oldPath = "course/{$this->course->id}/thumbnail.{$this->course->thumbnail_extension}";
+        if ($this->course->thumbnail_filename !== null) {
+            $oldPath = "course/{$this->course->id}/{$this->course->thumbnail_filename}";
             Storage::disk('public')->delete($oldPath);
         }
 
@@ -33,7 +34,7 @@ class CourseThumbnailService
             contents: $file->getContent()
         );
 
-        $this->course->thumbnail_extension = $extension;
+        $this->course->thumbnail_filename = $filename;
         $this->course->thumbnail_crops = $crops;
         $this->course->save();
     }
@@ -54,14 +55,14 @@ class CourseThumbnailService
      */
     public function delete(): void
     {
-        if ($this->course->thumbnail_extension === null) {
+        if ($this->course->thumbnail_filename === null) {
             return;
         }
 
-        $path = "course/{$this->course->id}/thumbnail.{$this->course->thumbnail_extension}";
+        $path = "course/{$this->course->id}/{$this->course->thumbnail_filename}";
         Storage::disk('public')->delete($path);
 
-        $this->course->thumbnail_extension = null;
+        $this->course->thumbnail_filename = null;
         $this->course->thumbnail_crops = null;
         $this->course->save();
     }

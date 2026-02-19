@@ -18,7 +18,7 @@ return new class extends Migration
             $table->timestamp('viewed_at')->nullable();
             $table->timestamp('started_at')->nullable();
             $table->timestamp('completed_at')->nullable();
-            $table->unsignedBigInteger('playback_time_milliseconds')->nullable();
+            $table->unsignedBigInteger('playback_time_seconds')->nullable();
             $table->timestamps();
 
             $table->unique(columns: ['user_id', 'lesson_id']);
