@@ -277,26 +277,74 @@ describe('guest progress in session', function () {
         expect(session("lesson_progress.{$lesson->id}.playback_time_seconds"))->toBe(100);
     });
 
-    it('auto-completes in session when playback time is within 10 seconds of duration', function () {
+    it('auto-completes in session at 90% for a medium lesson', function () {
         $course = Course::factory()->published()->create();
-        $lesson = Lesson::factory()->published()->for($course)->create(['duration_seconds' => 300]);
+        $lesson = Lesson::factory()->published()->for($course)->create(['duration_seconds' => 200]);
 
         postJson(route('api.learn.courses.lessons.player-event', [$course, $lesson]), [
             'event' => 'timeupdate',
-            'current_time' => 291,
+            'current_time' => 180,
         ])
             ->assertSuccessful()
-            ->assertSessionHas("lesson_progress.{$lesson->id}.playback_time_seconds", 291)
+            ->assertSessionHas("lesson_progress.{$lesson->id}.playback_time_seconds", 180)
             ->assertSessionHas("lesson_progress.{$lesson->id}.completed_at");
     });
 
-    it('does not auto-complete in session when playback time is more than 10 seconds from duration', function () {
+    it('does not auto-complete in session before 90% for a medium lesson', function () {
         $course = Course::factory()->published()->create();
-        $lesson = Lesson::factory()->published()->for($course)->create(['duration_seconds' => 300]);
+        $lesson = Lesson::factory()->published()->for($course)->create(['duration_seconds' => 200]);
 
         postJson(route('api.learn.courses.lessons.player-event', [$course, $lesson]), [
             'event' => 'timeupdate',
-            'current_time' => 289,
+            'current_time' => 179,
+        ])
+            ->assertSuccessful()
+            ->assertSessionMissing("lesson_progress.{$lesson->id}.completed_at");
+    });
+
+    it('auto-completes in session within 10 seconds of end for a short lesson', function () {
+        $course = Course::factory()->published()->create();
+        $lesson = Lesson::factory()->published()->for($course)->create(['duration_seconds' => 60]);
+
+        postJson(route('api.learn.courses.lessons.player-event', [$course, $lesson]), [
+            'event' => 'timeupdate',
+            'current_time' => 50,
+        ])
+            ->assertSuccessful()
+            ->assertSessionHas("lesson_progress.{$lesson->id}.completed_at");
+    });
+
+    it('does not auto-complete in session before 10 seconds of end for a short lesson', function () {
+        $course = Course::factory()->published()->create();
+        $lesson = Lesson::factory()->published()->for($course)->create(['duration_seconds' => 60]);
+
+        postJson(route('api.learn.courses.lessons.player-event', [$course, $lesson]), [
+            'event' => 'timeupdate',
+            'current_time' => 49,
+        ])
+            ->assertSuccessful()
+            ->assertSessionMissing("lesson_progress.{$lesson->id}.completed_at");
+    });
+
+    it('auto-completes in session within 30 seconds of end for a long lesson', function () {
+        $course = Course::factory()->published()->create();
+        $lesson = Lesson::factory()->published()->for($course)->create(['duration_seconds' => 600]);
+
+        postJson(route('api.learn.courses.lessons.player-event', [$course, $lesson]), [
+            'event' => 'timeupdate',
+            'current_time' => 570,
+        ])
+            ->assertSuccessful()
+            ->assertSessionHas("lesson_progress.{$lesson->id}.completed_at");
+    });
+
+    it('does not auto-complete in session before 30 seconds of end for a long lesson', function () {
+        $course = Course::factory()->published()->create();
+        $lesson = Lesson::factory()->published()->for($course)->create(['duration_seconds' => 600]);
+
+        postJson(route('api.learn.courses.lessons.player-event', [$course, $lesson]), [
+            'event' => 'timeupdate',
+            'current_time' => 569,
         ])
             ->assertSuccessful()
             ->assertSessionMissing("lesson_progress.{$lesson->id}.completed_at");

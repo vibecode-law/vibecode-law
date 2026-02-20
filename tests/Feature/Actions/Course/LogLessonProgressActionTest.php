@@ -158,11 +158,11 @@ describe('existing record', function () {
 });
 
 describe('auto-complete', function () {
-    it('auto-completes when playback time is within 10 seconds of lesson duration', function () {
+    it('auto-completes at 90% for a medium lesson', function () {
         $user = User::factory()->create();
-        $lesson = Lesson::factory()->create(['duration_seconds' => 300]);
+        $lesson = Lesson::factory()->create(['duration_seconds' => 200]);
 
-        app(LogLessonProgressAction::class)->handle(lesson: $lesson, user: $user, playbackTimeSeconds: 291);
+        app(LogLessonProgressAction::class)->handle(lesson: $lesson, user: $user, playbackTimeSeconds: 180);
 
         $pivot = LessonUser::query()
             ->where(column: 'user_id', operator: '=', value: $user->id)
@@ -170,8 +170,78 @@ describe('auto-complete', function () {
             ->first();
 
         expect($pivot)
-            ->playback_time_seconds->toBe(291)
+            ->playback_time_seconds->toBe(180)
             ->completed_at->not->toBeNull();
+    });
+
+    it('does not auto-complete before 90% for a medium lesson', function () {
+        $user = User::factory()->create();
+        $lesson = Lesson::factory()->create(['duration_seconds' => 200]);
+
+        app(LogLessonProgressAction::class)->handle(lesson: $lesson, user: $user, playbackTimeSeconds: 179);
+
+        $pivot = LessonUser::query()
+            ->where(column: 'user_id', operator: '=', value: $user->id)
+            ->where(column: 'lesson_id', operator: '=', value: $lesson->id)
+            ->first();
+
+        expect($pivot->completed_at)->toBeNull();
+    });
+
+    it('auto-completes within 10 seconds of end for a short lesson', function () {
+        $user = User::factory()->create();
+        $lesson = Lesson::factory()->create(['duration_seconds' => 60]);
+
+        app(LogLessonProgressAction::class)->handle(lesson: $lesson, user: $user, playbackTimeSeconds: 50);
+
+        $pivot = LessonUser::query()
+            ->where(column: 'user_id', operator: '=', value: $user->id)
+            ->where(column: 'lesson_id', operator: '=', value: $lesson->id)
+            ->first();
+
+        expect($pivot->completed_at)->not->toBeNull();
+    });
+
+    it('does not auto-complete before 10 seconds of end for a short lesson', function () {
+        $user = User::factory()->create();
+        $lesson = Lesson::factory()->create(['duration_seconds' => 60]);
+
+        app(LogLessonProgressAction::class)->handle(lesson: $lesson, user: $user, playbackTimeSeconds: 49);
+
+        $pivot = LessonUser::query()
+            ->where(column: 'user_id', operator: '=', value: $user->id)
+            ->where(column: 'lesson_id', operator: '=', value: $lesson->id)
+            ->first();
+
+        expect($pivot->completed_at)->toBeNull();
+    });
+
+    it('auto-completes within 30 seconds of end for a long lesson', function () {
+        $user = User::factory()->create();
+        $lesson = Lesson::factory()->create(['duration_seconds' => 600]);
+
+        app(LogLessonProgressAction::class)->handle(lesson: $lesson, user: $user, playbackTimeSeconds: 570);
+
+        $pivot = LessonUser::query()
+            ->where(column: 'user_id', operator: '=', value: $user->id)
+            ->where(column: 'lesson_id', operator: '=', value: $lesson->id)
+            ->first();
+
+        expect($pivot->completed_at)->not->toBeNull();
+    });
+
+    it('does not auto-complete before 30 seconds of end for a long lesson', function () {
+        $user = User::factory()->create();
+        $lesson = Lesson::factory()->create(['duration_seconds' => 600]);
+
+        app(LogLessonProgressAction::class)->handle(lesson: $lesson, user: $user, playbackTimeSeconds: 569);
+
+        $pivot = LessonUser::query()
+            ->where(column: 'user_id', operator: '=', value: $user->id)
+            ->where(column: 'lesson_id', operator: '=', value: $lesson->id)
+            ->first();
+
+        expect($pivot->completed_at)->toBeNull();
     });
 
     it('auto-completes when playback time exceeds lesson duration', function () {
@@ -186,20 +256,6 @@ describe('auto-complete', function () {
             ->first();
 
         expect($pivot->completed_at)->not->toBeNull();
-    });
-
-    it('does not auto-complete when playback time is more than 10 seconds from duration', function () {
-        $user = User::factory()->create();
-        $lesson = Lesson::factory()->create(['duration_seconds' => 300]);
-
-        app(LogLessonProgressAction::class)->handle(lesson: $lesson, user: $user, playbackTimeSeconds: 289);
-
-        $pivot = LessonUser::query()
-            ->where(column: 'user_id', operator: '=', value: $user->id)
-            ->where(column: 'lesson_id', operator: '=', value: $lesson->id)
-            ->first();
-
-        expect($pivot->completed_at)->toBeNull();
     });
 
     it('does not auto-complete when already completed', function () {
@@ -235,6 +291,147 @@ describe('auto-complete', function () {
             ->first();
 
         expect($pivot->completed_at)->toBeNull();
+    });
+});
+
+describe('guest progress', function () {
+    it('stores viewed_at in session on first interaction', function () {
+        $lesson = Lesson::factory()->create();
+
+        app(LogLessonProgressAction::class)->handle(lesson: $lesson, startedAt: now());
+
+        expect(session("lesson_progress.{$lesson->id}.viewed_at"))->not->toBeNull();
+    });
+
+    it('does not overwrite viewed_at when already set', function () {
+        $lesson = Lesson::factory()->create();
+
+        $originalValue = now()->subMinutes(5)->toIso8601String();
+        session(["lesson_progress.{$lesson->id}" => ['viewed_at' => $originalValue]]);
+
+        app(LogLessonProgressAction::class)->handle(lesson: $lesson, startedAt: now());
+
+        expect(session("lesson_progress.{$lesson->id}.viewed_at"))->toBe($originalValue);
+    });
+
+    it('stores started_at in session', function () {
+        $lesson = Lesson::factory()->create();
+
+        app(LogLessonProgressAction::class)->handle(lesson: $lesson, startedAt: now());
+
+        expect(session("lesson_progress.{$lesson->id}.started_at"))->not->toBeNull();
+    });
+
+    it('stores playback_time_seconds in session', function () {
+        $lesson = Lesson::factory()->create();
+
+        app(LogLessonProgressAction::class)->handle(lesson: $lesson, playbackTimeSeconds: 42);
+
+        expect(session("lesson_progress.{$lesson->id}.playback_time_seconds"))->toBe(42);
+    });
+
+    it('stores completed_at in session', function () {
+        $lesson = Lesson::factory()->create();
+
+        app(LogLessonProgressAction::class)->handle(lesson: $lesson, completedAt: now());
+
+        expect(session("lesson_progress.{$lesson->id}.completed_at"))->not->toBeNull();
+    });
+
+    it('does not overwrite started_at when already set', function () {
+        $lesson = Lesson::factory()->create();
+
+        $originalValue = now()->subMinutes(5)->toIso8601String();
+        session(["lesson_progress.{$lesson->id}" => ['started_at' => $originalValue]]);
+
+        app(LogLessonProgressAction::class)->handle(lesson: $lesson, startedAt: now());
+
+        expect(session("lesson_progress.{$lesson->id}.started_at"))->toBe($originalValue);
+    });
+
+    it('does not overwrite completed_at when already set', function () {
+        $lesson = Lesson::factory()->create();
+
+        $originalValue = now()->subMinutes(5)->toIso8601String();
+        session(["lesson_progress.{$lesson->id}" => ['completed_at' => $originalValue]]);
+
+        app(LogLessonProgressAction::class)->handle(lesson: $lesson, completedAt: now());
+
+        expect(session("lesson_progress.{$lesson->id}.completed_at"))->toBe($originalValue);
+    });
+
+    it('updates playback_time_seconds only when new value is greater', function () {
+        $lesson = Lesson::factory()->create();
+
+        session(["lesson_progress.{$lesson->id}" => ['playback_time_seconds' => 100]]);
+
+        app(LogLessonProgressAction::class)->handle(lesson: $lesson, playbackTimeSeconds: 50);
+
+        expect(session("lesson_progress.{$lesson->id}.playback_time_seconds"))->toBe(100);
+    });
+
+    it('updates playback_time_seconds when new value is greater', function () {
+        $lesson = Lesson::factory()->create();
+
+        session(["lesson_progress.{$lesson->id}" => ['playback_time_seconds' => 50]]);
+
+        app(LogLessonProgressAction::class)->handle(lesson: $lesson, playbackTimeSeconds: 100);
+
+        expect(session("lesson_progress.{$lesson->id}.playback_time_seconds"))->toBe(100);
+    });
+
+    it('auto-completes at 90% for a medium lesson', function () {
+        $lesson = Lesson::factory()->create(['duration_seconds' => 200]);
+
+        app(LogLessonProgressAction::class)->handle(lesson: $lesson, playbackTimeSeconds: 180);
+
+        expect(session("lesson_progress.{$lesson->id}"))
+            ->playback_time_seconds->toBe(180)
+            ->completed_at->not->toBeNull();
+    });
+
+    it('does not auto-complete before 90% for a medium lesson', function () {
+        $lesson = Lesson::factory()->create(['duration_seconds' => 200]);
+
+        app(LogLessonProgressAction::class)->handle(lesson: $lesson, playbackTimeSeconds: 179);
+
+        expect(session("lesson_progress.{$lesson->id}.completed_at"))->toBeNull();
+    });
+
+    it('does not auto-complete when already completed', function () {
+        $lesson = Lesson::factory()->create(['duration_seconds' => 200]);
+
+        $originalValue = now()->subMinutes(5)->toIso8601String();
+        session(["lesson_progress.{$lesson->id}" => ['completed_at' => $originalValue]]);
+
+        app(LogLessonProgressAction::class)->handle(lesson: $lesson, playbackTimeSeconds: 195);
+
+        expect(session("lesson_progress.{$lesson->id}.completed_at"))->toBe($originalValue);
+    });
+
+    it('does not auto-complete when lesson has no duration', function () {
+        $lesson = Lesson::factory()->create(['duration_seconds' => null]);
+
+        app(LogLessonProgressAction::class)->handle(lesson: $lesson, playbackTimeSeconds: 295);
+
+        expect(session("lesson_progress.{$lesson->id}.completed_at"))->toBeNull();
+    });
+
+    it('does not create a pivot record', function () {
+        $lesson = Lesson::factory()->create();
+
+        app(LogLessonProgressAction::class)->handle(lesson: $lesson, startedAt: now());
+
+        expect(LessonUser::query()->count())->toBe(0);
+    });
+
+    it('does not call course sync actions', function () {
+        $lesson = Lesson::factory()->create();
+
+        mock(SyncCourseStartedAction::class)->shouldNotReceive('handle');
+        mock(SyncCourseCompletedAction::class)->shouldNotReceive('handle');
+
+        app(LogLessonProgressAction::class)->handle(lesson: $lesson, completedAt: now());
     });
 });
 
