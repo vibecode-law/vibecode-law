@@ -24,7 +24,7 @@ export function TabNav({ items, ariaLabel, variant = 'default' }: TabNavProps) {
                 'flex overflow-x-auto',
                 variant === 'default' ? 'gap-1' : 'gap-2',
                 variant === 'default' &&
-                    'border-b border-neutral-200 dark:border-neutral-800',
+                    '-mb-px border-b border-neutral-200 dark:border-neutral-800',
             )}
             aria-label={ariaLabel}
         >
