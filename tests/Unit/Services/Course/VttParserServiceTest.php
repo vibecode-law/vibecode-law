@@ -163,16 +163,16 @@ test('parses a real transcript fixture file', function () {
 
     $result = $service->parse(vttContent: $vtt);
 
-    expect($result)->toHaveCount(916)
+    expect($result)->toHaveCount(32)
         ->and($result[0])->toBe([
             'start_seconds' => '0.000',
-            'end_seconds' => '1.120',
-            'text' => '[MUSIC PLAYING]',
+            'end_seconds' => '13.000',
+            'text' => 'Welcome to Vibe Academy, a series of practical lessons on how to get started with Vibe coding and we\'re going to start here with a quick introduction to what is Vibe coding and then we\'re going to talk about responsible Vibe coding.',
         ])
-        ->and($result[915])->toBe([
-            'start_seconds' => '2397.520',
-            'end_seconds' => '2401.120',
-            'text' => 'of Developer Tools Companies and other industry leaders.',
+        ->and($result[31])->toBe([
+            'start_seconds' => '325.000',
+            'end_seconds' => '337.000',
+            'text' => 'So there we have it. You\'ve got an initial idea of what vibe coding is where it\'s come from and how to do it responsibly in the next lesson. We\'re going to build our first demo app in three minutes.',
         ])
         ->and(collect($result)->every(fn (array $cue): bool => isset($cue['start_seconds'], $cue['end_seconds'], $cue['text'])
         ))->toBeTrue();
