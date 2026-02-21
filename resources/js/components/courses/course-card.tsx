@@ -23,19 +23,21 @@ export function CourseCard({ course, progress }: CourseCardProps) {
 
     const duration = formatDuration(course.duration_seconds);
     const isPreviewable = course.is_previewable === true;
+    const hasNoLessons = (course.lessons_count ?? 0) === 0;
+    const isClickable = !(isPreviewable && hasNoLessons);
 
-    return (
-        <Link
-            href={`/learn/courses/${course.slug}`}
-            className="group relative flex flex-col overflow-hidden rounded-xl border border-neutral-200 bg-white shadow-sm dark:border-neutral-800 dark:bg-neutral-900"
-        >
+    const cardClassName =
+        'group relative flex flex-col overflow-hidden rounded-xl border border-neutral-200 bg-white shadow-sm dark:border-neutral-800 dark:bg-neutral-900';
+
+    const content = (
+        <>
             {/* Thumbnail */}
             <div className="relative aspect-video overflow-hidden">
                 {thumbnailSrc ? (
                     <img
                         src={thumbnailSrc}
                         alt={course.title}
-                        className="h-full w-full object-cover transition-transform duration-300 group-hover:scale-105"
+                        className={`h-full w-full object-cover transition-transform duration-300 ${isClickable ? 'group-hover:scale-105' : ''}`}
                     />
                 ) : (
                     <div className="flex h-full w-full items-center justify-center bg-linear-to-br from-neutral-100 to-neutral-200 dark:from-neutral-800 dark:to-neutral-900">
@@ -99,6 +101,16 @@ export function CourseCard({ course, progress }: CourseCardProps) {
                     </div>
                 )}
             </div>
+        </>
+    );
+
+    if (!isClickable) {
+        return <div className={cardClassName}>{content}</div>;
+    }
+
+    return (
+        <Link href={`/learn/courses/${course.slug}`} className={cardClassName}>
+            {content}
         </Link>
     );
 }

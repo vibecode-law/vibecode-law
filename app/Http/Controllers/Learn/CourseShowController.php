@@ -62,6 +62,10 @@ class CourseShowController extends BaseController
             abort(404);
         }
 
+        if ($isPreviewable === true && $course->visibleLessons()->count() === 0 && $user?->is_admin !== true) {
+            abort(404);
+        }
+
         $this->isAdminPreview = $user?->is_admin === true && $isPublished === false && $isPreviewable === false;
     }
 

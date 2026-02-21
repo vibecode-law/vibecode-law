@@ -192,10 +192,29 @@ describe('course access control', function () {
             ->assertNotFound();
     });
 
-    test('show returns 200 for previewable courses', function () {
+    test('show returns 200 for previewable courses with lessons', function () {
+        $course = Course::factory()->previewable()->create();
+        Lesson::factory()->previewable()->for($course)->create();
+
+        get(route('learn.courses.show', $course))
+            ->assertOk();
+    });
+
+    test('show returns 404 for previewable courses with no lessons', function () {
         $course = Course::factory()->previewable()->create();
 
         get(route('learn.courses.show', $course))
+            ->assertNotFound();
+    });
+
+    test('show allows admin to access previewable courses with no lessons', function () {
+        $course = Course::factory()->previewable()->create();
+
+        /** @var User $admin */
+        $admin = User::factory()->create(['is_admin' => true]);
+
+        actingAs($admin)
+            ->get(route('learn.courses.show', $course))
             ->assertOk();
     });
 
