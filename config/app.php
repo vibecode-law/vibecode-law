@@ -120,6 +120,8 @@ return [
 
     'challenges_enabled' => (bool) env('CHALLENGES_ENABLED', false),
 
+    'learn_enabled' => (bool) env('LEARN_ENABLED', false),
+
     'maintenance' => [
         'driver' => env('APP_MAINTENANCE_DRIVER', 'file'),
         'store' => env('APP_MAINTENANCE_STORE', 'database'),

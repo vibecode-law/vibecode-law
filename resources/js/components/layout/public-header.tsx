@@ -1,8 +1,8 @@
 import AboutIndexController from '@/actions/App/Http/Controllers/About/AboutIndexController';
 import ChallengeIndexController from '@/actions/App/Http/Controllers/Challenge/Public/ChallengeIndexController';
 import HomeController from '@/actions/App/Http/Controllers/HomeController';
+import LearnIndexController from '@/actions/App/Http/Controllers/Learn/LearnIndexController';
 import NewsletterIndexController from '@/actions/App/Http/Controllers/Newsletter/NewsletterIndexController';
-import ResourcesIndexController from '@/actions/App/Http/Controllers/Resources/ResourcesIndexController';
 import ShowcaseCreateController from '@/actions/App/Http/Controllers/Showcase/ManageShowcase/ShowcaseCreateController';
 import WallOfLoveController from '@/actions/App/Http/Controllers/WallOfLove/WallOfLoveController';
 import AppLogo from '@/components/logo/app-logo';
@@ -52,10 +52,10 @@ export function PublicHeader() {
                             </Link>
                         )}
                         <Link
-                            href={ResourcesIndexController.url()}
+                            href={LearnIndexController.url()}
                             className="text-sm font-medium text-neutral-600 hover:text-neutral-900 dark:text-neutral-400 dark:hover:text-white"
                         >
-                            Resources
+                            Learn
                         </Link>
                         <Link
                             href={WallOfLoveController.url()}
@@ -168,15 +168,16 @@ export function PublicHeader() {
 
                                     <SheetClose asChild>
                                         <Link
-                                            href={ResourcesIndexController.url()}
+                                            href={LearnIndexController.url()}
                                             className="group flex items-center justify-between py-3"
                                         >
                                             <div>
                                                 <h3 className="text-xl font-bold text-neutral-900 group-hover:text-primary dark:text-white">
-                                                    Resources
+                                                    Learn
                                                 </h3>
                                                 <p className="mt-1 text-sm text-neutral-600 dark:text-neutral-400">
-                                                    Learn to vibecode.
+                                                    Courses and guides for
+                                                    vibecoding.
                                                 </p>
                                             </div>
                                             <ArrowRight className="size-5 text-neutral-400 transition-transform group-hover:translate-x-1 group-hover:text-primary dark:text-neutral-500" />

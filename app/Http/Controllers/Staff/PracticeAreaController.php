@@ -32,7 +32,7 @@ class PracticeAreaController extends BaseController
 
         PracticeArea::create($request->validated());
 
-        return Redirect::route('staff.practice-areas.index')
+        return Redirect::route('staff.metadata.practice-areas.index')
             ->with('flash', [
                 'message' => ['message' => 'Practice area created successfully.', 'type' => 'success'],
             ]);
@@ -44,7 +44,7 @@ class PracticeAreaController extends BaseController
 
         $practiceArea->update($request->validated());
 
-        return Redirect::route('staff.practice-areas.index')
+        return Redirect::route('staff.metadata.practice-areas.index')
             ->with('flash', [
                 'message' => ['message' => 'Practice area updated successfully.', 'type' => 'success'],
             ]);

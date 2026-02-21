@@ -7,8 +7,6 @@ use App\Http\Controllers\HomeController;
 use App\Http\Controllers\Legal\LegalShowController;
 use App\Http\Controllers\Newsletter\NewsletterIndexController;
 use App\Http\Controllers\Newsletter\NewsletterSignupController;
-use App\Http\Controllers\Resources\ResourcesIndexController;
-use App\Http\Controllers\Resources\ResourcesShowController;
 use App\Http\Controllers\Showcase\Public\ShowcaseShowController;
 use App\Http\Controllers\WallOfLove\WallOfLoveController;
 use Illuminate\Support\Facades\Route;
@@ -23,8 +21,8 @@ Route::get('/about', AboutIndexController::class)->name('about.index');
 Route::get('/about/the-community', CommunityController::class)->name('about.community');
 Route::get('/about/{slug}', AboutShowController::class)->name('about.show');
 
-Route::get('/resources', ResourcesIndexController::class)->name('resources.index');
-Route::get('/resources/{slug}', ResourcesShowController::class)->name('resources.show');
+Route::redirect('/resources', '/learn', status: 301);
+Route::redirect('/resources/{slug}', '/learn/guides/{slug}', status: 301);
 
 Route::get('/newsletter', NewsletterIndexController::class)->name('newsletter.index');
 Route::post('/newsletter/signup', NewsletterSignupController::class)->name('newsletter.signup');
@@ -33,6 +31,7 @@ Route::get('/wall-of-love', WallOfLoveController::class)->name('wall-of-love');
 
 require __DIR__.'/guest/showcase.php';
 require __DIR__.'/guest/inspiration.php';
+require __DIR__.'/guest/learn.php';
 require __DIR__.'/guest/user.php';
 
 Route::middleware(['auth', 'verified'])->group(function () {

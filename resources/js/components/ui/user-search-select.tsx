@@ -3,12 +3,12 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Search, X } from 'lucide-react';
-import { useEffect, useRef, useState } from 'react';
+import { type ReactNode, useEffect, useRef, useState } from 'react';
 
 interface User {
     id: number;
     name: string;
-    email: string;
+    email?: string | null;
     job_title?: string | null;
     organisation?: string | null;
 }
@@ -17,12 +17,18 @@ interface UserSearchSelectProps {
     selectedUser: User | null;
     onSelect: (user: User | null) => void;
     disabled?: boolean;
+    label?: ReactNode;
+    selectedHelpText?: string;
+    searchHelpText?: string;
 }
 
 export function UserSearchSelect({
     selectedUser,
     onSelect,
     disabled = false,
+    label = 'Link to User (Optional)',
+    selectedHelpText = 'Name, job title, organisation, and avatar will be pulled from this user profile',
+    searchHelpText = 'Search for a user to link this testimonial to their profile, or leave empty to enter details manually',
 }: UserSearchSelectProps) {
     const [search, setSearch] = useState('');
     const [users, setUsers] = useState<User[]>([]);
@@ -78,16 +84,18 @@ export function UserSearchSelect({
 
     return (
         <div ref={containerRef} className="relative">
-            <Label>Link to User (Optional)</Label>
+            <Label>{label}</Label>
             {selectedUser ? (
                 <div className="mt-1.5 flex items-center justify-between rounded-md border border-neutral-300 bg-neutral-50 p-3 dark:border-neutral-700 dark:bg-neutral-900">
                     <div>
                         <p className="font-medium text-neutral-900 dark:text-white">
                             {selectedUser.name}
                         </p>
-                        <p className="text-sm text-neutral-600 dark:text-neutral-400">
-                            {selectedUser.email}
-                        </p>
+                        {selectedUser.email && (
+                            <p className="text-sm text-neutral-600 dark:text-neutral-400">
+                                {selectedUser.email}
+                            </p>
+                        )}
                         {(selectedUser.job_title || selectedUser.organisation) && (
                             <p className="mt-0.5 text-xs text-neutral-500 dark:text-neutral-400">
                                 {selectedUser.job_title}
@@ -177,9 +185,7 @@ export function UserSearchSelect({
                 </>
             )}
             <p className="mt-1 text-xs text-neutral-500 dark:text-neutral-400">
-                {selectedUser
-                    ? 'Name, job title, organisation, and avatar will be pulled from this user profile'
-                    : 'Search for a user to link this testimonial to their profile, or leave empty to enter details manually'}
+                {selectedUser ? selectedHelpText : searchHelpText}
             </p>
         </div>
     );

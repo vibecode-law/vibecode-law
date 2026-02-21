@@ -6,6 +6,10 @@ namespace App\Models;
 use App\Enums\ShowcaseStatus;
 use App\Enums\TeamType;
 use App\Models\Challenge\Challenge;
+use App\Models\Course\Course;
+use App\Models\Course\CourseUser;
+use App\Models\Course\Lesson;
+use App\Models\Course\LessonUser;
 use App\Models\Showcase\Showcase;
 use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Attributes\Scope;
@@ -110,6 +114,22 @@ class User extends Authenticatable implements MustVerifyEmail
     public function hostedChallenges(): HasMany
     {
         return $this->hasMany(Challenge::class);
+    }
+
+    public function courses(): BelongsToMany
+    {
+        return $this->belongsToMany(Course::class)
+            ->using(CourseUser::class)
+            ->withPivot('viewed_at', 'started_at', 'completed_at')
+            ->withTimestamps();
+    }
+
+    public function lessons(): BelongsToMany
+    {
+        return $this->belongsToMany(Lesson::class)
+            ->using(LessonUser::class)
+            ->withPivot('viewed_at', 'started_at', 'completed_at', 'playback_time_seconds')
+            ->withTimestamps();
     }
 
     //

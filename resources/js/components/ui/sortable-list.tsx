@@ -14,16 +14,18 @@ import {
 } from '@dnd-kit/sortable';
 import { ReactNode } from 'react';
 
-interface SortableListProps<T extends { id: number; display_order: number }> {
+interface SortableListProps<T extends { id: number; [key: string]: unknown }> {
     items: T[];
     onReorder: (items: T[]) => void;
     children: (item: T) => ReactNode;
+    orderKey?: string;
 }
 
-export function SortableList<T extends { id: number; display_order: number }>({
+export function SortableList<T extends { id: number; [key: string]: unknown }>({
     items,
     onReorder,
     children,
+    orderKey = 'display_order',
 }: SortableListProps<T>) {
     const sensors = useSensors(
         useSensor(PointerSensor),
@@ -51,10 +53,10 @@ export function SortableList<T extends { id: number; display_order: number }>({
         const [movedItem] = reorderedItems.splice(oldIndex, 1);
         reorderedItems.splice(newIndex, 0, movedItem);
 
-        // Update display_order for all items
+        // Update order for all items
         const updatedItems = reorderedItems.map((item, index) => ({
             ...item,
-            display_order: index,
+            [orderKey]: index,
         }));
 
         onReorder(updatedItems);

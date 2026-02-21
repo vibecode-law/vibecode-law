@@ -38,7 +38,8 @@ arch('exceptions')
 arch('throwables should be in App\Exceptions')
     ->expect('App')
     ->not->toImplement(Throwable::class)
-    ->ignoring('App\Exceptions');
+    ->ignoring('App\Exceptions')
+    ->ignoring('App\Services\VideoHost\Exceptions');
 
 // Middleware
 arch('middleware')

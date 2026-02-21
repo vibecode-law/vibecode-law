@@ -1,0 +1,129 @@
+WEBVTT
+
+1
+00:00:00.000 --> 00:00:13.000
+Welcome to Vibe Academy, a series of practical lessons on how to get started with Vibe coding and we're going to start here with a quick introduction to what is Vibe coding and then we're going to talk about responsible Vibe coding.
+
+2
+00:00:13.000 --> 00:00:28.000
+So what is Vibe coding? Well, this is a tweet from Andre Carpathi, he's one of the founding engineers at OpenAI, the makers of chat GPT and in February 25, he posted this to say there's a new kind of coding I call Vibe coding.
+
+3
+00:00:28.000 --> 00:00:37.000
+And what he's really talking about is using natural language prompt to build software applications.
+
+4
+00:00:37.000 --> 00:00:51.000
+Now, this was in February 25, things have moved on quite a bit in the last 12 months and we're now at a point where actually even very experienced engineers are using natural language to build software.
+
+5
+00:00:51.000 --> 00:00:59.000
+Now, we think the conversation on Vibe coding has become a little bit polarized between those who are saying, well, you don't need to learn how to code.
+
+6
+00:00:59.000 --> 00:01:12.000
+Everything can be done with natural language and software is dead. That's one end of the spectrum and then at the other of those who say, well, no, Vibe coding is a waste of time.
+
+7
+00:01:12.000 --> 00:01:21.000
+And of course, we think the answer is somewhere between the two. We think there are some fantastic use cases
+
+8
+00:01:21.000 --> 00:01:35.000
+for Vibe coding to bring ideas to life. But there are also some really important things that we all need to consider when it comes to security and compliance as legal professionals and also deploying and maintaining these apps in the world.
+
+9
+00:01:35.000 --> 00:01:41.000
+And we think that that's always going to require experts as well.
+
+10
+00:01:41.000 --> 00:01:48.000
+So what we're going to cover here briefly in this first lesson is some of the principles around responsible Vibe coding.
+
+11
+00:01:48.000 --> 00:01:51.000
+This is not to put you off. This is not to scare you.
+
+12
+00:01:51.000 --> 00:02:04.000
+It's simply to say that as with anything as a legal professional, we have responsibilities and we need to make sure that when we are Vibe coding, we're doing it in a way that does align with those professional responsibilities.
+
+13
+00:02:04.000 --> 00:02:15.000
+So we're starting with a metaphor to help you kind of think about the risks associated with Vibe coding and a lot of it starts with who you actually building the application
+
+14
+00:02:15.000 --> 00:02:23.000
+for. And our metaphor is around cooking, making food. So we've got three options here.
+
+15
+00:02:23.000 --> 00:02:34.000
+So the first is, are you making something for yourself? That's clearly the lowest risk in the food analogy. If you poison yourself, okay, it's not great.
+
+16
+00:02:34.000 --> 00:02:39.000
+You don't have a great weekend, but you're not going to sue yourself.
+
+17
+00:02:39.000 --> 00:02:43.000
+So that's probably at the lower risk end of the spectrum.
+
+18
+00:02:43.000 --> 00:02:52.000
+In the middle is you're having a dinner party, you're having some friends over and something goes wrong with the food, again, food poisoning or they just don't like it.
+
+19
+00:02:52.000 --> 00:03:01.000
+And probably they talked to you about it for years and you love about it for years to come, but less in the way of liability there.
+
+20
+00:03:01.000 --> 00:03:22.000
+And then the third is, you're opening a restaurant and that's very, very different, of course. So not only are there increased regulatory obligations, but you've also got to night after night to live a food to the absolute highest standard and your guests are going to be much less forgiving when it comes to the food that you put on their plate.
+
+21
+00:03:22.000 --> 00:03:28.000
+So always decide at the beginning, who are you building this for and think about the risks through that lens.
+
+22
+00:03:28.000 --> 00:03:34.000
+There's also some key principles that we recommend you look at the first is around confidentiality and privilege.
+
+23
+00:03:34.000 --> 00:03:46.000
+So we always recommend that you don't put client or confidential data into vibe coding applications or things that you've built with with vibe coding.
+
+24
+00:03:46.000 --> 00:03:59.000
+We recommend that you use dummy data and that's simply because you don't know the security of the underlying solution and should always take advice or work with an expert on that.
+
+25
+00:03:59.000 --> 00:04:11.000
+The second is around privacy, so a lot of these applications will let you build things where you can process personal data, personal information. And as you know, that's going to be covered by regulations such as GDPR.
+
+26
+00:04:11.000 --> 00:04:25.000
+So just thinking sensibly and applying common sense in terms of are you processing personal data by the application. Do you need a privacy policy and of course the risk scale with the use case.
+
+27
+00:04:25.000 --> 00:04:36.000
+So if it's an application that's chart targeted at personal data of children, you've got to apply common sense there and that's of course going to be higher risk.
+
+28
+00:04:36.000 --> 00:04:52.000
+The third piece is around professional advice. So using AI tools to deliver legal information, we've always got to be careful about during that we're not giving advice and making that clear through the application itself.
+
+29
+00:04:52.000 --> 00:05:06.000
+So anything you build is not going to be a substitute for professional advice. And again, we will have professional responsibilities in that area. So to learn more about all of this, go to the resources page on vibe code dot law and under resources.
+
+30
+00:05:06.000 --> 00:05:16.000
+We have a section on responsible vibe coding with some of these principles. We also go a little bit deeper into it with the risks of vibe coding.
+
+31
+00:05:16.000 --> 00:05:25.000
+So again, none of this is to put you off. None of this is to scare you. This is all just common sense, but it is something that we really strongly recommend that you keep in mind.
+
+32
+00:05:25.000 --> 00:05:37.000
+So there we have it. You've got an initial idea of what vibe coding is where it's come from and how to do it responsibly in the next lesson. We're going to build our first demo app in three minutes.

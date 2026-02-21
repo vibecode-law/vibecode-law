@@ -11,7 +11,7 @@ describe('auth', function () {
     test('requires authentication', function () {
         $practiceArea = PracticeArea::factory()->create();
 
-        $response = put(route('staff.practice-areas.update', $practiceArea), [
+        $response = put(route('staff.metadata.practice-areas.update', $practiceArea), [
             'name' => 'Updated Name',
         ]);
 
@@ -26,7 +26,7 @@ describe('auth', function () {
 
         actingAs($user);
 
-        $response = put(route('staff.practice-areas.update', $practiceArea), [
+        $response = put(route('staff.metadata.practice-areas.update', $practiceArea), [
             'name' => 'Updated Name',
         ]);
 
@@ -39,11 +39,11 @@ describe('auth', function () {
 
         actingAs($admin);
 
-        $response = put(route('staff.practice-areas.update', $practiceArea), [
+        $response = put(route('staff.metadata.practice-areas.update', $practiceArea), [
             'name' => 'Updated Name',
         ]);
 
-        $response->assertRedirect(route('staff.practice-areas.index'));
+        $response->assertRedirect(route('staff.metadata.practice-areas.index'));
     });
 });
 
@@ -63,7 +63,7 @@ describe('validation', function () {
             'name' => 'Updated Name',
         ];
 
-        $response = put(route('staff.practice-areas.update', $practiceArea), array_merge($baseData, $data));
+        $response = put(route('staff.metadata.practice-areas.update', $practiceArea), array_merge($baseData, $data));
 
         $response->assertInvalid($invalidFields);
     })->with([
@@ -90,11 +90,11 @@ describe('validation', function () {
 
         actingAs($admin);
 
-        $response = put(route('staff.practice-areas.update', $practiceArea), [
+        $response = put(route('staff.metadata.practice-areas.update', $practiceArea), [
             'name' => 'Original Name',
         ]);
 
-        $response->assertRedirect(route('staff.practice-areas.index'));
+        $response->assertRedirect(route('staff.metadata.practice-areas.index'));
     });
 });
 
@@ -105,7 +105,7 @@ describe('update', function () {
 
         actingAs($admin);
 
-        put(route('staff.practice-areas.update', $practiceArea), [
+        put(route('staff.metadata.practice-areas.update', $practiceArea), [
             'name' => 'Updated Name',
         ]);
 
@@ -122,7 +122,7 @@ describe('update', function () {
 
         actingAs($admin);
 
-        put(route('staff.practice-areas.update', $practiceArea), [
+        put(route('staff.metadata.practice-areas.update', $practiceArea), [
             'name' => 'Updated Name',
         ]);
 
@@ -140,11 +140,11 @@ describe('response', function () {
 
         actingAs($admin);
 
-        $response = put(route('staff.practice-areas.update', $practiceArea), [
+        $response = put(route('staff.metadata.practice-areas.update', $practiceArea), [
             'name' => 'Updated Name',
         ]);
 
-        $response->assertRedirect(route('staff.practice-areas.index'));
+        $response->assertRedirect(route('staff.metadata.practice-areas.index'));
     });
 
     test('includes success message in session', function () {
@@ -153,7 +153,7 @@ describe('response', function () {
 
         actingAs($admin);
 
-        $response = put(route('staff.practice-areas.update', $practiceArea), [
+        $response = put(route('staff.metadata.practice-areas.update', $practiceArea), [
             'name' => 'Updated Name',
         ]);
 

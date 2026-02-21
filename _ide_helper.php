@@ -23319,6 +23319,33 @@ namespace Laravel\Socialite\Facades {
             }
     }
 
+namespace Prism\Prism\Facades {
+    /**
+     */
+    class PrismServer {
+        /**
+         * @param \Closure():PendingRequest|callable():PendingRequest $prism
+         * @static
+         */
+        public static function register($name, $prism)
+        {
+            /** @var \Prism\Prism\PrismServer $instance */
+            return $instance->register($name, $prism);
+        }
+
+        /**
+         * @return \Prism\Prism\Collection<int, array{name: string, prism: Closure():PendingRequest|callable():PendingRequest}>
+         * @static
+         */
+        public static function prisms()
+        {
+            /** @var \Prism\Prism\PrismServer $instance */
+            return $instance->prisms();
+        }
+
+            }
+    }
+
 namespace Sentry\Laravel {
     /**
      * @see \Sentry\State\HubInterface
@@ -29302,6 +29329,7 @@ namespace  {
     class View extends \Illuminate\Support\Facades\View {}
     class Vite extends \Illuminate\Support\Facades\Vite {}
     class Socialite extends \Laravel\Socialite\Facades\Socialite {}
+    class PrismServer extends \Prism\Prism\Facades\PrismServer {}
     class Sentry extends \Sentry\Laravel\Facade {}
     class Mailcoach extends \Spatie\MailcoachSdk\Facades\Mailcoach {}
 }

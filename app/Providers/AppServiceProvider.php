@@ -16,6 +16,9 @@ use App\Services\Markdown\MarkdownService;
 use App\Services\MarketingEmail\Recipients\Contracts\RecipientService;
 use App\Services\MarketingEmail\Recipients\MailcoachRecipientService;
 use App\Services\MarketingEmail\Recipients\NullRecipientService;
+use App\Services\VideoHost\Contracts\VideoHostService;
+use App\Services\VideoHost\MuxVideoHostService;
+use App\Services\VideoHost\NullVideoHostService;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Foundation\AliasLoader;
 use Illuminate\Support\Facades\Config;
@@ -42,6 +45,19 @@ class AppServiceProvider extends ServiceProvider
             }
 
             return new MailcoachRecipientService;
+        });
+
+        $this->app->bind(VideoHostService::class, function () {
+            if (Config::get('video.enabled') === false || app()->runningUnitTests()) {
+                return new NullVideoHostService;
+            }
+
+            return new MuxVideoHostService(
+                tokenId: Config::get('video.mux.token_id'),
+                tokenSecret: Config::get('video.mux.token_secret'),
+                signingKeyId: Config::get('video.mux.signing_key_id'),
+                signingPrivateKey: Config::get('video.mux.signing_private_key'),
+            );
         });
     }
 

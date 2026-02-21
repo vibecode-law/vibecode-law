@@ -1,5 +1,5 @@
 import HomeController from '@/actions/App/Http/Controllers/HomeController';
-import ResourcesShowController from '@/actions/App/Http/Controllers/Resources/ResourcesShowController';
+import GuideShowController from '@/actions/App/Http/Controllers/Learn/GuideShowController';
 import HowItWorksController from '@/actions/App/Http/Controllers/Showcase/Help/HowItWorksController';
 import ShowcaseCreateController from '@/actions/App/Http/Controllers/Showcase/ManageShowcase/ShowcaseCreateController';
 import { SidebarActiveChallenges } from '@/components/home/sidebar-active-challenges';
@@ -87,7 +87,7 @@ export default function Home({
                                 New to building?{' '}
                             </span>
                             <Link
-                                href={ResourcesShowController.url(
+                                href={GuideShowController.url(
                                     'start-vibecoding',
                                 )}
                                 className="font-bold underline underline-offset-4 transition-colors hover:text-neutral-900 dark:hover:text-white"

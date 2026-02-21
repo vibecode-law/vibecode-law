@@ -35,13 +35,13 @@ A commit is a snapshot of your changes at a specific point in time. Each commit 
 
 ### Push
 
-Pushing uploads the commits on your device to the corresponding location on GitHub. 
+Pushing uploads the commits on your device to the corresponding location on GitHub.
 
 ### Pull Request
 
-A pull request (or "PR") is a request to merge your changes into another repository (in this case, from the branch on your fork to the `main` branch on `vibecode-law/vibecode-law`). 
+A pull request (or "PR") is a request to merge your changes into another repository (in this case, from the branch on your fork to the `main` branch on `vibecode-law/vibecode-law`).
 
-When you open a pull request, you're asking the project maintainers to review your changes and, if they approve, merge them into the main project. 
+When you open a pull request, you're asking the project maintainers to review your changes and, if they approve, merge them into the main project.
 
 This is how contributions work on GitHub.
 
@@ -62,7 +62,7 @@ Before starting, you'll need:
 
 Or, if you've already forked the repository before, click **Sync fork** on your fork's page to get the latest changes from the original repository.
 
-*If you have followed the Codespaces Setup Guide above, you can now skip to step 4.*
+_If you have followed the Codespaces Setup Guide above, you can now skip to step 4._
 
 ### 2. Clone Your Fork
 
@@ -93,12 +93,13 @@ git remote -v
 ```
 
 You should see:
+
 - `origin` pointing to your fork
 - `upstream` pointing to the original repository
 
 ### 4. Create a Branch
 
-*Note, if you don't like using the terminal, all of the below steps can be done from the VSCode "Source Control" user interface, which looks like three nodes connected by two lines.*
+_Note, if you don't like using the terminal, all of the below steps can be done from the VSCode "Source Control" user interface, which looks like three nodes connected by two lines._
 
 Always create a new branch for your changes. To avoid yourself a headache later, never work directly on `main`.
 
@@ -116,6 +117,7 @@ git checkout -b feat/your-feature-name
 ```
 
 Use a descriptive branch name:
+
 - `feat/add-newsletter-form` for a new feature
 - `fix/broken-login-button` for a bug fix
 - `docs/update-readme` for documentation changes
@@ -165,6 +167,7 @@ git commit -m "feat: add newsletter subscription form"
 ```
 
 We use [Conventional Commits](https://www.conventionalcommits.org/en/v1.0.0/). Start your message with a prefix like:
+
 - `feat:` for new features
 - `fix:` for bug fixes
 - `docs:` for documentation changes
@@ -183,15 +186,16 @@ git push origin feat/your-feature-name
 
 1. Go to the [vibecode-law/vibecode-law](https://github.com/vibecode-law/vibecode-law) repository.
 2. You should see a banner saying your branch was recently pushed. Click **Compare & pull request**.
-   - If you don't see the banner, click **Pull requests** > **New pull request**, then click **compare across forks** and select your fork and branch.
+    - If you don't see the banner, click **Pull requests** > **New pull request**, then click **compare across forks** and select your fork and branch.
 3. Fill in the pull request form:
-   - **Title**: A short description of your changes
-   - **Description**: Explain what you changed and why. Include any relevant issue numbers (e.g., "Fixes #123").
+    - **Title**: A short description of your changes
+    - **Description**: Explain what you changed and why. Include any relevant issue numbers (e.g., "Fixes #123").
 4. Click **Create pull request**.
 
 ### 11. Wait for Review
 
 A maintainer will review your pull request. They may:
+
 - **Approve it** — Your changes will be merged.
 - **Request changes** — They'll leave comments explaining what needs to be updated.
 
