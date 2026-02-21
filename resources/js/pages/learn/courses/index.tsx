@@ -47,7 +47,7 @@ export default function CourseIndex({
                 <meta
                     head-key="description"
                     name="description"
-                    content="Master vibecoding with structured courses from beginner to professional. Build legal tech faster with AI-assisted development."
+                    content="Master vibecoding with structured courses from foundation to professional. Build legal tech faster with AI-assisted development."
                 />
                 <meta head-key="og-type" property="og:type" content="website" />
                 <meta
@@ -68,7 +68,7 @@ export default function CourseIndex({
                 <meta
                     head-key="og-description"
                     property="og:description"
-                    content="Master vibecoding with structured courses from beginner to professional. Build legal tech faster with AI-assisted development."
+                    content="Master vibecoding with structured courses from foundation to professional. Build legal tech faster with AI-assisted development."
                 />
             </Head>
 

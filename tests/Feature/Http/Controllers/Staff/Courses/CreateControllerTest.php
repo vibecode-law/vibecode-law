@@ -53,8 +53,8 @@ describe('data', function () {
             ->assertInertia(fn (AssertableInertia $page) => $page
                 ->component('staff-area/courses/create', shouldExist: false)
                 ->has('experienceLevels', count(ExperienceLevel::cases()))
-                ->where('experienceLevels.0.value', (string) ExperienceLevel::Beginner->value)
-                ->where('experienceLevels.0.label', ExperienceLevel::Beginner->label())
+                ->where('experienceLevels.0.value', (string) ExperienceLevel::Foundation->value)
+                ->where('experienceLevels.0.label', ExperienceLevel::Foundation->label())
             );
     });
 });

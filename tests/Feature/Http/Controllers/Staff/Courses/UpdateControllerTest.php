@@ -34,7 +34,7 @@ describe('auth', function () {
             'tagline' => 'Updated tagline',
             'description' => 'Updated description',
             'learning_objectives' => 'Objectives',
-            'experience_level' => ExperienceLevel::Beginner->value,
+            'experience_level' => ExperienceLevel::Foundation->value,
             'is_featured' => false,
         ])->assertRedirect();
     });
@@ -51,7 +51,7 @@ describe('auth', function () {
             'tagline' => 'Updated tagline',
             'description' => 'Updated description',
             'learning_objectives' => 'Objectives',
-            'experience_level' => ExperienceLevel::Beginner->value,
+            'experience_level' => ExperienceLevel::Foundation->value,
             'is_featured' => false,
         ])->assertForbidden();
     });
@@ -69,7 +69,7 @@ describe('auth', function () {
             'tagline' => 'Updated tagline',
             'description' => 'Updated description',
             'learning_objectives' => 'Objectives',
-            'experience_level' => ExperienceLevel::Beginner->value,
+            'experience_level' => ExperienceLevel::Foundation->value,
             'is_featured' => false,
         ])->assertForbidden();
     });
@@ -121,7 +121,7 @@ describe('update', function () {
             'tagline' => $course->tagline,
             'description' => $course->description,
             'learning_objectives' => 'Objectives',
-            'experience_level' => ExperienceLevel::Beginner->value,
+            'experience_level' => ExperienceLevel::Foundation->value,
             'is_featured' => false,
             'thumbnail' => $thumbnail,
         ])->assertRedirect();
@@ -146,7 +146,7 @@ describe('update', function () {
             'tagline' => $course->tagline,
             'description' => $course->description,
             'learning_objectives' => 'Objectives',
-            'experience_level' => ExperienceLevel::Beginner->value,
+            'experience_level' => ExperienceLevel::Foundation->value,
             'is_featured' => false,
             'remove_thumbnail' => true,
         ])->assertRedirect();
@@ -169,7 +169,7 @@ describe('update', function () {
             'tagline' => $course->tagline,
             'description' => $course->description,
             'learning_objectives' => 'Objectives',
-            'experience_level' => ExperienceLevel::Beginner->value,
+            'experience_level' => ExperienceLevel::Foundation->value,
             'is_featured' => false,
         ])->assertSessionHas('flash.message', [
             'message' => 'Course updated successfully.',
@@ -277,7 +277,7 @@ describe('validation', function () {
             'tagline' => 'Tagline',
             'description' => 'Description',
             'learning_objectives' => 'Objectives',
-            'experience_level' => ExperienceLevel::Beginner->value,
+            'experience_level' => ExperienceLevel::Foundation->value,
             'is_featured' => false,
         ])->assertSessionDoesntHaveErrors(['slug']);
 
@@ -288,7 +288,7 @@ describe('validation', function () {
             'tagline' => 'Tagline',
             'description' => 'Description',
             'learning_objectives' => 'Objectives',
-            'experience_level' => ExperienceLevel::Beginner->value,
+            'experience_level' => ExperienceLevel::Foundation->value,
             'is_featured' => false,
         ])->assertSessionHasErrors(['slug']);
     });
@@ -305,7 +305,7 @@ describe('validation', function () {
             'tagline' => 'Tagline',
             'description' => 'Description',
             'learning_objectives' => 'Objectives',
-            'experience_level' => ExperienceLevel::Beginner->value,
+            'experience_level' => ExperienceLevel::Foundation->value,
             $field => null,
         ])->assertSessionHasErrors([$field]);
     })->with([
@@ -327,7 +327,7 @@ describe('validation', function () {
             'tagline' => 'Tagline',
             'description' => 'Description',
             'learning_objectives' => 'Objectives',
-            'experience_level' => ExperienceLevel::Beginner->value,
+            'experience_level' => ExperienceLevel::Foundation->value,
             $field => null,
         ])->assertSessionHasErrors([$field]);
     })->with([
@@ -368,7 +368,7 @@ describe('validation', function () {
             'tagline' => $course->tagline,
             'description' => $course->description,
             'learning_objectives' => 'Objectives',
-            'experience_level' => ExperienceLevel::Beginner->value,
+            'experience_level' => ExperienceLevel::Foundation->value,
             'is_featured' => false,
             ...$data,
         ])->assertSessionHasErrors($invalid);
@@ -398,7 +398,7 @@ describe('tags', function () {
             'tagline' => $course->tagline,
             'description' => $course->description,
             'learning_objectives' => 'Objectives',
-            'experience_level' => ExperienceLevel::Beginner->value,
+            'experience_level' => ExperienceLevel::Foundation->value,
             'is_featured' => false,
             'tags' => $tags->pluck('id')->toArray(),
         ])->assertRedirect();
@@ -425,7 +425,7 @@ describe('tags', function () {
             'tagline' => $course->tagline,
             'description' => $course->description,
             'learning_objectives' => 'Objectives',
-            'experience_level' => ExperienceLevel::Beginner->value,
+            'experience_level' => ExperienceLevel::Foundation->value,
             'is_featured' => false,
             'tags' => $newTags->pluck('id')->toArray(),
         ])->assertRedirect();
@@ -451,7 +451,7 @@ describe('tags', function () {
             'tagline' => $course->tagline,
             'description' => $course->description,
             'learning_objectives' => 'Objectives',
-            'experience_level' => ExperienceLevel::Beginner->value,
+            'experience_level' => ExperienceLevel::Foundation->value,
             'is_featured' => false,
         ])->assertRedirect();
 

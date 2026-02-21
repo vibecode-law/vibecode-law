@@ -25,7 +25,7 @@ describe('auth', function () {
             'tagline' => 'A tagline',
             'description' => 'A description',
             'learning_objectives' => 'Some objectives',
-            'experience_level' => ExperienceLevel::Beginner,
+            'experience_level' => ExperienceLevel::Foundation,
         ]);
         Lesson::factory()->create([
             'course_id' => $course->id,
@@ -73,7 +73,7 @@ describe('setting publish date', function () {
             'tagline' => 'A tagline',
             'description' => 'A description',
             'learning_objectives' => 'Some objectives',
-            'experience_level' => ExperienceLevel::Beginner,
+            'experience_level' => ExperienceLevel::Foundation,
             'publish_date' => null,
         ]);
         Lesson::factory()->create([
@@ -104,7 +104,7 @@ describe('setting publish date', function () {
             'tagline' => 'A tagline',
             'description' => 'A description',
             'learning_objectives' => 'Some objectives',
-            'experience_level' => ExperienceLevel::Beginner,
+            'experience_level' => ExperienceLevel::Foundation,
             'publish_date' => '2026-06-01',
         ]);
 
@@ -150,7 +150,7 @@ describe('readiness validation', function () {
             'tagline' => 'A tagline',
             'description' => 'A description',
             'learning_objectives' => 'Some objectives',
-            'experience_level' => ExperienceLevel::Beginner,
+            'experience_level' => ExperienceLevel::Foundation,
             $field => null,
         ]);
         Lesson::factory()->create([
@@ -176,7 +176,7 @@ describe('readiness validation', function () {
             'tagline' => 'A tagline',
             'description' => 'A description',
             'learning_objectives' => 'Some objectives',
-            'experience_level' => ExperienceLevel::Beginner,
+            'experience_level' => ExperienceLevel::Foundation,
         ]);
         Lesson::factory()->create([
             'course_id' => $course->id,
@@ -198,7 +198,7 @@ describe('readiness validation', function () {
             'tagline' => 'A tagline',
             'description' => 'A description',
             'learning_objectives' => 'Some objectives',
-            'experience_level' => ExperienceLevel::Beginner,
+            'experience_level' => ExperienceLevel::Foundation,
         ]);
 
         actingAs($admin);
@@ -218,7 +218,7 @@ describe('allow preview', function () {
             'tagline' => 'A tagline',
             'description' => 'A description',
             'learning_objectives' => 'Some objectives',
-            'experience_level' => ExperienceLevel::Beginner,
+            'experience_level' => ExperienceLevel::Foundation,
             'allow_preview' => false,
         ]);
 
@@ -279,7 +279,7 @@ describe('allow preview', function () {
             'tagline' => 'A tagline',
             'description' => 'A description',
             'learning_objectives' => 'Some objectives',
-            'experience_level' => ExperienceLevel::Beginner,
+            'experience_level' => ExperienceLevel::Foundation,
             'allow_preview' => false,
         ]);
 
