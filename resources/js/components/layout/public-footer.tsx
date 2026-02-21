@@ -1,3 +1,6 @@
+import LearnIndexController from '@/actions/App/Http/Controllers/Learn/LearnIndexController';
+import ShowcaseCreateController from '@/actions/App/Http/Controllers/Showcase/ManageShowcase/ShowcaseCreateController';
+import ShowcaseIndexController from '@/actions/App/Http/Controllers/Showcase/Public/ShowcaseIndexController';
 import AppearanceToggleDropdown from '@/components/appearance/appearance-dropdown';
 import { GitHubIcon } from '@/components/icons/github-icon';
 import { LinkedInIcon } from '@/components/icons/linkedin-icon';
@@ -25,7 +28,7 @@ export function PublicFooter() {
                         <ul className="space-y-3">
                             <li>
                                 <Link
-                                    href="/learn/guides"
+                                    href={LearnIndexController.url()}
                                     className="text-sm text-neutral-600 transition-colors hover:text-neutral-900 dark:text-neutral-400 dark:hover:text-white"
                                 >
                                     Learn
@@ -33,7 +36,7 @@ export function PublicFooter() {
                             </li>
                             <li>
                                 <Link
-                                    href="/showcase"
+                                    href={ShowcaseIndexController.url()}
                                     className="text-sm text-neutral-600 transition-colors hover:text-neutral-900 dark:text-neutral-400 dark:hover:text-white"
                                 >
                                     Showcases
@@ -41,7 +44,7 @@ export function PublicFooter() {
                             </li>
                             <li>
                                 <Link
-                                    href="/showcase/create"
+                                    href={ShowcaseCreateController.url()}
                                     className="text-sm text-neutral-600 transition-colors hover:text-neutral-900 dark:text-neutral-400 dark:hover:text-white"
                                 >
                                     Share Your Project
