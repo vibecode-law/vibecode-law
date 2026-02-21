@@ -1,5 +1,5 @@
 import HomeController from '@/actions/App/Http/Controllers/HomeController';
-import GuideShowController from '@/actions/App/Http/Controllers/Learn/GuideShowController';
+import LearnIndexController from '@/actions/App/Http/Controllers/Learn/LearnIndexController';
 import HowItWorksController from '@/actions/App/Http/Controllers/Showcase/Help/HowItWorksController';
 import ShowcaseCreateController from '@/actions/App/Http/Controllers/Showcase/ManageShowcase/ShowcaseCreateController';
 import ShowcaseIndexController from '@/actions/App/Http/Controllers/Showcase/Public/ShowcaseIndexController';
@@ -178,10 +178,10 @@ export default function HowItWorks() {
                             Don&apos;t have a project yet?{' '}
                         </span>
                         <Link
-                            href={GuideShowController.url('start-vibecoding')}
+                            href={LearnIndexController.url()}
                             className="font-bold underline underline-offset-4 transition-colors hover:text-neutral-900 dark:hover:text-white"
                         >
-                            Make a demo app in three minutes.
+                            Start learning at VibeAcademy.
                         </Link>
                     </p>
                 </div>

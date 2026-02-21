@@ -2,6 +2,7 @@
 
 namespace App\Http\Resources\Course;
 
+use App\Enums\MarkdownProfile;
 use App\Http\Resources\TagResource;
 use App\Http\Resources\User\UserResource;
 use App\Models\Course\Lesson;
@@ -105,6 +106,7 @@ class LessonResource extends Resource
             'copy' => Lazy::create(fn () => $lesson->copy),
             'copy_html' => Lazy::create(fn () => $lesson->copy !== null ? $markdown->render(
                 markdown: $lesson->copy,
+                profile: MarkdownProfile::Full,
                 cacheKey: "lesson|{$lesson->id}|copy",
             ) : null),
             'has_transcript_lines' => Lazy::create(fn () => $lesson->transcriptLines()->exists()),

@@ -34,19 +34,19 @@ class LessonCopywriterService
             properties: [
                 new StringSchema(
                     name: 'tagline',
-                    description: 'A short, compelling tagline for the lesson (max 120 characters). Should capture the core value proposition. Do not pad for length unnecessarily.',
+                    description: 'A short, plaintext, compelling tagline for the lesson (max 120 characters). Should capture the core value proposition. Do not pad for length unnecessarily.',
                 ),
                 new StringSchema(
                     name: 'description',
-                    description: 'A concise description of the lesson content (2-3 sentences) to be used for marketing and meta descriptions. Explain what the lesson covers and why it matters.',
+                    description: 'A concise plaintext description of the lesson content (2-3 sentences) to be used for marketing and meta descriptions. Explain what the lesson covers and why it matters.',
                 ),
                 new StringSchema(
                     name: 'learning_objectives',
-                    description: 'A markdown-formatted bulleted list of 3-5 specific learning objectives. Each should start with an action verb and describe a measurable outcome. Use "- " for each bullet point.',
+                    description: 'A markdown-formatted bulleted list of 3-5 specific learning objectives. Each should start with an action verb and describe a measurable outcome. Use "- " for each bullet point. Do not use any markdown other than bullets and bold.',
                 ),
                 new StringSchema(
                     name: 'copy',
-                    description: 'A written propose version of the lesson, written in markdown. It should include equivelent detail and should not expand or contract on detail.',
+                    description: 'A written propose version of the lesson, written in markdown. It should include equivelent detail and should not expand or contract on detail. When using headings, start at h3 (i.e. do not use h1 or h2).',
                 ),
                 new ArraySchema(
                     name: 'suggested_tag_ids',
