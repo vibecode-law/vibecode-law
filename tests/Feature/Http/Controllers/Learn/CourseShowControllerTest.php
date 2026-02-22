@@ -63,11 +63,12 @@ test('show includes course details with description_html and learning_objectives
     $course = Course::factory()->published()->create([
         'description' => "Hello World\n\nThis is **bold** text.",
         'learning_objectives' => 'Learn **important** things.',
-    ])->fresh();
+    ]);
     $lesson = Lesson::factory()->published()->for($course)->create()->fresh();
     $lesson->instructors()->attach($instructor);
     $tag = Tag::factory()->create();
     $course->tags()->attach($tag);
+    $course->refresh();
 
     get(route('learn.courses.show', $course))
         ->assertInertia(fn (AssertableInertia $page) => $page

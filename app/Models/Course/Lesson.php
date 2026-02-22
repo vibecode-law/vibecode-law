@@ -59,6 +59,28 @@ class Lesson extends Model
         ];
     }
 
+    protected static function booted(): void
+    {
+        static::created(function (Lesson $lesson): void {
+            $lesson->recalculateCourseDuration();
+        });
+
+        static::updated(function (Lesson $lesson): void {
+            $lesson->recalculateCourseDuration();
+        });
+
+        static::deleted(function (Lesson $lesson): void {
+            $lesson->recalculateCourseDuration();
+        });
+    }
+
+    public function recalculateCourseDuration(): void
+    {
+        $this->course->update([
+            'duration_seconds' => $this->course->visibleLessons()->sum('duration_seconds'),
+        ]);
+    }
+
     /**
      * @return array<int, string>
      */
