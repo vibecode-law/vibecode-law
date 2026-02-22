@@ -72,7 +72,7 @@ class Lesson extends Model
 
                 app(MarkdownService::class)->clearCacheByKey(
                     cacheKey: "lesson|{$lesson->id}|$field",
-                    profile: MarkdownProfile::Basic
+                    profile: $lesson->getCachedFieldProfile(field: $field)
                 );
             }
         });
@@ -80,10 +80,10 @@ class Lesson extends Model
         static::deleted(function (Lesson $lesson): void {
             $markdownService = app(MarkdownService::class);
 
-            foreach ($lesson->getCachedFields() as $cacheKey) {
+            foreach ($lesson->getCachedFields() as $field) {
                 $markdownService->clearCacheByKey(
-                    cacheKey: "lesson|{$lesson->id}|$cacheKey",
-                    profile: MarkdownProfile::Basic
+                    cacheKey: "lesson|{$lesson->id}|$field",
+                    profile: $lesson->getCachedFieldProfile(field: $field)
                 );
             }
         });
@@ -95,6 +95,14 @@ class Lesson extends Model
     public function getCachedFields(): array
     {
         return ['description', 'learning_objectives', 'copy'];
+    }
+
+    public function getCachedFieldProfile(string $field): MarkdownProfile
+    {
+        return match ($field) {
+            'copy' => MarkdownProfile::Full,
+            default => MarkdownProfile::Basic,
+        };
     }
 
     public function getRouteKeyName(): string

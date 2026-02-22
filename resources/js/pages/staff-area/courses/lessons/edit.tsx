@@ -175,6 +175,7 @@ export default function LessonsEdit({
 
     const [isGenerating, setIsGenerating] = useState(false);
     const [generateDialogOpen, setGenerateDialogOpen] = useState(false);
+    const [formKey, setFormKey] = useState(0);
     const hasTxtTranscript = lesson.has_txt_transcript === true;
 
     function handleGenerateCopywriter() {
@@ -188,6 +189,9 @@ export default function LessonsEdit({
             {},
             {
                 preserveScroll: true,
+                onSuccess: () => {
+                    setFormKey((prev) => prev + 1);
+                },
                 onFinish: () => {
                     setIsGenerating(false);
                 },
@@ -267,6 +271,7 @@ export default function LessonsEdit({
                         {({ errors, processing }) => (
                             <>
                                 <LessonFormFields
+                                    key={formKey}
                                     processing={processing}
                                     errors={errors}
                                     availableTags={availableTags}

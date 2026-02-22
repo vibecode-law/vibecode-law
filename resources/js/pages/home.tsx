@@ -1,6 +1,5 @@
 import HomeController from '@/actions/App/Http/Controllers/HomeController';
-import GuideShowController from '@/actions/App/Http/Controllers/Learn/GuideShowController';
-import HowItWorksController from '@/actions/App/Http/Controllers/Showcase/Help/HowItWorksController';
+import LearnIndexController from '@/actions/App/Http/Controllers/Learn/LearnIndexController';
 import ShowcaseCreateController from '@/actions/App/Http/Controllers/Showcase/ManageShowcase/ShowcaseCreateController';
 import { SidebarActiveChallenges } from '@/components/home/sidebar-active-challenges';
 import { SidebarRecentShowcases } from '@/components/home/sidebar-recent-showcases';
@@ -76,7 +75,7 @@ export default function Home({
                                 </Link>
                             </Button>
                             <Button asChild size="lg" variant="outline">
-                                <Link href={HowItWorksController.url()}>
+                                <Link href={LearnIndexController.url()}>
                                     How does it work?
                                 </Link>
                             </Button>
@@ -87,12 +86,10 @@ export default function Home({
                                 New to building?{' '}
                             </span>
                             <Link
-                                href={GuideShowController.url(
-                                    'start-vibecoding',
-                                )}
+                                href={LearnIndexController.url()}
                                 className="font-bold underline underline-offset-4 transition-colors hover:text-neutral-900 dark:hover:text-white"
                             >
-                                Make a demo app in three minutes.
+                                Start learning at VibeAcademy.
                             </Link>
                         </p>
                     </div>

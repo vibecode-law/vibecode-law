@@ -154,6 +154,26 @@
             @apply italic;
         }
 
+        & del {
+            @apply line-through;
+        }
+
+        & h3 {
+            @apply mt-6 mb-3 text-lg font-semibold text-neutral-900 dark:text-white;
+        }
+
+        & h4 {
+            @apply mt-5 mb-2 text-base font-semibold text-neutral-900 dark:text-white;
+        }
+
+        & h5 {
+            @apply mt-4 mb-2 text-sm font-semibold text-neutral-900 dark:text-white;
+        }
+
+        & h6 {
+            @apply mt-4 mb-2 text-sm font-medium text-neutral-700 dark:text-neutral-300;
+        }
+
         & ul {
             @apply ml-4 list-disc;
         }
@@ -164,6 +184,46 @@
 
         & li {
             @apply mt-1;
+        }
+
+        & blockquote {
+            @apply my-4 border-l-4 border-neutral-300 pl-4 text-neutral-500 italic dark:border-neutral-700 dark:text-neutral-500;
+        }
+
+        & code {
+            @apply rounded bg-neutral-100 px-1.5 py-0.5 text-sm text-neutral-800 dark:bg-neutral-800 dark:text-neutral-200;
+        }
+
+        & pre {
+            @apply my-4 overflow-x-auto rounded-lg bg-neutral-100 p-4 dark:bg-neutral-800;
+
+            & code {
+                @apply bg-transparent p-0;
+            }
+        }
+
+        & table {
+            @apply my-4 w-full border-collapse overflow-hidden rounded-lg border border-neutral-200 dark:border-neutral-700;
+        }
+
+        & thead {
+            @apply bg-neutral-100 dark:bg-neutral-800;
+        }
+
+        & th {
+            @apply px-4 py-2 text-left text-sm font-semibold text-neutral-900 dark:text-white;
+        }
+
+        & td {
+            @apply border-t border-neutral-200 px-4 py-2 text-sm dark:border-neutral-700;
+        }
+
+        & tbody tr {
+            @apply transition-colors hover:bg-neutral-50 dark:hover:bg-neutral-800/50;
+        }
+
+        & hr {
+            @apply my-6 border-neutral-200 dark:border-neutral-800;
         }
 
         & a:not(.external-link) {

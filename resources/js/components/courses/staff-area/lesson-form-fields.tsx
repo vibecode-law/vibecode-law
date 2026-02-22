@@ -198,6 +198,8 @@ export default function LessonFormFields({
                     name="copy"
                     defaultValue={defaultValues?.copy}
                     height={200}
+                    profile="full"
+                    exclude={['heading1', 'heading2']}
                 />
             </FormField>
 
