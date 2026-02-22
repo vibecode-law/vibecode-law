@@ -9,7 +9,6 @@ use App\Models\Challenge\Challenge;
 use App\Models\Showcase\Showcase;
 use App\Services\Showcase\ShowcaseRankingService;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Config;
 use Inertia\Inertia;
 use Inertia\Response;
 
@@ -27,22 +26,17 @@ class ShowcaseShowController extends BaseController
 
         $rankingService = new ShowcaseRankingService(showcase: $showcase);
 
-        $props = [
+        return Inertia::render('showcase/public/show', [
             'showcase' => $this->buildShowcaseResource(showcase: $showcase),
             'lifetimeRank' => $rankingService->getLifetimeRank(),
             'monthlyRank' => $rankingService->getMonthlyRank(),
             'canEdit' => Auth::user()?->can('update', $showcase) ?? false,
             'canCreateDraft' => Auth::user()?->can('createDraft', $showcase) ?? false,
-        ];
-
-        if (Config::get('app.challenges_enabled') === true) {
-            $props['challengeEntries'] = $this->buildChallengeEntries(
+            'challengeEntries' => $this->buildChallengeEntries(
                 showcase: $showcase,
                 rankingService: $rankingService,
-            );
-        }
-
-        return Inertia::render('showcase/public/show', $props);
+            ),
+        ]);
     }
 
     private function ensureShowcaseIsAccessible(Showcase $showcase): void

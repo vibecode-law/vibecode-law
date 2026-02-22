@@ -290,9 +290,7 @@ describe('recentShowcases', function () {
 });
 
 describe('activeChallenges', function () {
-    test('returns active featured challenges when feature is enabled', function () {
-        config(['app.challenges_enabled' => true]);
-
+    test('returns active featured challenges', function () {
         $activeFeatured = Challenge::factory()->active()->featured()->create([
             'title' => 'Active Featured Challenge',
         ]);
@@ -316,22 +314,7 @@ describe('activeChallenges', function () {
             );
     });
 
-    test('returns empty array when feature is disabled', function () {
-        config(['app.challenges_enabled' => false]);
-
-        Challenge::factory()->active()->featured()->create();
-
-        get('/')
-            ->assertOk()
-            ->assertInertia(fn (AssertableInertia $page) => $page
-                ->component('home')
-                ->where('activeChallenges', [])
-            );
-    });
-
     test('orders active challenges by showcases count descending', function () {
-        config(['app.challenges_enabled' => true]);
-
         $lessChallenged = Challenge::factory()->active()->featured()->create([
             'title' => 'Less Popular',
         ]);

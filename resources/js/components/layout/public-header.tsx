@@ -31,7 +31,7 @@ import { ArrowRight, Lock, Menu, Plus, X } from 'lucide-react';
 
 export function PublicHeader() {
     const page = usePage<SharedData>();
-    const { auth, transformImages, challengesEnabled } = page.props;
+    const { auth, transformImages } = page.props;
     const getInitials = useInitials();
     const isAuthenticated = auth?.user !== undefined && auth?.user !== null;
 
@@ -43,14 +43,12 @@ export function PublicHeader() {
                 <nav className="flex items-center gap-2 lg:gap-4">
                     {/* Desktop navigation */}
                     <div className="hidden items-center gap-6 lg:flex">
-                        {challengesEnabled && (
-                            <Link
-                                href={ChallengeIndexController.url()}
-                                className="text-sm font-medium text-neutral-600 hover:text-neutral-900 dark:text-neutral-400 dark:hover:text-white"
-                            >
-                                Inspiration
-                            </Link>
-                        )}
+                        <Link
+                            href={ChallengeIndexController.url()}
+                            className="text-sm font-medium text-neutral-600 hover:text-neutral-900 dark:text-neutral-400 dark:hover:text-white"
+                        >
+                            Inspiration
+                        </Link>
                         <Link
                             href={LearnIndexController.url()}
                             className="text-sm font-medium text-neutral-600 hover:text-neutral-900 dark:text-neutral-400 dark:hover:text-white"
@@ -140,29 +138,25 @@ export function PublicHeader() {
                                         </Link>
                                     </SheetClose>
 
-                                    {challengesEnabled && (
-                                        <>
-                                            <hr className="border-neutral-200 dark:border-neutral-800" />
+                                    <hr className="border-neutral-200 dark:border-neutral-800" />
 
-                                            <SheetClose asChild>
-                                                <Link
-                                                    href={ChallengeIndexController.url()}
-                                                    className="group flex items-center justify-between py-3"
-                                                >
-                                                    <div>
-                                                        <h3 className="text-xl font-bold text-neutral-900 group-hover:text-primary dark:text-white">
-                                                            Inspiration
-                                                        </h3>
-                                                        <p className="mt-1 text-sm text-neutral-600 dark:text-neutral-400">
-                                                            Need an idea? This
-                                                            is for you.
-                                                        </p>
-                                                    </div>
-                                                    <ArrowRight className="size-5 text-neutral-400 transition-transform group-hover:translate-x-1 group-hover:text-primary dark:text-neutral-500" />
-                                                </Link>
-                                            </SheetClose>
-                                        </>
-                                    )}
+                                    <SheetClose asChild>
+                                        <Link
+                                            href={ChallengeIndexController.url()}
+                                            className="group flex items-center justify-between py-3"
+                                        >
+                                            <div>
+                                                <h3 className="text-xl font-bold text-neutral-900 group-hover:text-primary dark:text-white">
+                                                    Inspiration
+                                                </h3>
+                                                <p className="mt-1 text-sm text-neutral-600 dark:text-neutral-400">
+                                                    Need an idea? This is for
+                                                    you.
+                                                </p>
+                                            </div>
+                                            <ArrowRight className="size-5 text-neutral-400 transition-transform group-hover:translate-x-1 group-hover:text-primary dark:text-neutral-500" />
+                                        </Link>
+                                    </SheetClose>
 
                                     <hr className="border-neutral-200 dark:border-neutral-800" />
 

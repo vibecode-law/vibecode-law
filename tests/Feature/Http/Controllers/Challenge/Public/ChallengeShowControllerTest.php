@@ -4,35 +4,10 @@ use App\Models\Challenge\Challenge;
 use App\Models\Organisation\Organisation;
 use App\Models\Showcase\Showcase;
 use App\Models\User;
-use Illuminate\Support\Facades\Config;
 use Inertia\Testing\AssertableInertia;
 
 use function Pest\Laravel\actingAs;
 use function Pest\Laravel\get;
-
-beforeEach(function () {
-    Config::set('app.challenges_enabled', true);
-});
-
-test('show returns 404 when challenges are disabled', function () {
-    Config::set('app.challenges_enabled', false);
-
-    $challenge = Challenge::factory()->active()->create();
-
-    get(route('inspiration.challenges.show', $challenge))
-        ->assertNotFound();
-});
-
-test('show allows admins when challenges are disabled', function () {
-    Config::set('app.challenges_enabled', false);
-
-    $admin = User::factory()->admin()->create();
-    $challenge = Challenge::factory()->active()->create();
-
-    actingAs($admin)
-        ->get(route('inspiration.challenges.show', $challenge))
-        ->assertOk();
-});
 
 test('show returns active challenge', function () {
     $challenge = Challenge::factory()->active()->create();

@@ -59,8 +59,6 @@ class HandleInertiaRequests extends Middleware
                 ])
                 ->all(),
             'transformImages' => Config::get('services.image-transform.base_url') !== null,
-            'challengesEnabled' => Config::get('app.challenges_enabled') === true,
-            'learnEnabled' => Config::get('app.learn_enabled') === true,
         ]);
     }
 

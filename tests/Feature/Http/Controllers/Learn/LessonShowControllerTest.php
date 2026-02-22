@@ -7,37 +7,10 @@ use App\Models\Course\LessonTranscriptLine;
 use App\Models\Course\LessonUser;
 use App\Models\Tag;
 use App\Models\User;
-use Illuminate\Support\Facades\Config;
 use Inertia\Testing\AssertableInertia;
 
 use function Pest\Laravel\actingAs;
 use function Pest\Laravel\get;
-
-beforeEach(function () {
-    Config::set('app.learn_enabled', true);
-});
-
-test('show returns 404 when learn is disabled', function () {
-    Config::set('app.learn_enabled', false);
-
-    $course = Course::factory()->published()->create();
-    $lesson = Lesson::factory()->published()->for($course)->create();
-
-    get(route('learn.courses.lessons.show', [$course, $lesson]))
-        ->assertNotFound();
-});
-
-test('show allows admins when learn is disabled', function () {
-    Config::set('app.learn_enabled', false);
-
-    $course = Course::factory()->published()->create();
-    $lesson = Lesson::factory()->published()->for($course)->create();
-    $admin = User::factory()->admin()->create();
-
-    actingAs($admin)
-        ->get(route('learn.courses.lessons.show', [$course, $lesson]))
-        ->assertOk();
-});
 
 test('show returns 200 for valid course and published lesson pair', function () {
     $course = Course::factory()->published()->create();

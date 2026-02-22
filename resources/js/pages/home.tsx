@@ -25,7 +25,7 @@ export default function Home({
     recentShowcases,
     activeChallenges,
 }: HomeProps) {
-    const { name, appUrl, defaultMetaDescription, challengesEnabled } =
+    const { name, appUrl, defaultMetaDescription } =
         usePage<SharedData>().props;
 
     const months = showcasesByMonth ? Object.keys(showcasesByMonth) : [];
@@ -115,9 +115,7 @@ export default function Home({
                     </div>
 
                     {((recentShowcases && recentShowcases.length > 0) ||
-                        (challengesEnabled === true &&
-                            activeChallenges &&
-                            activeChallenges.length > 0)) && (
+                        (activeChallenges && activeChallenges.length > 0)) && (
                         <div className="mb-12 w-full lg:mb-0 lg:w-72 2xl:w-80">
                             <div className="space-y-8 lg:sticky lg:top-4">
                                 {recentShowcases &&
@@ -126,8 +124,7 @@ export default function Home({
                                             showcases={recentShowcases}
                                         />
                                     )}
-                                {challengesEnabled === true &&
-                                    activeChallenges &&
+                                {activeChallenges &&
                                     activeChallenges.length > 0 && (
                                         <SidebarActiveChallenges
                                             challenges={activeChallenges}

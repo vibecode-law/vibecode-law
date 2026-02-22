@@ -11,7 +11,6 @@ use App\Models\Course\LessonUser;
 use App\Models\User;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Config;
 use Inertia\Inertia;
 use Inertia\Response;
 use Symfony\Component\HttpFoundation\Response as HttpResponse;
@@ -24,10 +23,6 @@ class CourseShowController extends BaseController
     {
         /** @var User|null $user */
         $user = Auth::user();
-
-        if (Config::get('app.learn_enabled') === false && $user?->is_admin !== true) {
-            abort(404);
-        }
 
         $this->abortUnlessAccessible(course: $course, user: $user);
 

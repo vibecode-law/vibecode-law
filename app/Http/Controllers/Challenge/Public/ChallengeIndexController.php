@@ -5,8 +5,6 @@ namespace App\Http\Controllers\Challenge\Public;
 use App\Http\Controllers\BaseController;
 use App\Http\Resources\Challenge\ChallengeResource;
 use App\Models\Challenge\Challenge;
-use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Config;
 use Inertia\Inertia;
 use Inertia\Response;
 use Spatie\LaravelData\DataCollection;
@@ -15,10 +13,6 @@ class ChallengeIndexController extends BaseController
 {
     public function __invoke(): Response
     {
-        if (Config::get('app.challenges_enabled') === false && Auth::user()?->is_admin !== true) {
-            abort(404);
-        }
-
         $activeChallenges = Challenge::query()
             ->where('is_active', true)
             ->with('organisation')
