@@ -2,10 +2,9 @@
 
 namespace App\Models\Course;
 
-use App\Enums\MarkdownProfile;
+use App\Concerns\ClearsMarkdownCache;
 use App\Enums\VideoHost;
 use App\Models\User;
-use App\Services\Markdown\MarkdownService;
 use Illuminate\Database\Eloquent\Attributes\Scope;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Casts\Attribute;
@@ -25,7 +24,7 @@ use Illuminate\Support\Facades\Storage;
 class Lesson extends Model
 {
     /** @use HasFactory<\Database\Factories\Course\LessonFactory> */
-    use HasFactory;
+    use ClearsMarkdownCache, HasFactory;
 
     protected $fillable = [
         'title',
@@ -60,49 +59,12 @@ class Lesson extends Model
         ];
     }
 
-    protected static function booted(): void
-    {
-        static::updated(function (Lesson $lesson): void {
-            $cached = $lesson->getCachedFields();
-
-            foreach ($lesson->changes as $field => $value) {
-                if (in_array($field, $cached) === false) {
-                    continue;
-                }
-
-                app(MarkdownService::class)->clearCacheByKey(
-                    cacheKey: "lesson|{$lesson->id}|$field",
-                    profile: $lesson->getCachedFieldProfile(field: $field)
-                );
-            }
-        });
-
-        static::deleted(function (Lesson $lesson): void {
-            $markdownService = app(MarkdownService::class);
-
-            foreach ($lesson->getCachedFields() as $field) {
-                $markdownService->clearCacheByKey(
-                    cacheKey: "lesson|{$lesson->id}|$field",
-                    profile: $lesson->getCachedFieldProfile(field: $field)
-                );
-            }
-        });
-    }
-
     /**
      * @return array<int, string>
      */
     public function getCachedFields(): array
     {
         return ['description', 'learning_objectives', 'copy'];
-    }
-
-    public function getCachedFieldProfile(string $field): MarkdownProfile
-    {
-        return match ($field) {
-            'copy' => MarkdownProfile::Full,
-            default => MarkdownProfile::Basic,
-        };
     }
 
     public function getRouteKeyName(): string
