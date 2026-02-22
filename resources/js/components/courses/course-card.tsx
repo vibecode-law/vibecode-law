@@ -61,13 +61,15 @@ export function CourseCard({ course, progress }: CourseCardProps) {
             <div className="flex flex-1 flex-col p-6">
                 <div className="mb-2 flex items-center justify-between text-sm text-neutral-500 dark:text-neutral-400">
                     <div className="flex items-center gap-3">
-                        <div className="flex items-center gap-1">
-                            <Users className="size-3.5" />
-                            <span>
-                                {course.started_count ?? 0} already enrolled
-                            </span>
-                        </div>
-                        {duration && (
+                        {!isPreviewable && (
+                            <div className="flex items-center gap-1">
+                                <Users className="size-3.5" />
+                                <span>
+                                    {course.started_count ?? 0} already enrolled
+                                </span>
+                            </div>
+                        )}
+                        {!isPreviewable && duration && (
                             <div className="flex items-center gap-1">
                                 <Clock className="size-3.5" />
                                 <span>{duration}</span>
