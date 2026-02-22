@@ -1,5 +1,6 @@
 import HomeController from '@/actions/App/Http/Controllers/HomeController';
 import LearnIndexController from '@/actions/App/Http/Controllers/Learn/LearnIndexController';
+import HowItWorksController from '@/actions/App/Http/Controllers/Showcase/Help/HowItWorksController';
 import ShowcaseCreateController from '@/actions/App/Http/Controllers/Showcase/ManageShowcase/ShowcaseCreateController';
 import { SidebarActiveChallenges } from '@/components/home/sidebar-active-challenges';
 import { SidebarRecentShowcases } from '@/components/home/sidebar-recent-showcases';
@@ -75,7 +76,7 @@ export default function Home({
                                 </Link>
                             </Button>
                             <Button asChild size="lg" variant="outline">
-                                <Link href={LearnIndexController.url()}>
+                                <Link href={HowItWorksController.url()}>
                                     How does it work?
                                 </Link>
                             </Button>
