@@ -2,12 +2,11 @@
 
 namespace App\Models\Challenge;
 
-use App\Enums\MarkdownProfile;
+use App\Concerns\ClearsMarkdownCache;
 use App\Models\Organisation\Organisation;
 use App\Models\Showcase\Showcase;
 use App\Models\Showcase\ShowcaseUpvote;
 use App\Models\User;
-use App\Services\Markdown\MarkdownService;
 use Illuminate\Database\Eloquent\Attributes\Scope;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Casts\Attribute;
@@ -27,7 +26,7 @@ use Illuminate\Support\Facades\Storage;
 class Challenge extends Model
 {
     /** @use HasFactory<\Database\Factories\Challenge\ChallengeFactory> */
-    use HasFactory;
+    use ClearsMarkdownCache, HasFactory;
 
     protected $fillable = [
         'title',
@@ -52,35 +51,6 @@ class Challenge extends Model
             'is_featured' => 'boolean',
             'thumbnail_crops' => 'array',
         ];
-    }
-
-    protected static function booted(): void
-    {
-        static::updated(function (Challenge $challenge): void {
-            $cached = $challenge->getCachedFields();
-
-            foreach ($challenge->getChanges() as $field => $value) {
-                if (in_array($field, $cached) === false) {
-                    continue;
-                }
-
-                app(MarkdownService::class)->clearCacheByKey(
-                    cacheKey: "challenge|{$challenge->id}|$field",
-                    profile: MarkdownProfile::Basic
-                );
-            }
-        });
-
-        static::deleted(function (Challenge $challenge): void {
-            $markdownService = app(MarkdownService::class);
-
-            foreach ($challenge->getCachedFields() as $cacheKey) {
-                $markdownService->clearCacheByKey(
-                    cacheKey: "challenge|{$challenge->id}|$cacheKey",
-                    profile: MarkdownProfile::Basic
-                );
-            }
-        });
     }
 
     /**

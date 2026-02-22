@@ -183,53 +183,32 @@ describe('markdown cache clearing on model events', function () {
         Cache::flush();
     });
 
-    it('clears a specific markdown cache when a basic profile field is updated', function (string $field) {
+    it('clears all profile caches when a markdown field is updated', function (string $field) {
         $lesson = Lesson::factory()->create();
         $markdownService = app(MarkdownService::class);
 
         $cacheKey = "lesson|{$lesson->id}|$field";
 
-        $markdownService->render(
-            markdown: '**test content**',
-            profile: MarkdownProfile::Basic,
-            cacheKey: $cacheKey
-        );
+        foreach (MarkdownProfile::cases() as $profile) {
+            $markdownService->render(
+                markdown: '**test content**',
+                profile: $profile,
+                cacheKey: $cacheKey
+            );
+        }
 
-        $fullKey = $markdownService->getCacheKey(
-            profile: MarkdownProfile::Basic,
-            cacheKey: $cacheKey
-        );
-
-        expect(Cache::has(key: $fullKey))->toBeTrue();
+        foreach (MarkdownProfile::cases() as $profile) {
+            $fullKey = $markdownService->getCacheKey(profile: $profile, cacheKey: $cacheKey);
+            expect(Cache::has(key: $fullKey))->toBeTrue();
+        }
 
         $lesson->update([$field => 'Updated content']);
 
-        expect(Cache::has(key: $fullKey))->toBeFalse();
-    })->with(['description', 'learning_objectives']);
-
-    it('clears the full profile markdown cache when copy is updated', function () {
-        $lesson = Lesson::factory()->create();
-        $markdownService = app(MarkdownService::class);
-
-        $cacheKey = "lesson|{$lesson->id}|copy";
-
-        $markdownService->render(
-            markdown: '**test content**',
-            profile: MarkdownProfile::Full,
-            cacheKey: $cacheKey
-        );
-
-        $fullKey = $markdownService->getCacheKey(
-            profile: MarkdownProfile::Full,
-            cacheKey: $cacheKey
-        );
-
-        expect(Cache::has(key: $fullKey))->toBeTrue();
-
-        $lesson->update(['copy' => 'Updated content']);
-
-        expect(Cache::has(key: $fullKey))->toBeFalse();
-    });
+        foreach (MarkdownProfile::cases() as $profile) {
+            $fullKey = $markdownService->getCacheKey(profile: $profile, cacheKey: $cacheKey);
+            expect(Cache::has(key: $fullKey))->toBeFalse();
+        }
+    })->with(['description', 'learning_objectives', 'copy']);
 
     it('does not clear markdown cache when non-markdown fields are updated', function () {
         $lesson = Lesson::factory()->create();
@@ -251,40 +230,40 @@ describe('markdown cache clearing on model events', function () {
         expect(Cache::has(key: $fullKey))->toBeTrue();
     });
 
-    it('clears markdown cache when lesson is deleted', function () {
+    it('clears all profile caches when lesson is deleted', function () {
         $lesson = Lesson::factory()->create();
         $markdownService = app(MarkdownService::class);
 
-        $fields = $lesson->getCachedFields();
-
-        foreach ($fields as $field) {
-            $profile = $lesson->getCachedFieldProfile(field: $field);
-
-            $markdownService->render(
-                markdown: '**test content**',
-                profile: $profile,
-                cacheKey: "lesson|{$lesson->id}|$field"
-            );
+        foreach ($lesson->getCachedFields() as $field) {
+            foreach (MarkdownProfile::cases() as $profile) {
+                $markdownService->render(
+                    markdown: '**test content**',
+                    profile: $profile,
+                    cacheKey: "lesson|{$lesson->id}|$field"
+                );
+            }
         }
 
-        foreach ($fields as $field) {
-            $profile = $lesson->getCachedFieldProfile(field: $field);
-            $fullKey = $markdownService->getCacheKey(
-                profile: $profile,
-                cacheKey: "lesson|{$lesson->id}|$field"
-            );
-            expect(Cache::has(key: $fullKey))->toBeTrue();
+        foreach ($lesson->getCachedFields() as $field) {
+            foreach (MarkdownProfile::cases() as $profile) {
+                $fullKey = $markdownService->getCacheKey(
+                    profile: $profile,
+                    cacheKey: "lesson|{$lesson->id}|$field"
+                );
+                expect(Cache::has(key: $fullKey))->toBeTrue();
+            }
         }
 
         $lesson->delete();
 
-        foreach ($fields as $field) {
-            $profile = $lesson->getCachedFieldProfile(field: $field);
-            $fullKey = $markdownService->getCacheKey(
-                profile: $profile,
-                cacheKey: "lesson|{$lesson->id}|$field"
-            );
-            expect(Cache::has(key: $fullKey))->toBeFalse();
+        foreach ($lesson->getCachedFields() as $field) {
+            foreach (MarkdownProfile::cases() as $profile) {
+                $fullKey = $markdownService->getCacheKey(
+                    profile: $profile,
+                    cacheKey: "lesson|{$lesson->id}|$field"
+                );
+                expect(Cache::has(key: $fullKey))->toBeFalse();
+            }
         }
     });
 });

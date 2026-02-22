@@ -1,5 +1,6 @@
 <?php
 
+use App\Enums\MarkdownProfile;
 use App\Models\Challenge\Challenge;
 use App\Models\Challenge\ChallengeShowcase;
 use App\Models\Organisation\Organisation;
@@ -164,24 +165,31 @@ describe('markdown cache clearing on model events', function () {
         Cache::flush();
     });
 
-    it('clears description markdown cache when description is updated', function () {
+    it('clears all profile caches when description is updated', function () {
         $challenge = Challenge::factory()->create();
         $markdownService = app(MarkdownService::class);
 
         $cacheKey = "challenge|{$challenge->id}|description";
 
-        $markdownService->render(
-            markdown: '**test content**',
-            cacheKey: $cacheKey
-        );
+        foreach (MarkdownProfile::cases() as $profile) {
+            $markdownService->render(
+                markdown: '**test content**',
+                profile: $profile,
+                cacheKey: $cacheKey
+            );
+        }
 
-        $fullKey = $markdownService->getCacheKey(cacheKey: $cacheKey);
-
-        expect(Cache::has(key: $fullKey))->toBeTrue();
+        foreach (MarkdownProfile::cases() as $profile) {
+            $fullKey = $markdownService->getCacheKey(profile: $profile, cacheKey: $cacheKey);
+            expect(Cache::has(key: $fullKey))->toBeTrue();
+        }
 
         $challenge->update(['description' => 'Updated content']);
 
-        expect(Cache::has(key: $fullKey))->toBeFalse();
+        foreach (MarkdownProfile::cases() as $profile) {
+            $fullKey = $markdownService->getCacheKey(profile: $profile, cacheKey: $cacheKey);
+            expect(Cache::has(key: $fullKey))->toBeFalse();
+        }
     });
 
     it('does not clear markdown cache when non-markdown fields are updated', function () {
@@ -204,23 +212,30 @@ describe('markdown cache clearing on model events', function () {
         expect(Cache::has(key: $fullKey))->toBeTrue();
     });
 
-    it('clears markdown cache when challenge is deleted', function () {
+    it('clears all profile caches when challenge is deleted', function () {
         $challenge = Challenge::factory()->create();
         $markdownService = app(MarkdownService::class);
 
         $cacheKey = "challenge|{$challenge->id}|description";
 
-        $markdownService->render(
-            markdown: '**test content**',
-            cacheKey: $cacheKey
-        );
+        foreach (MarkdownProfile::cases() as $profile) {
+            $markdownService->render(
+                markdown: '**test content**',
+                profile: $profile,
+                cacheKey: $cacheKey
+            );
+        }
 
-        $fullKey = $markdownService->getCacheKey(cacheKey: $cacheKey);
-
-        expect(Cache::has(key: $fullKey))->toBeTrue();
+        foreach (MarkdownProfile::cases() as $profile) {
+            $fullKey = $markdownService->getCacheKey(profile: $profile, cacheKey: $cacheKey);
+            expect(Cache::has(key: $fullKey))->toBeTrue();
+        }
 
         $challenge->delete();
 
-        expect(Cache::has(key: $fullKey))->toBeFalse();
+        foreach (MarkdownProfile::cases() as $profile) {
+            $fullKey = $markdownService->getCacheKey(profile: $profile, cacheKey: $cacheKey);
+            expect(Cache::has(key: $fullKey))->toBeFalse();
+        }
     });
 });

@@ -1,10 +1,10 @@
 <?php
 
+use App\Enums\MarkdownProfile;
 use App\Models\Challenge\Challenge;
 use App\Models\Challenge\ChallengeShowcase;
 use App\Models\Showcase\Showcase;
 use App\Services\Markdown\MarkdownService;
-use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\Storage;
@@ -88,24 +88,31 @@ describe('markdown cache clearing on model events', function () {
         Cache::flush();
     });
 
-    it('clears a specific markdown cache when that field is updated', function (string $field) {
+    it('clears all profile caches when a markdown field is updated', function (string $field) {
         $showcase = Showcase::factory()->withoutPracticeAreas()->create();
         $markdownService = app(MarkdownService::class);
 
         $cacheKey = "showcase|{$showcase->id}|$field";
 
-        $markdownService->render(
-            markdown: '**test content**',
-            cacheKey: $cacheKey
-        );
+        foreach (MarkdownProfile::cases() as $profile) {
+            $markdownService->render(
+                markdown: '**test content**',
+                profile: $profile,
+                cacheKey: $cacheKey
+            );
+        }
 
-        $fullKey = $markdownService->getCacheKey(cacheKey: $cacheKey);
-
-        expect(Cache::has(key: $fullKey))->toBeTrue();
+        foreach (MarkdownProfile::cases() as $profile) {
+            $fullKey = $markdownService->getCacheKey(profile: $profile, cacheKey: $cacheKey);
+            expect(Cache::has(key: $fullKey))->toBeTrue();
+        }
 
         $showcase->update([$field => 'Updated content']);
 
-        expect(Cache::has(key: $fullKey))->toBeFalse();
+        foreach (MarkdownProfile::cases() as $profile) {
+            $fullKey = $markdownService->getCacheKey(profile: $profile, cacheKey: $cacheKey);
+            expect(Cache::has(key: $fullKey))->toBeFalse();
+        }
     })->with(['description', 'help_needed', 'key_features']);
 
     it('does not clear markdown cache when non-markdown fields are updated', function () {
@@ -128,29 +135,40 @@ describe('markdown cache clearing on model events', function () {
         expect(Cache::has(key: $fullKey))->toBeTrue();
     });
 
-    it('clears markdown cache when showcase is deleted', function () {
+    it('clears all profile caches when showcase is deleted', function () {
         $showcase = Showcase::factory()->withoutPracticeAreas()->create();
         $markdownService = app(MarkdownService::class);
 
-        $cacheKeys = new Collection($showcase->getCachedFields())->map(fn (string $field) => "showcase|{$showcase->id}|$field");
-
-        foreach ($cacheKeys as $cacheKey) {
-            $markdownService->render(
-                markdown: '**test content**',
-                cacheKey: $cacheKey
-            );
+        foreach ($showcase->getCachedFields() as $field) {
+            foreach (MarkdownProfile::cases() as $profile) {
+                $markdownService->render(
+                    markdown: '**test content**',
+                    profile: $profile,
+                    cacheKey: "showcase|{$showcase->id}|$field"
+                );
+            }
         }
 
-        foreach ($cacheKeys as $cacheKey) {
-            $fullKey = $markdownService->getCacheKey(cacheKey: $cacheKey);
-            expect(Cache::has(key: $fullKey))->toBeTrue();
+        foreach ($showcase->getCachedFields() as $field) {
+            foreach (MarkdownProfile::cases() as $profile) {
+                $fullKey = $markdownService->getCacheKey(
+                    profile: $profile,
+                    cacheKey: "showcase|{$showcase->id}|$field"
+                );
+                expect(Cache::has(key: $fullKey))->toBeTrue();
+            }
         }
 
         $showcase->delete();
 
-        foreach ($cacheKeys as $cacheKey) {
-            $fullKey = $markdownService->getCacheKey(cacheKey: $cacheKey);
-            expect(Cache::has(key: $fullKey))->toBeFalse();
+        foreach ($showcase->getCachedFields() as $field) {
+            foreach (MarkdownProfile::cases() as $profile) {
+                $fullKey = $markdownService->getCacheKey(
+                    profile: $profile,
+                    cacheKey: "showcase|{$showcase->id}|$field"
+                );
+                expect(Cache::has(key: $fullKey))->toBeFalse();
+            }
         }
     });
 });

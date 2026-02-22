@@ -1,11 +1,11 @@
 <?php
 
+use App\Enums\MarkdownProfile;
 use App\Models\Course\Course;
 use App\Models\Course\Lesson;
 use App\Models\Tag;
 use App\Models\User;
 use App\Services\Markdown\MarkdownService;
-use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Cache;
 
 test('uses slug as route key name', function () {
@@ -115,24 +115,31 @@ describe('markdown cache clearing on model events', function () {
         Cache::flush();
     });
 
-    it('clears a specific markdown cache when that field is updated', function (string $field) {
+    it('clears all profile caches when a markdown field is updated', function (string $field) {
         $course = Course::factory()->create();
         $markdownService = app(MarkdownService::class);
 
         $cacheKey = "course|{$course->id}|$field";
 
-        $markdownService->render(
-            markdown: '**test content**',
-            cacheKey: $cacheKey
-        );
+        foreach (MarkdownProfile::cases() as $profile) {
+            $markdownService->render(
+                markdown: '**test content**',
+                profile: $profile,
+                cacheKey: $cacheKey
+            );
+        }
 
-        $fullKey = $markdownService->getCacheKey(cacheKey: $cacheKey);
-
-        expect(Cache::has(key: $fullKey))->toBeTrue();
+        foreach (MarkdownProfile::cases() as $profile) {
+            $fullKey = $markdownService->getCacheKey(profile: $profile, cacheKey: $cacheKey);
+            expect(Cache::has(key: $fullKey))->toBeTrue();
+        }
 
         $course->update([$field => 'Updated content']);
 
-        expect(Cache::has(key: $fullKey))->toBeFalse();
+        foreach (MarkdownProfile::cases() as $profile) {
+            $fullKey = $markdownService->getCacheKey(profile: $profile, cacheKey: $cacheKey);
+            expect(Cache::has(key: $fullKey))->toBeFalse();
+        }
     })->with(['description', 'learning_objectives']);
 
     it('does not clear markdown cache when non-markdown fields are updated', function () {
@@ -155,29 +162,40 @@ describe('markdown cache clearing on model events', function () {
         expect(Cache::has(key: $fullKey))->toBeTrue();
     });
 
-    it('clears markdown cache when course is deleted', function () {
+    it('clears all profile caches when course is deleted', function () {
         $course = Course::factory()->create();
         $markdownService = app(MarkdownService::class);
 
-        $cacheKeys = new Collection($course->getCachedFields())->map(fn (string $field) => "course|{$course->id}|$field");
-
-        foreach ($cacheKeys as $cacheKey) {
-            $markdownService->render(
-                markdown: '**test content**',
-                cacheKey: $cacheKey
-            );
+        foreach ($course->getCachedFields() as $field) {
+            foreach (MarkdownProfile::cases() as $profile) {
+                $markdownService->render(
+                    markdown: '**test content**',
+                    profile: $profile,
+                    cacheKey: "course|{$course->id}|$field"
+                );
+            }
         }
 
-        foreach ($cacheKeys as $cacheKey) {
-            $fullKey = $markdownService->getCacheKey(cacheKey: $cacheKey);
-            expect(Cache::has(key: $fullKey))->toBeTrue();
+        foreach ($course->getCachedFields() as $field) {
+            foreach (MarkdownProfile::cases() as $profile) {
+                $fullKey = $markdownService->getCacheKey(
+                    profile: $profile,
+                    cacheKey: "course|{$course->id}|$field"
+                );
+                expect(Cache::has(key: $fullKey))->toBeTrue();
+            }
         }
 
         $course->delete();
 
-        foreach ($cacheKeys as $cacheKey) {
-            $fullKey = $markdownService->getCacheKey(cacheKey: $cacheKey);
-            expect(Cache::has(key: $fullKey))->toBeFalse();
+        foreach ($course->getCachedFields() as $field) {
+            foreach (MarkdownProfile::cases() as $profile) {
+                $fullKey = $markdownService->getCacheKey(
+                    profile: $profile,
+                    cacheKey: "course|{$course->id}|$field"
+                );
+                expect(Cache::has(key: $fullKey))->toBeFalse();
+            }
         }
     });
 });
