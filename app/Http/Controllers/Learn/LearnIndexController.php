@@ -20,31 +20,22 @@ class LearnIndexController extends BaseController
 {
     public function __invoke(): Response
     {
-        $learnEnabled = Config::get('app.learn_enabled') === true || Auth::user()?->is_admin === true;
+        $courses = Course::query()
+            ->select('id', 'slug', 'title', 'tagline', 'order', 'experience_level', 'duration_seconds', 'allow_preview', 'is_featured', 'publish_date', 'thumbnail_filename', 'thumbnail_crops')
+            ->visible()
+            ->withCount('visibleLessons as lessons_count')
+            ->orderBy('order')
+            ->get();
 
-        $courses = collect();
-        $totalEnrolledUsers = 0;
-
-        if ($learnEnabled === true) {
-            $courses = Course::query()
-                ->select('id', 'slug', 'title', 'tagline', 'order', 'experience_level', 'duration_seconds', 'allow_preview', 'is_featured', 'publish_date', 'thumbnail_filename', 'thumbnail_crops')
-                ->visible()
-                ->withCount('visibleLessons as lessons_count')
-                ->orderBy('order')
-                ->get();
-
-            $totalEnrolledUsers = CourseUser::query()
-                ->distinct()
-                ->count(columns: 'user_id');
-        }
+        $totalEnrolledUsers = CourseUser::query()
+            ->distinct()
+            ->count(columns: 'user_id');
 
         return Inertia::render('learn/courses/index', [
-            'courses' => $learnEnabled === true
-                ? CourseResource::collect($courses, DataCollection::class)
-                    ->include('experience_level', 'lessons_count', 'started_count', 'duration_seconds')
-                    ->only('id', 'slug', 'title', 'tagline', 'experience_level', 'order', 'lessons_count', 'started_count', 'duration_seconds', 'thumbnail_url', 'thumbnail_rect_strings', 'is_previewable')
-                : [],
-            'courseProgress' => $learnEnabled === true ? $this->getCourseProgress($courses) : [],
+            'courses' => CourseResource::collect($courses, DataCollection::class)
+                ->include('experience_level', 'lessons_count', 'started_count', 'duration_seconds')
+                ->only('id', 'slug', 'title', 'tagline', 'experience_level', 'order', 'lessons_count', 'started_count', 'duration_seconds', 'thumbnail_url', 'thumbnail_rect_strings', 'is_previewable'),
+            'courseProgress' => $this->getCourseProgress($courses),
             'guides' => $this->getGuides(),
             'totalEnrolledUsers' => $totalEnrolledUsers,
         ]);

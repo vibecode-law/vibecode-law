@@ -2,33 +2,9 @@
 
 use App\Models\Challenge\Challenge;
 use App\Models\Organisation\Organisation;
-use App\Models\User;
-use Illuminate\Support\Facades\Config;
 use Inertia\Testing\AssertableInertia;
 
-use function Pest\Laravel\actingAs;
 use function Pest\Laravel\get;
-
-beforeEach(function () {
-    Config::set('app.challenges_enabled', true);
-});
-
-test('index returns 404 when challenges are disabled', function () {
-    Config::set('app.challenges_enabled', false);
-
-    get(route('inspiration.index'))
-        ->assertNotFound();
-});
-
-test('index allows admins when challenges are disabled', function () {
-    Config::set('app.challenges_enabled', false);
-
-    $admin = User::factory()->admin()->create();
-
-    actingAs($admin)
-        ->get(route('inspiration.index'))
-        ->assertOk();
-});
 
 test('index returns active challenges', function () {
     Challenge::factory()->active()->count(3)->create();

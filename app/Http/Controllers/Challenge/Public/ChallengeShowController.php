@@ -9,7 +9,6 @@ use App\Http\Resources\User\UserResource;
 use App\Models\Challenge\Challenge;
 use App\Models\Showcase\Showcase;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Config;
 use Inertia\Inertia;
 use Inertia\Response;
 use Spatie\LaravelData\DataCollection;
@@ -18,10 +17,6 @@ class ChallengeShowController extends BaseController
 {
     public function __invoke(Challenge $challenge): Response
     {
-        if (Config::get('app.challenges_enabled') === false && Auth::user()?->is_admin !== true) {
-            abort(404);
-        }
-
         if ($challenge->is_active === false) {
             abort(404);
         }

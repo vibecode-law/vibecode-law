@@ -8,7 +8,6 @@ use App\Models\Challenge\Challenge;
 use App\Models\Showcase\Showcase;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Config;
 use Inertia\Inertia;
 use Inertia\Response;
 use Spatie\LaravelData\DataCollection;
@@ -58,21 +57,17 @@ class HomeController extends BaseController
             ->only('id', 'slug', 'title', 'thumbnail_url', 'thumbnail_rect_string', 'user')
             ->toArray();
 
-        $activeChallenges = [];
+        $activeChallenges = Challenge::query()
+            ->where('is_active', true)
+            ->where('is_featured', true)
+            ->withCount('showcases')
+            ->orderByDesc('showcases_count')
+            ->get();
 
-        if (Config::get('app.challenges_enabled') === true) {
-            $activeChallenges = Challenge::query()
-                ->where('is_active', true)
-                ->where('is_featured', true)
-                ->withCount('showcases')
-                ->orderByDesc('showcases_count')
-                ->get();
-
-            $activeChallenges = ChallengeResource::collect($activeChallenges, DataCollection::class)
-                ->include('showcases_count')
-                ->only('id', 'slug', 'title', 'thumbnail_url', 'thumbnail_rect_strings', 'showcases_count')
-                ->toArray();
-        }
+        $activeChallenges = ChallengeResource::collect($activeChallenges, DataCollection::class)
+            ->include('showcases_count')
+            ->only('id', 'slug', 'title', 'thumbnail_url', 'thumbnail_rect_strings', 'showcases_count')
+            ->toArray();
 
         return Inertia::render('home', [
             'showcasesByMonth' => $showcasesByMonth,

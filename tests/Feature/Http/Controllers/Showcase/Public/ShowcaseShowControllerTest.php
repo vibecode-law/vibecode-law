@@ -5,7 +5,6 @@ use App\Models\Challenge\Challenge;
 use App\Models\Showcase\Showcase;
 use App\Models\Showcase\ShowcaseImage;
 use App\Models\User;
-use Illuminate\Support\Facades\Config;
 use Inertia\Testing\AssertableInertia;
 
 use function Pest\Laravel\actingAs;
@@ -769,22 +768,7 @@ describe('approval celebration', function () {
 });
 
 describe('challengeEntries', function () {
-    test('challengeEntries is not passed when challenges_enabled is false', function () {
-        Config::set('app.challenges_enabled', false);
-
-        $showcase = Showcase::factory()->approved()->create();
-        $challenge = Challenge::factory()->active()->create();
-        $challenge->showcases()->attach($showcase);
-
-        get(route('showcase.show', $showcase))
-            ->assertInertia(fn (AssertableInertia $page) => $page
-                ->missing('challengeEntries')
-            );
-    });
-
-    test('challengeEntries is passed when challenges_enabled is true', function () {
-        Config::set('app.challenges_enabled', true);
-
+    test('challengeEntries includes active challenge entries', function () {
         $showcase = Showcase::factory()->approved()->create();
         $challenge = Challenge::factory()->active()->create();
         $challenge->showcases()->attach($showcase);
@@ -796,8 +780,6 @@ describe('challengeEntries', function () {
     });
 
     test('challengeEntries is empty when showcase has no active challenges', function () {
-        Config::set('app.challenges_enabled', true);
-
         $showcase = Showcase::factory()->approved()->create();
 
         get(route('showcase.show', $showcase))
@@ -807,8 +789,6 @@ describe('challengeEntries', function () {
     });
 
     test('challengeEntries excludes inactive challenges', function () {
-        Config::set('app.challenges_enabled', true);
-
         $showcase = Showcase::factory()->approved()->create();
         $activeChallenge = Challenge::factory()->active()->create();
         $inactiveChallenge = Challenge::factory()->create(['is_active' => false]);
@@ -823,8 +803,6 @@ describe('challengeEntries', function () {
     });
 
     test('challengeEntries contains correct challenge data and rank', function () {
-        Config::set('app.challenges_enabled', true);
-
         $upvoters = User::factory()->count(3)->create();
 
         $showcase = Showcase::factory()->approved()->create(['submitted_date' => '2025-01-15']);
@@ -855,8 +833,6 @@ describe('challengeEntries', function () {
     });
 
     test('challengeEntries shows correct rank for lower-ranked showcase', function () {
-        Config::set('app.challenges_enabled', true);
-
         $upvoters = User::factory()->count(5)->create();
 
         $topShowcase = Showcase::factory()->approved()->create(['submitted_date' => '2025-01-10']);
