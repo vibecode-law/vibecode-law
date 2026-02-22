@@ -54,8 +54,9 @@ test('index lesson count only includes visible lessons', function () {
 });
 
 test('index returns the correct data structure', function () {
-    $course = Course::factory()->published()->create()->fresh();
+    $course = Course::factory()->published()->create();
     Lesson::factory()->published()->count(2)->for($course)->create();
+    $course->refresh();
 
     get(route('learn.index'))
         ->assertInertia(fn (AssertableInertia $page) => $page
