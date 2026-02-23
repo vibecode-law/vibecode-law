@@ -11,6 +11,8 @@ import {
 import { FormField } from '@/components/ui/form-field';
 import { Input } from '@/components/ui/input';
 import { SubmitButton } from '@/components/ui/submit-button';
+import TextLink from '@/components/ui/text-link';
+import { register } from '@/routes';
 import { store } from '@/routes/login';
 import { Form } from '@inertiajs/react';
 import { Lock, Mail } from 'lucide-react';
@@ -109,6 +111,12 @@ export function LessonGatedPlaceholder({
                                         >
                                             Log in
                                         </SubmitButton>
+                                        <p className="text-center text-sm text-muted-foreground">
+                                            Don&apos;t have an account?{' '}
+                                            <TextLink href={register.url()}>
+                                                Sign up
+                                            </TextLink>
+                                        </p>
                                     </>
                                 )}
                             </Form>
