@@ -2,6 +2,7 @@
 
 namespace App\Http\Requests\Staff;
 
+use App\Enums\ChallengeVisibility;
 use App\Models\Challenge\Challenge;
 use Closure;
 use Illuminate\Foundation\Http\FormRequest;
@@ -45,6 +46,7 @@ class ChallengeUpdateRequest extends FormRequest
             'ends_at' => ['nullable', 'date', 'after:starts_at'],
             'is_active' => $isActiveRules,
             'is_featured' => ['nullable', 'boolean'],
+            'visibility' => ['nullable', Rule::enum(ChallengeVisibility::class)],
             'organisation_id' => ['nullable', Rule::exists('organisations', 'id')],
             'thumbnail' => [Rule::prohibitedIf($this->filled('organisation_id')), 'nullable', 'image', 'mimes:png,jpg,jpeg,gif,webp', 'max:2048'],
             'thumbnail_crops' => [

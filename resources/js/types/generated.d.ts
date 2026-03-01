@@ -1,5 +1,7 @@
 declare namespace App.Enums {
+    export type ChallengeVisibility = 1 | 2 | 3;
     export type ExperienceLevel = 1 | 2 | 3 | 4;
+    export type InviteCodeScope = 1 | 2;
     export type MarkdownProfile = 'basic' | 'full';
     export type ShowcaseDraftStatus = 1 | 2 | 3;
     export type ShowcaseStatus = 1 | 2 | 3 | 4;
@@ -56,6 +58,15 @@ declare namespace App.Http.Resources {
     };
 }
 declare namespace App.Http.Resources.Challenge {
+    export type ChallengeInviteCodeResource = {
+        id: number;
+        code: string;
+        label: string;
+        scope: App.Enums.InviteCodeScope;
+        is_active: boolean;
+        created_at: string;
+        users_count?: number | null;
+    };
     export type ChallengeResource = {
         id: number;
         slug: string;
@@ -67,6 +78,7 @@ declare namespace App.Http.Resources.Challenge {
         ends_at: string | null;
         is_active: boolean;
         is_featured: boolean;
+        visibility?: App.Enums.ChallengeVisibility;
         thumbnail_url: string | null;
         thumbnail_rect_strings: { [key: string]: string } | null;
         thumbnail_crops?: { [key: string]: App.ValueObjects.ImageCrop } | null;

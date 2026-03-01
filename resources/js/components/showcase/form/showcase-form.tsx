@@ -34,6 +34,7 @@ import { type FrontendEnum } from '@/types';
 import { Form, Head } from '@inertiajs/react';
 import {
     AlertCircle,
+    AlertTriangle,
     Code,
     FileText,
     Globe,
@@ -77,6 +78,7 @@ interface ShowcaseFormProps {
     showSlugField: boolean;
     canSubmit: boolean;
     challenge?: ChallengeContext;
+    challengeWarning?: string;
 }
 
 export function ShowcaseForm({
@@ -93,8 +95,12 @@ export function ShowcaseForm({
     showSlugField,
     canSubmit,
     challenge,
+    challengeWarning,
 }: ShowcaseFormProps) {
     const [title, setTitle] = useState(initialData.title);
+    const [showChallengeWarning, setShowChallengeWarning] = useState(
+        challengeWarning !== undefined,
+    );
     const [slug, setSlug] = useState(initialData.slug);
     const [tagline, setTagline] = useState(initialData.tagline);
     const [description, setDescription] = useState(initialData.description);
@@ -254,6 +260,35 @@ export function ShowcaseForm({
                                     </div>
 
                                     <div className="mx-auto mt-8 max-w-4xl space-y-8">
+                                        {/* Challenge warning */}
+                                        {showChallengeWarning === true &&
+                                            challengeWarning !== undefined && (
+                                                <InfoBox
+                                                    variant="warning"
+                                                    icon={
+                                                        <AlertTriangle className="size-5" />
+                                                    }
+                                                >
+                                                    <div className="flex items-center justify-between gap-2">
+                                                        <p>
+                                                            {challengeWarning}
+                                                        </p>
+                                                        <button
+                                                            type="button"
+                                                            onClick={() =>
+                                                                setShowChallengeWarning(
+                                                                    false,
+                                                                )
+                                                            }
+                                                            className="shrink-0 rounded-md p-1 hover:bg-amber-100 dark:hover:bg-amber-800/40"
+                                                            aria-label="Dismiss warning"
+                                                        >
+                                                            <X className="size-4" />
+                                                        </button>
+                                                    </div>
+                                                </InfoBox>
+                                            )}
+
                                         {/* Challenge tip */}
                                         {activeChallenge !== undefined && (
                                             <InfoBox

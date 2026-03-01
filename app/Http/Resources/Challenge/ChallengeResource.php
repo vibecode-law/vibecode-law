@@ -2,6 +2,7 @@
 
 namespace App\Http\Resources\Challenge;
 
+use App\Enums\ChallengeVisibility;
 use App\Http\Resources\Organisation\OrganisationResource;
 use App\Models\Challenge\Challenge;
 use App\Services\Markdown\MarkdownService;
@@ -38,6 +39,8 @@ class ChallengeResource extends Resource
 
     public bool $is_featured;
 
+    public Lazy|ChallengeVisibility $visibility;
+
     public ?string $thumbnail_url;
 
     /** @var array<string, string>|null */
@@ -70,6 +73,7 @@ class ChallengeResource extends Resource
             'ends_at' => $challenge->ends_at,
             'is_active' => $challenge->is_active,
             'is_featured' => $challenge->is_featured,
+            'visibility' => Lazy::create(fn () => $challenge->visibility),
             'thumbnail_url' => $challenge->thumbnail_url,
             'thumbnail_rect_strings' => $challenge->thumbnail_rect_strings,
             'thumbnail_crops' => Lazy::create(fn () => $challenge->thumbnail_crops !== null

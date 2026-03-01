@@ -29,6 +29,9 @@ namespace App\Models\Challenge{
  * @property string|null $thumbnail_extension
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
+ * @property \App\Enums\ChallengeVisibility $visibility
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\Challenge\ChallengeInviteCode> $inviteCodes
+ * @property-read int|null $invite_codes_count
  * @property-read \App\Models\Organisation\Organisation|null $organisation
  * @property-read \App\Models\Challenge\ChallengeShowcase|null $pivot
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\Showcase\Showcase> $showcases
@@ -39,6 +42,7 @@ namespace App\Models\Challenge{
  * @method static \Database\Factories\Challenge\ChallengeFactory factory($count = null, $state = [])
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Challenge newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Challenge newQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Challenge publiclyVisible()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Challenge query()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Challenge whereCreatedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Challenge whereDescription($value)
@@ -55,11 +59,65 @@ namespace App\Models\Challenge{
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Challenge whereTitle($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Challenge whereUpdatedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Challenge whereUserId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Challenge whereVisibility($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Challenge withTotalUpvotesCount()
  * @mixin \Eloquent
  */
 	#[\AllowDynamicProperties]
 	class IdeHelperChallenge {}
+}
+
+namespace App\Models\Challenge{
+/**
+ * @property int $id
+ * @property int $challenge_id
+ * @property string $code
+ * @property \App\Enums\InviteCodeScope $scope
+ * @property bool $is_active
+ * @property \Illuminate\Support\Carbon|null $created_at
+ * @property \Illuminate\Support\Carbon|null $updated_at
+ * @property-read \App\Models\Challenge\Challenge $challenge
+ * @property-read \App\Models\Challenge\ChallengeInviteCodeUser|null $pivot
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\User> $users
+ * @property-read int|null $users_count
+ * @method static \Database\Factories\Challenge\ChallengeInviteCodeFactory factory($count = null, $state = [])
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|ChallengeInviteCode newModelQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|ChallengeInviteCode newQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|ChallengeInviteCode query()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|ChallengeInviteCode whereChallengeId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|ChallengeInviteCode whereCode($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|ChallengeInviteCode whereCreatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|ChallengeInviteCode whereId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|ChallengeInviteCode whereIsActive($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|ChallengeInviteCode whereScope($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|ChallengeInviteCode whereUpdatedAt($value)
+ * @mixin \Eloquent
+ */
+	#[\AllowDynamicProperties]
+	class IdeHelperChallengeInviteCode {}
+}
+
+namespace App\Models\Challenge{
+/**
+ * @property int $id
+ * @property int $challenge_invite_code_id
+ * @property int $user_id
+ * @property \Illuminate\Support\Carbon|null $created_at
+ * @property \Illuminate\Support\Carbon|null $updated_at
+ * @property-read \App\Models\Challenge\ChallengeInviteCode $challengeInviteCode
+ * @property-read \App\Models\User $user
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|ChallengeInviteCodeUser newModelQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|ChallengeInviteCodeUser newQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|ChallengeInviteCodeUser query()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|ChallengeInviteCodeUser whereChallengeInviteCodeId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|ChallengeInviteCodeUser whereCreatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|ChallengeInviteCodeUser whereId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|ChallengeInviteCodeUser whereUpdatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|ChallengeInviteCodeUser whereUserId($value)
+ * @mixin \Eloquent
+ */
+	#[\AllowDynamicProperties]
+	class IdeHelperChallengeInviteCodeUser {}
 }
 
 namespace App\Models\Challenge{
@@ -723,8 +781,10 @@ namespace App\Models{
  * @property string|null $two_factor_recovery_codes
  * @property \Illuminate\Support\Carbon|null $two_factor_confirmed_at
  * @property string|null $external_subscriber_uuid
+ * @property-read \App\Models\Course\LessonUser|\App\Models\Course\CourseUser|\App\Models\Challenge\ChallengeInviteCodeUser|null $pivot
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\Challenge\ChallengeInviteCode> $acceptedChallengeInviteCodes
+ * @property-read int|null $accepted_challenge_invite_codes_count
  * @property-read string|null $avatar
- * @property-read \App\Models\Course\LessonUser|\App\Models\Course\CourseUser|null $pivot
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\Course\Course> $courses
  * @property-read int|null $courses_count
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\Challenge\Challenge> $hostedChallenges

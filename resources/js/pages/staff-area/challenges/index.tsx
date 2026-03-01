@@ -72,6 +72,16 @@ export default function ChallengesIndex({ challenges }: ChallengesIndexProps) {
                                                     Featured
                                                 </Badge>
                                             )}
+                                            {challenge.visibility === 3 && (
+                                                <Badge className="bg-purple-500 text-white hover:bg-purple-500">
+                                                    Private
+                                                </Badge>
+                                            )}
+                                            {challenge.visibility === 2 && (
+                                                <Badge className="bg-blue-500 text-white hover:bg-blue-500">
+                                                    Invite Only Subs
+                                                </Badge>
+                                            )}
                                         </div>
                                         <p className="text-sm text-neutral-500 dark:text-neutral-400">
                                             {challenge.tagline}

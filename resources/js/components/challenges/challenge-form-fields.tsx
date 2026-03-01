@@ -7,6 +7,13 @@ import { type SimpleCropData } from '@/components/ui/image-crop-modal';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { MarkdownEditor } from '@/components/ui/markdown-editor';
+import {
+    Select,
+    SelectContent,
+    SelectItem,
+    SelectTrigger,
+    SelectValue,
+} from '@/components/ui/select';
 import { Separator } from '@/components/ui/separator';
 import { Switch } from '@/components/ui/switch';
 import { ThumbnailSelector } from '@/components/ui/thumbnail-selector';
@@ -35,10 +42,12 @@ interface ChallengeFormFieldsProps {
         ends_at?: string | null;
         is_active?: boolean;
         is_featured?: boolean;
+        visibility?: number;
         organisation?: Organisation | null;
         thumbnail_url?: string | null;
         thumbnail_crops?: Record<string, SimpleCropData> | null;
     };
+    visibilityOptions: App.ValueObjects.FrontendEnum[];
     mode: 'create' | 'edit';
 }
 
@@ -46,6 +55,7 @@ export default function ChallengeFormFields({
     processing,
     errors,
     defaultValues,
+    visibilityOptions,
     mode,
 }: ChallengeFormFieldsProps) {
     const [autoSlug, setAutoSlug] = useState(mode === 'create');
@@ -62,6 +72,9 @@ export default function ChallengeFormFields({
     );
     const [featuredChecked, setFeaturedChecked] = useState(
         defaultValues?.is_featured ?? false,
+    );
+    const [visibility, setVisibility] = useState(
+        String(defaultValues?.visibility ?? 1),
     );
     const slugRef = useRef<HTMLInputElement>(null);
 
@@ -335,6 +348,40 @@ export default function ChallengeFormFields({
                     value={featuredChecked ? '1' : '0'}
                 />
             </div>
+
+            <Separator />
+
+            <FormField
+                label="Visibility"
+                htmlFor="visibility"
+                error={errors.visibility}
+            >
+                <Select
+                    value={visibility}
+                    onValueChange={setVisibility}
+                    disabled={processing}
+                >
+                    <SelectTrigger
+                        id="visibility"
+                        aria-invalid={
+                            errors.visibility !== undefined ? true : undefined
+                        }
+                    >
+                        <SelectValue placeholder="Select visibility" />
+                    </SelectTrigger>
+                    <SelectContent>
+                        {visibilityOptions.map((option) => (
+                            <SelectItem
+                                key={option.value}
+                                value={String(option.value)}
+                            >
+                                {option.label}
+                            </SelectItem>
+                        ))}
+                    </SelectContent>
+                </Select>
+                <input type="hidden" name="visibility" value={visibility} />
+            </FormField>
         </div>
     );
 }

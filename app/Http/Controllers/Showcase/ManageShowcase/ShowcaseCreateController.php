@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Showcase\ManageShowcase;
 
+use App\Enums\InviteCodeScope;
 use App\Enums\SourceStatus;
 use App\Http\Controllers\BaseController;
 use App\Http\Resources\Challenge\ChallengeResource;
@@ -20,14 +21,7 @@ class ShowcaseCreateController extends BaseController
     {
         Log::channel('showcaseUX')->info('User accessed showcase page', ['name' => Auth::user()->first_name.' '.Auth::user()->last_name]);
 
-        $challenge = null;
-
-        if ($request->has('challenge')) {
-            $challenge = Challenge::query()
-                ->where('slug', $request->query('challenge'))
-                ->where('is_active', true)
-                ->first();
-        }
+        ['challenge' => $challenge, 'warning' => $challengeWarning] = $this->resolveChallenge(request: $request);
 
         return Inertia::render('showcase/user/create', [
             'practiceAreas' => PracticeAreaResource::collect(PracticeArea::orderBy('name')->get()),
@@ -35,6 +29,37 @@ class ShowcaseCreateController extends BaseController
             'challenge' => $challenge !== null
                 ? ChallengeResource::from($challenge)->only('id', 'title', 'slug')
                 : null,
+            'challengeWarning' => $challengeWarning,
         ]);
+    }
+
+    /**
+     * @return array{challenge: ?Challenge, warning: ?string}
+     */
+    private function resolveChallenge(Request $request): array
+    {
+        if ($request->has('challenge') === false) {
+            return ['challenge' => null, 'warning' => null];
+        }
+
+        $challenge = Challenge::query()
+            ->where('slug', $request->query('challenge'))
+            ->where('is_active', true)
+            ->first();
+
+        if ($challenge === null) {
+            return ['challenge' => null, 'warning' => null];
+        }
+
+        if ($challenge->requiresInviteToSubmit() === true) {
+            if (Auth::user()->hasChallengeAccess($challenge, InviteCodeScope::ViewAndSubmit) === false) {
+                return [
+                    'challenge' => null,
+                    'warning' => "You don't have permission to submit to the {$challenge->title} challenge. An invite code with submit access is required.",
+                ];
+            }
+        }
+
+        return ['challenge' => $challenge, 'warning' => null];
     }
 }

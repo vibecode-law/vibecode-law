@@ -1,5 +1,6 @@
 <?php
 
+use App\Enums\ChallengeVisibility;
 use App\Models\Challenge\Challenge;
 use App\Models\Organisation\Organisation;
 use App\Models\User;
@@ -242,6 +243,23 @@ describe('update', function () {
                 'message' => 'Challenge updated successfully.',
                 'type' => 'success',
             ]);
+    });
+
+    test('updates visibility field', function () {
+        $admin = User::factory()->admin()->create();
+        $challenge = Challenge::factory()->create();
+
+        actingAs($admin);
+
+        patch(route('staff.challenges.update', $challenge), [
+            'title' => $challenge->title,
+            'slug' => $challenge->slug,
+            'tagline' => $challenge->tagline,
+            'description' => $challenge->description,
+            'visibility' => ChallengeVisibility::InviteToViewAndSubmit->value,
+        ])->assertRedirect();
+
+        expect($challenge->refresh()->visibility)->toBe(ChallengeVisibility::InviteToViewAndSubmit);
     });
 
     test('updates challenge dates', function () {

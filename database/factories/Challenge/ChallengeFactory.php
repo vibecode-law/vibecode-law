@@ -2,6 +2,7 @@
 
 namespace Database\Factories\Challenge;
 
+use App\Enums\ChallengeVisibility;
 use App\Models\Challenge\Challenge;
 use App\Models\Organisation\Organisation;
 use App\Models\User;
@@ -41,6 +42,7 @@ class ChallengeFactory extends Factory
             'is_featured' => false,
             'organisation_id' => null,
             'user_id' => null,
+            'visibility' => ChallengeVisibility::Public,
             'thumbnail_extension' => null,
             'thumbnail_crops' => null,
         ];
@@ -96,6 +98,20 @@ class ChallengeFactory extends Factory
             'is_active' => false,
             'starts_at' => fake()->dateTimeBetween('-2 months', '-1 month'),
             'ends_at' => fake()->dateTimeBetween('-1 week', '-1 day'),
+        ]);
+    }
+
+    public function inviteToSubmit(): static
+    {
+        return $this->state(fn () => [
+            'visibility' => ChallengeVisibility::InviteToSubmit,
+        ]);
+    }
+
+    public function inviteToViewAndSubmit(): static
+    {
+        return $this->state(fn () => [
+            'visibility' => ChallengeVisibility::InviteToViewAndSubmit,
         ]);
     }
 
