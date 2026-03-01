@@ -3,6 +3,7 @@
 namespace App\Models\Challenge;
 
 use App\Concerns\ClearsMarkdownCache;
+use App\Enums\ChallengeVisibility;
 use App\Models\Organisation\Organisation;
 use App\Models\Showcase\Showcase;
 use App\Models\Showcase\ShowcaseUpvote;
@@ -14,6 +15,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\Storage;
 
@@ -37,6 +39,7 @@ class Challenge extends Model
         'ends_at',
         'is_active',
         'is_featured',
+        'visibility',
         'organisation_id',
         'thumbnail_extension',
         'thumbnail_crops',
@@ -49,6 +52,7 @@ class Challenge extends Model
             'ends_at' => 'datetime',
             'is_active' => 'boolean',
             'is_featured' => 'boolean',
+            'visibility' => ChallengeVisibility::class,
             'thumbnail_crops' => 'array',
         ];
     }
@@ -87,6 +91,11 @@ class Challenge extends Model
             ->withTimestamps();
     }
 
+    public function inviteCodes(): HasMany
+    {
+        return $this->hasMany(ChallengeInviteCode::class);
+    }
+
     /**
      * @param  Builder<Challenge>  $query
      */
@@ -99,6 +108,33 @@ class Challenge extends Model
                 ->join('challenge_showcase', 'showcase_upvotes.showcase_id', '=', 'challenge_showcase.showcase_id')
                 ->whereColumn('challenge_showcase.challenge_id', 'challenges.id'),
         ]);
+    }
+
+    /**
+     * @param  Builder<Challenge>  $query
+     */
+    #[Scope]
+    protected function publiclyVisible(Builder $query): void
+    {
+        $query->whereIn('visibility', [
+            ChallengeVisibility::Public,
+            ChallengeVisibility::InviteToSubmit,
+        ]);
+    }
+
+    //
+    // Helpers
+    //
+
+    public function isInviteOnly(): bool
+    {
+        return $this->visibility === ChallengeVisibility::InviteToViewAndSubmit;
+    }
+
+    public function requiresInviteToSubmit(): bool
+    {
+        return $this->visibility === ChallengeVisibility::InviteToSubmit
+            || $this->visibility === ChallengeVisibility::InviteToViewAndSubmit;
     }
 
     //

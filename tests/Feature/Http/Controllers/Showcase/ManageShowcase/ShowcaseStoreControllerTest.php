@@ -1,10 +1,12 @@
 <?php
 
 use App\Actions\Showcase\SubmitShowcaseAction;
+use App\Enums\InviteCodeScope;
 use App\Enums\ShowcaseStatus;
 use App\Enums\SourceStatus;
 use App\Jobs\MarketingEmail\AddShowcaseTagToSubscriberJob;
 use App\Models\Challenge\Challenge;
+use App\Models\Challenge\ChallengeInviteCode;
 use App\Models\PracticeArea;
 use App\Models\Showcase\Showcase;
 use App\Models\User;
@@ -1309,5 +1311,57 @@ describe('challenge attachment', function () {
 
         expect($showcase->challenges)->toHaveCount(1);
         expect($showcase->challenges->first()->id)->toBe($challenge->id);
+    });
+
+    test('rejects submission to invite-to-submit challenge without invite', function () {
+        $practiceArea = PracticeArea::factory()->create();
+        $challenge = Challenge::factory()->active()->inviteToSubmit()->create();
+
+        /** @var User */
+        $user = User::factory()->create();
+
+        actingAs($user);
+
+        post(route('showcase.manage.store'), [
+            'practice_area_ids' => [$practiceArea->id],
+            'title' => 'My Challenge Project',
+            'tagline' => 'A great project tagline',
+            'description' => 'This is a great project description',
+            'key_features' => 'Some key features',
+            'url' => 'https://example.com',
+            'source_status' => SourceStatus::NotAvailable->value,
+            'images' => [UploadedFile::fake()->image('test.jpg', 1280, 720)],
+            'thumbnail' => UploadedFile::fake()->image('thumbnail.jpg', 500, 500),
+            'thumbnail_crop' => ['x' => 0, 'y' => 0, 'width' => 500, 'height' => 500],
+            'challenge_id' => $challenge->id,
+        ])->assertInvalid(['challenge_id' => 'do not have permission']);
+    });
+
+    test('allows submission to invite-to-submit challenge with ViewAndSubmit invite', function () {
+        $practiceArea = PracticeArea::factory()->create();
+        $challenge = Challenge::factory()->active()->inviteToSubmit()->create();
+        $inviteCode = ChallengeInviteCode::factory()->forChallenge($challenge)->create([
+            'scope' => InviteCodeScope::ViewAndSubmit,
+        ]);
+
+        /** @var User */
+        $user = User::factory()->create();
+        $inviteCode->users()->attach($user);
+
+        actingAs($user);
+
+        post(route('showcase.manage.store'), [
+            'practice_area_ids' => [$practiceArea->id],
+            'title' => 'My Invited Challenge Project',
+            'tagline' => 'A great project tagline',
+            'description' => 'This is a great project description',
+            'key_features' => 'Some key features',
+            'url' => 'https://example.com',
+            'source_status' => SourceStatus::NotAvailable->value,
+            'images' => [UploadedFile::fake()->image('test.jpg', 1280, 720)],
+            'thumbnail' => UploadedFile::fake()->image('thumbnail.jpg', 500, 500),
+            'thumbnail_crop' => ['x' => 0, 'y' => 0, 'width' => 500, 'height' => 500],
+            'challenge_id' => $challenge->id,
+        ])->assertValid('challenge_id');
     });
 });

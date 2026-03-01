@@ -3,9 +3,13 @@
 namespace App\Models;
 
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
+use App\Enums\ChallengeVisibility;
+use App\Enums\InviteCodeScope;
 use App\Enums\ShowcaseStatus;
 use App\Enums\TeamType;
 use App\Models\Challenge\Challenge;
+use App\Models\Challenge\ChallengeInviteCode;
+use App\Models\Challenge\ChallengeInviteCodeUser;
 use App\Models\Course\Course;
 use App\Models\Course\CourseUser;
 use App\Models\Course\Lesson;
@@ -116,6 +120,13 @@ class User extends Authenticatable implements MustVerifyEmail
         return $this->hasMany(Challenge::class);
     }
 
+    public function acceptedChallengeInviteCodes(): BelongsToMany
+    {
+        return $this->belongsToMany(ChallengeInviteCode::class)
+            ->using(ChallengeInviteCodeUser::class)
+            ->withTimestamps();
+    }
+
     public function courses(): BelongsToMany
     {
         return $this->belongsToMany(Course::class)
@@ -181,6 +192,18 @@ class User extends Authenticatable implements MustVerifyEmail
     public function isSubscribedToMarketing(): bool
     {
         return $this->marketing_opt_out_at === null;
+    }
+
+    public function hasChallengeAccess(Challenge $challenge, InviteCodeScope $requiredScope): bool
+    {
+        if ($challenge->visibility === ChallengeVisibility::Public) {
+            return true;
+        }
+
+        return $this->acceptedChallengeInviteCodes()
+            ->where('challenge_id', $challenge->id)
+            ->whereIn('scope', $requiredScope->satisfiedBy())
+            ->exists();
     }
 
     //

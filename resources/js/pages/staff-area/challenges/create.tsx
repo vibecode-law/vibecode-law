@@ -7,7 +7,13 @@ import { index, store } from '@/routes/staff/challenges';
 import { Form, Head, Link } from '@inertiajs/react';
 import { ArrowLeft } from 'lucide-react';
 
-export default function ChallengesCreate() {
+interface ChallengesCreateProps {
+    visibilityOptions: App.ValueObjects.FrontendEnum[];
+}
+
+export default function ChallengesCreate({
+    visibilityOptions,
+}: ChallengesCreateProps) {
     return (
         <StaffAreaLayout fullWidth>
             <Head title="Create Challenge" />
@@ -38,6 +44,7 @@ export default function ChallengesCreate() {
                                 <ChallengeFormFields
                                     processing={processing}
                                     errors={errors}
+                                    visibilityOptions={visibilityOptions}
                                     mode="create"
                                 />
 

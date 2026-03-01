@@ -3,6 +3,9 @@
 use App\Http\Controllers\Staff\Challenges\CreateController as ChallengeCreateController;
 use App\Http\Controllers\Staff\Challenges\EditController as ChallengeEditController;
 use App\Http\Controllers\Staff\Challenges\IndexController as ChallengeIndexController;
+use App\Http\Controllers\Staff\Challenges\InviteCodes\IndexController as InviteCodeIndexController;
+use App\Http\Controllers\Staff\Challenges\InviteCodes\StoreController as InviteCodeStoreController;
+use App\Http\Controllers\Staff\Challenges\InviteCodes\ToggleActiveController as InviteCodeToggleActiveController;
 use App\Http\Controllers\Staff\Challenges\StoreController as ChallengeStoreController;
 use App\Http\Controllers\Staff\Challenges\UpdateController as ChallengeUpdateController;
 use App\Http\Controllers\Staff\Courses\CreateController as CourseCreateController;
@@ -137,6 +140,12 @@ Route::middleware(['can:access-staff'])->prefix('staff')->name('staff.')->group(
         Route::post('/', ChallengeStoreController::class)->name('store');
         Route::get('/{challenge}/edit', ChallengeEditController::class)->name('edit');
         Route::patch('/{challenge}', ChallengeUpdateController::class)->name('update');
+
+        Route::prefix('{challenge}/invite-codes')->name('invite-codes.')->scopeBindings()->group(function () {
+            Route::get('/', InviteCodeIndexController::class)->name('index');
+            Route::post('/', InviteCodeStoreController::class)->name('store');
+            Route::post('/{inviteCode}/toggle', InviteCodeToggleActiveController::class)->name('toggle');
+        });
     });
 
     Route::prefix('press-coverage')->name('press-coverage.')->group(function () {

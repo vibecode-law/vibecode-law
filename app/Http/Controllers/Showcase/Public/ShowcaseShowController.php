@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers\Showcase\Public;
 
+use App\Enums\ChallengeVisibility;
+use App\Enums\InviteCodeScope;
 use App\Http\Controllers\BaseController;
 use App\Http\Resources\Challenge\ChallengeResource;
 use App\Http\Resources\Showcase\ShowcaseResource;
@@ -81,11 +83,23 @@ class ShowcaseShowController extends BaseController
             ->where('is_active', true)
             ->get();
 
-        return $challenges->map(fn (Challenge $challenge) => [
-            'challenge' => ChallengeResource::from($challenge)
-                ->only('id', 'slug', 'title', 'thumbnail_url', 'thumbnail_rect_strings'),
-            'rank' => $rankingService->getChallengeRank(challenge: $challenge),
-        ])->all();
+        $user = Auth::user();
+
+        return $challenges
+            ->filter(function (Challenge $challenge) use ($user): bool {
+                if ($challenge->visibility !== ChallengeVisibility::InviteToViewAndSubmit) {
+                    return true;
+                }
+
+                return $user !== null && $user->hasChallengeAccess($challenge, InviteCodeScope::View);
+            })
+            ->map(fn (Challenge $challenge) => [
+                'challenge' => ChallengeResource::from($challenge)
+                    ->only('id', 'slug', 'title', 'thumbnail_url', 'thumbnail_rect_strings'),
+                'rank' => $rankingService->getChallengeRank(challenge: $challenge),
+            ])
+            ->values()
+            ->all();
     }
 
     private function buildShowcaseResource(Showcase $showcase): ShowcaseResource

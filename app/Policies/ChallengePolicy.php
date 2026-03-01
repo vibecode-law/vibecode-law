@@ -46,4 +46,12 @@ class ChallengePolicy
     {
         return $user->is_admin === true;
     }
+
+    /**
+     * Determine whether the user can manage invite codes for the model.
+     */
+    public function manageInviteCodes(User $user, Challenge $challenge): bool
+    {
+        return $user->is_admin === true;
+    }
 }

@@ -3,6 +3,7 @@
 use App\Http\Controllers\About\AboutIndexController;
 use App\Http\Controllers\About\AboutShowController;
 use App\Http\Controllers\About\CommunityController;
+use App\Http\Controllers\Challenge\AcceptInviteCodeController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\Legal\LegalShowController;
 use App\Http\Controllers\Newsletter\NewsletterIndexController;
@@ -28,6 +29,8 @@ Route::get('/newsletter', NewsletterIndexController::class)->name('newsletter.in
 Route::post('/newsletter/signup', NewsletterSignupController::class)->name('newsletter.signup');
 
 Route::get('/wall-of-love', WallOfLoveController::class)->name('wall-of-love');
+
+Route::get('/challenges/invite/{code}', AcceptInviteCodeController::class)->name('challenges.invite.accept');
 
 require __DIR__.'/guest/showcase.php';
 require __DIR__.'/guest/inspiration.php';

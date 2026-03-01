@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Staff\Challenges;
 
+use App\Enums\ChallengeVisibility;
 use App\Http\Controllers\BaseController;
 use App\Models\Challenge\Challenge;
 use Inertia\Inertia;
@@ -13,6 +14,10 @@ class CreateController extends BaseController
     {
         $this->authorize('create', Challenge::class);
 
-        return Inertia::render('staff-area/challenges/create');
+        return Inertia::render('staff-area/challenges/create', [
+            'visibilityOptions' => collect(ChallengeVisibility::cases())->map(
+                fn (ChallengeVisibility $visibility) => $visibility->forFrontend(),
+            ),
+        ]);
     }
 }

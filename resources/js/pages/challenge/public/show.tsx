@@ -1,5 +1,6 @@
 import ChallengeIndexController from '@/actions/App/Http/Controllers/Challenge/Public/ChallengeIndexController';
 import ShowcaseCreateController from '@/actions/App/Http/Controllers/Showcase/ManageShowcase/ShowcaseCreateController';
+import { Participants } from '@/components/challenges/participants';
 import { RichTextContent } from '@/components/showcase/rich-text-content';
 import { ProjectItem } from '@/components/showcase/showcase-item';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
@@ -22,109 +23,16 @@ interface ChallengeShowProps {
     challenge: App.Http.Resources.Challenge.ChallengeResource;
     showcases: App.Http.Resources.Showcase.ShowcaseResource[];
     participants: App.Http.Resources.User.UserResource[];
-}
-
-const avatarColors = [
-    'bg-rose-500',
-    'bg-amber-500',
-    'bg-emerald-500',
-    'bg-sky-500',
-    'bg-violet-500',
-    'bg-pink-500',
-    'bg-teal-500',
-    'bg-orange-500',
-];
-
-function getAvatarColor(name: string): string {
-    let hash = 0;
-    for (let i = 0; i < name.length; i++) {
-        hash = name.charCodeAt(i) + ((hash << 5) - hash);
-    }
-    return avatarColors[Math.abs(hash) % avatarColors.length];
-}
-
-const VISIBLE_PARTICIPANTS = 5;
-
-interface ParticipantsProps {
-    participants: App.Http.Resources.User.UserResource[];
-    transformImages: boolean;
-    className?: string;
-}
-
-function Participants({
-    participants,
-    transformImages,
-    className,
-}: ParticipantsProps) {
-    const visible = participants.slice(0, VISIBLE_PARTICIPANTS);
-    const remaining = participants.length - visible.length;
-
-    const names = visible.map((p) => p.first_name);
-    const nameList =
-        remaining > 0
-            ? names.join(', ')
-            : names.length <= 2
-              ? names.join(' and ')
-              : `${names.slice(0, -1).join(', ')} and ${names[names.length - 1]}`;
-
-    const suffix =
-        remaining > 0
-            ? ` and ${remaining} ${remaining === 1 ? 'other' : 'others'} are`
-            : participants.length === 1
-              ? ' is'
-              : ' are';
-
-    return (
-        <div className={cn('pt-8', className)}>
-            <div className="flex -space-x-2">
-                {visible.map((participant) => {
-                    const avatarSrc =
-                        participant.avatar !== null
-                            ? transformImages
-                                ? `${participant.avatar}?w=100`
-                                : participant.avatar
-                            : undefined;
-
-                    return (
-                        <Avatar
-                            key={participant.handle}
-                            className="size-8 ring-2 ring-white dark:ring-neutral-950"
-                        >
-                            {avatarSrc ? (
-                                <AvatarImage
-                                    src={avatarSrc}
-                                    alt={participant.first_name}
-                                />
-                            ) : null}
-                            <AvatarFallback
-                                className={cn(
-                                    'text-xs font-semibold text-white',
-                                    getAvatarColor(participant.first_name),
-                                )}
-                            >
-                                {participant.first_name.charAt(0)}
-                            </AvatarFallback>
-                        </Avatar>
-                    );
-                })}
-                {remaining > 0 && (
-                    <div className="flex size-8 items-center justify-center rounded-full bg-neutral-200 text-xs font-semibold text-neutral-600 ring-2 ring-white dark:bg-neutral-700 dark:text-neutral-300 dark:ring-neutral-950">
-                        +{remaining}
-                    </div>
-                )}
-            </div>
-            <p className="mt-2 text-sm text-neutral-600 dark:text-neutral-400">
-                {nameList}
-                {suffix} tackling this challenge.
-            </p>
-        </div>
-    );
+    canSubmit: boolean;
+    requiresInviteToSubmit: boolean;
 }
 
 export default function ChallengeShow({
     challenge,
     showcases,
     participants,
+    canSubmit,
+    requiresInviteToSubmit,
 }: ChallengeShowProps) {
     const { name, appUrl, transformImages } = usePage<SharedData>().props;
     const status = getChallengeStatus(challenge.starts_at, challenge.ends_at);
@@ -190,14 +98,11 @@ export default function ChallengeShow({
                 />
             </Head>
 
-            {/* Header + Description + Aside */}
             <section className="bg-white dark:bg-neutral-950">
                 <div className="mx-auto max-w-5xl border-b border-neutral-200 px-4 py-8 dark:border-neutral-800">
                     <div className="flex flex-col gap-x-12 gap-y-4 lg:flex-row">
-                        {/* Main content */}
                         <div className="min-w-0 flex-1">
                             <div className="flex flex-col gap-4">
-                                {/* Status badge and time info */}
                                 <div className="flex items-center gap-2">
                                     <Badge
                                         variant="secondary"
@@ -220,7 +125,6 @@ export default function ChallengeShow({
                                     )}
                                 </div>
 
-                                {/* Title and tagline */}
                                 <h1 className="text-3xl font-bold tracking-tight text-neutral-900 sm:text-4xl dark:text-white">
                                     {challenge.title}
                                 </h1>
@@ -229,7 +133,6 @@ export default function ChallengeShow({
                                 </p>
                             </div>
 
-                            {/* Description */}
                             {challenge.description_html && (
                                 <div className="mt-8">
                                     <RichTextContent
@@ -239,19 +142,27 @@ export default function ChallengeShow({
                                 </div>
                             )}
 
-                            {/* CTA + Dates */}
                             <div className="mt-8 flex flex-col gap-4 sm:flex-row sm:items-center">
-                                <Button asChild>
-                                    <Link
-                                        href={
-                                            ShowcaseCreateController.url() +
-                                            '?challenge=' +
-                                            challenge.slug
-                                        }
-                                    >
-                                        Submit Your Project
-                                    </Link>
-                                </Button>
+                                {canSubmit === true && (
+                                    <Button asChild>
+                                        <Link
+                                            href={
+                                                ShowcaseCreateController.url() +
+                                                '?challenge=' +
+                                                challenge.slug
+                                            }
+                                        >
+                                            Submit Your Project
+                                        </Link>
+                                    </Button>
+                                )}
+                                {canSubmit === false &&
+                                    requiresInviteToSubmit === true && (
+                                        <p className="text-sm text-neutral-500 italic dark:text-neutral-400">
+                                            Submissions to this challenge are by
+                                            invitation only.
+                                        </p>
+                                    )}
                                 {(challenge.starts_at !== null ||
                                     challenge.ends_at !== null) && (
                                     <p className="text-sm text-neutral-500 dark:text-neutral-400">
@@ -296,7 +207,6 @@ export default function ChallengeShow({
                             </div>
                         </div>
 
-                        {/* Aside */}
                         {(challenge.organisation ||
                             thumbnailSrc ||
                             participants.length > 0) && (
@@ -356,7 +266,6 @@ export default function ChallengeShow({
                 </div>
             </section>
 
-            {/* Leaderboard Section */}
             <section className="bg-white pb-16 dark:bg-neutral-950">
                 <div className="mx-auto max-w-4xl px-4">
                     <div className="pt-8">
@@ -380,13 +289,17 @@ export default function ChallengeShow({
                                 icon={Trophy}
                                 title="Vibing in Progress"
                                 description="Entries will go live soon. Be one of the first!"
-                                action={{
-                                    label: 'Submit',
-                                    href:
-                                        ShowcaseCreateController.url() +
-                                        '?challenge=' +
-                                        challenge.slug,
-                                }}
+                                action={
+                                    canSubmit === true
+                                        ? {
+                                              label: 'Submit',
+                                              href:
+                                                  ShowcaseCreateController.url() +
+                                                  '?challenge=' +
+                                                  challenge.slug,
+                                          }
+                                        : undefined
+                                }
                                 className="mt-4"
                             />
                         )}

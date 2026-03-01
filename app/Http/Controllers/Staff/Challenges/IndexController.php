@@ -34,7 +34,7 @@ class IndexController extends BaseController
             ->withQueryString();
 
         return ChallengeResource::collect($challenges, PaginatedDataCollection::class)
-            ->include('organisation', 'showcases_count')
+            ->include('organisation', 'showcases_count', 'visibility')
             ->only(
                 'id',
                 'slug',
@@ -44,6 +44,7 @@ class IndexController extends BaseController
                 'ends_at',
                 'is_active',
                 'is_featured',
+                'visibility',
                 'organisation',
                 'showcases_count',
             );

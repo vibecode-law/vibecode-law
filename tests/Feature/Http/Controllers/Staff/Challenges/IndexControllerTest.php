@@ -1,5 +1,6 @@
 <?php
 
+use App\Enums\ChallengeVisibility;
 use App\Models\Challenge\Challenge;
 use App\Models\Organisation\Organisation;
 use App\Models\User;
@@ -80,6 +81,7 @@ describe('data', function () {
                     ->where('ends_at', $challenge->ends_at->toIso8601String())
                     ->where('is_active', true)
                     ->where('is_featured', true)
+                    ->where('visibility', ChallengeVisibility::Public->value)
                     ->where('organisation.name', $organisation->name)
                     ->where('showcases_count', 0)
                     ->missing('description')

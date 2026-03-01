@@ -163,6 +163,40 @@ test('index includes showcases_count for active challenges', function () {
         );
 });
 
+test('index excludes invite-to-view-and-submit challenges', function () {
+    Challenge::factory()->active()->create();
+    Challenge::factory()->active()->inviteToViewAndSubmit()->create();
+
+    get(route('inspiration.index'))
+        ->assertOk()
+        ->assertInertia(fn (AssertableInertia $page) => $page
+            ->has('activeChallenges', 1)
+            ->has('featuredChallenges', 0)
+        );
+});
+
+test('index excludes featured invite-to-view-and-submit challenges', function () {
+    Challenge::factory()->active()->featured()->create();
+    Challenge::factory()->active()->featured()->inviteToViewAndSubmit()->create();
+
+    get(route('inspiration.index'))
+        ->assertOk()
+        ->assertInertia(fn (AssertableInertia $page) => $page
+            ->has('featuredChallenges', 1)
+            ->has('activeChallenges', 0)
+        );
+});
+
+test('index includes invite-to-submit challenges', function () {
+    Challenge::factory()->active()->inviteToSubmit()->create();
+
+    get(route('inspiration.index'))
+        ->assertOk()
+        ->assertInertia(fn (AssertableInertia $page) => $page
+            ->has('activeChallenges', 1)
+        );
+});
+
 test('index includes total_upvotes_count for active challenges', function () {
     $challenge = Challenge::factory()->active()->create();
     $showcases = \App\Models\Showcase\Showcase::factory()->count(2)->create();

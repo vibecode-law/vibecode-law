@@ -1,12 +1,15 @@
 <?php
 
+use App\Enums\ChallengeVisibility;
 use App\Enums\MarkdownProfile;
 use App\Models\Challenge\Challenge;
+use App\Models\Challenge\ChallengeInviteCode;
 use App\Models\Challenge\ChallengeShowcase;
 use App\Models\Organisation\Organisation;
 use App\Models\Showcase\Showcase;
 use App\Models\User;
 use App\Services\Markdown\MarkdownService;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\Storage;
@@ -158,6 +161,83 @@ test('thumbnail rect strings returns correct format for multiple crops', functio
         'square' => 'rect=50,100,200,200',
         'landscape' => 'rect=10,20,400,225',
     ]);
+});
+
+describe('inviteCodes relationship', function () {
+    test('challenge can have many invite codes', function () {
+        $challenge = Challenge::factory()->create();
+        ChallengeInviteCode::factory()->count(3)->forChallenge($challenge)->create();
+
+        expect($challenge->inviteCodes())->toBeInstanceOf(HasMany::class)
+            ->and($challenge->inviteCodes)->toHaveCount(3)
+            ->each->toBeInstanceOf(ChallengeInviteCode::class);
+    });
+
+    test('challenge with no invite codes returns empty collection', function () {
+        $challenge = Challenge::factory()->create();
+
+        expect($challenge->inviteCodes)->toBeEmpty();
+    });
+});
+
+describe('isInviteOnly', function () {
+    test('returns true for InviteToViewAndSubmit', function () {
+        $challenge = Challenge::factory()->inviteToViewAndSubmit()->create();
+
+        expect($challenge->isInviteOnly())->toBeTrue();
+    });
+
+    test('returns false for Public', function () {
+        $challenge = Challenge::factory()->create();
+
+        expect($challenge->isInviteOnly())->toBeFalse();
+    });
+
+    test('returns false for InviteToSubmit', function () {
+        $challenge = Challenge::factory()->inviteToSubmit()->create();
+
+        expect($challenge->isInviteOnly())->toBeFalse();
+    });
+});
+
+describe('requiresInviteToSubmit', function () {
+    test('returns true for InviteToSubmit', function () {
+        $challenge = Challenge::factory()->inviteToSubmit()->create();
+
+        expect($challenge->requiresInviteToSubmit())->toBeTrue();
+    });
+
+    test('returns true for InviteToViewAndSubmit', function () {
+        $challenge = Challenge::factory()->inviteToViewAndSubmit()->create();
+
+        expect($challenge->requiresInviteToSubmit())->toBeTrue();
+    });
+
+    test('returns false for Public', function () {
+        $challenge = Challenge::factory()->create();
+
+        expect($challenge->requiresInviteToSubmit())->toBeFalse();
+    });
+});
+
+describe('publiclyVisible scope', function () {
+    test('includes Public challenges', function () {
+        $public = Challenge::factory()->create(['visibility' => ChallengeVisibility::Public]);
+
+        expect(Challenge::publiclyVisible()->pluck('id')->all())->toContain($public->id);
+    });
+
+    test('includes InviteToSubmit challenges', function () {
+        $inviteToSubmit = Challenge::factory()->inviteToSubmit()->create();
+
+        expect(Challenge::publiclyVisible()->pluck('id')->all())->toContain($inviteToSubmit->id);
+    });
+
+    test('excludes InviteToViewAndSubmit challenges', function () {
+        $inviteOnly = Challenge::factory()->inviteToViewAndSubmit()->create();
+
+        expect(Challenge::publiclyVisible()->pluck('id')->all())->not->toContain($inviteOnly->id);
+    });
 });
 
 describe('markdown cache clearing on model events', function () {

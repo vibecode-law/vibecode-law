@@ -1,6 +1,8 @@
 <?php
 
+use App\Enums\InviteCodeScope;
 use App\Models\Challenge\Challenge;
+use App\Models\Challenge\ChallengeInviteCode;
 use App\Models\Organisation\Organisation;
 use App\Models\Showcase\Showcase;
 use App\Models\User;
@@ -273,6 +275,208 @@ test('show returns unique participants from publicly visible showcases', functio
                 ->has('avatar')
                 ->has('handle')
             )
+        );
+});
+
+test('show redirects to login for invite-to-view-and-submit challenge as guest', function () {
+    $challenge = Challenge::factory()->active()->inviteToViewAndSubmit()->create();
+
+    get(route('inspiration.challenges.show', $challenge))
+        ->assertRedirect(route('login'));
+});
+
+test('show stores intended url when redirecting guest to login', function () {
+    $challenge = Challenge::factory()->active()->inviteToViewAndSubmit()->create();
+
+    get(route('inspiration.challenges.show', $challenge));
+
+    expect(session('url.intended'))->toBe(route('inspiration.challenges.show', $challenge));
+});
+
+test('show renders invite-only page for invite-to-view-and-submit challenge without invite', function () {
+    /** @var User */
+    $user = User::factory()->create();
+    $challenge = Challenge::factory()->active()->inviteToViewAndSubmit()->create();
+
+    actingAs($user)
+        ->get(route('inspiration.challenges.show', $challenge))
+        ->assertOk()
+        ->assertInertia(fn (AssertableInertia $page) => $page
+            ->component('challenge/invite-only')
+            ->missing('challenge')
+        );
+});
+
+test('show returns 200 for invite-to-view-and-submit challenge with accepted invite', function () {
+    /** @var User */
+    $user = User::factory()->create();
+    $challenge = Challenge::factory()->active()->inviteToViewAndSubmit()->create();
+    $inviteCode = ChallengeInviteCode::factory()->forChallenge($challenge)->viewOnly()->create();
+    $inviteCode->users()->attach($user);
+
+    actingAs($user)
+        ->get(route('inspiration.challenges.show', $challenge))
+        ->assertOk();
+});
+
+test('show canSubmit is true for public challenges', function () {
+    $challenge = Challenge::factory()->active()->create();
+
+    get(route('inspiration.challenges.show', $challenge))
+        ->assertInertia(fn (AssertableInertia $page) => $page
+            ->where('canSubmit', true)
+        );
+});
+
+test('show canSubmit is false for invite-to-submit challenge without invite', function () {
+    /** @var User */
+    $user = User::factory()->create();
+    $challenge = Challenge::factory()->active()->inviteToSubmit()->create();
+
+    actingAs($user)
+        ->get(route('inspiration.challenges.show', $challenge))
+        ->assertInertia(fn (AssertableInertia $page) => $page
+            ->where('canSubmit', false)
+        );
+});
+
+test('show canSubmit is true for invite-to-submit challenge with ViewAndSubmit invite', function () {
+    /** @var User */
+    $user = User::factory()->create();
+    $challenge = Challenge::factory()->active()->inviteToSubmit()->create();
+    $inviteCode = ChallengeInviteCode::factory()->forChallenge($challenge)->create([
+        'scope' => InviteCodeScope::ViewAndSubmit,
+    ]);
+    $inviteCode->users()->attach($user);
+
+    actingAs($user)
+        ->get(route('inspiration.challenges.show', $challenge))
+        ->assertInertia(fn (AssertableInertia $page) => $page
+            ->where('canSubmit', true)
+        );
+});
+
+test('show returns 200 for invite-to-submit challenge as guest', function () {
+    $challenge = Challenge::factory()->active()->inviteToSubmit()->create();
+
+    get(route('inspiration.challenges.show', $challenge))
+        ->assertOk();
+});
+
+test('show canSubmit is false for invite-to-submit challenge with View-only invite', function () {
+    /** @var User */
+    $user = User::factory()->create();
+    $challenge = Challenge::factory()->active()->inviteToSubmit()->create();
+    $inviteCode = ChallengeInviteCode::factory()->forChallenge($challenge)->viewOnly()->create();
+    $inviteCode->users()->attach($user);
+
+    actingAs($user)
+        ->get(route('inspiration.challenges.show', $challenge))
+        ->assertInertia(fn (AssertableInertia $page) => $page
+            ->where('canSubmit', false)
+        );
+});
+
+test('show canSubmit is false for invite-to-view-and-submit challenge with View-only invite', function () {
+    /** @var User */
+    $user = User::factory()->create();
+    $challenge = Challenge::factory()->active()->inviteToViewAndSubmit()->create();
+    $inviteCode = ChallengeInviteCode::factory()->forChallenge($challenge)->viewOnly()->create();
+    $inviteCode->users()->attach($user);
+
+    actingAs($user)
+        ->get(route('inspiration.challenges.show', $challenge))
+        ->assertInertia(fn (AssertableInertia $page) => $page
+            ->where('canSubmit', false)
+        );
+});
+
+test('show canSubmit is true for invite-to-view-and-submit challenge with ViewAndSubmit invite', function () {
+    /** @var User */
+    $user = User::factory()->create();
+    $challenge = Challenge::factory()->active()->inviteToViewAndSubmit()->create();
+    $inviteCode = ChallengeInviteCode::factory()->forChallenge($challenge)->create([
+        'scope' => InviteCodeScope::ViewAndSubmit,
+    ]);
+    $inviteCode->users()->attach($user);
+
+    actingAs($user)
+        ->get(route('inspiration.challenges.show', $challenge))
+        ->assertInertia(fn (AssertableInertia $page) => $page
+            ->where('canSubmit', true)
+        );
+});
+
+test('show canSubmit is false for guest on invite-to-submit challenge', function () {
+    $challenge = Challenge::factory()->active()->inviteToSubmit()->create();
+
+    get(route('inspiration.challenges.show', $challenge))
+        ->assertInertia(fn (AssertableInertia $page) => $page
+            ->where('canSubmit', false)
+        );
+});
+
+test('show returns 200 for invite-to-view-and-submit challenge when user is admin', function () {
+    /** @var User */
+    $user = User::factory()->admin()->create();
+    $challenge = Challenge::factory()->active()->inviteToViewAndSubmit()->create();
+
+    actingAs($user)
+        ->get(route('inspiration.challenges.show', $challenge))
+        ->assertOk();
+});
+
+test('show canSubmit is true for admin on invite-to-view-and-submit challenge without invite', function () {
+    /** @var User */
+    $user = User::factory()->admin()->create();
+    $challenge = Challenge::factory()->active()->inviteToViewAndSubmit()->create();
+
+    actingAs($user)
+        ->get(route('inspiration.challenges.show', $challenge))
+        ->assertInertia(fn (AssertableInertia $page) => $page
+            ->where('canSubmit', true)
+        );
+});
+
+test('show canSubmit is true for admin on invite-to-submit challenge without invite', function () {
+    /** @var User */
+    $user = User::factory()->admin()->create();
+    $challenge = Challenge::factory()->active()->inviteToSubmit()->create();
+
+    actingAs($user)
+        ->get(route('inspiration.challenges.show', $challenge))
+        ->assertInertia(fn (AssertableInertia $page) => $page
+            ->where('canSubmit', true)
+        );
+});
+
+test('show requiresInviteToSubmit is false for public challenge', function () {
+    $challenge = Challenge::factory()->active()->create();
+
+    get(route('inspiration.challenges.show', $challenge))
+        ->assertInertia(fn (AssertableInertia $page) => $page
+            ->where('requiresInviteToSubmit', false)
+        );
+});
+
+test('show requiresInviteToSubmit is true for invite-to-submit challenge', function () {
+    $challenge = Challenge::factory()->active()->inviteToSubmit()->create();
+
+    get(route('inspiration.challenges.show', $challenge))
+        ->assertInertia(fn (AssertableInertia $page) => $page
+            ->where('requiresInviteToSubmit', true)
+        );
+});
+
+test('show requiresInviteToSubmit is true for invite-to-view-and-submit challenge', function () {
+    /** @var User */
+    $user = User::factory()->admin()->create();
+    $challenge = Challenge::factory()->active()->inviteToViewAndSubmit()->create();
+
+    actingAs($user)
+        ->get(route('inspiration.challenges.show', $challenge))
+        ->assertInertia(fn (AssertableInertia $page) => $page
+            ->where('requiresInviteToSubmit', true)
         );
 });
 

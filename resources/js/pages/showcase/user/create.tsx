@@ -21,6 +21,7 @@ interface CreateProps {
     practiceAreas: App.Http.Resources.PracticeAreaResource[];
     sourceStatuses: FrontendEnum<number>[];
     challenge?: ChallengeContext | null;
+    challengeWarning?: string | null;
 }
 
 export default function Create(props: CreateProps) {
@@ -33,6 +34,7 @@ function CreateWrapper({
     practiceAreas,
     sourceStatuses,
     challenge,
+    challengeWarning,
 }: CreateProps) {
     const { hasPermission } = usePermissions();
     const isEditing = showcase !== undefined;
@@ -111,6 +113,7 @@ function CreateWrapper({
             showSlugField={canEditSlug}
             canSubmit={canSubmit}
             challenge={challenge ?? undefined}
+            challengeWarning={challengeWarning ?? undefined}
         />
     );
 }

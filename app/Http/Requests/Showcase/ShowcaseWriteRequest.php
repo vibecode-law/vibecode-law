@@ -2,6 +2,7 @@
 
 namespace App\Http\Requests\Showcase;
 
+use App\Enums\InviteCodeScope;
 use App\Enums\SourceStatus;
 use App\Models\Challenge\Challenge;
 use App\Models\PracticeArea;
@@ -144,6 +145,7 @@ class ShowcaseWriteRequest extends FormRequest
             $showcase = $this->route('showcase');
 
             $this->validateChallengeDateWindow(validator: $validator, showcase: $showcase);
+            $this->validateChallengeInviteAccess(validator: $validator, showcase: $showcase);
 
             $existingImagesCount = $showcase?->images()->count() ?? 0;
             $removedImagesCount = count($this->input('removed_images', []));
@@ -202,6 +204,27 @@ class ShowcaseWriteRequest extends FormRequest
 
         if ($challenge->ends_at !== null && $now->isAfter($challenge->ends_at)) {
             $validator->errors()->add('challenge_id', 'This challenge has already closed.');
+        }
+    }
+
+    private function validateChallengeInviteAccess(Validator $validator, ?Showcase $showcase): void
+    {
+        $challengeId = $this->input('challenge_id');
+
+        if ($challengeId === null) {
+            return;
+        }
+
+        $challenge = Challenge::find($challengeId);
+
+        if ($challenge === null) {
+            return;
+        }
+
+        if ($challenge->requiresInviteToSubmit() === true) {
+            if ($this->user()->hasChallengeAccess($challenge, InviteCodeScope::ViewAndSubmit) === false) {
+                $validator->errors()->add('challenge_id', 'You do not have permission to submit to this challenge.');
+            }
         }
     }
 

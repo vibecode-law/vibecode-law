@@ -1,5 +1,6 @@
 <?php
 
+use App\Enums\ChallengeVisibility;
 use App\Models\Challenge\Challenge;
 use App\Models\Organisation\Organisation;
 use App\Models\User;
@@ -218,6 +219,41 @@ describe('store', function () {
         $challenge = Challenge::query()->where('slug', 'no-org-challenge')->firstOrFail();
 
         expect($challenge->organisation_id)->toBeNull();
+    });
+
+    test('creates challenge with visibility', function () {
+        $admin = User::factory()->admin()->create();
+
+        actingAs($admin);
+
+        post(route('staff.challenges.store'), [
+            'title' => 'Invite Challenge',
+            'slug' => 'invite-challenge',
+            'tagline' => 'An invite challenge',
+            'description' => 'Description here.',
+            'visibility' => ChallengeVisibility::InviteToSubmit->value,
+        ])->assertRedirect();
+
+        $challenge = Challenge::query()->where('slug', 'invite-challenge')->firstOrFail();
+
+        expect($challenge->visibility)->toBe(ChallengeVisibility::InviteToSubmit);
+    });
+
+    test('creates challenge with public visibility by default', function () {
+        $admin = User::factory()->admin()->create();
+
+        actingAs($admin);
+
+        post(route('staff.challenges.store'), [
+            'title' => 'Default Vis Challenge',
+            'slug' => 'default-vis-challenge',
+            'tagline' => 'Default visibility',
+            'description' => 'Description here.',
+        ])->assertRedirect();
+
+        $challenge = Challenge::query()->where('slug', 'default-vis-challenge')->firstOrFail();
+
+        expect($challenge->visibility)->toBe(ChallengeVisibility::Public);
     });
 
     test('creates challenge inactive by default', function () {

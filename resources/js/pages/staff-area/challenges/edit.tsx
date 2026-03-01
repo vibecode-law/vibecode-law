@@ -5,14 +5,21 @@ import { Button } from '@/components/ui/button';
 import { SubmitButton } from '@/components/ui/submit-button';
 import StaffAreaLayout from '@/layouts/staff-area/layout';
 import { index, update } from '@/routes/staff/challenges';
+import { index as inviteCodesIndex } from '@/routes/staff/challenges/invite-codes';
 import { Form, Head, Link } from '@inertiajs/react';
-import { ArrowLeft } from 'lucide-react';
+import { ArrowLeft, KeyRound } from 'lucide-react';
 
 interface ChallengesEditProps {
     challenge: App.Http.Resources.Challenge.ChallengeResource;
+    inviteCodesCount: number;
+    visibilityOptions: App.ValueObjects.FrontendEnum[];
 }
 
-export default function ChallengesEdit({ challenge }: ChallengesEditProps) {
+export default function ChallengesEdit({
+    challenge,
+    inviteCodesCount,
+    visibilityOptions,
+}: ChallengesEditProps) {
     return (
         <StaffAreaLayout fullWidth>
             <Head title={`Edit ${challenge.title}`} />
@@ -57,6 +64,7 @@ export default function ChallengesEdit({ challenge }: ChallengesEditProps) {
                                 <ChallengeFormFields
                                     processing={processing}
                                     errors={errors}
+                                    visibilityOptions={visibilityOptions}
                                     mode="edit"
                                     defaultValues={{
                                         title: challenge.title,
@@ -67,6 +75,7 @@ export default function ChallengesEdit({ challenge }: ChallengesEditProps) {
                                         ends_at: challenge.ends_at,
                                         is_active: challenge.is_active,
                                         is_featured: challenge.is_featured,
+                                        visibility: challenge.visibility,
                                         organisation:
                                             challenge.organisation ?? null,
                                         thumbnail_url:
@@ -76,20 +85,50 @@ export default function ChallengesEdit({ challenge }: ChallengesEditProps) {
                                     }}
                                 />
 
-                                <div className="mt-6 flex items-center justify-end gap-3 border-t pt-6 dark:border-neutral-800">
-                                    <Button
-                                        variant="outline"
-                                        type="button"
-                                        asChild
-                                    >
-                                        <Link href={index.url()}>Cancel</Link>
-                                    </Button>
-                                    <SubmitButton
-                                        processing={processing}
-                                        processingLabel="Saving..."
-                                    >
-                                        Save changes
-                                    </SubmitButton>
+                                <div className="mt-6 flex items-center border-t pt-6 dark:border-neutral-800">
+                                    {challenge.visibility !== undefined &&
+                                        challenge.visibility !== 1 && (
+                                            <Button
+                                                variant="outline"
+                                                type="button"
+                                                asChild
+                                            >
+                                                <Link
+                                                    href={inviteCodesIndex.url({
+                                                        challenge:
+                                                            challenge.slug,
+                                                    })}
+                                                >
+                                                    <KeyRound className="mr-1.5 size-4" />
+                                                    Manage Invite Codes
+                                                    {inviteCodesCount > 0 && (
+                                                        <Badge
+                                                            variant="secondary"
+                                                            className="ml-1.5"
+                                                        >
+                                                            {inviteCodesCount}
+                                                        </Badge>
+                                                    )}
+                                                </Link>
+                                            </Button>
+                                        )}
+                                    <div className="ml-auto flex items-center gap-3">
+                                        <Button
+                                            variant="outline"
+                                            type="button"
+                                            asChild
+                                        >
+                                            <Link href={index.url()}>
+                                                Cancel
+                                            </Link>
+                                        </Button>
+                                        <SubmitButton
+                                            processing={processing}
+                                            processingLabel="Saving..."
+                                        >
+                                            Save changes
+                                        </SubmitButton>
+                                    </div>
                                 </div>
                             </>
                         )}
