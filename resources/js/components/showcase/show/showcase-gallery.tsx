@@ -8,8 +8,8 @@ import { cn } from '@/lib/utils';
 import { type SharedData } from '@/types';
 import { usePage } from '@inertiajs/react';
 import * as DialogPrimitive from '@radix-ui/react-dialog';
-import { Play, X } from 'lucide-react';
-import { useState } from 'react';
+import { ChevronLeft, ChevronRight, Play, X } from 'lucide-react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 
 type ShowcaseImage = App.Http.Resources.Showcase.ShowcaseImageResource;
 
@@ -30,12 +30,72 @@ export function ShowcaseGallery({
 }: ShowcaseGalleryProps) {
     const { transformImages } = usePage<SharedData>().props;
     const [modalOpen, setModalOpen] = useState(false);
+    const [modalImageIndex, setModalImageIndex] = useState(0);
+    const touchStartX = useRef<number | null>(null);
     const hasVideo =
         youtubeId !== null && youtubeId !== undefined && youtubeId !== '';
     const isVideoSelected = hasVideo && selectedIndex === 0;
     const imageIndex = hasVideo ? selectedIndex - 1 : selectedIndex;
     const selectedImage = images[imageIndex];
     const totalItems = images.length + (hasVideo ? 1 : 0);
+    const modalImage = images[modalImageIndex];
+    const hasMultipleImages = images.length > 1;
+
+    const goToPrevImage = useCallback(() => {
+        setModalImageIndex((prev) => (prev > 0 ? prev - 1 : images.length - 1));
+    }, [images.length]);
+
+    const goToNextImage = useCallback(() => {
+        setModalImageIndex((prev) => (prev < images.length - 1 ? prev + 1 : 0));
+    }, [images.length]);
+
+    useEffect(() => {
+        if (modalOpen === false || hasMultipleImages === false) {
+            return;
+        }
+
+        const handleKeyDown = (e: KeyboardEvent) => {
+            if (e.key === 'ArrowLeft') {
+                e.preventDefault();
+                goToPrevImage();
+            } else if (e.key === 'ArrowRight') {
+                e.preventDefault();
+                goToNextImage();
+            }
+        };
+
+        window.addEventListener('keydown', handleKeyDown);
+
+        return () => window.removeEventListener('keydown', handleKeyDown);
+    }, [modalOpen, hasMultipleImages, goToPrevImage, goToNextImage]);
+
+    const handleTouchStart = (e: React.TouchEvent) => {
+        touchStartX.current = e.touches[0].clientX;
+    };
+
+    const handleTouchEnd = (e: React.TouchEvent) => {
+        if (touchStartX.current === null || hasMultipleImages === false) {
+            return;
+        }
+
+        const diff = touchStartX.current - e.changedTouches[0].clientX;
+        const threshold = 50;
+
+        if (Math.abs(diff) > threshold) {
+            if (diff > 0) {
+                goToNextImage();
+            } else {
+                goToPrevImage();
+            }
+        }
+
+        touchStartX.current = null;
+    };
+
+    const openModal = (index: number) => {
+        setModalImageIndex(index);
+        setModalOpen(true);
+    };
 
     return (
         <div className="mb-8 space-y-3">
@@ -54,7 +114,7 @@ export function ShowcaseGallery({
                 ) : (
                     <button
                         type="button"
-                        onClick={() => setModalOpen(true)}
+                        onClick={() => openModal(imageIndex)}
                         className="w-full cursor-zoom-in"
                     >
                         <img
@@ -73,16 +133,46 @@ export function ShowcaseGallery({
             <Dialog open={modalOpen} onOpenChange={setModalOpen}>
                 <DialogPortal>
                     <DialogOverlay />
-                    <DialogPrimitive.Content className="fixed top-1/2 left-1/2 z-50 max-h-[90vh] max-w-[90vw] -translate-x-1/2 -translate-y-1/2 focus:outline-none">
+                    <DialogPrimitive.Content
+                        className="fixed top-1/2 left-1/2 z-50 max-h-[90vh] max-w-[90vw] -translate-x-1/2 -translate-y-1/2 focus:outline-none"
+                        onTouchStart={handleTouchStart}
+                        onTouchEnd={handleTouchEnd}
+                    >
                         <img
-                            src={selectedImage?.url}
-                            alt={selectedImage?.alt_text ?? fallbackAlt}
+                            src={modalImage?.url}
+                            alt={modalImage?.alt_text ?? fallbackAlt}
                             className="max-h-[90vh] max-w-[90vw] rounded-lg object-contain"
+                            draggable={false}
                         />
-                        <DialogClose className="absolute -top-2 -right-2 rounded-full bg-white p-1.5 text-neutral-900 shadow-lg transition-opacity hover:opacity-80">
+                        <DialogClose className="absolute -top-10 -right-12 rounded-full bg-white/90 p-1.5 text-neutral-900 shadow-lg transition-opacity hover:opacity-80">
                             <X className="size-5" />
                             <span className="sr-only">Close</span>
                         </DialogClose>
+                        {hasMultipleImages && (
+                            <>
+                                <button
+                                    type="button"
+                                    onClick={goToPrevImage}
+                                    className="absolute top-1/2 -left-12 hidden -translate-y-1/2 rounded-full bg-white/90 p-1.5 text-neutral-900 shadow-lg transition-opacity hover:opacity-80 md:block"
+                                >
+                                    <ChevronLeft className="size-5" />
+                                    <span className="sr-only">
+                                        Previous image
+                                    </span>
+                                </button>
+                                <button
+                                    type="button"
+                                    onClick={goToNextImage}
+                                    className="absolute top-1/2 -right-12 hidden -translate-y-1/2 rounded-full bg-white/90 p-1.5 text-neutral-900 shadow-lg transition-opacity hover:opacity-80 md:block"
+                                >
+                                    <ChevronRight className="size-5" />
+                                    <span className="sr-only">Next image</span>
+                                </button>
+                                <div className="absolute -bottom-8 left-1/2 -translate-x-1/2 text-sm text-white">
+                                    {modalImageIndex + 1} / {images.length}
+                                </div>
+                            </>
+                        )}
                     </DialogPrimitive.Content>
                 </DialogPortal>
             </Dialog>
