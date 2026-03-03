@@ -22,6 +22,7 @@ use Illuminate\Support\Facades\Storage;
 /**
  * @property array<string, array{x: int, y: int, width: int, height: int}>|null $thumbnail_crops
  * @property-read int|null $total_upvotes_count
+ *
  * @mixin IdeHelperChallenge
  */
 class Challenge extends Model

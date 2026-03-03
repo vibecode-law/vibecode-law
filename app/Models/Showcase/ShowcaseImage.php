@@ -11,6 +11,7 @@ use Illuminate\Support\Facades\Storage;
 
 /**
  * @property array<string, array{x: int, y: int, width: int, height: int}>|null $crops
+ *
  * @mixin IdeHelperShowcaseImage
  */
 class ShowcaseImage extends Model

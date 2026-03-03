@@ -31,6 +31,7 @@ use Spatie\Permission\Traits\HasRoles;
 
 /**
  * @property \Illuminate\Support\Carbon|null $marketing_opt_out_at
+ *
  * @mixin IdeHelperUser
  */
 class User extends Authenticatable implements MustVerifyEmail

@@ -12,6 +12,7 @@ use Illuminate\Support\Facades\Storage;
 
 /**
  * @property array{x: int, y: int, width: int, height: int}|null $thumbnail_crop
+ *
  * @mixin IdeHelperPressCoverage
  */
 class PressCoverage extends Model

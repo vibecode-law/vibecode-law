@@ -17,6 +17,7 @@ use Illuminate\Support\Facades\Storage;
 
 /**
  * @property array<string, array{x: int, y: int, width: int, height: int}>|null $thumbnail_crops
+ *
  * @mixin IdeHelperCourse
  */
 class Course extends Model
