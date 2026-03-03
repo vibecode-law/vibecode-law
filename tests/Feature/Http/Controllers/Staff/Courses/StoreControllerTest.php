@@ -170,6 +170,37 @@ describe('store', function () {
         ]);
     });
 
+    test('strips extra shapes and fields from thumbnail crops', function () {
+        Storage::fake('public');
+
+        $admin = User::factory()->admin()->create();
+
+        actingAs($admin);
+
+        post(route('staff.academy.courses.store'), [
+            'title' => 'Strip Course',
+            'slug' => 'strip-course',
+            'tagline' => 'With extras',
+            'description' => 'Description here.',
+            'learning_objectives' => 'Test objectives',
+            'experience_level' => ExperienceLevel::Foundation->value,
+            'is_featured' => false,
+            'thumbnail' => UploadedFile::fake()->image(name: 'thumbnail.jpg', width: 800, height: 600),
+            'thumbnail_crops' => [
+                'square' => ['x' => 100, 'y' => 50, 'width' => 400, 'height' => 400, 'zoom' => 1.5],
+                'landscape' => ['x' => 0, 'y' => 50, 'width' => 800, 'height' => 450],
+                'portrait' => ['x' => 0, 'y' => 0, 'width' => 300, 'height' => 500],
+            ],
+        ])->assertRedirect();
+
+        $course = Course::query()->where('slug', 'strip-course')->firstOrFail();
+
+        expect($course->thumbnail_crops)->toBe([
+            'square' => ['x' => 100, 'y' => 50, 'width' => 400, 'height' => 400],
+            'landscape' => ['x' => 0, 'y' => 50, 'width' => 800, 'height' => 450],
+        ]);
+    });
+
     test('returns success flash message', function () {
         $admin = User::factory()->admin()->create();
 
@@ -295,26 +326,6 @@ describe('validation', function () {
             'is_featured' => false,
             'thumbnail' => $file,
         ])->assertSessionHasErrors(['thumbnail']);
-    });
-
-    test('rejects invalid crop keys', function () {
-        $admin = User::factory()->admin()->create();
-
-        actingAs($admin);
-
-        post(route('staff.academy.courses.store'), [
-            'title' => 'Test',
-            'slug' => 'test',
-            'tagline' => 'Tagline',
-            'description' => 'Description',
-            'learning_objectives' => 'Objectives',
-            'experience_level' => ExperienceLevel::Foundation->value,
-            'is_featured' => false,
-            'thumbnail' => UploadedFile::fake()->image(name: 'thumb.jpg', width: 800, height: 600),
-            'thumbnail_crops' => [
-                'portrait' => ['x' => 0, 'y' => 0, 'width' => 300, 'height' => 500],
-            ],
-        ])->assertSessionHasErrors(['thumbnail_crops']);
     });
 
     test('validates tags must be an array of valid tag ids', function ($data, $invalid) {

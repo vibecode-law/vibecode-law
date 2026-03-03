@@ -155,6 +155,24 @@ describe('updating', function () {
         Storage::disk('public')->assertExists($testimonial->avatar_path);
     });
 
+    test('strips extra fields from avatar crop', function () {
+        $moderator = User::factory()->moderator()->create();
+        $testimonial = Testimonial::factory()->create();
+
+        actingAs($moderator);
+
+        put(route('staff.testimonials.update', $testimonial), [
+            'name' => $testimonial->name,
+            'content' => $testimonial->content,
+            'avatar' => UploadedFile::fake()->image('avatar.png', 200, 200),
+            'avatar_crop' => ['x' => 10, 'y' => 20, 'width' => 100, 'height' => 100, 'zoom' => 1.5, 'rotation' => 90],
+        ])->assertRedirect();
+
+        $testimonial->refresh();
+
+        expect($testimonial->avatar_crop)->toBe(['x' => 10, 'y' => 20, 'width' => 100, 'height' => 100]);
+    });
+
     test('updates crop data without replacing avatar file', function () {
         $moderator = User::factory()->moderator()->create();
         $testimonial = Testimonial::factory()->create([

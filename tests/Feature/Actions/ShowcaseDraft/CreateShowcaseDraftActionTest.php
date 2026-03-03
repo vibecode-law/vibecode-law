@@ -74,6 +74,20 @@ describe('draft creation', function () {
         expect($draft->images[1]->original_image_id)->toBe($images[1]->id);
     });
 
+    test('copies image crops to draft images', function () {
+        $showcase = Showcase::factory()->approved()->create();
+        $crops = ['landscape' => ['x' => 10, 'y' => 20, 'width' => 800, 'height' => 450]];
+        $showcase->images()->createMany([
+            ['path' => 'showcase/1/images/image1.jpg', 'filename' => 'image1.jpg', 'order' => 1, 'alt_text' => null, 'crops' => $crops],
+            ['path' => 'showcase/1/images/image2.jpg', 'filename' => 'image2.jpg', 'order' => 2, 'alt_text' => null, 'crops' => null],
+        ]);
+
+        $draft = (new CreateShowcaseDraftAction)->create(showcase: $showcase);
+
+        expect($draft->images[0]->crops)->toBe($crops);
+        expect($draft->images[1]->crops)->toBeNull();
+    });
+
     test('copies thumbnail metadata to draft', function () {
         $showcase = Showcase::factory()->approved()->create([
             'thumbnail_extension' => 'jpg',

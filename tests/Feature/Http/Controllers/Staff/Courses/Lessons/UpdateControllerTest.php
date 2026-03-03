@@ -151,6 +151,36 @@ describe('update', function () {
         Storage::disk('public')->assertExists("lesson/{$lesson->id}/{$lesson->thumbnail_filename}");
     });
 
+    test('strips extra shapes and fields from thumbnail crops', function () {
+        Storage::fake('public');
+
+        $admin = User::factory()->admin()->create();
+        $course = Course::factory()->create();
+        $lesson = Lesson::factory()->create(['course_id' => $course->id, 'allow_preview' => false, 'publish_date' => null]);
+
+        actingAs($admin);
+
+        patch(route('staff.academy.courses.lessons.update', [$course, $lesson]), [
+            'title' => $lesson->title,
+            'slug' => $lesson->slug,
+            'tagline' => $lesson->tagline,
+            'description' => $lesson->description,
+            'learning_objectives' => 'Objectives',
+            'gated' => true,
+            'thumbnail' => UploadedFile::fake()->image(name: 'thumbnail.jpg', width: 800, height: 600),
+            'thumbnail_crops' => [
+                'landscape' => ['x' => 0, 'y' => 50, 'width' => 800, 'height' => 450, 'zoom' => 1.5],
+                'square' => ['x' => 100, 'y' => 50, 'width' => 400, 'height' => 400],
+            ],
+        ])->assertRedirect();
+
+        $lesson->refresh();
+
+        expect($lesson->thumbnail_crops)->toBe([
+            'landscape' => ['x' => 0, 'y' => 50, 'width' => 800, 'height' => 450],
+        ]);
+    });
+
     test('handles thumbnail removal', function () {
         Storage::fake('public');
 
@@ -395,7 +425,7 @@ describe('validation', function () {
         'learning_objectives' => ['learning_objectives'],
     ]);
 
-    test('validates thumbnail_crops rejects invalid keys', function ($data, $invalid) {
+    test('validates thumbnail_crops rejects incorrect aspect ratios', function () {
         $admin = User::factory()->admin()->create();
         $course = Course::factory()->create();
         $lesson = Lesson::factory()->create(['course_id' => $course->id, 'allow_preview' => false, 'publish_date' => null]);
@@ -409,22 +439,9 @@ describe('validation', function () {
             'description' => $lesson->description,
             'learning_objectives' => 'Objectives',
             'gated' => true,
-            ...$data,
-        ])->assertSessionHasErrors($invalid);
-    })->with([
-        'square crop key rejected' => [
-            ['thumbnail_crops' => ['square' => ['x' => 0, 'y' => 0, 'width' => 100, 'height' => 100]]],
-            ['thumbnail_crops'],
-        ],
-        'unknown crop key rejected' => [
-            ['thumbnail_crops' => ['banner' => ['x' => 0, 'y' => 0, 'width' => 100, 'height' => 100]]],
-            ['thumbnail_crops'],
-        ],
-        'landscape crop with wrong aspect ratio rejected' => [
-            ['thumbnail_crops' => ['landscape' => ['x' => 0, 'y' => 0, 'width' => 100, 'height' => 100]]],
-            ['thumbnail_crops'],
-        ],
-    ]);
+            'thumbnail_crops' => ['landscape' => ['x' => 0, 'y' => 0, 'width' => 100, 'height' => 100]],
+        ])->assertSessionHasErrors(['thumbnail_crops']);
+    });
 
     test('accepts valid landscape crop data', function () {
         $admin = User::factory()->admin()->create();

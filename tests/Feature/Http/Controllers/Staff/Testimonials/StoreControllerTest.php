@@ -142,6 +142,23 @@ describe('storing', function () {
             ->and($testimonial->avatar_crop)->toBe(['x' => 10, 'y' => 20, 'width' => 100, 'height' => 100]);
         Storage::disk('public')->assertExists($testimonial->avatar_path);
     });
+
+    test('strips extra fields from avatar crop', function () {
+        $moderator = User::factory()->moderator()->create();
+
+        actingAs($moderator);
+
+        post(route('staff.testimonials.store'), [
+            'name' => 'Jane Doe',
+            'content' => 'With extra crop fields.',
+            'avatar' => UploadedFile::fake()->image('avatar.jpg', 200, 200),
+            'avatar_crop' => ['x' => 10, 'y' => 20, 'width' => 100, 'height' => 100, 'zoom' => 1.5, 'rotation' => 90],
+        ])->assertRedirect();
+
+        $testimonial = Testimonial::latest('id')->first();
+
+        expect($testimonial->avatar_crop)->toBe(['x' => 10, 'y' => 20, 'width' => 100, 'height' => 100]);
+    });
 });
 
 describe('validation', function () {

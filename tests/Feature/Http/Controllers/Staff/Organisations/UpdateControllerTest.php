@@ -152,23 +152,6 @@ describe('validation', function () {
         ])->assertSessionHasErrors(['thumbnail']);
     });
 
-    test('rejects invalid crop keys', function () {
-        $admin = User::factory()->admin()->create();
-        $organisation = Organisation::factory()->create();
-
-        actingAs($admin);
-
-        patch(route('staff.organisations.update', $organisation), [
-            'name' => $organisation->name,
-            'tagline' => $organisation->tagline,
-            'about' => $organisation->about,
-            'thumbnail' => UploadedFile::fake()->image(name: 'thumb.jpg', width: 800, height: 600),
-            'thumbnail_crops' => [
-                'portrait' => ['x' => 0, 'y' => 0, 'width' => 300, 'height' => 500],
-            ],
-        ])->assertSessionHasErrors(['thumbnail_crops']);
-    });
-
     test('rejects crops with incorrect aspect ratios', function ($crops) {
         $admin = User::factory()->admin()->create();
         $organisation = Organisation::factory()->create();
@@ -258,6 +241,34 @@ describe('update', function () {
             'thumbnail_crops' => [
                 'square' => ['x' => 100, 'y' => 50, 'width' => 400, 'height' => 400],
                 'landscape' => ['x' => 0, 'y' => 50, 'width' => 800, 'height' => 450],
+            ],
+        ])->assertRedirect();
+
+        $organisation->refresh();
+
+        expect($organisation->thumbnail_crops)->toBe([
+            'square' => ['x' => 100, 'y' => 50, 'width' => 400, 'height' => 400],
+            'landscape' => ['x' => 0, 'y' => 50, 'width' => 800, 'height' => 450],
+        ]);
+    });
+
+    test('strips extra shapes and fields from thumbnail crops', function () {
+        Storage::fake('public');
+
+        $admin = User::factory()->admin()->create();
+        $organisation = Organisation::factory()->create();
+
+        actingAs($admin);
+
+        patch(route('staff.organisations.update', $organisation), [
+            'name' => $organisation->name,
+            'tagline' => $organisation->tagline,
+            'about' => $organisation->about,
+            'thumbnail' => UploadedFile::fake()->image(name: 'logo.jpg', width: 800, height: 600),
+            'thumbnail_crops' => [
+                'square' => ['x' => 100, 'y' => 50, 'width' => 400, 'height' => 400, 'zoom' => 1.5],
+                'landscape' => ['x' => 0, 'y' => 50, 'width' => 800, 'height' => 450],
+                'portrait' => ['x' => 0, 'y' => 0, 'width' => 300, 'height' => 500],
             ],
         ])->assertRedirect();
 

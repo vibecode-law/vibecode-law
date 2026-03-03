@@ -13,6 +13,35 @@ import { useCallback, useEffect, useRef, useState } from 'react';
 
 type ShowcaseImage = App.Http.Resources.Showcase.ShowcaseImageResource;
 
+function buildImageUrl(
+    baseUrl: string,
+    transform: boolean,
+    image: ShowcaseImage,
+    width?: number,
+): string {
+    if (transform === false) {
+        return baseUrl;
+    }
+
+    const params = new URLSearchParams();
+
+    if (width !== undefined) {
+        params.set('w', String(width));
+    }
+
+    const landscapeCrop = image.crops?.landscape;
+
+    if (landscapeCrop !== undefined && landscapeCrop !== null) {
+        params.set(
+            'rect',
+            `${landscapeCrop.x},${landscapeCrop.y},${landscapeCrop.width},${landscapeCrop.height}`,
+        );
+    }
+
+    const paramString = params.toString();
+    return paramString !== '' ? `${baseUrl}?${paramString}` : baseUrl;
+}
+
 interface ShowcaseGalleryProps {
     images: ShowcaseImage[];
     selectedIndex: number;
@@ -118,11 +147,12 @@ export function ShowcaseGallery({
                         className="w-full cursor-zoom-in"
                     >
                         <img
-                            src={
-                                transformImages === true
-                                    ? `${selectedImage.url}?w=700`
-                                    : selectedImage.url
-                            }
+                            src={buildImageUrl(
+                                selectedImage.url,
+                                transformImages === true,
+                                selectedImage,
+                                700,
+                            )}
                             alt={selectedImage.alt_text ?? fallbackAlt}
                             className="aspect-video w-full object-cover"
                         />
@@ -212,11 +242,12 @@ export function ShowcaseGallery({
                                 )}
                             >
                                 <img
-                                    src={
-                                        transformImages === true
-                                            ? `${image.url}?w=700`
-                                            : image.url
-                                    }
+                                    src={buildImageUrl(
+                                        image.url,
+                                        transformImages === true,
+                                        image,
+                                        700,
+                                    )}
                                     alt={
                                         image.alt_text ??
                                         `${fallbackAlt} - Image ${index + 1}`

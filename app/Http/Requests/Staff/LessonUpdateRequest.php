@@ -3,7 +3,8 @@
 namespace App\Http\Requests\Staff;
 
 use App\Models\Course\Lesson;
-use Closure;
+use App\Rules\CropAspectRatio;
+use App\Services\CropSanitizationService;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
 
@@ -12,6 +13,18 @@ class LessonUpdateRequest extends FormRequest
     public function authorize(): bool
     {
         return true;
+    }
+
+    protected function prepareForValidation(): void
+    {
+        if ($this->has('thumbnail_crops') && is_array($this->input('thumbnail_crops'))) {
+            $this->merge([
+                'thumbnail_crops' => CropSanitizationService::sanitizeNamedCrops(
+                    crops: $this->input('thumbnail_crops'),
+                    allowedShapes: ['landscape'],
+                ),
+            ]);
+        }
     }
 
     /**
@@ -48,7 +61,7 @@ class LessonUpdateRequest extends FormRequest
             'thumbnail_crops' => [
                 'nullable',
                 'array',
-                $this->validateCropKeysAndAspectRatios(),
+                new CropAspectRatio(expectedRatios: ['landscape' => 16 / 9]),
             ],
             'thumbnail_crops.*' => ['array'],
             'thumbnail_crops.*.x' => ['required', 'integer', 'min:0'],
@@ -61,43 +74,6 @@ class LessonUpdateRequest extends FormRequest
             'instructor_ids' => ['nullable', 'array'],
             'instructor_ids.*' => ['integer', Rule::exists('users', 'id')],
         ];
-    }
-
-    /**
-     * @return Closure(string, mixed, Closure): void
-     */
-    private function validateCropKeysAndAspectRatios(): Closure
-    {
-        $expectedRatios = [
-            'landscape' => 16 / 9,
-        ];
-
-        return function (string $attribute, mixed $value, Closure $fail) use ($expectedRatios): void {
-            if (! is_array($value)) {
-                return;
-            }
-
-            $invalidKeys = array_diff(array_keys($value), array_keys($expectedRatios));
-
-            if (count($invalidKeys) > 0) {
-                $fail('Only landscape crops are accepted.');
-
-                return;
-            }
-
-            foreach ($value as $key => $crop) {
-                if (! is_array($crop) || ! isset($crop['width'], $crop['height']) || (int) $crop['height'] === 0) {
-                    continue;
-                }
-
-                $ratio = (int) $crop['width'] / (int) $crop['height'];
-                $expectedRatio = $expectedRatios[$key];
-
-                if (abs($ratio - $expectedRatio) > 0.02) {
-                    $fail("The {$key} crop does not have the correct aspect ratio.");
-                }
-            }
-        };
     }
 
     /**

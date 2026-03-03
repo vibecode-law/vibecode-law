@@ -54,6 +54,7 @@ class CreateShowcaseDraftAction
                     'filename' => $image->filename,
                     'alt_text' => $image->alt_text,
                     'order' => $image->order,
+                    'crops' => $image->crops,
                 ]);
             }
 

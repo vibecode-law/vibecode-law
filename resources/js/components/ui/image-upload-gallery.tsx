@@ -1,7 +1,11 @@
 import { type NormalizedImage } from '@/components/showcase/form/types';
 import { cn } from '@/lib/utils';
-import { ImagePlus, X } from 'lucide-react';
+import { Crop, ImagePlus, X } from 'lucide-react';
 import { useEffect, useRef, useState } from 'react';
+import {
+    ImageCropModal,
+    type CropData,
+} from '@/components/ui/image-crop-modal';
 
 function generateId(): string {
     if (
@@ -12,6 +16,8 @@ function generateId(): string {
     }
     return `${Date.now()}-${Math.random().toString(36).substring(2, 11)}`;
 }
+
+type CropRegion = App.ValueObjects.ImageCrop;
 
 interface ImageUploadGalleryProps {
     name: string;
@@ -28,6 +34,12 @@ interface ImageUploadGalleryProps {
     /** Field name for tracking deleted new draft images (only for edit-draft mode) */
     deletedNewImagesFieldName?: string;
     onChange?: () => void;
+    /** Whether to require cropping when uploading new images */
+    requireCrop?: boolean;
+    /** Aspect ratio for the crop modal (e.g. 16/9) */
+    cropAspectRatio?: number;
+    /** The crop region name (e.g. 'landscape') */
+    cropName?: string;
 }
 
 interface GalleryImage {
@@ -41,6 +53,9 @@ interface GalleryImage {
     /** The draft image ID (only for new draft images) */
     draftImageId?: number | null;
     file?: File;
+    crops?: Record<string, CropRegion> | null;
+    /** The original uncropped image URL (for re-cropping) */
+    originalUrl?: string;
 }
 
 function HiddenFileInput({ name, file }: { name: string; file: File }) {
@@ -70,6 +85,9 @@ export function ImageUploadGallery({
     removedImagesFieldName = 'removed_images',
     deletedNewImagesFieldName,
     onChange,
+    requireCrop = false,
+    cropAspectRatio = 16 / 9,
+    cropName = 'landscape',
 }: ImageUploadGalleryProps) {
     const [images, setImages] = useState<GalleryImage[]>(() => {
         if (existingImages === undefined || existingImages.length === 0) {
@@ -82,6 +100,7 @@ export function ImageUploadGallery({
             originalImageId: img.originalImageId,
             isNewDraftImage: img.isNewDraftImage,
             draftImageId: img.draftImageId,
+            crops: img.crops,
         }));
     });
     const [removedImageIds, setRemovedImageIds] = useState<number[]>([]);
@@ -91,24 +110,155 @@ export function ImageUploadGallery({
     const [selectedIndex, setSelectedIndex] = useState(0);
     const fileInputRef = useRef<HTMLInputElement>(null);
 
+    // Crop modal state
+    const [cropModalOpen, setCropModalOpen] = useState(false);
+    const [pendingCropFiles, setPendingCropFiles] = useState<File[]>([]);
+    const [pendingCropUrls, setPendingCropUrls] = useState<string[]>([]);
+    const [currentCropIndex, setCurrentCropIndex] = useState(0);
+
+    // Re-crop modal state
+    const [recropModalOpen, setRecropModalOpen] = useState(false);
+    const [recropImageId, setRecropImageId] = useState<string | null>(null);
+
+    // Track which existing images have had their crops changed
+    const [changedExistingImageIds, setChangedExistingImageIds] = useState<
+        Set<string>
+    >(new Set());
+
     const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const files = Array.from(e.target.files ?? []);
         const remainingSlots = maxImages - images.length;
         const filesToAdd = files.slice(0, remainingSlots);
 
-        const newImages: GalleryImage[] = filesToAdd.map((file) => ({
-            id: generateId(),
-            file,
-            url: URL.createObjectURL(file),
-            isExisting: false,
-        }));
+        if (filesToAdd.length === 0) {
+            return;
+        }
 
-        setImages((prev) => [...prev, ...newImages]);
-        onChange?.();
+        if (requireCrop === true) {
+            const urls = filesToAdd.map((file) => URL.createObjectURL(file));
+            setPendingCropFiles(filesToAdd);
+            setPendingCropUrls(urls);
+            setCurrentCropIndex(0);
+            setCropModalOpen(true);
+        } else {
+            const newImages: GalleryImage[] = filesToAdd.map((file) => ({
+                id: generateId(),
+                file,
+                url: URL.createObjectURL(file),
+                isExisting: false,
+            }));
+
+            setImages((prev) => [...prev, ...newImages]);
+            onChange?.();
+        }
 
         if (fileInputRef.current !== null) {
             fileInputRef.current.value = '';
         }
+    };
+
+    const handleCropComplete = (croppedFile: File, cropData: CropData) => {
+        const crops: Record<string, CropRegion> = {
+            [cropName]: {
+                x: cropData.x,
+                y: cropData.y,
+                width: cropData.width,
+                height: cropData.height,
+            },
+        };
+
+        const newImage: GalleryImage = {
+            id: generateId(),
+            file: pendingCropFiles[currentCropIndex],
+            url: URL.createObjectURL(croppedFile),
+            isExisting: false,
+            crops,
+            originalUrl: pendingCropUrls[currentCropIndex],
+        };
+
+        setImages((prev) => [...prev, newImage]);
+
+        const nextIndex = currentCropIndex + 1;
+
+        if (nextIndex < pendingCropFiles.length) {
+            setCurrentCropIndex(nextIndex);
+        } else {
+            cleanupPendingCrop();
+            onChange?.();
+        }
+    };
+
+    const cleanupPendingCrop = () => {
+        // Don't revoke pending crop URLs — they're stored as originalUrl for re-cropping
+        setPendingCropFiles([]);
+        setPendingCropUrls([]);
+        setCurrentCropIndex(0);
+        setCropModalOpen(false);
+    };
+
+    const handleCropCancel = () => {
+        cleanupPendingCrop();
+    };
+
+    const handleChangeCrop = (imageId: string) => {
+        setRecropImageId(imageId);
+        setRecropModalOpen(true);
+    };
+
+    const handleRecropComplete = (croppedFile: File, cropData: CropData) => {
+        const image = images.find((img) => img.id === recropImageId);
+
+        if (image === undefined) {
+            return;
+        }
+
+        const newCrops: Record<string, CropRegion> = {
+            [cropName]: {
+                x: cropData.x,
+                y: cropData.y,
+                width: cropData.width,
+                height: cropData.height,
+            },
+        };
+
+        if (image.isExisting === false) {
+            // New image: update preview and crops, keep original file
+            const newUrl = URL.createObjectURL(croppedFile);
+
+            setImages((prev) =>
+                prev.map((img) =>
+                    img.id === recropImageId
+                        ? { ...img, url: newUrl, crops: newCrops }
+                        : img,
+                ),
+            );
+        } else {
+            // Existing image: update crops and url (cropped blob for preview), store server URL as originalUrl
+            const newUrl = URL.createObjectURL(croppedFile);
+
+            setImages((prev) =>
+                prev.map((img) =>
+                    img.id === recropImageId
+                        ? {
+                              ...img,
+                              url: newUrl,
+                              crops: newCrops,
+                              originalUrl: img.originalUrl ?? img.url,
+                          }
+                        : img,
+                ),
+            );
+
+            setChangedExistingImageIds((prev) => {
+                const next = new Set(prev);
+                next.add(image.id);
+                return next;
+            });
+        }
+
+        setRecropModalOpen(false);
+        setRecropImageId(null);
+        onChange?.();
     };
 
     const removeImage = (id: string) => {
@@ -196,6 +346,18 @@ export function ImageUploadGallery({
                         >
                             <X className="size-4" />
                         </button>
+                        {requireCrop === true && (
+                            <button
+                                type="button"
+                                onClick={() =>
+                                    handleChangeCrop(selectedImage.id)
+                                }
+                                className="absolute bottom-2 left-2 flex items-center gap-1.5 rounded-full bg-white/90 py-1.5 pr-3 pl-2.5 text-sm font-medium text-neutral-800 shadow-sm transition-colors hover:bg-white dark:bg-neutral-800/90 dark:text-neutral-200 dark:hover:bg-neutral-800"
+                            >
+                                <Crop className="size-4" />
+                                Re-crop
+                            </button>
+                        )}
                     </div>
 
                     {/* Thumbnails + Add button */}
@@ -278,6 +440,100 @@ export function ImageUploadGallery({
                     ),
             )}
 
+            {/* Hidden inputs for crop data */}
+            {newImages.map((image, index) =>
+                image.crops !== null &&
+                image.crops !== undefined
+                    ? Object.entries(image.crops).map(
+                          ([regionName, region]) => (
+                              <div key={`crops-${image.id}-${regionName}`}>
+                                  <input
+                                      type="hidden"
+                                      name={`image_crops[${index}][${regionName}][x]`}
+                                      value={region.x}
+                                  />
+                                  <input
+                                      type="hidden"
+                                      name={`image_crops[${index}][${regionName}][y]`}
+                                      value={region.y}
+                                  />
+                                  <input
+                                      type="hidden"
+                                      name={`image_crops[${index}][${regionName}][width]`}
+                                      value={region.width}
+                                  />
+                                  <input
+                                      type="hidden"
+                                      name={`image_crops[${index}][${regionName}][height]`}
+                                      value={region.height}
+                                  />
+                              </div>
+                          ),
+                      )
+                    : null,
+            )}
+
+            {/* Hidden inputs for existing image crop updates */}
+            {images
+                .filter(
+                    (image) =>
+                        image.isExisting === true &&
+                        changedExistingImageIds.has(image.id) &&
+                        image.crops !== null &&
+                        image.crops !== undefined,
+                )
+                .map((image) => {
+                    const idKey =
+                        image.originalImageId !== null &&
+                        image.originalImageId !== undefined
+                            ? image.originalImageId
+                            : null;
+                    const draftIdKey =
+                        image.isNewDraftImage === true &&
+                        image.draftImageId !== null &&
+                        image.draftImageId !== undefined
+                            ? image.draftImageId
+                            : null;
+
+                    if (idKey === null && draftIdKey === null) {
+                        return null;
+                    }
+
+                    const fieldPrefix =
+                        draftIdKey !== null && idKey === null
+                            ? `draft_image_crop_updates[${draftIdKey}]`
+                            : `image_crop_updates[${idKey}]`;
+
+                    return Object.entries(image.crops!).map(
+                        ([regionName, region]) => (
+                            <div
+                                key={`crop-update-${image.id}-${regionName}`}
+                            >
+                                <input
+                                    type="hidden"
+                                    name={`${fieldPrefix}[${regionName}][x]`}
+                                    value={region.x}
+                                />
+                                <input
+                                    type="hidden"
+                                    name={`${fieldPrefix}[${regionName}][y]`}
+                                    value={region.y}
+                                />
+                                <input
+                                    type="hidden"
+                                    name={`${fieldPrefix}[${regionName}][width]`}
+                                    value={region.width}
+                                />
+                                <input
+                                    type="hidden"
+                                    name={`${fieldPrefix}[${regionName}][height]`}
+                                    value={region.height}
+                                />
+                            </div>
+                        ),
+                    );
+                })}
+
             {/* Hidden inputs for removed image IDs */}
             {removedImageIds.map((id, index) => (
                 <input
@@ -317,6 +573,65 @@ export function ImageUploadGallery({
                         ))}
                     </div>
                 )}
+
+            {/* Crop modal for new image uploads */}
+            {requireCrop === true && (
+                <>
+                    <ImageCropModal
+                        open={cropModalOpen}
+                        onOpenChange={(open) => {
+                            if (open === false) {
+                                handleCropCancel();
+                            }
+                        }}
+                        imageUrl={pendingCropUrls[currentCropIndex] ?? null}
+                        aspectRatio={cropAspectRatio}
+                        onCropComplete={handleCropComplete}
+                        onChangeImage={() => fileInputRef.current?.click()}
+                        stepInfo={
+                            pendingCropFiles.length > 1
+                                ? {
+                                      current: currentCropIndex + 1,
+                                      total: pendingCropFiles.length,
+                                      label: 'Crop Image',
+                                  }
+                                : undefined
+                        }
+                    />
+
+                    {/* Re-crop modal for existing images */}
+                    <ImageCropModal
+                        open={recropModalOpen}
+                        onOpenChange={(open) => {
+                            if (open === false) {
+                                setRecropModalOpen(false);
+                                setRecropImageId(null);
+                            }
+                        }}
+                        imageUrl={
+                            recropImageId !== null
+                                ? (images.find(
+                                      (img) => img.id === recropImageId,
+                                  )?.originalUrl ??
+                                  images.find(
+                                      (img) => img.id === recropImageId,
+                                  )?.url ??
+                                  null)
+                                : null
+                        }
+                        aspectRatio={cropAspectRatio}
+                        initialCropData={
+                            recropImageId !== null
+                                ? (images.find(
+                                      (img) => img.id === recropImageId,
+                                  )?.crops?.[cropName] ?? null)
+                                : null
+                        }
+                        onCropComplete={handleRecropComplete}
+                        onChangeImage={() => {}}
+                    />
+                </>
+            )}
         </div>
     );
 }

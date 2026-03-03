@@ -18,7 +18,7 @@ class ShowcaseDraftUpdateController extends BaseController
 {
     public function __invoke(ShowcaseDraftWriteRequest $request, ShowcaseDraft $draft, ShowcaseMediaService $mediaService): RedirectResponse
     {
-        $excludeFields = ['images', 'practice_area_ids', 'thumbnail', 'remove_thumbnail', 'removed_images', 'deleted_new_images', 'submit'];
+        $excludeFields = ['images', 'image_crops', 'image_crop_updates', 'draft_image_crop_updates', 'practice_area_ids', 'thumbnail', 'remove_thumbnail', 'removed_images', 'deleted_new_images', 'submit'];
 
         $draft->update($request->safe()->except($excludeFields));
 
@@ -52,7 +52,20 @@ class ShowcaseDraftUpdateController extends BaseController
 
         // Handle new image uploads
         if ($request->hasFile('images')) {
-            $mediaService->storeImages(model: $draft, files: $request->file('images'));
+            $mediaService->storeImages(
+                model: $draft,
+                files: $request->file('images'),
+                crops: $request->validated('image_crops', []),
+            );
+        }
+
+        // Handle crop updates for existing images
+        if ($request->validated('image_crop_updates') !== null || $request->validated('draft_image_crop_updates') !== null) {
+            $mediaService->updateDraftImageCrops(
+                draft: $draft,
+                cropUpdates: $request->validated('image_crop_updates', []),
+                draftCropUpdates: $request->validated('draft_image_crop_updates', []),
+            );
         }
 
         // Handle submit flag

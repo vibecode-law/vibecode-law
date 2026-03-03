@@ -210,6 +210,35 @@ describe('store', function () {
         Storage::disk('public')->assertExists("lesson/{$lesson->id}/{$lesson->thumbnail_filename}");
     });
 
+    test('strips extra shapes and fields from thumbnail crops', function () {
+        Storage::fake('public');
+
+        $admin = User::factory()->admin()->create();
+        $course = Course::factory()->create();
+
+        actingAs($admin);
+
+        post(route('staff.academy.courses.lessons.store', $course), [
+            'title' => 'Strip Lesson',
+            'slug' => 'strip-lesson',
+            'tagline' => 'With extras',
+            'description' => 'Description here.',
+            'learning_objectives' => 'Test objectives',
+            'gated' => true,
+            'thumbnail' => UploadedFile::fake()->image(name: 'thumbnail.jpg', width: 800, height: 600),
+            'thumbnail_crops' => [
+                'landscape' => ['x' => 0, 'y' => 50, 'width' => 800, 'height' => 450, 'zoom' => 1.5],
+                'square' => ['x' => 100, 'y' => 50, 'width' => 400, 'height' => 400],
+            ],
+        ])->assertRedirect();
+
+        $lesson = Lesson::query()->where('slug', 'strip-lesson')->firstOrFail();
+
+        expect($lesson->thumbnail_crops)->toBe([
+            'landscape' => ['x' => 0, 'y' => 50, 'width' => 800, 'height' => 450],
+        ]);
+    });
+
     test('returns success flash message', function () {
         $admin = User::factory()->admin()->create();
         $course = Course::factory()->create();
@@ -316,7 +345,7 @@ describe('validation', function () {
         ],
     ]);
 
-    test('validates thumbnail_crops rejects invalid keys', function ($data, $invalid) {
+    test('validates thumbnail_crops rejects incorrect aspect ratios', function () {
         $admin = User::factory()->admin()->create();
         $course = Course::factory()->create();
 
@@ -329,22 +358,9 @@ describe('validation', function () {
             'description' => 'Description',
             'learning_objectives' => 'Objectives',
             'gated' => true,
-            ...$data,
-        ])->assertSessionHasErrors($invalid);
-    })->with([
-        'square crop key rejected' => [
-            ['thumbnail_crops' => ['square' => ['x' => 0, 'y' => 0, 'width' => 100, 'height' => 100]]],
-            ['thumbnail_crops'],
-        ],
-        'unknown crop key rejected' => [
-            ['thumbnail_crops' => ['banner' => ['x' => 0, 'y' => 0, 'width' => 100, 'height' => 100]]],
-            ['thumbnail_crops'],
-        ],
-        'landscape crop with wrong aspect ratio rejected' => [
-            ['thumbnail_crops' => ['landscape' => ['x' => 0, 'y' => 0, 'width' => 100, 'height' => 100]]],
-            ['thumbnail_crops'],
-        ],
-    ]);
+            'thumbnail_crops' => ['landscape' => ['x' => 0, 'y' => 0, 'width' => 100, 'height' => 100]],
+        ])->assertSessionHasErrors(['thumbnail_crops']);
+    });
 
     test('accepts valid landscape crop data', function () {
         $admin = User::factory()->admin()->create();

@@ -3,6 +3,7 @@
 namespace App\Http\Resources\Showcase;
 
 use App\Models\Showcase\ShowcaseImage;
+use App\ValueObjects\ImageCrop;
 use Spatie\LaravelData\Resource;
 use Spatie\TypeScriptTransformer\Attributes\TypeScript;
 
@@ -19,6 +20,9 @@ class ShowcaseImageResource extends Resource
 
     public string $url;
 
+    /** @var array<string, ImageCrop>|null */
+    public ?array $crops;
+
     public static function fromModel(ShowcaseImage $image): self
     {
         return self::from([
@@ -27,6 +31,7 @@ class ShowcaseImageResource extends Resource
             'order' => $image->order,
             'alt_text' => $image->alt_text,
             'url' => $image->url,
+            'crops' => $image->crops,
         ]);
     }
 }

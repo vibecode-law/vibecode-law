@@ -132,6 +132,38 @@ describe('update', function () {
         Storage::disk('public')->assertExists("course/{$course->id}/{$course->thumbnail_filename}");
     });
 
+    test('strips extra shapes and fields from thumbnail crops', function () {
+        Storage::fake('public');
+
+        $admin = User::factory()->admin()->create();
+        $course = Course::factory()->create(['allow_preview' => false, 'publish_date' => null]);
+
+        actingAs($admin);
+
+        patch(route('staff.academy.courses.update', $course), [
+            'title' => $course->title,
+            'slug' => $course->slug,
+            'tagline' => $course->tagline,
+            'description' => $course->description,
+            'learning_objectives' => 'Objectives',
+            'experience_level' => ExperienceLevel::Foundation->value,
+            'is_featured' => false,
+            'thumbnail' => UploadedFile::fake()->image(name: 'thumbnail.jpg', width: 800, height: 600),
+            'thumbnail_crops' => [
+                'square' => ['x' => 100, 'y' => 50, 'width' => 400, 'height' => 400, 'zoom' => 1.5],
+                'landscape' => ['x' => 0, 'y' => 50, 'width' => 800, 'height' => 450],
+                'portrait' => ['x' => 0, 'y' => 0, 'width' => 300, 'height' => 500],
+            ],
+        ])->assertRedirect();
+
+        $course->refresh();
+
+        expect($course->thumbnail_crops)->toBe([
+            'square' => ['x' => 100, 'y' => 50, 'width' => 400, 'height' => 400],
+            'landscape' => ['x' => 0, 'y' => 50, 'width' => 800, 'height' => 450],
+        ]);
+    });
+
     test('handles thumbnail removal', function () {
         Storage::fake('public');
 

@@ -21,7 +21,7 @@ class ShowcaseStoreController extends BaseController
 
         /** @var Showcase */
         $showcase = $request->user()->showcases()->create([
-            ...$request->safe()->except(['images', 'practice_area_ids', 'thumbnail', 'remove_thumbnail', 'submit', 'challenge_id']),
+            ...$request->safe()->except(['images', 'image_crops', 'practice_area_ids', 'thumbnail', 'remove_thumbnail', 'submit', 'challenge_id']),
             'slug' => $slug,
         ]);
 
@@ -40,7 +40,11 @@ class ShowcaseStoreController extends BaseController
         }
 
         if ($request->hasFile('images')) {
-            $mediaService->storeImages(model: $showcase, files: $request->file('images'));
+            $mediaService->storeImages(
+                model: $showcase,
+                files: $request->file('images'),
+                crops: $request->validated('image_crops', []),
+            );
         }
 
         $this->dispatchShowcaseTagJobIfFirstShowcase(user: $request->user());

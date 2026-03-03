@@ -18,7 +18,7 @@ class ShowcaseUpdateController extends BaseController
         $wasApproved = $showcase->isApproved();
         $isAdmin = $request->user()->is_admin;
 
-        $excludeFields = ['images', 'practice_area_ids', 'thumbnail', 'remove_thumbnail', 'removed_images', 'submit', 'challenge_id'];
+        $excludeFields = ['images', 'image_crops', 'image_crop_updates', 'practice_area_ids', 'thumbnail', 'remove_thumbnail', 'removed_images', 'submit', 'challenge_id'];
 
         if ($wasApproved === true) {
             $excludeFields[] = 'slug';
@@ -53,7 +53,19 @@ class ShowcaseUpdateController extends BaseController
         }
 
         if ($request->hasFile('images')) {
-            $mediaService->storeImages(model: $showcase, files: $request->file('images'));
+            $mediaService->storeImages(
+                model: $showcase,
+                files: $request->file('images'),
+                crops: $request->validated('image_crops', []),
+            );
+        }
+
+        // Handle crop updates for existing images
+        if ($request->validated('image_crop_updates') !== null) {
+            $mediaService->updateImageCrops(
+                showcase: $showcase,
+                cropUpdates: $request->validated('image_crop_updates'),
+            );
         }
 
         // Handle submit flag - only for draft or rejected showcases

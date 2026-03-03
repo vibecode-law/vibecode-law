@@ -123,6 +123,26 @@ describe('updating', function () {
         Storage::disk('public')->assertExists("press-coverage/{$pressCoverage->id}/thumbnail.png");
     });
 
+    test('strips extra fields from thumbnail crop', function () {
+        $moderator = User::factory()->moderator()->create();
+        $pressCoverage = PressCoverage::factory()->create();
+
+        actingAs($moderator);
+
+        put(route('staff.press-coverage.update', $pressCoverage), [
+            'title' => $pressCoverage->title,
+            'publication_name' => $pressCoverage->publication_name,
+            'publication_date' => $pressCoverage->publication_date->format('Y-m-d'),
+            'url' => $pressCoverage->url,
+            'thumbnail' => UploadedFile::fake()->image('thumbnail.png', 200, 200),
+            'thumbnail_crop' => ['x' => 10, 'y' => 20, 'width' => 100, 'height' => 100, 'zoom' => 1.5, 'rotation' => 90],
+        ])->assertRedirect();
+
+        $pressCoverage->refresh();
+
+        expect($pressCoverage->thumbnail_crop)->toBe(['x' => 10, 'y' => 20, 'width' => 100, 'height' => 100]);
+    });
+
     test('removes thumbnail when remove_thumbnail is true', function () {
         $moderator = User::factory()->moderator()->create();
         $pressCoverage = PressCoverage::factory()->create([

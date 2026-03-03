@@ -99,10 +99,11 @@ class ApproveShowcaseDraftAction
 
     private function handleKeepImage(ShowcaseDraftImage $draftImage): void
     {
-        // Update order and alt_text on the original image
+        // Update order, alt_text, and crops on the original image
         $draftImage->originalImage?->update([
             'order' => $draftImage->order,
             'alt_text' => $draftImage->alt_text,
+            'crops' => $draftImage->crops,
         ]);
     }
 
@@ -129,6 +130,7 @@ class ApproveShowcaseDraftAction
             'filename' => $draftImage->filename,
             'alt_text' => $draftImage->alt_text,
             'order' => $draftImage->order,
+            'crops' => $draftImage->crops,
         ]);
     }
 }

@@ -127,13 +127,32 @@ describe('storing', function () {
             'publication_date' => '2026-01-01',
             'url' => 'https://example.com/crop',
             'thumbnail' => UploadedFile::fake()->image('thumbnail.png', 200, 200),
-            'thumbnail_crop' => ['x' => 10, 'y' => 20, 'width' => 100, 'height' => 80],
+            'thumbnail_crop' => ['x' => 10, 'y' => 20, 'width' => 100, 'height' => 100],
         ])->assertRedirect();
 
         $item = PressCoverage::latest('id')->first();
 
         expect($item->thumbnail_extension)->toBe('png')
-            ->and($item->thumbnail_crop)->toBe(['x' => 10, 'y' => 20, 'width' => 100, 'height' => 80]);
+            ->and($item->thumbnail_crop)->toBe(['x' => 10, 'y' => 20, 'width' => 100, 'height' => 100]);
+    });
+
+    test('strips extra fields from thumbnail crop', function () {
+        $moderator = User::factory()->moderator()->create();
+
+        actingAs($moderator);
+
+        post(route('staff.press-coverage.store'), [
+            'title' => 'With Extra Crop Fields',
+            'publication_name' => 'Pub',
+            'publication_date' => '2026-01-01',
+            'url' => 'https://example.com/strip',
+            'thumbnail' => UploadedFile::fake()->image('thumbnail.png', 200, 200),
+            'thumbnail_crop' => ['x' => 10, 'y' => 20, 'width' => 100, 'height' => 100, 'zoom' => 1.5, 'rotation' => 90],
+        ])->assertRedirect();
+
+        $item = PressCoverage::latest('id')->first();
+
+        expect($item->thumbnail_crop)->toBe(['x' => 10, 'y' => 20, 'width' => 100, 'height' => 100]);
     });
 });
 

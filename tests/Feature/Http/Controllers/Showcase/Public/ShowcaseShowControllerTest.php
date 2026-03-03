@@ -123,6 +123,7 @@ test('show returns correct showcase data', function () {
                 ->has('order')
                 ->has('alt_text')
                 ->has('url')
+                ->has('crops')
             )
             ->where('images.0.id', $image1->id)
             ->where('images.0.filename', 'test1.jpg')

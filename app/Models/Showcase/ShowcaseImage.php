@@ -10,6 +10,8 @@ use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\Storage;
 
 /**
+ * @property array<string, array{x: int, y: int, width: int, height: int}>|null $crops
+ *
  * @mixin IdeHelperShowcaseImage
  */
 class ShowcaseImage extends Model
@@ -29,12 +31,14 @@ class ShowcaseImage extends Model
         'filename',
         'order',
         'alt_text',
+        'crops',
     ];
 
     protected function casts(): array
     {
         return [
             'order' => 'integer',
+            'crops' => 'array',
         ];
     }
 

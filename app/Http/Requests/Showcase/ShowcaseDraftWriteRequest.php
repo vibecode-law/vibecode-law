@@ -6,6 +6,9 @@ use App\Enums\SourceStatus;
 use App\Models\PracticeArea;
 use App\Models\Showcase\ShowcaseDraft;
 use App\Models\Showcase\ShowcaseDraftImage;
+use App\Rules\CropAspectRatio;
+use App\Rules\SingleCropAspectRatio;
+use App\Services\CropSanitizationService;
 use Illuminate\Contracts\Validation\Validator;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
@@ -26,6 +29,44 @@ class ShowcaseDraftWriteRequest extends FormRequest
 
         if ($sourceStatus === null || $sourceStatus->hasSourceUrl() === false) {
             $this->merge(['source_url' => null]);
+        }
+
+        $this->sanitizeCropData();
+    }
+
+    protected function sanitizeCropData(): void
+    {
+        if ($this->has('thumbnail_crop') && is_array($this->input('thumbnail_crop'))) {
+            $this->merge([
+                'thumbnail_crop' => CropSanitizationService::sanitizeSingleCrop($this->input('thumbnail_crop')),
+            ]);
+        }
+
+        if ($this->has('image_crops') && is_array($this->input('image_crops'))) {
+            $this->merge([
+                'image_crops' => CropSanitizationService::sanitizeNamedCropsArray(
+                    cropsArray: $this->input('image_crops'),
+                    allowedShapes: ['landscape'],
+                ),
+            ]);
+        }
+
+        if ($this->has('image_crop_updates') && is_array($this->input('image_crop_updates'))) {
+            $this->merge([
+                'image_crop_updates' => CropSanitizationService::sanitizeKeyedNamedCropsArray(
+                    cropsArray: $this->input('image_crop_updates'),
+                    allowedShapes: ['landscape'],
+                ),
+            ]);
+        }
+
+        if ($this->has('draft_image_crop_updates') && is_array($this->input('draft_image_crop_updates'))) {
+            $this->merge([
+                'draft_image_crop_updates' => CropSanitizationService::sanitizeKeyedNamedCropsArray(
+                    cropsArray: $this->input('draft_image_crop_updates'),
+                    allowedShapes: ['landscape'],
+                ),
+            ]);
         }
     }
 
@@ -63,13 +104,34 @@ class ShowcaseDraftWriteRequest extends FormRequest
             ],
             'thumbnail' => ['nullable', 'image', 'dimensions:min_width=100,min_height=100', 'max:2048'],
             'remove_thumbnail' => ['nullable', 'boolean'],
-            'thumbnail_crop' => ['nullable', 'required_with:thumbnail', 'array'],
+            'thumbnail_crop' => ['nullable', 'required_with:thumbnail', 'array', new SingleCropAspectRatio(expectedRatio: 1.0)],
             'thumbnail_crop.x' => ['required_with:thumbnail_crop', 'integer', 'min:0'],
             'thumbnail_crop.y' => ['required_with:thumbnail_crop', 'integer', 'min:0'],
             'thumbnail_crop.width' => ['required_with:thumbnail_crop', 'integer', 'min:1'],
             'thumbnail_crop.height' => ['required_with:thumbnail_crop', 'integer', 'min:1'],
             'images' => ['nullable', 'array', 'max:10'],
             'images.*' => ['image', 'dimensions:min_width=400,min_height=225', 'max:4096'],
+            'image_crops' => ['nullable', 'array'],
+            'image_crops.*' => ['required', 'array', new CropAspectRatio(expectedRatios: ['landscape' => 16 / 9])],
+            'image_crops.*.landscape' => ['required', 'array'],
+            'image_crops.*.landscape.x' => ['required', 'integer', 'min:0'],
+            'image_crops.*.landscape.y' => ['required', 'integer', 'min:0'],
+            'image_crops.*.landscape.width' => ['required', 'integer', 'min:1'],
+            'image_crops.*.landscape.height' => ['required', 'integer', 'min:1'],
+            'image_crop_updates' => ['nullable', 'array'],
+            'image_crop_updates.*' => ['required', 'array', new CropAspectRatio(expectedRatios: ['landscape' => 16 / 9])],
+            'image_crop_updates.*.landscape' => ['required', 'array'],
+            'image_crop_updates.*.landscape.x' => ['required', 'integer', 'min:0'],
+            'image_crop_updates.*.landscape.y' => ['required', 'integer', 'min:0'],
+            'image_crop_updates.*.landscape.width' => ['required', 'integer', 'min:1'],
+            'image_crop_updates.*.landscape.height' => ['required', 'integer', 'min:1'],
+            'draft_image_crop_updates' => ['nullable', 'array'],
+            'draft_image_crop_updates.*' => ['required', 'array', new CropAspectRatio(expectedRatios: ['landscape' => 16 / 9])],
+            'draft_image_crop_updates.*.landscape' => ['required', 'array'],
+            'draft_image_crop_updates.*.landscape.x' => ['required', 'integer', 'min:0'],
+            'draft_image_crop_updates.*.landscape.y' => ['required', 'integer', 'min:0'],
+            'draft_image_crop_updates.*.landscape.width' => ['required', 'integer', 'min:1'],
+            'draft_image_crop_updates.*.landscape.height' => ['required', 'integer', 'min:1'],
             'removed_images' => ['nullable', 'array'],
             'removed_images.*' => [
                 'integer',
@@ -93,6 +155,13 @@ class ShowcaseDraftWriteRequest extends FormRequest
         $validator->after(function (Validator $validator) {
             /** @var ShowcaseDraft $draft */
             $draft = $this->route('draft');
+
+            $newImagesCount = count($this->file('images', []));
+            $imageCropsCount = count($this->input('image_crops', []));
+
+            if ($newImagesCount > 0 && $imageCropsCount !== $newImagesCount) {
+                $validator->errors()->add('image_crops', 'Crop data must be provided for each new image.');
+            }
 
             // Count kept images (existing images minus removed ones)
             $keptImagesCount = $draft->images()

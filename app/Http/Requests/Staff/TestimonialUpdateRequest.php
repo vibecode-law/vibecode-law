@@ -2,10 +2,21 @@
 
 namespace App\Http\Requests\Staff;
 
+use App\Rules\SingleCropAspectRatio;
+use App\Services\CropSanitizationService;
 use Illuminate\Foundation\Http\FormRequest;
 
 class TestimonialUpdateRequest extends FormRequest
 {
+    protected function prepareForValidation(): void
+    {
+        if ($this->has('avatar_crop') && is_array($this->input('avatar_crop'))) {
+            $this->merge([
+                'avatar_crop' => CropSanitizationService::sanitizeSingleCrop($this->input('avatar_crop')),
+            ]);
+        }
+    }
+
     public function rules(): array
     {
         return [
@@ -15,7 +26,7 @@ class TestimonialUpdateRequest extends FormRequest
             'organisation' => ['nullable', 'string', 'max:255'],
             'content' => ['required', 'string', 'max:1000'],
             'avatar' => ['nullable', 'image', 'mimes:png,jpg,jpeg,gif,webp', 'max:2048'],
-            'avatar_crop' => ['nullable', 'array'],
+            'avatar_crop' => ['nullable', 'array', new SingleCropAspectRatio(expectedRatio: 1.0)],
             'avatar_crop.x' => ['required_with:avatar_crop', 'integer'],
             'avatar_crop.y' => ['required_with:avatar_crop', 'integer'],
             'avatar_crop.width' => ['required_with:avatar_crop', 'integer'],

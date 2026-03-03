@@ -99,6 +99,7 @@ describe('showcase store validation logging', function () {
             'url' => 'https://example.com',
             'source_status' => SourceStatus::NotAvailable->value,
             'images' => [UploadedFile::fake()->image('test.jpg', 1280, 720)],
+            'image_crops' => [['landscape' => ['x' => 0, 'y' => 0, 'width' => 1280, 'height' => 720]]],
             'thumbnail' => UploadedFile::fake()->image('thumbnail.jpg', 500, 500),
             'thumbnail_crop' => ['x' => 0, 'y' => 0, 'width' => 500, 'height' => 500],
         ]);

@@ -166,6 +166,35 @@ describe('update', function () {
         ]);
     });
 
+    test('strips extra shapes and fields from thumbnail crops', function () {
+        Storage::fake('public');
+
+        $admin = User::factory()->admin()->create();
+        $challenge = Challenge::factory()->create();
+
+        actingAs($admin);
+
+        patch(route('staff.challenges.update', $challenge), [
+            'title' => $challenge->title,
+            'slug' => $challenge->slug,
+            'tagline' => $challenge->tagline,
+            'description' => $challenge->description,
+            'thumbnail' => UploadedFile::fake()->image(name: 'thumbnail.jpg', width: 800, height: 600),
+            'thumbnail_crops' => [
+                'square' => ['x' => 100, 'y' => 50, 'width' => 400, 'height' => 400, 'zoom' => 1.5],
+                'landscape' => ['x' => 0, 'y' => 50, 'width' => 800, 'height' => 450],
+                'portrait' => ['x' => 0, 'y' => 0, 'width' => 300, 'height' => 500],
+            ],
+        ])->assertRedirect();
+
+        $challenge->refresh();
+
+        expect($challenge->thumbnail_crops)->toBe([
+            'square' => ['x' => 100, 'y' => 50, 'width' => 400, 'height' => 400],
+            'landscape' => ['x' => 0, 'y' => 50, 'width' => 800, 'height' => 450],
+        ]);
+    });
+
     test('updates crops without uploading a new image', function () {
         $admin = User::factory()->admin()->create();
         $challenge = Challenge::factory()->create([
@@ -459,24 +488,6 @@ describe('validation', function () {
             'organisation_id' => $organisation->id,
             'thumbnail' => $thumbnail,
         ])->assertSessionHasErrors(['thumbnail']);
-    });
-
-    test('rejects invalid crop keys', function () {
-        $admin = User::factory()->admin()->create();
-        $challenge = Challenge::factory()->create();
-
-        actingAs($admin);
-
-        patch(route('staff.challenges.update', $challenge), [
-            'title' => 'Test',
-            'slug' => $challenge->slug,
-            'tagline' => 'Tagline',
-            'description' => 'Description',
-            'thumbnail' => UploadedFile::fake()->image(name: 'thumb.jpg', width: 800, height: 600),
-            'thumbnail_crops' => [
-                'portrait' => ['x' => 0, 'y' => 0, 'width' => 300, 'height' => 500],
-            ],
-        ])->assertSessionHasErrors(['thumbnail_crops']);
     });
 
     test('rejects crops with incorrect aspect ratios', function ($crops) {
