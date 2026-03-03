@@ -426,6 +426,8 @@ export function ShowcaseForm({
                                                     | undefined
                                             }
                                             imageErrors={imageErrors}
+                                            requireCrop
+                                            cropAspectRatio={16 / 9}
                                         />
 
                                         {/* About Section */}

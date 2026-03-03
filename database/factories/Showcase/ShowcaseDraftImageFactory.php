@@ -29,6 +29,14 @@ class ShowcaseDraftImageFactory extends Factory
             'filename' => fake()->word().'.jpg',
             'alt_text' => fake()->optional()->sentence(),
             'order' => 0,
+            'crops' => [
+                'landscape' => [
+                    'x' => 0,
+                    'y' => 0,
+                    'width' => 800,
+                    'height' => 450,
+                ],
+            ],
         ];
     }
 
@@ -41,6 +49,7 @@ class ShowcaseDraftImageFactory extends Factory
             'filename' => null,
             'alt_text' => $originalImage->alt_text,
             'order' => $originalImage->order,
+            'crops' => $originalImage->crops,
         ]);
     }
 
@@ -53,6 +62,7 @@ class ShowcaseDraftImageFactory extends Factory
             'filename' => null,
             'alt_text' => null,
             'order' => 0,
+            'crops' => null,
         ]);
     }
 

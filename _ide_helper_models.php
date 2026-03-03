@@ -72,6 +72,7 @@ namespace App\Models\Challenge{
  * @property int $id
  * @property int $challenge_id
  * @property string $code
+ * @property string $label
  * @property \App\Enums\InviteCodeScope $scope
  * @property bool $is_active
  * @property \Illuminate\Support\Carbon|null $created_at
@@ -89,6 +90,7 @@ namespace App\Models\Challenge{
  * @method static \Illuminate\Database\Eloquent\Builder<static>|ChallengeInviteCode whereCreatedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|ChallengeInviteCode whereId($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|ChallengeInviteCode whereIsActive($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|ChallengeInviteCode whereLabel($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|ChallengeInviteCode whereScope($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|ChallengeInviteCode whereUpdatedAt($value)
  * @mixin \Eloquent
@@ -595,6 +597,7 @@ namespace App\Models\Showcase{
 
 namespace App\Models\Showcase{
 /**
+ * @property array<string, array{x: int, y: int, width: int, height: int}>|null $crops
  * @property int $id
  * @property int $showcase_draft_id
  * @property int|null $original_image_id
@@ -615,6 +618,7 @@ namespace App\Models\Showcase{
  * @method static \Illuminate\Database\Eloquent\Builder<static>|ShowcaseDraftImage whereAction($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|ShowcaseDraftImage whereAltText($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|ShowcaseDraftImage whereCreatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|ShowcaseDraftImage whereCrops($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|ShowcaseDraftImage whereFilename($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|ShowcaseDraftImage whereId($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|ShowcaseDraftImage whereOrder($value)
@@ -630,6 +634,7 @@ namespace App\Models\Showcase{
 
 namespace App\Models\Showcase{
 /**
+ * @property array<string, array{x: int, y: int, width: int, height: int}>|null $crops
  * @property int $id
  * @property int $showcase_id
  * @property string $path
@@ -646,6 +651,7 @@ namespace App\Models\Showcase{
  * @method static \Illuminate\Database\Eloquent\Builder<static>|ShowcaseImage query()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|ShowcaseImage whereAltText($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|ShowcaseImage whereCreatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|ShowcaseImage whereCrops($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|ShowcaseImage whereFilename($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|ShowcaseImage whereId($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|ShowcaseImage whereOrder($value)

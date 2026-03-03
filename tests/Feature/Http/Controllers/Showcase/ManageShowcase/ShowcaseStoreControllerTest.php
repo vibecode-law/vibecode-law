@@ -35,6 +35,7 @@ describe('auth', function () {
             'url' => 'https://example.com',
             'source_status' => SourceStatus::NotAvailable->value,
             'images' => [UploadedFile::fake()->image('test.jpg', 1280, 720)],
+            'image_crops' => [['landscape' => ['x' => 0, 'y' => 0, 'width' => 1280, 'height' => 720]]],
             'thumbnail' => UploadedFile::fake()->image('thumbnail.jpg', 500, 500),
             'thumbnail_crop' => ['x' => 0, 'y' => 0, 'width' => 500, 'height' => 500],
         ]);
@@ -59,6 +60,7 @@ describe('auth', function () {
             'url' => 'https://example.com',
             'source_status' => SourceStatus::NotAvailable->value,
             'images' => [UploadedFile::fake()->image('test.jpg', 1280, 720)],
+            'image_crops' => [['landscape' => ['x' => 0, 'y' => 0, 'width' => 1280, 'height' => 720]]],
             'thumbnail' => UploadedFile::fake()->image('thumbnail.jpg', 500, 500),
             'thumbnail_crop' => ['x' => 0, 'y' => 0, 'width' => 500, 'height' => 500],
         ]);
@@ -83,6 +85,7 @@ describe('auth', function () {
             'url' => 'https://example.com',
             'source_status' => SourceStatus::NotAvailable->value,
             'images' => [UploadedFile::fake()->image('test.jpg', 1280, 720)],
+            'image_crops' => [['landscape' => ['x' => 0, 'y' => 0, 'width' => 1280, 'height' => 720]]],
             'thumbnail' => UploadedFile::fake()->image('thumbnail.jpg', 500, 500),
             'thumbnail_crop' => ['x' => 0, 'y' => 0, 'width' => 500, 'height' => 500],
         ]);
@@ -107,6 +110,7 @@ describe('auth', function () {
             'url' => 'https://example.com',
             'source_status' => SourceStatus::NotAvailable->value,
             'images' => [UploadedFile::fake()->image('test.jpg', 1280, 720)],
+            'image_crops' => [['landscape' => ['x' => 0, 'y' => 0, 'width' => 1280, 'height' => 720]]],
             'thumbnail' => UploadedFile::fake()->image('thumbnail.jpg', 500, 500),
             'thumbnail_crop' => ['x' => 0, 'y' => 0, 'width' => 500, 'height' => 500],
         ]);
@@ -133,6 +137,7 @@ describe('validation', function () {
             'url' => 'https://example.com',
             'source_status' => SourceStatus::NotAvailable->value,
             'images' => [UploadedFile::fake()->image('test.jpg', 1280, 720)],
+            'image_crops' => [['landscape' => ['x' => 0, 'y' => 0, 'width' => 1280, 'height' => 720]]],
             'thumbnail' => UploadedFile::fake()->image('thumbnail.jpg', 500, 500),
             'thumbnail_crop' => ['x' => 0, 'y' => 0, 'width' => 500, 'height' => 500],
         ];
@@ -284,7 +289,70 @@ describe('validation', function () {
             ['slug' => 'my-custom-slug'],
             ['slug'],
         ],
+        'image_crops items must have landscape region' => [
+            [
+                'images' => [UploadedFile::fake()->image('test.jpg', 1280, 720)],
+                'image_crops' => [['wrong_name' => ['x' => 0, 'y' => 0, 'width' => 800, 'height' => 450]]],
+            ],
+            ['image_crops.0.landscape'],
+        ],
+        'image_crops landscape x must be an integer' => [
+            [
+                'images' => [UploadedFile::fake()->image('test.jpg', 1280, 720)],
+                'image_crops' => [['landscape' => ['x' => 'abc', 'y' => 0, 'width' => 800, 'height' => 450]]],
+            ],
+            ['image_crops.0.landscape.x'],
+        ],
+        'image_crops landscape y must be non-negative' => [
+            [
+                'images' => [UploadedFile::fake()->image('test.jpg', 1280, 720)],
+                'image_crops' => [['landscape' => ['x' => 0, 'y' => -1, 'width' => 800, 'height' => 450]]],
+            ],
+            ['image_crops.0.landscape.y'],
+        ],
+        'image_crops landscape width must be at least 1' => [
+            [
+                'images' => [UploadedFile::fake()->image('test.jpg', 1280, 720)],
+                'image_crops' => [['landscape' => ['x' => 0, 'y' => 0, 'width' => 0, 'height' => 450]]],
+            ],
+            ['image_crops.0.landscape.width'],
+        ],
+        'image_crops landscape height must be at least 1' => [
+            [
+                'images' => [UploadedFile::fake()->image('test.jpg', 1280, 720)],
+                'image_crops' => [['landscape' => ['x' => 0, 'y' => 0, 'width' => 800, 'height' => 0]]],
+            ],
+            ['image_crops.0.landscape.height'],
+        ],
     ]);
+
+    test('image_crops count must match images count', function () {
+        $practiceArea = PracticeArea::factory()->create();
+
+        /** @var User */
+        $user = User::factory()->create();
+
+        actingAs($user);
+
+        post(route('showcase.manage.store'), [
+            'practice_area_ids' => [$practiceArea->id],
+            'title' => 'Test Showcase',
+            'tagline' => 'Test tagline',
+            'description' => 'Test description',
+            'key_features' => 'Test key features',
+            'url' => 'https://example.com',
+            'source_status' => SourceStatus::NotAvailable->value,
+            'images' => [
+                UploadedFile::fake()->image('test1.jpg', 1280, 720),
+                UploadedFile::fake()->image('test2.jpg', 1280, 720),
+            ],
+            'image_crops' => [
+                ['landscape' => ['x' => 0, 'y' => 0, 'width' => 800, 'height' => 450]],
+            ],
+            'thumbnail' => UploadedFile::fake()->image('thumbnail.jpg', 500, 500),
+            'thumbnail_crop' => ['x' => 0, 'y' => 0, 'width' => 500, 'height' => 500],
+        ])->assertInvalid(['image_crops']);
+    });
 });
 
 describe('showcase creation', function () {
@@ -305,6 +373,7 @@ describe('showcase creation', function () {
             'url' => 'https://example.com',
             'source_status' => SourceStatus::NotAvailable->value,
             'images' => [UploadedFile::fake()->image('test.jpg', 1280, 720)],
+            'image_crops' => [['landscape' => ['x' => 0, 'y' => 0, 'width' => 1280, 'height' => 720]]],
             'thumbnail' => UploadedFile::fake()->image('thumbnail.jpg', 500, 500),
             'thumbnail_crop' => ['x' => 0, 'y' => 0, 'width' => 500, 'height' => 500],
         ]);
@@ -348,6 +417,7 @@ describe('showcase creation', function () {
             'url' => 'https://example.com',
             'source_status' => SourceStatus::NotAvailable->value,
             'images' => [UploadedFile::fake()->image('test.jpg', 1280, 720)],
+            'image_crops' => [['landscape' => ['x' => 0, 'y' => 0, 'width' => 1280, 'height' => 720]]],
             'thumbnail' => UploadedFile::fake()->image('thumbnail.jpg', 500, 500),
             'thumbnail_crop' => ['x' => 0, 'y' => 0, 'width' => 500, 'height' => 500],
         ]);
@@ -387,6 +457,7 @@ describe('showcase creation', function () {
             'url' => 'https://example.com',
             'source_status' => SourceStatus::NotAvailable->value,
             'images' => [UploadedFile::fake()->image('test.jpg', 1280, 720)],
+            'image_crops' => [['landscape' => ['x' => 0, 'y' => 0, 'width' => 1280, 'height' => 720]]],
             'thumbnail' => UploadedFile::fake()->image('thumbnail.jpg', 500, 500),
             'thumbnail_crop' => ['x' => 0, 'y' => 0, 'width' => 500, 'height' => 500],
         ]);
@@ -422,6 +493,7 @@ describe('showcase creation', function () {
             'url' => 'https://example.com',
             'source_status' => SourceStatus::NotAvailable->value,
             'images' => [UploadedFile::fake()->image('test.jpg', 1280, 720)],
+            'image_crops' => [['landscape' => ['x' => 0, 'y' => 0, 'width' => 1280, 'height' => 720]]],
             'thumbnail' => UploadedFile::fake()->image('thumbnail.jpg', 500, 500),
             'thumbnail_crop' => ['x' => 0, 'y' => 0, 'width' => 500, 'height' => 500],
         ]);
@@ -450,6 +522,7 @@ describe('showcase creation', function () {
             'url' => 'https://example.com',
             'source_status' => SourceStatus::NotAvailable->value,
             'images' => [UploadedFile::fake()->image('test.jpg', 1280, 720)],
+            'image_crops' => [['landscape' => ['x' => 0, 'y' => 0, 'width' => 1280, 'height' => 720]]],
             'thumbnail' => UploadedFile::fake()->image('thumbnail.jpg', 500, 500),
             'thumbnail_crop' => ['x' => 0, 'y' => 0, 'width' => 500, 'height' => 500],
         ]);
@@ -475,6 +548,7 @@ describe('showcase creation', function () {
             'url' => 'https://example.com',
             'source_status' => SourceStatus::NotAvailable->value,
             'images' => [UploadedFile::fake()->image('test.jpg', 1280, 720)],
+            'image_crops' => [['landscape' => ['x' => 0, 'y' => 0, 'width' => 1280, 'height' => 720]]],
             'thumbnail' => UploadedFile::fake()->image('thumbnail.jpg', 500, 500),
             'thumbnail_crop' => ['x' => 0, 'y' => 0, 'width' => 500, 'height' => 500],
         ]);
@@ -502,6 +576,7 @@ describe('showcase creation', function () {
             'url' => 'https://example.com',
             'source_status' => SourceStatus::NotAvailable->value,
             'images' => [UploadedFile::fake()->image('test.jpg', 1280, 720)],
+            'image_crops' => [['landscape' => ['x' => 0, 'y' => 0, 'width' => 1280, 'height' => 720]]],
             'thumbnail' => UploadedFile::fake()->image('thumbnail.jpg', 500, 500),
             'thumbnail_crop' => ['x' => 0, 'y' => 0, 'width' => 500, 'height' => 500],
         ]);
@@ -530,6 +605,7 @@ describe('showcase creation', function () {
             'source_status' => SourceStatus::OpenSource->value,
             'source_url' => 'https://github.com/user/repo',
             'images' => [UploadedFile::fake()->image('test.jpg', 1280, 720)],
+            'image_crops' => [['landscape' => ['x' => 0, 'y' => 0, 'width' => 1280, 'height' => 720]]],
             'thumbnail' => UploadedFile::fake()->image('thumbnail.jpg', 500, 500),
             'thumbnail_crop' => ['x' => 0, 'y' => 0, 'width' => 500, 'height' => 500],
         ]);
@@ -559,6 +635,7 @@ describe('showcase creation', function () {
             'url' => 'https://example.com',
             'source_status' => SourceStatus::NotAvailable->value,
             'images' => [UploadedFile::fake()->image('test.jpg', 1280, 720)],
+            'image_crops' => [['landscape' => ['x' => 0, 'y' => 0, 'width' => 1280, 'height' => 720]]],
             'thumbnail' => UploadedFile::fake()->image('thumbnail.jpg', 500, 500),
             'thumbnail_crop' => ['x' => 0, 'y' => 0, 'width' => 500, 'height' => 500],
         ]);
@@ -588,6 +665,7 @@ describe('showcase creation', function () {
             'source_status' => SourceStatus::NotAvailable->value,
             'source_url' => 'https://github.com/user/repo',
             'images' => [UploadedFile::fake()->image('test.jpg', 1280, 720)],
+            'image_crops' => [['landscape' => ['x' => 0, 'y' => 0, 'width' => 1280, 'height' => 720]]],
             'thumbnail' => UploadedFile::fake()->image('thumbnail.jpg', 500, 500),
             'thumbnail_crop' => ['x' => 0, 'y' => 0, 'width' => 500, 'height' => 500],
         ]);
@@ -618,6 +696,7 @@ describe('image uploads', function () {
             'url' => 'https://example.com',
             'source_status' => SourceStatus::NotAvailable->value,
             'images' => [$image],
+            'image_crops' => [['landscape' => ['x' => 0, 'y' => 0, 'width' => 1280, 'height' => 720]]],
             'thumbnail' => UploadedFile::fake()->image('thumbnail.jpg', 500, 500),
             'thumbnail_crop' => ['x' => 0, 'y' => 0, 'width' => 500, 'height' => 500],
         ]);
@@ -651,6 +730,7 @@ describe('image uploads', function () {
             'url' => 'https://example.com',
             'source_status' => SourceStatus::NotAvailable->value,
             'images' => $images,
+            'image_crops' => array_map(fn () => ['landscape' => ['x' => 0, 'y' => 0, 'width' => 1280, 'height' => 720]], $images),
             'thumbnail' => UploadedFile::fake()->image('thumbnail.jpg', 500, 500),
             'thumbnail_crop' => ['x' => 0, 'y' => 0, 'width' => 500, 'height' => 500],
         ]);
@@ -680,6 +760,7 @@ describe('image uploads', function () {
             'url' => 'https://example.com',
             'source_status' => SourceStatus::NotAvailable->value,
             'images' => [$image],
+            'image_crops' => [['landscape' => ['x' => 0, 'y' => 0, 'width' => 1280, 'height' => 720]]],
             'thumbnail' => UploadedFile::fake()->image('thumbnail.jpg', 500, 500),
             'thumbnail_crop' => ['x' => 0, 'y' => 0, 'width' => 500, 'height' => 500],
         ]);
@@ -714,6 +795,7 @@ describe('image uploads', function () {
             'url' => 'https://example.com',
             'source_status' => SourceStatus::NotAvailable->value,
             'images' => $images,
+            'image_crops' => array_map(fn () => ['landscape' => ['x' => 0, 'y' => 0, 'width' => 1280, 'height' => 720]], $images),
             'thumbnail' => UploadedFile::fake()->image('thumbnail.jpg', 500, 500),
             'thumbnail_crop' => ['x' => 0, 'y' => 0, 'width' => 500, 'height' => 500],
         ]);
@@ -748,6 +830,7 @@ describe('image uploads', function () {
             'thumbnail' => $thumbnail,
             'thumbnail_crop' => ['x' => 0, 'y' => 0, 'width' => 500, 'height' => 500],
             'images' => [$image],
+            'image_crops' => [['landscape' => ['x' => 0, 'y' => 0, 'width' => 1280, 'height' => 720]]],
         ]);
 
         $showcase = Showcase::where('title', 'My Awesome Project')->first();
@@ -776,6 +859,7 @@ describe('image uploads', function () {
             'url' => 'https://example.com',
             'source_status' => SourceStatus::NotAvailable->value,
             'images' => [$image],
+            'image_crops' => [['landscape' => ['x' => 0, 'y' => 0, 'width' => 1280, 'height' => 720]]],
             'thumbnail' => UploadedFile::fake()->image('thumbnail.jpg', 500, 500),
             'thumbnail_crop' => ['x' => 0, 'y' => 0, 'width' => 500, 'height' => 500],
         ]);
@@ -784,6 +868,138 @@ describe('image uploads', function () {
         $storedImage = $showcase->images->first();
 
         expect($storedImage->filename)->toBe('my-screenshot.jpg');
+    });
+
+    test('stores image crops correctly', function () {
+        $practiceArea = PracticeArea::factory()->create();
+
+        /** @var User */
+        $user = User::factory()->create();
+
+        actingAs($user);
+
+        $image = UploadedFile::fake()->image('screenshot.jpg', 1280, 720);
+
+        post(route('showcase.manage.store'), [
+            'practice_area_ids' => [$practiceArea->id],
+            'title' => 'My Awesome Project',
+            'tagline' => 'A great project tagline',
+            'description' => 'This is a great project description',
+            'key_features' => 'Some key features',
+            'url' => 'https://example.com',
+            'source_status' => SourceStatus::NotAvailable->value,
+            'images' => [$image],
+            'image_crops' => [['landscape' => ['x' => 10, 'y' => 20, 'width' => 800, 'height' => 450]]],
+            'thumbnail' => UploadedFile::fake()->image('thumbnail.jpg', 500, 500),
+            'thumbnail_crop' => ['x' => 0, 'y' => 0, 'width' => 500, 'height' => 500],
+        ]);
+
+        $showcase = Showcase::where('title', 'My Awesome Project')->first();
+        $storedImage = $showcase->images->first();
+
+        expect($storedImage->crops)->toBe([
+            'landscape' => ['x' => 10, 'y' => 20, 'width' => 800, 'height' => 450],
+        ]);
+    });
+
+    test('stores crops for multiple images correctly', function () {
+        $practiceArea = PracticeArea::factory()->create();
+
+        /** @var User */
+        $user = User::factory()->create();
+
+        actingAs($user);
+
+        $images = [
+            UploadedFile::fake()->image('screenshot1.jpg', 1280, 720),
+            UploadedFile::fake()->image('screenshot2.jpg', 1280, 720),
+        ];
+
+        post(route('showcase.manage.store'), [
+            'practice_area_ids' => [$practiceArea->id],
+            'title' => 'My Awesome Project',
+            'tagline' => 'A great project tagline',
+            'description' => 'This is a great project description',
+            'key_features' => 'Some key features',
+            'url' => 'https://example.com',
+            'source_status' => SourceStatus::NotAvailable->value,
+            'images' => $images,
+            'image_crops' => [
+                ['landscape' => ['x' => 0, 'y' => 0, 'width' => 800, 'height' => 450]],
+                ['landscape' => ['x' => 50, 'y' => 100, 'width' => 600, 'height' => 338]],
+            ],
+            'thumbnail' => UploadedFile::fake()->image('thumbnail.jpg', 500, 500),
+            'thumbnail_crop' => ['x' => 0, 'y' => 0, 'width' => 500, 'height' => 500],
+        ]);
+
+        $showcase = Showcase::where('title', 'My Awesome Project')->first();
+        $orderedImages = $showcase->images()->orderBy('order')->get();
+
+        expect($orderedImages[0]->crops)->toBe([
+            'landscape' => ['x' => 0, 'y' => 0, 'width' => 800, 'height' => 450],
+        ]);
+        expect($orderedImages[1]->crops)->toBe([
+            'landscape' => ['x' => 50, 'y' => 100, 'width' => 600, 'height' => 338],
+        ]);
+    });
+
+    test('strips extra fields from image crop data', function () {
+        $practiceArea = PracticeArea::factory()->create();
+
+        /** @var User */
+        $user = User::factory()->create();
+
+        actingAs($user);
+
+        post(route('showcase.manage.store'), [
+            'practice_area_ids' => [$practiceArea->id],
+            'title' => 'My Awesome Project',
+            'tagline' => 'A great project tagline',
+            'description' => 'This is a great project description',
+            'key_features' => 'Some key features',
+            'url' => 'https://example.com',
+            'source_status' => SourceStatus::NotAvailable->value,
+            'images' => [UploadedFile::fake()->image('screenshot.jpg', 1280, 720)],
+            'image_crops' => [['landscape' => ['x' => 10, 'y' => 20, 'width' => 800, 'height' => 450, 'zoom' => 1.5, 'rotation' => 90], 'square' => ['x' => 0, 'y' => 0, 'width' => 400, 'height' => 400]]],
+            'thumbnail' => UploadedFile::fake()->image('thumbnail.jpg', 500, 500),
+            'thumbnail_crop' => ['x' => 0, 'y' => 0, 'width' => 500, 'height' => 500],
+        ]);
+
+        $showcase = Showcase::where('title', 'My Awesome Project')->first();
+        $storedImage = $showcase->images->first();
+
+        expect($storedImage->crops)->toBe([
+            'landscape' => ['x' => 10, 'y' => 20, 'width' => 800, 'height' => 450],
+        ]);
+    });
+
+    test('strips extra fields from thumbnail crop data', function () {
+        $practiceArea = PracticeArea::factory()->create();
+
+        /** @var User */
+        $user = User::factory()->create();
+
+        actingAs($user);
+
+        post(route('showcase.manage.store'), [
+            'practice_area_ids' => [$practiceArea->id],
+            'title' => 'My Awesome Project',
+            'tagline' => 'A great project tagline',
+            'description' => 'This is a great project description',
+            'key_features' => 'Some key features',
+            'url' => 'https://example.com',
+            'source_status' => SourceStatus::NotAvailable->value,
+            'images' => [UploadedFile::fake()->image('screenshot.jpg', 1280, 720)],
+            'image_crops' => [['landscape' => ['x' => 0, 'y' => 0, 'width' => 1280, 'height' => 720]]],
+            'thumbnail' => UploadedFile::fake()->image('thumbnail.jpg', 500, 500),
+            'thumbnail_crop' => ['x' => 0, 'y' => 0, 'width' => 500, 'height' => 500, 'zoom' => 2.0, 'rotation' => 45],
+        ]);
+
+        $showcase = Showcase::where('title', 'My Awesome Project')->first();
+
+        expect($showcase->thumbnail_crop)->toBe([
+            'x' => 0, 'y' => 0, 'width' => 500, 'height' => 500,
+        ]);
     });
 });
 
@@ -805,6 +1021,7 @@ describe('response', function () {
             'url' => 'https://example.com',
             'source_status' => SourceStatus::NotAvailable->value,
             'images' => [UploadedFile::fake()->image('test.jpg', 1280, 720)],
+            'image_crops' => [['landscape' => ['x' => 0, 'y' => 0, 'width' => 1280, 'height' => 720]]],
             'thumbnail' => UploadedFile::fake()->image('thumbnail.jpg', 500, 500),
             'thumbnail_crop' => ['x' => 0, 'y' => 0, 'width' => 500, 'height' => 500],
         ]);
@@ -831,6 +1048,7 @@ describe('response', function () {
             'url' => 'https://example.com',
             'source_status' => SourceStatus::NotAvailable->value,
             'images' => [UploadedFile::fake()->image('test.jpg', 1280, 720)],
+            'image_crops' => [['landscape' => ['x' => 0, 'y' => 0, 'width' => 1280, 'height' => 720]]],
             'thumbnail' => UploadedFile::fake()->image('thumbnail.jpg', 500, 500),
             'thumbnail_crop' => ['x' => 0, 'y' => 0, 'width' => 500, 'height' => 500],
         ]);
@@ -859,6 +1077,7 @@ describe('submit on create', function () {
             'url' => 'https://example.com',
             'source_status' => SourceStatus::NotAvailable->value,
             'images' => [UploadedFile::fake()->image('test.jpg', 1280, 720)],
+            'image_crops' => [['landscape' => ['x' => 0, 'y' => 0, 'width' => 1280, 'height' => 720]]],
             'thumbnail' => UploadedFile::fake()->image('thumbnail.jpg', 500, 500),
             'thumbnail_crop' => ['x' => 0, 'y' => 0, 'width' => 500, 'height' => 500],
             'submit' => true,
@@ -890,6 +1109,7 @@ describe('submit on create', function () {
             'url' => 'https://example.com',
             'source_status' => SourceStatus::NotAvailable->value,
             'images' => [UploadedFile::fake()->image('test.jpg', 1280, 720)],
+            'image_crops' => [['landscape' => ['x' => 0, 'y' => 0, 'width' => 1280, 'height' => 720]]],
             'thumbnail' => UploadedFile::fake()->image('thumbnail.jpg', 500, 500),
             'thumbnail_crop' => ['x' => 0, 'y' => 0, 'width' => 500, 'height' => 500],
             'submit' => false,
@@ -921,6 +1141,7 @@ describe('submit on create', function () {
             'url' => 'https://example.com',
             'source_status' => SourceStatus::NotAvailable->value,
             'images' => [UploadedFile::fake()->image('test.jpg', 1280, 720)],
+            'image_crops' => [['landscape' => ['x' => 0, 'y' => 0, 'width' => 1280, 'height' => 720]]],
             'thumbnail' => UploadedFile::fake()->image('thumbnail.jpg', 500, 500),
             'thumbnail_crop' => ['x' => 0, 'y' => 0, 'width' => 500, 'height' => 500],
         ]);
@@ -948,6 +1169,7 @@ describe('submit on create', function () {
             'url' => 'https://example.com',
             'source_status' => SourceStatus::NotAvailable->value,
             'images' => [UploadedFile::fake()->image('test.jpg', 1280, 720)],
+            'image_crops' => [['landscape' => ['x' => 0, 'y' => 0, 'width' => 1280, 'height' => 720]]],
             'thumbnail' => UploadedFile::fake()->image('thumbnail.jpg', 500, 500),
             'thumbnail_crop' => ['x' => 0, 'y' => 0, 'width' => 500, 'height' => 500],
             'submit' => true,
@@ -977,6 +1199,7 @@ describe('submit on create', function () {
             'url' => 'https://example.com',
             'source_status' => SourceStatus::NotAvailable->value,
             'images' => [UploadedFile::fake()->image('test.jpg', 1280, 720)],
+            'image_crops' => [['landscape' => ['x' => 0, 'y' => 0, 'width' => 1280, 'height' => 720]]],
             'thumbnail' => UploadedFile::fake()->image('thumbnail.jpg', 500, 500),
             'thumbnail_crop' => ['x' => 0, 'y' => 0, 'width' => 500, 'height' => 500],
             'submit' => true,
@@ -1006,6 +1229,7 @@ describe('marketing tag', function () {
             'url' => 'https://example.com',
             'source_status' => SourceStatus::NotAvailable->value,
             'images' => [UploadedFile::fake()->image('test.jpg', 1280, 720)],
+            'image_crops' => [['landscape' => ['x' => 0, 'y' => 0, 'width' => 1280, 'height' => 720]]],
             'thumbnail' => UploadedFile::fake()->image('thumbnail.jpg', 500, 500),
             'thumbnail_crop' => ['x' => 0, 'y' => 0, 'width' => 500, 'height' => 500],
         ]);
@@ -1036,6 +1260,7 @@ describe('marketing tag', function () {
             'url' => 'https://example.com',
             'source_status' => SourceStatus::NotAvailable->value,
             'images' => [UploadedFile::fake()->image('test.jpg', 1280, 720)],
+            'image_crops' => [['landscape' => ['x' => 0, 'y' => 0, 'width' => 1280, 'height' => 720]]],
             'thumbnail' => UploadedFile::fake()->image('thumbnail.jpg', 500, 500),
             'thumbnail_crop' => ['x' => 0, 'y' => 0, 'width' => 500, 'height' => 500],
         ]);
@@ -1066,6 +1291,7 @@ describe('marketing tag', function () {
             'url' => 'https://example.com',
             'source_status' => SourceStatus::NotAvailable->value,
             'images' => [UploadedFile::fake()->image('test.jpg', 1280, 720)],
+            'image_crops' => [['landscape' => ['x' => 0, 'y' => 0, 'width' => 1280, 'height' => 720]]],
             'thumbnail' => UploadedFile::fake()->image('thumbnail.jpg', 500, 500),
             'thumbnail_crop' => ['x' => 0, 'y' => 0, 'width' => 500, 'height' => 500],
         ]);
@@ -1093,6 +1319,7 @@ describe('challenge attachment', function () {
             'url' => 'https://example.com',
             'source_status' => SourceStatus::NotAvailable->value,
             'images' => [UploadedFile::fake()->image('test.jpg', 1280, 720)],
+            'image_crops' => [['landscape' => ['x' => 0, 'y' => 0, 'width' => 1280, 'height' => 720]]],
             'thumbnail' => UploadedFile::fake()->image('thumbnail.jpg', 500, 500),
             'thumbnail_crop' => ['x' => 0, 'y' => 0, 'width' => 500, 'height' => 500],
             'challenge_id' => $challenge->id,
@@ -1123,6 +1350,7 @@ describe('challenge attachment', function () {
             'url' => 'https://example.com',
             'source_status' => SourceStatus::NotAvailable->value,
             'images' => [UploadedFile::fake()->image('test.jpg', 1280, 720)],
+            'image_crops' => [['landscape' => ['x' => 0, 'y' => 0, 'width' => 1280, 'height' => 720]]],
             'thumbnail' => UploadedFile::fake()->image('thumbnail.jpg', 500, 500),
             'thumbnail_crop' => ['x' => 0, 'y' => 0, 'width' => 500, 'height' => 500],
         ]);
@@ -1150,6 +1378,7 @@ describe('challenge attachment', function () {
             'url' => 'https://example.com',
             'source_status' => SourceStatus::NotAvailable->value,
             'images' => [UploadedFile::fake()->image('test.jpg', 1280, 720)],
+            'image_crops' => [['landscape' => ['x' => 0, 'y' => 0, 'width' => 1280, 'height' => 720]]],
             'thumbnail' => UploadedFile::fake()->image('thumbnail.jpg', 500, 500),
             'thumbnail_crop' => ['x' => 0, 'y' => 0, 'width' => 500, 'height' => 500],
             'challenge_id' => $challenge->id,
@@ -1173,6 +1402,7 @@ describe('challenge attachment', function () {
             'url' => 'https://example.com',
             'source_status' => SourceStatus::NotAvailable->value,
             'images' => [UploadedFile::fake()->image('test.jpg', 1280, 720)],
+            'image_crops' => [['landscape' => ['x' => 0, 'y' => 0, 'width' => 1280, 'height' => 720]]],
             'thumbnail' => UploadedFile::fake()->image('thumbnail.jpg', 500, 500),
             'thumbnail_crop' => ['x' => 0, 'y' => 0, 'width' => 500, 'height' => 500],
             'challenge_id' => 99999,
@@ -1200,6 +1430,7 @@ describe('challenge attachment', function () {
             'url' => 'https://example.com',
             'source_status' => SourceStatus::NotAvailable->value,
             'images' => [UploadedFile::fake()->image('test.jpg', 1280, 720)],
+            'image_crops' => [['landscape' => ['x' => 0, 'y' => 0, 'width' => 1280, 'height' => 720]]],
             'thumbnail' => UploadedFile::fake()->image('thumbnail.jpg', 500, 500),
             'thumbnail_crop' => ['x' => 0, 'y' => 0, 'width' => 500, 'height' => 500],
             'challenge_id' => $challenge->id,
@@ -1227,6 +1458,7 @@ describe('challenge attachment', function () {
             'url' => 'https://example.com',
             'source_status' => SourceStatus::NotAvailable->value,
             'images' => [UploadedFile::fake()->image('test.jpg', 1280, 720)],
+            'image_crops' => [['landscape' => ['x' => 0, 'y' => 0, 'width' => 1280, 'height' => 720]]],
             'thumbnail' => UploadedFile::fake()->image('thumbnail.jpg', 500, 500),
             'thumbnail_crop' => ['x' => 0, 'y' => 0, 'width' => 500, 'height' => 500],
             'challenge_id' => $challenge->id,
@@ -1251,6 +1483,7 @@ describe('challenge attachment', function () {
             'url' => 'https://example.com',
             'source_status' => SourceStatus::NotAvailable->value,
             'images' => [UploadedFile::fake()->image('test.jpg', 1280, 720)],
+            'image_crops' => [['landscape' => ['x' => 0, 'y' => 0, 'width' => 1280, 'height' => 720]]],
             'thumbnail' => UploadedFile::fake()->image('thumbnail.jpg', 500, 500),
             'thumbnail_crop' => ['x' => 0, 'y' => 0, 'width' => 500, 'height' => 500],
             'challenge_id' => $challenge->id,
@@ -1278,6 +1511,7 @@ describe('challenge attachment', function () {
             'url' => 'https://example.com',
             'source_status' => SourceStatus::NotAvailable->value,
             'images' => [UploadedFile::fake()->image('test.jpg', 1280, 720)],
+            'image_crops' => [['landscape' => ['x' => 0, 'y' => 0, 'width' => 1280, 'height' => 720]]],
             'thumbnail' => UploadedFile::fake()->image('thumbnail.jpg', 500, 500),
             'thumbnail_crop' => ['x' => 0, 'y' => 0, 'width' => 500, 'height' => 500],
             'challenge_id' => $challenge->id,
@@ -1302,6 +1536,7 @@ describe('challenge attachment', function () {
             'url' => 'https://example.com',
             'source_status' => SourceStatus::NotAvailable->value,
             'images' => [UploadedFile::fake()->image('test.jpg', 1280, 720)],
+            'image_crops' => [['landscape' => ['x' => 0, 'y' => 0, 'width' => 1280, 'height' => 720]]],
             'thumbnail' => UploadedFile::fake()->image('thumbnail.jpg', 500, 500),
             'thumbnail_crop' => ['x' => 0, 'y' => 0, 'width' => 500, 'height' => 500],
             'challenge_id' => $challenge->id,
@@ -1331,6 +1566,7 @@ describe('challenge attachment', function () {
             'url' => 'https://example.com',
             'source_status' => SourceStatus::NotAvailable->value,
             'images' => [UploadedFile::fake()->image('test.jpg', 1280, 720)],
+            'image_crops' => [['landscape' => ['x' => 0, 'y' => 0, 'width' => 1280, 'height' => 720]]],
             'thumbnail' => UploadedFile::fake()->image('thumbnail.jpg', 500, 500),
             'thumbnail_crop' => ['x' => 0, 'y' => 0, 'width' => 500, 'height' => 500],
             'challenge_id' => $challenge->id,
@@ -1359,6 +1595,7 @@ describe('challenge attachment', function () {
             'url' => 'https://example.com',
             'source_status' => SourceStatus::NotAvailable->value,
             'images' => [UploadedFile::fake()->image('test.jpg', 1280, 720)],
+            'image_crops' => [['landscape' => ['x' => 0, 'y' => 0, 'width' => 1280, 'height' => 720]]],
             'thumbnail' => UploadedFile::fake()->image('thumbnail.jpg', 500, 500),
             'thumbnail_crop' => ['x' => 0, 'y' => 0, 'width' => 500, 'height' => 500],
             'challenge_id' => $challenge->id,

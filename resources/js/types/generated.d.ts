@@ -174,6 +174,7 @@ declare namespace App.Http.Resources.Showcase {
         order: number;
         alt_text: string | null;
         url: string | null;
+        crops: { [key: string]: App.ValueObjects.ImageCrop } | null;
     };
     export type ShowcaseDraftResource = {
         id: number;
@@ -207,6 +208,7 @@ declare namespace App.Http.Resources.Showcase {
         order: number;
         alt_text: string | null;
         url: string;
+        crops: { [key: string]: App.ValueObjects.ImageCrop } | null;
     };
     export type ShowcaseResource = {
         id: number;

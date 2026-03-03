@@ -14,6 +14,8 @@ export interface NormalizedImage {
     isNewDraftImage: boolean;
     /** The draft image ID (only for draft images that were newly added) */
     draftImageId: number | null;
+    /** Crop regions for this image (e.g. { landscape: { x, y, width, height } }) */
+    crops: Record<string, App.ValueObjects.ImageCrop> | null;
 }
 
 /**
@@ -126,6 +128,7 @@ export function normalizeShowcase(
         originalImageId: img.id,
         isNewDraftImage: false,
         draftImageId: null,
+        crops: img.crops ?? null,
     }));
 
     return {
@@ -173,6 +176,7 @@ export function normalizeDraft(
         originalImageId: img.original_image_id,
         isNewDraftImage: img.action === 'add',
         draftImageId: img.action === 'add' ? img.id : null,
+        crops: img.crops ?? null,
     }));
 
     return {

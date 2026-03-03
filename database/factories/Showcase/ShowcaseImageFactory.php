@@ -26,6 +26,14 @@ class ShowcaseImageFactory extends Factory
             'filename' => fake()->word().'.jpg',
             'order' => 0,
             'alt_text' => fake()->optional()->sentence(),
+            'crops' => [
+                'landscape' => [
+                    'x' => 0,
+                    'y' => 0,
+                    'width' => 800,
+                    'height' => 450,
+                ],
+            ],
         ];
     }
 

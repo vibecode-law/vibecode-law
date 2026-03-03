@@ -7,6 +7,9 @@ use App\Enums\SourceStatus;
 use App\Models\Challenge\Challenge;
 use App\Models\PracticeArea;
 use App\Models\Showcase\Showcase;
+use App\Rules\CropAspectRatio;
+use App\Rules\SingleCropAspectRatio;
+use App\Services\CropSanitizationService;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;
@@ -37,7 +40,35 @@ class ShowcaseWriteRequest extends FormRequest
             $this->merge(['source_url' => null]);
         }
 
+        $this->sanitizeCropData();
         $this->prepareSlug();
+    }
+
+    protected function sanitizeCropData(): void
+    {
+        if ($this->has('thumbnail_crop') && is_array($this->input('thumbnail_crop'))) {
+            $this->merge([
+                'thumbnail_crop' => CropSanitizationService::sanitizeSingleCrop($this->input('thumbnail_crop')),
+            ]);
+        }
+
+        if ($this->has('image_crops') && is_array($this->input('image_crops'))) {
+            $this->merge([
+                'image_crops' => CropSanitizationService::sanitizeNamedCropsArray(
+                    cropsArray: $this->input('image_crops'),
+                    allowedShapes: ['landscape'],
+                ),
+            ]);
+        }
+
+        if ($this->has('image_crop_updates') && is_array($this->input('image_crop_updates'))) {
+            $this->merge([
+                'image_crop_updates' => CropSanitizationService::sanitizeKeyedNamedCropsArray(
+                    cropsArray: $this->input('image_crop_updates'),
+                    allowedShapes: ['landscape'],
+                ),
+            ]);
+        }
     }
 
     protected function prepareSlug(): void
@@ -124,13 +155,27 @@ class ShowcaseWriteRequest extends FormRequest
             ],
             'thumbnail' => ['nullable', 'image', 'dimensions:min_width=100,min_height=100', 'max:2048'],
             'remove_thumbnail' => ['nullable', 'boolean'],
-            'thumbnail_crop' => ['nullable', 'required_with:thumbnail', 'array'],
+            'thumbnail_crop' => ['nullable', 'required_with:thumbnail', 'array', new SingleCropAspectRatio(expectedRatio: 1.0)],
             'thumbnail_crop.x' => ['required_with:thumbnail_crop', 'integer', 'min:0'],
             'thumbnail_crop.y' => ['required_with:thumbnail_crop', 'integer', 'min:0'],
             'thumbnail_crop.width' => ['required_with:thumbnail_crop', 'integer', 'min:1'],
             'thumbnail_crop.height' => ['required_with:thumbnail_crop', 'integer', 'min:1'],
             'images' => ['nullable', 'array', 'max:10'],
             'images.*' => ['image', 'dimensions:min_width=400,min_height=225', 'max:4096'],
+            'image_crops' => ['nullable', 'array'],
+            'image_crops.*' => ['required', 'array', new CropAspectRatio(expectedRatios: ['landscape' => 16 / 9])],
+            'image_crops.*.landscape' => ['required', 'array'],
+            'image_crops.*.landscape.x' => ['required', 'integer', 'min:0'],
+            'image_crops.*.landscape.y' => ['required', 'integer', 'min:0'],
+            'image_crops.*.landscape.width' => ['required', 'integer', 'min:1'],
+            'image_crops.*.landscape.height' => ['required', 'integer', 'min:1'],
+            'image_crop_updates' => ['nullable', 'array'],
+            'image_crop_updates.*' => ['required', 'array', new CropAspectRatio(expectedRatios: ['landscape' => 16 / 9])],
+            'image_crop_updates.*.landscape' => ['required', 'array'],
+            'image_crop_updates.*.landscape.x' => ['required', 'integer', 'min:0'],
+            'image_crop_updates.*.landscape.y' => ['required', 'integer', 'min:0'],
+            'image_crop_updates.*.landscape.width' => ['required', 'integer', 'min:1'],
+            'image_crop_updates.*.landscape.height' => ['required', 'integer', 'min:1'],
             'removed_images' => ['nullable', 'array'],
             'removed_images.*' => ['integer', Rule::exists('showcase_images', 'id')->where('showcase_id', $showcase?->id)],
             'submit' => ['nullable', 'boolean'],
@@ -146,6 +191,13 @@ class ShowcaseWriteRequest extends FormRequest
 
             $this->validateChallengeDateWindow(validator: $validator, showcase: $showcase);
             $this->validateChallengeInviteAccess(validator: $validator, showcase: $showcase);
+
+            $newImagesCount = count($this->file('images', []));
+            $imageCropsCount = count($this->input('image_crops', []));
+
+            if ($newImagesCount > 0 && $imageCropsCount !== $newImagesCount) {
+                $validator->errors()->add('image_crops', 'Crop data must be provided for each new image.');
+            }
 
             $existingImagesCount = $showcase?->images()->count() ?? 0;
             $removedImagesCount = count($this->input('removed_images', []));

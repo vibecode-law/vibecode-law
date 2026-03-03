@@ -13,7 +13,6 @@ use Illuminate\Support\Facades\Storage;
 
 /**
  * @property array{x: int, y: int, width: int, height: int}|null $avatar_crop
- *
  * @mixin IdeHelperTestimonial
  */
 class Testimonial extends Model

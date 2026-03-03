@@ -698,4 +698,211 @@ describe('thumbnail operations', function () {
         // Old thumbnail should be removed
         Storage::disk('public')->assertMissing("showcase-drafts/{$draft->id}/thumbnail.jpg");
     });
+
+    test('strips extra fields from thumbnail crop data', function () {
+        /** @var User */
+        $owner = User::factory()->create();
+        $showcase = Showcase::factory()->approved()->for($owner, 'user')->create();
+        $draft = ShowcaseDraft::factory()
+            ->for($showcase, 'showcase')
+            ->create();
+        ShowcaseDraftImage::factory()->for($draft, 'showcaseDraft')->add()->create();
+
+        actingAs($owner);
+
+        put(route('showcase.draft.update', $draft), [
+            'practice_area_ids' => $draft->practiceAreas->pluck('id')->toArray(),
+            'title' => $draft->title,
+            'tagline' => $draft->tagline,
+            'description' => $draft->description,
+            'key_features' => $draft->key_features,
+            'source_status' => SourceStatus::NotAvailable->value,
+            'thumbnail' => UploadedFile::fake()->image('thumbnail.jpg', 500, 500),
+            'thumbnail_crop' => ['x' => 0, 'y' => 0, 'width' => 500, 'height' => 500, 'zoom' => 2.0, 'rotation' => 45],
+        ])->assertRedirect();
+
+        $draft->refresh();
+
+        expect($draft->thumbnail_crop)->toBe([
+            'x' => 0, 'y' => 0, 'width' => 500, 'height' => 500,
+        ]);
+    });
+});
+
+describe('image crop updates', function () {
+    test('updates crops on a kept draft image via image_crop_updates', function () {
+        /** @var User */
+        $owner = User::factory()->create();
+        $showcase = Showcase::factory()->approved()->for($owner, 'user')->create();
+        $originalImage = ShowcaseImage::factory()->for($showcase, 'showcase')->create([
+            'crops' => ['landscape' => ['x' => 0, 'y' => 0, 'width' => 800, 'height' => 450]],
+        ]);
+
+        $draft = ShowcaseDraft::factory()->for($showcase, 'showcase')->create();
+        $keptImage = ShowcaseDraftImage::factory()->for($draft, 'showcaseDraft')->keep($originalImage)->create();
+
+        actingAs($owner);
+
+        put(route('showcase.draft.update', $draft), [
+            'practice_area_ids' => $draft->practiceAreas->pluck('id')->toArray(),
+            'title' => $draft->title,
+            'tagline' => $draft->tagline,
+            'description' => $draft->description,
+            'key_features' => $draft->key_features,
+            'source_status' => SourceStatus::NotAvailable->value,
+            'image_crop_updates' => [
+                $originalImage->id => ['landscape' => ['x' => 50, 'y' => 100, 'width' => 600, 'height' => 338]],
+            ],
+        ])->assertSessionHasNoErrors()
+            ->assertRedirect();
+
+        $keptImage->refresh();
+
+        expect($keptImage->crops)->toBe([
+            'landscape' => ['x' => 50, 'y' => 100, 'width' => 600, 'height' => 338],
+        ]);
+    });
+
+    test('updates crops on a new draft image via draft_image_crop_updates', function () {
+        /** @var User */
+        $owner = User::factory()->create();
+        $showcase = Showcase::factory()->approved()->for($owner, 'user')->create();
+
+        $originalImage = ShowcaseImage::factory()->for($showcase, 'showcase')->create();
+        $draft = ShowcaseDraft::factory()->for($showcase, 'showcase')->create();
+        ShowcaseDraftImage::factory()->for($draft, 'showcaseDraft')->keep($originalImage)->create();
+
+        $newDraftImage = ShowcaseDraftImage::factory()->for($draft, 'showcaseDraft')->add()->create([
+            'crops' => ['landscape' => ['x' => 0, 'y' => 0, 'width' => 800, 'height' => 450]],
+        ]);
+
+        actingAs($owner);
+
+        put(route('showcase.draft.update', $draft), [
+            'practice_area_ids' => $draft->practiceAreas->pluck('id')->toArray(),
+            'title' => $draft->title,
+            'tagline' => $draft->tagline,
+            'description' => $draft->description,
+            'key_features' => $draft->key_features,
+            'source_status' => SourceStatus::NotAvailable->value,
+            'draft_image_crop_updates' => [
+                $newDraftImage->id => ['landscape' => ['x' => 30, 'y' => 40, 'width' => 500, 'height' => 281]],
+            ],
+        ])->assertSessionHasNoErrors()
+            ->assertRedirect();
+
+        $newDraftImage->refresh();
+
+        expect($newDraftImage->crops)->toBe([
+            'landscape' => ['x' => 30, 'y' => 40, 'width' => 500, 'height' => 281],
+        ]);
+    });
+
+    test('updates both kept and new draft image crops simultaneously', function () {
+        /** @var User */
+        $owner = User::factory()->create();
+        $showcase = Showcase::factory()->approved()->for($owner, 'user')->create();
+
+        $originalImage = ShowcaseImage::factory()->for($showcase, 'showcase')->create();
+        $draft = ShowcaseDraft::factory()->for($showcase, 'showcase')->create();
+        $keptImage = ShowcaseDraftImage::factory()->for($draft, 'showcaseDraft')->keep($originalImage)->create();
+        $newDraftImage = ShowcaseDraftImage::factory()->for($draft, 'showcaseDraft')->add()->create();
+
+        actingAs($owner);
+
+        put(route('showcase.draft.update', $draft), [
+            'practice_area_ids' => $draft->practiceAreas->pluck('id')->toArray(),
+            'title' => $draft->title,
+            'tagline' => $draft->tagline,
+            'description' => $draft->description,
+            'key_features' => $draft->key_features,
+            'source_status' => SourceStatus::NotAvailable->value,
+            'image_crop_updates' => [
+                $originalImage->id => ['landscape' => ['x' => 10, 'y' => 20, 'width' => 700, 'height' => 394]],
+            ],
+            'draft_image_crop_updates' => [
+                $newDraftImage->id => ['landscape' => ['x' => 30, 'y' => 40, 'width' => 500, 'height' => 281]],
+            ],
+        ])->assertSessionHasNoErrors()
+            ->assertRedirect();
+
+        $keptImage->refresh();
+        $newDraftImage->refresh();
+
+        expect($keptImage->crops)->toBe([
+            'landscape' => ['x' => 10, 'y' => 20, 'width' => 700, 'height' => 394],
+        ]);
+        expect($newDraftImage->crops)->toBe([
+            'landscape' => ['x' => 30, 'y' => 40, 'width' => 500, 'height' => 281],
+        ]);
+    });
+
+    test('validates image_crop_updates requires valid crop data', function ($data, $invalid) {
+        /** @var User */
+        $owner = User::factory()->create();
+        $showcase = Showcase::factory()->approved()->for($owner, 'user')->create();
+
+        $originalImage = ShowcaseImage::factory()->for($showcase, 'showcase')->create();
+        $draft = ShowcaseDraft::factory()->for($showcase, 'showcase')->create();
+        ShowcaseDraftImage::factory()->for($draft, 'showcaseDraft')->keep($originalImage)->create();
+
+        actingAs($owner);
+
+        put(route('showcase.draft.update', $draft), array_merge([
+            'practice_area_ids' => $draft->practiceAreas->pluck('id')->toArray(),
+            'title' => $draft->title,
+            'tagline' => $draft->tagline,
+            'description' => $draft->description,
+            'key_features' => $draft->key_features,
+            'source_status' => SourceStatus::NotAvailable->value,
+        ], $data))->assertInvalid($invalid);
+    })->with([
+        'image_crop_updates missing landscape' => [
+            ['image_crop_updates' => [1 => ['x' => 0]]],
+            ['image_crop_updates.1'],
+        ],
+        'image_crop_updates missing x' => [
+            ['image_crop_updates' => [1 => ['landscape' => ['y' => 0, 'width' => 800, 'height' => 450]]]],
+            ['image_crop_updates.1.landscape.x'],
+        ],
+        'draft_image_crop_updates missing landscape' => [
+            ['draft_image_crop_updates' => [1 => ['x' => 0]]],
+            ['draft_image_crop_updates.1'],
+        ],
+        'draft_image_crop_updates width must be at least 1' => [
+            ['draft_image_crop_updates' => [1 => ['landscape' => ['x' => 0, 'y' => 0, 'width' => 0, 'height' => 450]]]],
+            ['draft_image_crop_updates.1.landscape.width'],
+        ],
+    ]);
+
+    test('strips extra fields from image crop update data', function () {
+        /** @var User */
+        $owner = User::factory()->create();
+        $showcase = Showcase::factory()->approved()->for($owner, 'user')->create();
+
+        $originalImage = ShowcaseImage::factory()->for($showcase, 'showcase')->create();
+        $draft = ShowcaseDraft::factory()->for($showcase, 'showcase')->create();
+        $keptImage = ShowcaseDraftImage::factory()->for($draft, 'showcaseDraft')->keep($originalImage)->create();
+
+        actingAs($owner);
+
+        put(route('showcase.draft.update', $draft), [
+            'practice_area_ids' => $draft->practiceAreas->pluck('id')->toArray(),
+            'title' => $draft->title,
+            'tagline' => $draft->tagline,
+            'description' => $draft->description,
+            'key_features' => $draft->key_features,
+            'source_status' => SourceStatus::NotAvailable->value,
+            'image_crop_updates' => [
+                $originalImage->id => ['landscape' => ['x' => 10, 'y' => 20, 'width' => 800, 'height' => 450, 'zoom' => 1.5], 'square' => ['x' => 0, 'y' => 0, 'width' => 100, 'height' => 100]],
+            ],
+        ])->assertSessionHasNoErrors()
+            ->assertRedirect();
+
+        $keptImage->refresh();
+
+        expect($keptImage->crops)->toBe([
+            'landscape' => ['x' => 10, 'y' => 20, 'width' => 800, 'height' => 450],
+        ]);
+    });
 });

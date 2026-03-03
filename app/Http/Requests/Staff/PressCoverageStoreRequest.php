@@ -2,10 +2,21 @@
 
 namespace App\Http\Requests\Staff;
 
+use App\Rules\SingleCropAspectRatio;
+use App\Services\CropSanitizationService;
 use Illuminate\Foundation\Http\FormRequest;
 
 class PressCoverageStoreRequest extends FormRequest
 {
+    protected function prepareForValidation(): void
+    {
+        if ($this->has('thumbnail_crop') && is_array($this->input('thumbnail_crop'))) {
+            $this->merge([
+                'thumbnail_crop' => CropSanitizationService::sanitizeSingleCrop($this->input('thumbnail_crop')),
+            ]);
+        }
+    }
+
     public function rules(): array
     {
         return [
@@ -15,7 +26,7 @@ class PressCoverageStoreRequest extends FormRequest
             'url' => ['required', 'url', 'max:500'],
             'excerpt' => ['nullable', 'string', 'max:500'],
             'thumbnail' => ['nullable', 'image', 'mimes:png,jpg,jpeg,gif,webp', 'max:2048', 'dimensions:min_width=100,min_height=100'],
-            'thumbnail_crop' => ['nullable', 'array'],
+            'thumbnail_crop' => ['nullable', 'array', new SingleCropAspectRatio(expectedRatio: 1.0)],
             'thumbnail_crop.x' => ['required_with:thumbnail_crop', 'integer'],
             'thumbnail_crop.y' => ['required_with:thumbnail_crop', 'integer'],
             'thumbnail_crop.width' => ['required_with:thumbnail_crop', 'integer'],

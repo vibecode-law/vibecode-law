@@ -53,14 +53,15 @@ class ShowcaseMediaService
 
     /**
      * @param  array<UploadedFile>  $files
+     * @param  array<int, array<string, array{x: int, y: int, width: int, height: int}>>  $crops
      */
-    public function storeImages(Showcase|ShowcaseDraft $model, array $files): void
+    public function storeImages(Showcase|ShowcaseDraft $model, array $files, array $crops = []): void
     {
         $order = $model->images()->max('order') ?? 0;
         $storagePath = $this->getStoragePath(model: $model).'/images';
         $isDraft = $model instanceof ShowcaseDraft;
 
-        foreach ($files as $file) {
+        foreach ($files as $index => $file) {
             $path = $file->storeAs(
                 path: $storagePath,
                 name: Str::uuid().'.'.$file->getClientOriginalExtension(),
@@ -71,6 +72,7 @@ class ShowcaseMediaService
                 'path' => $path,
                 'filename' => $file->getClientOriginalName(),
                 'order' => ++$order,
+                'crops' => $crops[$index] ?? null,
             ];
 
             if ($isDraft === true) {
@@ -79,6 +81,41 @@ class ShowcaseMediaService
             }
 
             $model->images()->create($imageData);
+        }
+    }
+
+    /**
+     * Update crop data for existing showcase images.
+     *
+     * @param  array<int, array<string, array{x: int, y: int, width: int, height: int}>>  $cropUpdates
+     */
+    public function updateImageCrops(Showcase $showcase, array $cropUpdates): void
+    {
+        foreach ($cropUpdates as $imageId => $crops) {
+            $showcase->images()
+                ->where('id', $imageId)
+                ->update(['crops' => json_encode($crops)]);
+        }
+    }
+
+    /**
+     * Update crop data for existing draft images.
+     *
+     * @param  array<int, array<string, array{x: int, y: int, width: int, height: int}>>  $cropUpdates  Keyed by original_image_id
+     * @param  array<int, array<string, array{x: int, y: int, width: int, height: int}>>  $draftCropUpdates  Keyed by draft image ID
+     */
+    public function updateDraftImageCrops(ShowcaseDraft $draft, array $cropUpdates, array $draftCropUpdates): void
+    {
+        foreach ($cropUpdates as $originalImageId => $crops) {
+            $draft->images()
+                ->where('original_image_id', $originalImageId)
+                ->update(['crops' => json_encode($crops)]);
+        }
+
+        foreach ($draftCropUpdates as $draftImageId => $crops) {
+            $draft->images()
+                ->where('id', $draftImageId)
+                ->update(['crops' => json_encode($crops)]);
         }
     }
 

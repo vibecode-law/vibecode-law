@@ -146,6 +146,61 @@ describe('image handling', function () {
         expect($showcase->images[0]->filename)->toBe('new-image.jpg');
         expect($showcase->images[0]->alt_text)->toBe('New Image Alt');
     });
+
+    test('copies crops from kept draft image to showcase image', function () {
+        $showcase = Showcase::factory()->approved()->create();
+        $image = ShowcaseImage::factory()->create([
+            'showcase_id' => $showcase->id,
+            'order' => 1,
+            'crops' => ['landscape' => ['x' => 0, 'y' => 0, 'width' => 800, 'height' => 450]],
+        ]);
+
+        $draft = ShowcaseDraft::factory()->pending()->create([
+            'showcase_id' => $showcase->id,
+        ]);
+
+        ShowcaseDraftImage::factory()->keep($image)->create([
+            'showcase_draft_id' => $draft->id,
+            'order' => 1,
+            'crops' => ['landscape' => ['x' => 50, 'y' => 25, 'width' => 600, 'height' => 338]],
+        ]);
+
+        (new ApproveShowcaseDraftAction)->approve(draft: $draft);
+
+        $image->refresh();
+
+        expect($image->crops)->toBe([
+            'landscape' => ['x' => 50, 'y' => 25, 'width' => 600, 'height' => 338],
+        ]);
+    });
+
+    test('copies crops from added draft image to new showcase image', function () {
+        $showcase = Showcase::factory()->approved()->create();
+
+        $draft = ShowcaseDraft::factory()->pending()->create([
+            'showcase_id' => $showcase->id,
+        ]);
+
+        $draftImagePath = "showcase-drafts/{$draft->id}/images/new-image.jpg";
+        Storage::disk('public')->put($draftImagePath, 'fake image');
+
+        ShowcaseDraftImage::factory()->add()->create([
+            'showcase_draft_id' => $draft->id,
+            'path' => $draftImagePath,
+            'filename' => 'new-image.jpg',
+            'order' => 1,
+            'crops' => ['landscape' => ['x' => 10, 'y' => 20, 'width' => 800, 'height' => 450]],
+        ]);
+
+        (new ApproveShowcaseDraftAction)->approve(draft: $draft);
+
+        $showcase->refresh();
+
+        expect($showcase->images)->toHaveCount(1);
+        expect($showcase->images[0]->crops)->toBe([
+            'landscape' => ['x' => 10, 'y' => 20, 'width' => 800, 'height' => 450],
+        ]);
+    });
 });
 
 describe('thumbnail handling', function () {
