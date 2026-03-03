@@ -40,6 +40,7 @@ class HomeController extends BaseController
                 ->only('id', 'slug', 'title', 'tagline', 'thumbnail_url', 'thumbnail_rect_string', 'upvotes_count', 'has_upvoted', 'view_count', 'user')
                 ->toArray()
             )
+            ->sortKeysDesc()
             ->toArray();
 
         if (! array_key_exists($currentMonth, $showcasesByMonth)) {
