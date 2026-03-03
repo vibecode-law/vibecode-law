@@ -82,7 +82,7 @@ export function PublicFooter() {
                             <a
                                 href="https://www.linkedin.com/company/vibecode-law"
                                 target="_blank"
-                                rel="noopener noreferrer"
+                                rel="noopener"
                                 className="text-primary transition-colors hover:text-primary/80"
                                 aria-label="LinkedIn"
                             >
@@ -91,7 +91,7 @@ export function PublicFooter() {
                             <a
                                 href="https://github.com/vibecode-law"
                                 target="_blank"
-                                rel="noopener noreferrer"
+                                rel="noopener"
                                 className="text-primary transition-colors hover:text-primary/80"
                                 aria-label="GitHub"
                             >
@@ -114,6 +114,50 @@ export function PublicFooter() {
                             <NewsletterSignup compact />
                         </div>
                     )}
+                </div>
+            </div>
+
+            {/* Official Platform Partners */}
+            <div className="border-t border-neutral-200 dark:border-neutral-800">
+                <div className="mx-auto my-8 flex max-w-6xl flex-col items-center gap-8 px-2 md:flex-row md:justify-center md:gap-12">
+                    <span className="shrink-0 text-xs font-semibold tracking-wide text-neutral-400 uppercase dark:text-neutral-500">
+                        Official Platform Partners
+                    </span>
+                    <div className="grid max-w-sm grid-cols-2 items-center gap-8 sm:flex sm:max-w-none sm:gap-10 [&>*:last-child:nth-child(odd)]:col-span-2 [&>*:last-child:nth-child(odd)]:mx-auto [&>*:last-child:nth-child(odd)]:max-w-[calc(50%-0.5rem)]">
+                        <a
+                            href="https://www.lupl.com/"
+                            target="_blank"
+                            rel="noopener"
+                        >
+                            <img
+                                src="/static/partners/lupl-black.svg"
+                                alt="Lupl"
+                                className="max-h-10 w-full object-contain opacity-60 grayscale transition hover:opacity-100 hover:grayscale-0 sm:h-8 sm:max-h-none sm:w-auto sm:landscape:h-10 dark:invert"
+                            />
+                        </a>
+                        <a
+                            href="https://tilder-tldr.com"
+                            target="_blank"
+                            rel="noopener"
+                        >
+                            <img
+                                src="/static/partners/tilder-black.svg"
+                                alt="Tilder by Tacit Legal"
+                                className="max-h-10 w-full object-contain opacity-60 grayscale transition hover:opacity-100 hover:grayscale-0 sm:h-8 sm:max-h-none sm:w-auto sm:landscape:h-10 dark:invert"
+                            />
+                        </a>
+                        <a
+                            href="https://www.legaltechcollective.com/"
+                            target="_blank"
+                            rel="noopener"
+                        >
+                            <img
+                                src="/static/partners/ltc-black.svg"
+                                alt="Legal Tech Collective"
+                                className="max-h-10 w-full object-contain opacity-60 grayscale transition hover:opacity-100 hover:grayscale-0 sm:h-8 sm:max-h-none sm:w-auto sm:landscape:h-10 dark:invert"
+                            />
+                        </a>
+                    </div>
                 </div>
             </div>
 

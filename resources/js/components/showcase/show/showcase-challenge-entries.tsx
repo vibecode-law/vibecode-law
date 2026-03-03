@@ -30,7 +30,7 @@ export function ShowcaseChallengeEntries({
     return (
         <div className={cn('w-full', className)}>
             <h3 className="mb-3 text-xs font-medium tracking-wide text-neutral-500 uppercase dark:text-neutral-400">
-                Particpating In
+                Participating In
             </h3>
             <div className="space-y-2">
                 {challengeEntries.map((entry) => (
