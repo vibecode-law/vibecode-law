@@ -45,7 +45,7 @@ jobs:
 
       - name: Backend format check
         run: composer lint
-     
+
       - name: Backend static analysis
         run: composer types
 

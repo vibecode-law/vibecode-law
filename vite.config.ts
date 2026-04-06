@@ -61,10 +61,7 @@ export default defineConfig(({ mode }) => {
                 clientPort: 443,
             },
             origin: `https://${codespacesDomain}`,
-        } : {
-            // Standard local development configuration
-            host: 'localhost',
-        },
+        } : undefined,
 
         esbuild: {
             jsx: 'automatic',

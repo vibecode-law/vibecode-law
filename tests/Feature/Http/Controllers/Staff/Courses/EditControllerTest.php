@@ -2,6 +2,7 @@
 
 use App\Enums\ExperienceLevel;
 use App\Models\Course\Course;
+use App\Models\Course\Lesson;
 use App\Models\Tag;
 use App\Models\User;
 use Inertia\Testing\AssertableInertia;
@@ -56,7 +57,7 @@ describe('data', function () {
             'allow_preview' => true,
             'is_featured' => true,
             'experience_level' => ExperienceLevel::Advanced,
-            'publish_date' => '2026-03-15',
+            'publish_date' => now()->addMonth()->format('Y-m-d'),
         ]);
 
         actingAs($admin);
@@ -78,7 +79,7 @@ describe('data', function () {
                     ->where('is_previewable', true)
                     ->where('is_scheduled', false)
                     ->where('is_featured', true)
-                    ->where('publish_date', '2026-03-15')
+                    ->where('publish_date', now()->addMonth()->format('Y-m-d'))
                     ->where('order', $course->order)
                     ->where('thumbnail_url', null)
                     ->where('thumbnail_rect_strings', null)
@@ -124,7 +125,7 @@ describe('data', function () {
     test('returns lessons count', function () {
         $admin = User::factory()->admin()->create();
         $course = Course::factory()->create();
-        \App\Models\Course\Lesson::factory()->count(5)->create(['course_id' => $course->id]);
+        Lesson::factory()->count(5)->create(['course_id' => $course->id]);
 
         actingAs($admin);
 

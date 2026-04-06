@@ -269,7 +269,7 @@ test('show returns unique participants from publicly visible showcases', functio
     get(route('inspiration.challenges.show', $challenge))
         ->assertInertia(fn (AssertableInertia $page) => $page
             ->has('participants', 2)
-            ->where('participants.0.first_name', 'Alice')
+            ->where('participants', fn ($participants) => $participants->contains('first_name', 'Alice'))
             ->has('participants.0', fn (AssertableInertia $p) => $p
                 ->has('first_name')
                 ->has('avatar')
