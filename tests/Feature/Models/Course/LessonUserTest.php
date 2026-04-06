@@ -3,6 +3,7 @@
 use App\Models\Course\Lesson;
 use App\Models\Course\LessonUser;
 use App\Models\User;
+use Illuminate\Database\UniqueConstraintViolationException;
 use Illuminate\Support\Carbon;
 
 test('timestamps are cast to datetime', function () {
@@ -48,4 +49,4 @@ test('user and lesson combination is unique', function () {
         'user_id' => $progress->user_id,
         'lesson_id' => $progress->lesson_id,
     ]);
-})->throws(Illuminate\Database\UniqueConstraintViolationException::class);
+})->throws(UniqueConstraintViolationException::class);

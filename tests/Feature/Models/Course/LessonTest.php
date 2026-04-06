@@ -9,6 +9,7 @@ use App\Models\Tag;
 use App\Models\User;
 use App\Services\Markdown\MarkdownService;
 use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Facades\DB;
 
 test('uses slug as route key name', function () {
     $lesson = Lesson::factory()->create();
@@ -115,7 +116,7 @@ describe('instructors relationship', function () {
         $lesson->delete();
 
         expect(
-            \Illuminate\Support\Facades\DB::table('instructor_lesson')
+            DB::table('instructor_lesson')
                 ->where('lesson_id', $lessonId)
                 ->count()
         )->toBe(0);

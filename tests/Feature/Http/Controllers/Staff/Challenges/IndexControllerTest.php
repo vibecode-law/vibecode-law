@@ -3,6 +3,7 @@
 use App\Enums\ChallengeVisibility;
 use App\Models\Challenge\Challenge;
 use App\Models\Organisation\Organisation;
+use App\Models\Showcase\Showcase;
 use App\Models\User;
 use Inertia\Testing\AssertableInertia;
 
@@ -112,7 +113,7 @@ describe('data', function () {
         $admin = User::factory()->admin()->create();
         $challenge = Challenge::factory()->create();
         $challenge->showcases()->attach(
-            \App\Models\Showcase\Showcase::factory()->count(3)->create()->pluck('id')
+            Showcase::factory()->count(3)->create()->pluck('id')
         );
 
         actingAs($admin);

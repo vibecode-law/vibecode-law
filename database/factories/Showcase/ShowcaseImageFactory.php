@@ -10,7 +10,7 @@ use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 
 /**
- * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\Showcase\ShowcaseImage>
+ * @extends Factory<ShowcaseImage>
  */
 class ShowcaseImageFactory extends Factory
 {

@@ -22,7 +22,7 @@ describe('showcase create page logging', function () {
             ->andReturnSelf();
 
         Log::shouldReceive('info')
-            ->with('User accessed showcase page', \Mockery::on(function ($context) {
+            ->with('User accessed showcase page', Mockery::on(function ($context) {
                 return isset($context['name']);
             }))
             ->once();
@@ -72,7 +72,7 @@ describe('showcase store validation logging', function () {
             ->andReturnSelf();
 
         Log::shouldReceive('info')
-            ->with('Showcase validation succeeded', \Mockery::on(function ($context) {
+            ->with('Showcase validation succeeded', Mockery::on(function ($context) {
                 return isset($context['route'])
                     && isset($context['name'])
                     && $context['route'] === 'showcase.manage.store'
@@ -112,7 +112,7 @@ describe('showcase store validation logging', function () {
             ->andReturnSelf();
 
         Log::shouldReceive('info')
-            ->with('Showcase validation failed', \Mockery::on(function ($context) {
+            ->with('Showcase validation failed', Mockery::on(function ($context) {
                 return isset($context['route'])
                     && isset($context['name'])
                     && isset($context['errors'])
@@ -145,7 +145,7 @@ describe('showcase update validation logging', function () {
             ->andReturnSelf();
 
         Log::shouldReceive('info')
-            ->with('Showcase validation succeeded', \Mockery::on(function ($context) {
+            ->with('Showcase validation succeeded', Mockery::on(function ($context) {
                 return isset($context['route'])
                     && isset($context['name'])
                     && $context['route'] === 'showcase.manage.update'
@@ -184,7 +184,7 @@ describe('showcase update validation logging', function () {
             ->andReturnSelf();
 
         Log::shouldReceive('info')
-            ->with('Showcase validation failed', \Mockery::on(function ($context) {
+            ->with('Showcase validation failed', Mockery::on(function ($context) {
                 return isset($context['route'])
                     && isset($context['name'])
                     && isset($context['errors'])

@@ -62,7 +62,7 @@ describe('data', function () {
             'course_id' => $course->id,
             'gated' => true,
             'allow_preview' => true,
-            'publish_date' => '2026-03-15',
+            'publish_date' => now()->addMonth()->format('Y-m-d'),
         ]);
         $lesson->instructors()->attach($instructor);
 
@@ -84,7 +84,7 @@ describe('data', function () {
                     ->where('allow_preview', true)
                     ->where('is_previewable', true)
                     ->where('is_scheduled', false)
-                    ->where('publish_date', '2026-03-15')
+                    ->where('publish_date', now()->addMonth()->format('Y-m-d'))
                     ->where('order', $lesson->order)
                     ->where('asset_id', $lesson->asset_id)
                     ->where('playback_id', $lesson->playback_id)

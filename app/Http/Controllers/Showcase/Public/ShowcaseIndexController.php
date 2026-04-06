@@ -8,6 +8,7 @@ use App\Http\Resources\Showcase\ShowcaseResource;
 use App\Models\PracticeArea;
 use App\Models\Showcase\Showcase;
 use App\Queries\Showcase\PublicShowcaseQuery;
+use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Support\Carbon;
 use Inertia\Inertia;
 use Inertia\Response;
@@ -47,9 +48,9 @@ class ShowcaseIndexController extends BaseController
     }
 
     /**
-     * @return \Illuminate\Database\Eloquent\Collection<int, PracticeArea>
+     * @return Collection<int, PracticeArea>
      */
-    private function getPracticeAreas(): \Illuminate\Database\Eloquent\Collection
+    private function getPracticeAreas(): Collection
     {
         return PracticeArea::query()
             ->orderBy('name')

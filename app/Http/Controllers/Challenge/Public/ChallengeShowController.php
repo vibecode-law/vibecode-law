@@ -10,6 +10,7 @@ use App\Http\Resources\Showcase\ShowcaseResource;
 use App\Http\Resources\User\UserResource;
 use App\Models\Challenge\Challenge;
 use App\Models\Showcase\Showcase;
+use App\Models\User;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Support\Facades\Auth;
@@ -104,7 +105,7 @@ class ChallengeShowController extends BaseController
 
     /**
      * @param  Collection<int, Showcase>  $showcases
-     * @return \Illuminate\Support\Collection<int, \App\Models\User>
+     * @return \Illuminate\Support\Collection<int, User>
      */
     private function extractParticipants(Collection $showcases): \Illuminate\Support\Collection
     {

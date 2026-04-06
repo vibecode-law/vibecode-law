@@ -6,6 +6,7 @@ use App\Actions\User\GenerateUniqueUserHandleAction;
 use App\Models\User;
 use App\Notifications\UserInvitation;
 use App\Services\User\ProfileService;
+use Illuminate\Auth\Passwords\PasswordBroker;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Password;
 
@@ -60,7 +61,7 @@ class InviteUserAction
 
     private function sendInvitation(User $user): void
     {
-        /** @var \Illuminate\Auth\Passwords\PasswordBroker $broker */
+        /** @var PasswordBroker $broker */
         $broker = Password::broker();
         $token = $broker->createToken(user: $user);
 

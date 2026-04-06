@@ -2,10 +2,11 @@
 
 namespace Database\Factories;
 
+use App\Models\PressCoverage;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
- * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\PressCoverage>
+ * @extends Factory<PressCoverage>
  */
 class PressCoverageFactory extends Factory
 {

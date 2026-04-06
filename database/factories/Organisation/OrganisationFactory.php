@@ -9,7 +9,7 @@ use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 
 /**
- * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\Organisation\Organisation>
+ * @extends Factory<Organisation>
  */
 class OrganisationFactory extends Factory
 {

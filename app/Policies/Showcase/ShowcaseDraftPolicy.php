@@ -2,6 +2,7 @@
 
 namespace App\Policies\Showcase;
 
+use App\Models\Showcase\Showcase;
 use App\Models\Showcase\ShowcaseDraft;
 use App\Models\User;
 
@@ -28,7 +29,7 @@ class ShowcaseDraftPolicy
             return true;
         }
 
-        /** @var \App\Models\Showcase\Showcase $showcase */
+        /** @var Showcase $showcase */
         $showcase = $draft->showcase;
 
         return $user->id === $showcase->user_id;
@@ -47,7 +48,7 @@ class ShowcaseDraftPolicy
             return false;
         }
 
-        /** @var \App\Models\Showcase\Showcase $showcase */
+        /** @var Showcase $showcase */
         $showcase = $draft->showcase;
 
         // Only the showcase owner can update the draft
@@ -68,7 +69,7 @@ class ShowcaseDraftPolicy
             return true;
         }
 
-        /** @var \App\Models\Showcase\Showcase $showcase */
+        /** @var Showcase $showcase */
         $showcase = $draft->showcase;
 
         // Only the showcase owner can discard their draft
@@ -84,7 +85,7 @@ class ShowcaseDraftPolicy
             return false;
         }
 
-        /** @var \App\Models\Showcase\Showcase $showcase */
+        /** @var Showcase $showcase */
         $showcase = $draft->showcase;
 
         // Only the showcase owner can submit the draft

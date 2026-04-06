@@ -10,6 +10,7 @@ use App\Models\Challenge\ChallengeShowcase;
 use App\Models\PracticeArea;
 use App\Models\User;
 use App\Services\YoutubeIdExtractionService;
+use Database\Factories\Showcase\ShowcaseFactory;
 use Illuminate\Database\Eloquent\Attributes\Scope;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Casts\Attribute;
@@ -30,7 +31,7 @@ use Illuminate\Support\Facades\Storage;
  */
 class Showcase extends Model
 {
-    /** @use HasFactory<\Database\Factories\Showcase\ShowcaseFactory> */
+    /** @use HasFactory<ShowcaseFactory> */
     use ClearsMarkdownCache, HasFactory, SoftDeletes;
 
     protected $fillable = [

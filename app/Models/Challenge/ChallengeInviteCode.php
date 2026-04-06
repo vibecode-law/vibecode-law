@@ -4,6 +4,7 @@ namespace App\Models\Challenge;
 
 use App\Enums\InviteCodeScope;
 use App\Models\User;
+use Database\Factories\Challenge\ChallengeInviteCodeFactory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -14,7 +15,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsToMany;
  */
 class ChallengeInviteCode extends Model
 {
-    /** @use HasFactory<\Database\Factories\Challenge\ChallengeInviteCodeFactory> */
+    /** @use HasFactory<ChallengeInviteCodeFactory> */
     use HasFactory;
 
     protected $fillable = [

@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use App\Models\Showcase\Showcase;
+use Database\Factories\PracticeAreaFactory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
@@ -12,7 +13,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsToMany;
  */
 class PracticeArea extends Model
 {
-    /** @use HasFactory<\Database\Factories\PracticeAreaFactory> */
+    /** @use HasFactory<PracticeAreaFactory> */
     use HasFactory;
 
     protected $fillable = [

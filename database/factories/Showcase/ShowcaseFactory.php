@@ -13,7 +13,7 @@ use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 
 /**
- * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\Showcase\Showcase>
+ * @extends Factory<Showcase>
  */
 class ShowcaseFactory extends Factory
 {

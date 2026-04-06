@@ -9,6 +9,7 @@ use App\Models\User;
 use App\Services\User\ProfileService;
 use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\Queue;
+use Mockery\MockInterface;
 
 describe('create', function () {
     it('creates a user with profile data', function () {
@@ -94,7 +95,7 @@ describe('create', function () {
     it('calls onEmailSet hook when user is created', function () {
         Queue::fake();
 
-        /** @var ProfileService&\Mockery\MockInterface $service */
+        /** @var ProfileService&MockInterface $service */
         $service = Mockery::mock(ProfileService::class)
             ->makePartial()
             ->shouldAllowMockingProtectedMethods();
@@ -114,7 +115,7 @@ describe('create', function () {
     it('does not call onMarketingPreferenceSet hook when user opted out', function () {
         Queue::fake();
 
-        /** @var ProfileService&\Mockery\MockInterface $service */
+        /** @var ProfileService&MockInterface $service */
         $service = Mockery::mock(ProfileService::class)
             ->makePartial()
             ->shouldAllowMockingProtectedMethods();
@@ -210,7 +211,7 @@ describe('update', function () {
             'email' => 'old@example.com',
         ]);
 
-        /** @var ProfileService&\Mockery\MockInterface $service */
+        /** @var ProfileService&MockInterface $service */
         $service = Mockery::mock(ProfileService::class)
             ->makePartial()
             ->shouldAllowMockingProtectedMethods();
@@ -233,7 +234,7 @@ describe('update', function () {
             'email' => 'same@example.com',
         ]);
 
-        /** @var ProfileService&\Mockery\MockInterface $service */
+        /** @var ProfileService&MockInterface $service */
         $service = Mockery::mock(ProfileService::class)
             ->makePartial()
             ->shouldAllowMockingProtectedMethods();
@@ -253,7 +254,7 @@ describe('update', function () {
             'marketing_opt_out_at' => null,
         ]);
 
-        /** @var ProfileService&\Mockery\MockInterface $service */
+        /** @var ProfileService&MockInterface $service */
         $service = Mockery::mock(ProfileService::class)
             ->makePartial()
             ->shouldAllowMockingProtectedMethods();
@@ -276,7 +277,7 @@ describe('update', function () {
             'marketing_opt_out_at' => now(),
         ]);
 
-        /** @var ProfileService&\Mockery\MockInterface $service */
+        /** @var ProfileService&MockInterface $service */
         $service = Mockery::mock(ProfileService::class)
             ->makePartial()
             ->shouldAllowMockingProtectedMethods();
@@ -300,7 +301,7 @@ describe('update', function () {
             'marketing_opt_out_at' => $optOutTime,
         ]);
 
-        /** @var ProfileService&\Mockery\MockInterface $service */
+        /** @var ProfileService&MockInterface $service */
         $service = Mockery::mock(ProfileService::class)
             ->makePartial()
             ->shouldAllowMockingProtectedMethods();

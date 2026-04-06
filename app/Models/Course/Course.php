@@ -4,7 +4,9 @@ namespace App\Models\Course;
 
 use App\Concerns\ClearsMarkdownCache;
 use App\Enums\ExperienceLevel;
+use App\Models\Tag;
 use App\Models\User;
+use Database\Factories\Course\CourseFactory;
 use Illuminate\Database\Eloquent\Attributes\Scope;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Casts\Attribute;
@@ -22,7 +24,7 @@ use Illuminate\Support\Facades\Storage;
  */
 class Course extends Model
 {
-    /** @use HasFactory<\Database\Factories\Course\CourseFactory> */
+    /** @use HasFactory<CourseFactory> */
     use ClearsMarkdownCache, HasFactory;
 
     protected $fillable = [
@@ -180,7 +182,7 @@ class Course extends Model
 
     public function tags(): BelongsToMany
     {
-        return $this->belongsToMany(related: \App\Models\Tag::class);
+        return $this->belongsToMany(related: Tag::class);
     }
 
     public function users(): BelongsToMany

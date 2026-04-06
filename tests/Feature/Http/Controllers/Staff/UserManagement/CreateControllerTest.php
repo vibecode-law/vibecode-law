@@ -1,6 +1,7 @@
 <?php
 
 use App\Models\User;
+use Illuminate\Support\Collection;
 use Inertia\Testing\AssertableInertia;
 
 use function Pest\Laravel\actingAs;
@@ -63,7 +64,7 @@ describe('create page', function () {
         get(route('staff.users.create'))
             ->assertInertia(fn (AssertableInertia $page) => $page
                 ->has('roles')
-                ->where('roles', fn ($roles) => is_array($roles) || $roles instanceof \Illuminate\Support\Collection)
+                ->where('roles', fn ($roles) => is_array($roles) || $roles instanceof Collection)
             );
     });
 

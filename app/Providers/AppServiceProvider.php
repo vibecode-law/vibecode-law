@@ -24,6 +24,7 @@ use Illuminate\Foundation\AliasLoader;
 use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\ServiceProvider;
+use Spatie\MailcoachSdk\Facades\Mailcoach;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -32,7 +33,7 @@ class AppServiceProvider extends ServiceProvider
         // Fix incorrect alias from spatie/laravel-mailcoach-sdk package
         AliasLoader::getInstance()->alias(
             alias: 'Mailcoach',
-            class: \Spatie\MailcoachSdk\Facades\Mailcoach::class,
+            class: Mailcoach::class,
         );
 
         $this->app->singleton(MarkdownService::class);

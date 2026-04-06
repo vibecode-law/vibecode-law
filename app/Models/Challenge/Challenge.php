@@ -8,6 +8,7 @@ use App\Models\Organisation\Organisation;
 use App\Models\Showcase\Showcase;
 use App\Models\Showcase\ShowcaseUpvote;
 use App\Models\User;
+use Database\Factories\Challenge\ChallengeFactory;
 use Illuminate\Database\Eloquent\Attributes\Scope;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Casts\Attribute;
@@ -27,7 +28,7 @@ use Illuminate\Support\Facades\Storage;
  */
 class Challenge extends Model
 {
-    /** @use HasFactory<\Database\Factories\Challenge\ChallengeFactory> */
+    /** @use HasFactory<ChallengeFactory> */
     use ClearsMarkdownCache, HasFactory;
 
     protected $fillable = [

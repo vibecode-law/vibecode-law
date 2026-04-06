@@ -7,7 +7,7 @@ use App\Models\Course\LessonTranscriptLine;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
- * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\Course\LessonTranscriptLine>
+ * @extends Factory<LessonTranscriptLine>
  */
 class LessonTranscriptLineFactory extends Factory
 {

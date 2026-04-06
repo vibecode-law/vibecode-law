@@ -1,6 +1,7 @@
 <?php
 
 use App\Models\Course\Course;
+use App\Models\Course\Lesson;
 use App\Models\User;
 use Inertia\Testing\AssertableInertia;
 
@@ -93,7 +94,7 @@ describe('data', function () {
     test('returns lessons count', function () {
         $admin = User::factory()->admin()->create();
         $course = Course::factory()->create();
-        \App\Models\Course\Lesson::factory()->count(3)->create(['course_id' => $course->id]);
+        Lesson::factory()->count(3)->create(['course_id' => $course->id]);
 
         actingAs($admin);
 

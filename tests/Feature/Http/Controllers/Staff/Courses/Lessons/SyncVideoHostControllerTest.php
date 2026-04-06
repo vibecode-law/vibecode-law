@@ -275,7 +275,7 @@ describe('sync', function () {
         mock(VideoHostService::class)
             ->shouldReceive('getAsset')
             ->once()
-            ->andThrow(new \Exception('Something unexpected'));
+            ->andThrow(new Exception('Something unexpected'));
 
         actingAs($admin);
 

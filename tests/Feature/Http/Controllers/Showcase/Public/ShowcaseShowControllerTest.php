@@ -1,10 +1,13 @@
 <?php
 
 use App\Enums\ShowcaseStatus;
+use App\Enums\SourceStatus;
 use App\Models\Challenge\Challenge;
+use App\Models\PracticeArea;
 use App\Models\Showcase\Showcase;
 use App\Models\Showcase\ShowcaseImage;
 use App\Models\User;
+use Illuminate\Support\Facades\Storage;
 use Inertia\Testing\AssertableInertia;
 
 use function Pest\Laravel\actingAs;
@@ -52,7 +55,7 @@ test('show returns correct showcase data', function () {
         'help_needed' => 'Help needed content',
         'url' => 'https://example.com',
         'video_url' => 'https://youtube.com/watch?v=dQw4w9WgXcQ',
-        'source_status' => \App\Enums\SourceStatus::NotAvailable,
+        'source_status' => SourceStatus::NotAvailable,
         'source_url' => null,
         'view_count' => 0,
         'is_featured' => true,
@@ -99,9 +102,9 @@ test('show returns correct showcase data', function () {
             ->where('url', 'https://example.com')
             ->where('video_url', 'https://youtube.com/watch?v=dQw4w9WgXcQ')
             ->where('youtube_id', 'dQw4w9WgXcQ')
-            ->where('source_status', \App\Enums\SourceStatus::NotAvailable->forFrontend())
+            ->where('source_status', SourceStatus::NotAvailable->forFrontend())
             ->where('source_url', null)
-            ->where('thumbnail_url', \Illuminate\Support\Facades\Storage::disk('public')->url("showcase/{$showcase->id}/thumbnail.jpg"))
+            ->where('thumbnail_url', Storage::disk('public')->url("showcase/{$showcase->id}/thumbnail.jpg"))
             ->where('thumbnail_rect_string', 'rect=10,20,300,200')
             ->where('view_count', 1) // Incremented by viewing
             ->where('status', ShowcaseStatus::Approved->forFrontend())
@@ -111,7 +114,7 @@ test('show returns correct showcase data', function () {
                 ->where('handle', $user->handle)
                 ->where('organisation', 'Test Org')
                 ->where('job_title', 'Developer')
-                ->where('avatar', \Illuminate\Support\Facades\Storage::disk('public')->url('avatars/test.jpg'))
+                ->where('avatar', Storage::disk('public')->url('avatars/test.jpg'))
                 ->where('linkedin_url', 'https://linkedin.com/in/testuser')
                 ->where('team_role', null)
                 ->missing('bio')
@@ -219,8 +222,8 @@ test('show eager loads user and images relationships', function () {
 test('show loads and returns practice areas', function () {
     $showcase = Showcase::factory()->approved()->create();
 
-    $practiceArea1 = \App\Models\PracticeArea::factory()->create(['name' => 'AI & Machine Learning']);
-    $practiceArea2 = \App\Models\PracticeArea::factory()->create(['name' => 'Web Development']);
+    $practiceArea1 = PracticeArea::factory()->create(['name' => 'AI & Machine Learning']);
+    $practiceArea2 = PracticeArea::factory()->create(['name' => 'Web Development']);
 
     // Sync to replace any factory-attached practice areas with our specific ones
     $showcase->practiceAreas()->sync([$practiceArea1->id, $practiceArea2->id]);

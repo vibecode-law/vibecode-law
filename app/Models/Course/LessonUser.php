@@ -2,6 +2,7 @@
 
 namespace App\Models\Course;
 
+use Database\Factories\Course\LessonUserFactory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\Pivot;
 
@@ -10,7 +11,7 @@ use Illuminate\Database\Eloquent\Relations\Pivot;
  */
 class LessonUser extends Pivot
 {
-    /** @use HasFactory<\Database\Factories\Course\LessonUserFactory> */
+    /** @use HasFactory<LessonUserFactory> */
     use HasFactory;
 
     protected $table = 'lesson_user';
