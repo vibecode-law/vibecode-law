@@ -5,6 +5,7 @@ namespace App\Console\Commands;
 use App\Concerns\ClearsMarkdownCache;
 use Illuminate\Console\Command;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\File;
 use ReflectionClass;
 
@@ -74,13 +75,13 @@ class ClearModelMarkdownCacheCommand extends Command
     }
 
     /**
-     * @return \Illuminate\Support\Collection<int, class-string<Model>>
+     * @return Collection<int, class-string<Model>>
      */
-    private function discoverModels(): \Illuminate\Support\Collection
+    private function discoverModels(): Collection
     {
         $modelsPath = app_path('Models');
 
-        /** @var \Illuminate\Support\Collection<int, class-string<Model>> */
+        /** @var Collection<int, class-string<Model>> */
         return collect(File::allFiles($modelsPath))
             ->map(function (\SplFileInfo $file): string {
                 $relativePath = str_replace(

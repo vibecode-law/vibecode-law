@@ -11,6 +11,7 @@ use App\Services\User\UserAvatarService;
 use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Auth;
 use Inertia\Inertia;
 use Inertia\Response;
@@ -58,7 +59,7 @@ class EditProfileController extends BaseController
         return to_route('user-area.profile.edit');
     }
 
-    private function resolveMarketingOptOutAt(ProfileUpdateRequest $request): ?\Illuminate\Support\Carbon
+    private function resolveMarketingOptOutAt(ProfileUpdateRequest $request): ?Carbon
     {
         $user = $request->user();
         $wantsOptOut = $request->boolean('marketing_opt_out');

@@ -7,6 +7,7 @@ use App\Http\Resources\User\AdminUserResource;
 use App\Models\User;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\Request;
+use Illuminate\Support\Collection;
 use Inertia\Inertia;
 use Inertia\Response;
 use Spatie\LaravelData\PaginatedDataCollection;
@@ -82,7 +83,7 @@ class IndexController extends BaseController
     }
 
     /**
-     * @param  \Illuminate\Database\Eloquent\Builder<User>  $query
+     * @param  Builder<User>  $query
      */
     private function applyRoleFilter(Builder $query, Request $request): void
     {
@@ -111,9 +112,9 @@ class IndexController extends BaseController
     }
 
     /**
-     * @return \Illuminate\Support\Collection<int, string>
+     * @return Collection<int, string>
      */
-    private function getRoles(): \Illuminate\Support\Collection
+    private function getRoles(): Collection
     {
         return Role::query()
             ->orderBy('name')

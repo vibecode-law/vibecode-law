@@ -8,6 +8,7 @@ use App\Services\VideoHost\Exceptions\VideoHostException;
 use App\Services\VideoHost\ValueObjects\AssetData;
 use Firebase\JWT\JWT;
 use Illuminate\Http\Client\RequestException;
+use Illuminate\Http\Client\Response;
 use Illuminate\Support\Facades\Http;
 
 class MuxVideoHostService implements VideoHostService
@@ -27,7 +28,7 @@ class MuxVideoHostService implements VideoHostService
     public function getAsset(string $externalId): AssetData
     {
         try {
-            /** @var \Illuminate\Http\Client\Response $response */
+            /** @var Response $response */
             $response = Http::withBasicAuth(username: $this->tokenId, password: $this->tokenSecret)
                 ->get("https://api.mux.com/video/v1/assets/{$externalId}");
 

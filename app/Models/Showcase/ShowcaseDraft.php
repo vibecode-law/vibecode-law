@@ -5,6 +5,7 @@ namespace App\Models\Showcase;
 use App\Enums\ShowcaseDraftStatus;
 use App\Enums\SourceStatus;
 use App\Models\PracticeArea;
+use Database\Factories\Showcase\ShowcaseDraftFactory;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -21,7 +22,7 @@ use Illuminate\Support\Facades\Storage;
  */
 class ShowcaseDraft extends Model
 {
-    /** @use HasFactory<\Database\Factories\Showcase\ShowcaseDraftFactory> */
+    /** @use HasFactory<ShowcaseDraftFactory> */
     use HasFactory;
 
     protected $fillable = [

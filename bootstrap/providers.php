@@ -1,7 +1,11 @@
 <?php
 
+use App\Providers\AppServiceProvider;
+use App\Providers\FortifyServiceProvider;
+use App\Providers\RateLimitServiceProvider;
+
 return [
-    App\Providers\AppServiceProvider::class,
-    App\Providers\FortifyServiceProvider::class,
-    App\Providers\RateLimitServiceProvider::class,
+    AppServiceProvider::class,
+    FortifyServiceProvider::class,
+    RateLimitServiceProvider::class,
 ];

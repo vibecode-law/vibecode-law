@@ -3,6 +3,7 @@
 namespace App\Models\Organisation;
 
 use App\Models\Challenge\Challenge;
+use Database\Factories\Organisation\OrganisationFactory;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -17,7 +18,7 @@ use Illuminate\Support\Facades\Storage;
  */
 class Organisation extends Model
 {
-    /** @use HasFactory<\Database\Factories\Organisation\OrganisationFactory> */
+    /** @use HasFactory<OrganisationFactory> */
     use HasFactory;
 
     protected $fillable = [

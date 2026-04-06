@@ -2,6 +2,8 @@
 
 use App\Models\Challenge\Challenge;
 use App\Models\Organisation\Organisation;
+use App\Models\Showcase\Showcase;
+use App\Models\User;
 use Inertia\Testing\AssertableInertia;
 
 use function Pest\Laravel\get;
@@ -47,17 +49,17 @@ test('index orders challenges by total upvotes descending', function () {
     $midUpvotes = Challenge::factory()->active()->create();
 
     // Give each challenge a showcase with different upvote counts
-    $showcaseLow = \App\Models\Showcase\Showcase::factory()->create();
+    $showcaseLow = Showcase::factory()->create();
     $lowUpvotes->showcases()->attach($showcaseLow);
-    $showcaseLow->upvoters()->attach(\App\Models\User::factory()->count(1)->create()->pluck('id'));
+    $showcaseLow->upvoters()->attach(User::factory()->count(1)->create()->pluck('id'));
 
-    $showcaseHigh = \App\Models\Showcase\Showcase::factory()->create();
+    $showcaseHigh = Showcase::factory()->create();
     $highUpvotes->showcases()->attach($showcaseHigh);
-    $showcaseHigh->upvoters()->attach(\App\Models\User::factory()->count(5)->create()->pluck('id'));
+    $showcaseHigh->upvoters()->attach(User::factory()->count(5)->create()->pluck('id'));
 
-    $showcaseMid = \App\Models\Showcase\Showcase::factory()->create();
+    $showcaseMid = Showcase::factory()->create();
     $midUpvotes->showcases()->attach($showcaseMid);
-    $showcaseMid->upvoters()->attach(\App\Models\User::factory()->count(3)->create()->pluck('id'));
+    $showcaseMid->upvoters()->attach(User::factory()->count(3)->create()->pluck('id'));
 
     get(route('inspiration.index'))
         ->assertInertia(fn (AssertableInertia $page) => $page
@@ -154,7 +156,7 @@ test('index returns empty arrays when no active challenges exist', function () {
 test('index includes showcases_count for active challenges', function () {
     $challenge = Challenge::factory()->active()->create();
     $challenge->showcases()->attach(
-        \App\Models\Showcase\Showcase::factory()->count(5)->create()->pluck('id')
+        Showcase::factory()->count(5)->create()->pluck('id')
     );
 
     get(route('inspiration.index'))
@@ -199,15 +201,15 @@ test('index includes invite-to-submit challenges', function () {
 
 test('index includes total_upvotes_count for active challenges', function () {
     $challenge = Challenge::factory()->active()->create();
-    $showcases = \App\Models\Showcase\Showcase::factory()->count(2)->create();
+    $showcases = Showcase::factory()->count(2)->create();
     $challenge->showcases()->attach($showcases->pluck('id'));
 
     // Add 3 upvoters to first showcase
-    $users1 = \App\Models\User::factory()->count(3)->create();
+    $users1 = User::factory()->count(3)->create();
     $showcases[0]->upvoters()->attach($users1->pluck('id'));
 
     // Add 2 upvoters to second showcase
-    $users2 = \App\Models\User::factory()->count(2)->create();
+    $users2 = User::factory()->count(2)->create();
     $showcases[1]->upvoters()->attach($users2->pluck('id'));
 
     get(route('inspiration.index'))

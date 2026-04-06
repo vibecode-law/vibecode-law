@@ -10,6 +10,7 @@ use App\Http\Resources\Showcase\ShowcaseResource;
 use App\Models\Challenge\Challenge;
 use App\Models\Showcase\Showcase;
 use App\Services\Showcase\ShowcaseRankingService;
+use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Support\Facades\Auth;
 use Inertia\Inertia;
 use Inertia\Response;
@@ -78,7 +79,7 @@ class ShowcaseShowController extends BaseController
      */
     private function buildChallengeEntries(Showcase $showcase, ShowcaseRankingService $rankingService): array
     {
-        /** @var \Illuminate\Database\Eloquent\Collection<int, Challenge> $challenges */
+        /** @var Collection<int, Challenge> $challenges */
         $challenges = $showcase->challenges()
             ->where('is_active', true)
             ->get();

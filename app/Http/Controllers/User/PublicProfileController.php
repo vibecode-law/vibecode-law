@@ -7,6 +7,7 @@ use App\Http\Resources\Showcase\ShowcaseResource;
 use App\Http\Resources\User\UserResource;
 use App\Models\Showcase\Showcase;
 use App\Models\User;
+use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Support\Facades\Auth;
 use Inertia\Inertia;
 use Inertia\Response;
@@ -29,9 +30,9 @@ class PublicProfileController extends BaseController
     }
 
     /**
-     * @return \Illuminate\Database\Eloquent\Collection<int, Showcase>
+     * @return Collection<int, Showcase>
      */
-    private function getShowcases(User $user): \Illuminate\Database\Eloquent\Collection
+    private function getShowcases(User $user): Collection
     {
         return Showcase::query()
             ->where('user_id', $user->id)

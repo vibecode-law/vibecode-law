@@ -2,6 +2,7 @@
 
 namespace App\Models\Course;
 
+use Database\Factories\Course\LessonTranscriptLineFactory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -11,7 +12,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
  */
 class LessonTranscriptLine extends Model
 {
-    /** @use HasFactory<\Database\Factories\Course\LessonTranscriptLineFactory> */
+    /** @use HasFactory<LessonTranscriptLineFactory> */
     use HasFactory;
 
     protected $fillable = [

@@ -1,5 +1,7 @@
 <?php
 
+use App\Enums\ShowcaseStatus;
+use App\Enums\SourceStatus;
 use App\Models\PracticeArea;
 use App\Models\Showcase\Showcase;
 use App\Models\Showcase\ShowcaseImage;
@@ -250,9 +252,9 @@ describe('data structure', function () {
             'help_needed' => 'Help wanted text',
             'url' => 'https://complete.test',
             'video_url' => 'https://youtube.com/watch?v=complete',
-            'source_status' => \App\Enums\SourceStatus::OpenSource,
+            'source_status' => SourceStatus::OpenSource,
             'source_url' => 'https://github.com/test/complete',
-            'status' => \App\Enums\ShowcaseStatus::Draft,
+            'status' => ShowcaseStatus::Draft,
             'view_count' => 75,
             'submitted_date' => null,
             'rejection_reason' => null,
@@ -290,9 +292,9 @@ describe('data structure', function () {
                 ->where('help_needed', 'Help wanted text')
                 ->where('url', 'https://complete.test')
                 ->where('video_url', 'https://youtube.com/watch?v=complete')
-                ->where('source_status', \App\Enums\SourceStatus::OpenSource->forFrontend())
+                ->where('source_status', SourceStatus::OpenSource->forFrontend())
                 ->where('source_url', 'https://github.com/test/complete')
-                ->where('status', \App\Enums\ShowcaseStatus::Draft->forFrontend())
+                ->where('status', ShowcaseStatus::Draft->forFrontend())
                 ->where('submitted_date', null)
                 ->where('rejection_reason', null)
                 ->where('view_count', 75)
