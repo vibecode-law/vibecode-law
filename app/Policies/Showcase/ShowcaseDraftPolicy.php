@@ -44,6 +44,10 @@ class ShowcaseDraftPolicy
             return true;
         }
 
+        if ($user->can('showcase.approve-reject')) {
+            return true;
+        }
+
         if ($user->isBlockedFromSubmissions()) {
             return false;
         }
