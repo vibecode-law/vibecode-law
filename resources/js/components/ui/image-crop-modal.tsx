@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useState } from 'react';
 import Cropper from 'react-easy-crop';
 import type { Area, Point } from 'react-easy-crop';
 import { ImagePlus, Minus, Plus, Trash2 } from 'lucide-react';
@@ -134,10 +134,13 @@ export function ImageCropModal({
         ? `${stepInfo.current}-${aspectRatio}`
         : `single-${aspectRatio}`;
 
-    useEffect(() => {
+    const [prevCropperKey, setPrevCropperKey] = useState(cropperKey);
+
+    if (cropperKey !== prevCropperKey) {
+        setPrevCropperKey(cropperKey);
         setCrop({ x: 0, y: 0 });
         setZoom(1);
-    }, [cropperKey]);
+    }
 
     const handleCropComplete = useCallback(
         (_croppedArea: Area, croppedAreaPixels: Area) => {

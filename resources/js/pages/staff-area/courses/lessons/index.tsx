@@ -15,7 +15,7 @@ import { edit as courseEdit } from '@/routes/staff/academy/courses';
 import { create, edit, reorder } from '@/routes/staff/academy/courses/lessons';
 import { Head, Link, router } from '@inertiajs/react';
 import { ArrowLeft, Pencil, Plus } from 'lucide-react';
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 
 interface LessonsIndexProps {
     course: App.Http.Resources.Course.CourseResource;
@@ -24,10 +24,12 @@ interface LessonsIndexProps {
 
 export default function LessonsIndex({ course, lessons }: LessonsIndexProps) {
     const [localLessons, setLocalLessons] = useState(lessons);
+    const [prevLessons, setPrevLessons] = useState(lessons);
 
-    useEffect(() => {
+    if (lessons !== prevLessons) {
+        setPrevLessons(lessons);
         setLocalLessons(lessons);
-    }, [lessons]);
+    }
 
     const handleReorder = (
         reorderedItems: App.Http.Resources.Course.LessonResource[],

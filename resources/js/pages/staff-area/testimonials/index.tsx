@@ -7,7 +7,7 @@ import { SortableList } from '@/components/ui/sortable-list';
 import StaffAreaLayout from '@/layouts/staff-area/layout';
 import { reorder, store, update } from '@/routes/staff/testimonials';
 import { Head, router } from '@inertiajs/react';
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 
 interface TestimonialsIndexProps {
     testimonials: App.Http.Resources.TestimonialResource[];
@@ -20,11 +20,12 @@ export default function TestimonialsIndex({
         useState<App.Http.Resources.TestimonialResource | null>(null);
 
     const [localTestimonials, setLocalTestimonials] = useState(testimonials);
+    const [prevTestimonials, setPrevTestimonials] = useState(testimonials);
 
-    // Sync local state when testimonials prop changes (after create/delete)
-    useEffect(() => {
+    if (testimonials !== prevTestimonials) {
+        setPrevTestimonials(testimonials);
         setLocalTestimonials(testimonials);
-    }, [testimonials]);
+    }
 
     const handleReorder = (
         reorderedItems: App.Http.Resources.TestimonialResource[],

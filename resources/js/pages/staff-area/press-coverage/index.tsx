@@ -7,7 +7,7 @@ import { SortableList } from '@/components/ui/sortable-list';
 import StaffAreaLayout from '@/layouts/staff-area/layout';
 import { reorder, store, update } from '@/routes/staff/press-coverage';
 import { Head, router } from '@inertiajs/react';
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 
 interface PressCoverageIndexProps {
     pressCoverage: App.Http.Resources.PressCoverageResource[];
@@ -19,11 +19,12 @@ export default function PressCoverageIndex({
     const [editingPressCoverage, setEditingPressCoverage] =
         useState<App.Http.Resources.PressCoverageResource | null>(null);
     const [localPressCoverage, setLocalPressCoverage] = useState(pressCoverage);
+    const [prevPressCoverage, setPrevPressCoverage] = useState(pressCoverage);
 
-    // Sync local state when pressCoverage prop changes (after create/delete)
-    useEffect(() => {
+    if (pressCoverage !== prevPressCoverage) {
+        setPrevPressCoverage(pressCoverage);
         setLocalPressCoverage(pressCoverage);
-    }, [pressCoverage]);
+    }
 
     const handleReorder = (
         reorderedItems: App.Http.Resources.PressCoverageResource[],
