@@ -5,8 +5,7 @@ import { MarkdownEditor } from '@/components/ui/markdown-editor';
 import { SubmitButton } from '@/components/ui/submit-button';
 import StaffAreaLayout from '@/layouts/staff-area/layout';
 import { updateAnnouncement } from '@/routes/staff/settings';
-import { Head, router } from '@inertiajs/react';
-import { useState } from 'react';
+import { Head, useForm } from '@inertiajs/react';
 
 interface SettingsIndexProps {
     announcementMarkdown: string | null;
@@ -15,45 +14,20 @@ interface SettingsIndexProps {
 export default function SettingsIndex({
     announcementMarkdown,
 }: SettingsIndexProps) {
-    const [value, setValue] = useState(announcementMarkdown ?? '');
-    const [isSubmitting, setIsSubmitting] = useState(false);
-    const [errors, setErrors] = useState<{ announcement?: string }>({});
+    const { data, setData, patch, processing, errors } = useForm<{
+        announcement: string | null;
+    }>({
+        announcement: announcementMarkdown ?? '',
+    });
 
     const handleSubmit = (e: React.FormEvent) => {
         e.preventDefault();
-        setIsSubmitting(true);
-        setErrors({});
-
-        router.patch(
-            updateAnnouncement.url(),
-            { announcement: value || null },
-            {
-                onError: (newErrors) => {
-                    setErrors(newErrors as { announcement?: string });
-                },
-                onFinish: () => {
-                    setIsSubmitting(false);
-                },
-            },
-        );
+        patch(updateAnnouncement.url(), { preserveScroll: true });
     };
 
     const handleClear = () => {
-        setIsSubmitting(true);
-        setErrors({});
-
-        router.patch(
-            updateAnnouncement.url(),
-            { announcement: null },
-            {
-                onSuccess: () => {
-                    setValue('');
-                },
-                onFinish: () => {
-                    setIsSubmitting(false);
-                },
-            },
-        );
+        setData('announcement', '');
+        patch(updateAnnouncement.url(), { preserveScroll: true });
     };
 
     return (
@@ -78,8 +52,8 @@ export default function SettingsIndex({
                         </p>
                         <MarkdownEditor
                             name="announcement"
-                            value={value}
-                            onChange={setValue}
+                            value={data.announcement ?? ''}
+                            onChange={(value) => setData('announcement', value)}
                             placeholder="e.g. We're launching a new feature! [Learn more](/about)"
                             height={150}
                             profile="basic"
@@ -88,7 +62,7 @@ export default function SettingsIndex({
 
                     <div className="flex items-center gap-3">
                         <SubmitButton
-                            processing={isSubmitting}
+                            processing={processing}
                             processingLabel="Saving..."
                         >
                             Save
@@ -99,7 +73,7 @@ export default function SettingsIndex({
                                     type="button"
                                     variant="outline"
                                     onClick={handleClear}
-                                    disabled={isSubmitting}
+                                    disabled={processing}
                                 >
                                     Clear Announcement
                                 </Button>
