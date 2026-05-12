@@ -1,3 +1,4 @@
+import { AnnouncementBanner } from '@/components/layout/announcement-banner';
 import { PublicFooter } from '@/components/layout/public-footer';
 import { PublicHeader } from '@/components/layout/public-header';
 import {
@@ -43,6 +44,7 @@ export default function PublicLayout({
                 />
             </Head>
 
+            <AnnouncementBanner />
             <PublicHeader />
             <main className="flex-1">
                 {breadcrumbs !== undefined && breadcrumbs.length > 0 && (

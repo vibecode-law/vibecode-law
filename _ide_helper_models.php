@@ -129,7 +129,7 @@ namespace App\Models\Challenge{
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
  * @property-read \App\Models\Challenge\Challenge $challenge
- * @property-read \App\Models\Showcase\Showcase $showcase
+ * @property-read \App\Models\Showcase\Showcase|null $showcase
  * @method static \Illuminate\Database\Eloquent\Builder<static>|ChallengeShowcase newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|ChallengeShowcase newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|ChallengeShowcase query()
@@ -564,7 +564,7 @@ namespace App\Models\Showcase{
  * @property-read int|null $images_count
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\PracticeArea> $practiceAreas
  * @property-read int|null $practice_areas_count
- * @property-read \App\Models\Showcase\Showcase $showcase
+ * @property-read \App\Models\Showcase\Showcase|null $showcase
  * @property-read string|null $thumbnail_rect_string
  * @property-read string|null $thumbnail_url
  * @method static \Database\Factories\Showcase\ShowcaseDraftFactory factory($count = null, $state = [])
@@ -643,7 +643,7 @@ namespace App\Models\Showcase{
  * @property string|null $alt_text
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
- * @property-read \App\Models\Showcase\Showcase $showcase
+ * @property-read \App\Models\Showcase\Showcase|null $showcase
  * @property-read string $url
  * @method static \Database\Factories\Showcase\ShowcaseImageFactory factory($count = null, $state = [])
  * @method static \Illuminate\Database\Eloquent\Builder<static>|ShowcaseImage newModelQuery()
@@ -671,7 +671,7 @@ namespace App\Models\Showcase{
  * @property int $showcase_id
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
- * @property-read \App\Models\Showcase\Showcase $showcase
+ * @property-read \App\Models\Showcase\Showcase|null $showcase
  * @property-read \App\Models\User $user
  * @method static \Illuminate\Database\Eloquent\Builder<static>|ShowcaseUpvote newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|ShowcaseUpvote newQuery()
@@ -685,6 +685,28 @@ namespace App\Models\Showcase{
  */
 	#[\AllowDynamicProperties]
 	class IdeHelperShowcaseUpvote {}
+}
+
+namespace App\Models{
+/**
+ * @property int $id
+ * @property string $key
+ * @property string|null $value
+ * @property \Illuminate\Support\Carbon|null $created_at
+ * @property \Illuminate\Support\Carbon|null $updated_at
+ * @method static \Database\Factories\SiteSettingFactory factory($count = null, $state = [])
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|SiteSetting newModelQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|SiteSetting newQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|SiteSetting query()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|SiteSetting whereCreatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|SiteSetting whereId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|SiteSetting whereKey($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|SiteSetting whereUpdatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|SiteSetting whereValue($value)
+ * @mixin \Eloquent
+ */
+	#[\AllowDynamicProperties]
+	class IdeHelperSiteSetting {}
 }
 
 namespace App\Models{
@@ -760,7 +782,7 @@ namespace App\Models{
 
 namespace App\Models{
 /**
- * @property \Illuminate\Support\Carbon|null $marketing_opt_out_at
+ * @property Carbon|null $marketing_opt_out_at
  * @property int $id
  * @property string $first_name
  * @property string $last_name

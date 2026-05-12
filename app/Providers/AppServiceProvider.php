@@ -4,10 +4,12 @@ namespace App\Providers;
 
 use App\Models\PressCoverage;
 use App\Models\Showcase\Showcase;
+use App\Models\SiteSetting;
 use App\Models\Testimonial;
 use App\Models\User;
 use App\Policies\PressCoveragePolicy;
 use App\Policies\Showcase\ShowcasePolicy;
+use App\Policies\SiteSettingPolicy;
 use App\Policies\TestimonialPolicy;
 use App\Policies\UserPolicy;
 use App\Services\Content\ContentNavigationService;
@@ -80,5 +82,6 @@ class AppServiceProvider extends ServiceProvider
         Gate::policy(User::class, UserPolicy::class);
         Gate::policy(Testimonial::class, TestimonialPolicy::class);
         Gate::policy(PressCoverage::class, PressCoveragePolicy::class);
+        Gate::policy(SiteSetting::class, SiteSettingPolicy::class);
     }
 }

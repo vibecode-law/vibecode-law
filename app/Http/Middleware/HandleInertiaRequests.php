@@ -3,7 +3,9 @@
 namespace App\Http\Middleware;
 
 use App\Http\Resources\User\PrivateUserResource;
+use App\Models\SiteSetting;
 use App\Models\User;
+use App\Services\Markdown\MarkdownService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Config;
 use Inertia\Middleware;
@@ -59,7 +61,22 @@ class HandleInertiaRequests extends Middleware
                 ])
                 ->all(),
             'transformImages' => Config::get('services.image-transform.base_url') !== null,
+            'announcement' => fn () => $this->getRenderedAnnouncement(),
         ]);
+    }
+
+    private function getRenderedAnnouncement(): ?string
+    {
+        $announcement = SiteSetting::getValue(key: SiteSetting::ANNOUNCEMENT);
+
+        if ($announcement === null) {
+            return null;
+        }
+
+        return app(MarkdownService::class)->render(
+            markdown: $announcement,
+            cacheKey: 'site-announcement',
+        );
     }
 
     /**

@@ -5,6 +5,7 @@ import { index as coursesIndex } from '@/routes/staff/academy/courses';
 import { index as challengesIndex } from '@/routes/staff/challenges';
 import { index as practiceAreasIndex } from '@/routes/staff/metadata/practice-areas';
 import { index as pressCoverageIndex } from '@/routes/staff/press-coverage';
+import { index as settingsIndex } from '@/routes/staff/settings';
 import { index as showcaseModerationIndex } from '@/routes/staff/showcase-moderation';
 import { index as testimonialsIndex } from '@/routes/staff/testimonials';
 import { index as usersIndex } from '@/routes/staff/users';
@@ -55,6 +56,11 @@ export function useStaffAreaNavItems(): TabNavItem[] {
             {
                 title: 'Users',
                 href: usersIndex().url,
+                adminOnly: true,
+            },
+            {
+                title: 'Settings',
+                href: settingsIndex().url,
                 adminOnly: true,
             },
         ];

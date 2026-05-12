@@ -33,6 +33,8 @@ use App\Http\Controllers\Staff\PressCoverage\IndexController as PressCoverageInd
 use App\Http\Controllers\Staff\PressCoverage\ReorderController as PressCoverageReorderController;
 use App\Http\Controllers\Staff\PressCoverage\StoreController as PressCoverageStoreController;
 use App\Http\Controllers\Staff\PressCoverage\UpdateController as PressCoverageUpdateController;
+use App\Http\Controllers\Staff\Settings\IndexController as SettingsIndexController;
+use App\Http\Controllers\Staff\Settings\UpdateAnnouncementController as SettingsUpdateAnnouncementController;
 use App\Http\Controllers\Staff\ShowcaseModeration\ApproveController as ShowcaseModerationApproveController;
 use App\Http\Controllers\Staff\ShowcaseModeration\ApproveDraftController as ShowcaseModerationApproveDraftController;
 use App\Http\Controllers\Staff\ShowcaseModeration\IndexController as ShowcaseModerationIndexController;
@@ -146,6 +148,11 @@ Route::middleware(['can:access-staff'])->prefix('staff')->name('staff.')->group(
             Route::post('/', InviteCodeStoreController::class)->name('store');
             Route::post('/{inviteCode}/toggle', InviteCodeToggleActiveController::class)->name('toggle');
         });
+    });
+
+    Route::prefix('settings')->name('settings.')->group(function () {
+        Route::get('/', SettingsIndexController::class)->name('index');
+        Route::patch('/announcement', SettingsUpdateAnnouncementController::class)->name('update-announcement');
     });
 
     Route::prefix('press-coverage')->name('press-coverage.')->group(function () {
