@@ -89,7 +89,7 @@ class ShowcaseWriteRequest extends FormRequest
 
     protected function isModOrAdmin(): bool
     {
-        return $this->user()->is_admin === true || $this->user()->can('showcase.approve-reject');
+        return $this->user()->is_superadmin === true || $this->user()->can('showcase.approve-reject');
     }
 
     protected function getSlugRequirementRule(?Showcase $showcase): string

@@ -792,7 +792,7 @@ namespace App\Models{
  * @property string $email
  * @property \Illuminate\Support\Carbon|null $email_verified_at
  * @property string|null $password
- * @property bool $is_admin
+ * @property bool $is_superadmin
  * @property string|null $avatar_path
  * @property string|null $linkedin_url
  * @property string|null $bio
@@ -848,7 +848,7 @@ namespace App\Models{
  * @method static \Illuminate\Database\Eloquent\Builder<static>|User whereFirstName($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|User whereHandle($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|User whereId($value)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|User whereIsAdmin($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|User whereIsSuperadmin($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|User whereJobTitle($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|User whereLastName($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|User whereLinkedinId($value)

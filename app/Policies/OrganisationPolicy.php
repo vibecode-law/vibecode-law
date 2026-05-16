@@ -12,7 +12,7 @@ class OrganisationPolicy
      */
     public function create(User $user): bool
     {
-        return $user->is_admin === true;
+        return $user->is_superadmin === true;
     }
 
     /**
@@ -20,6 +20,6 @@ class OrganisationPolicy
      */
     public function update(User $user, Organisation $organisation): bool
     {
-        return $user->is_admin === true;
+        return $user->is_superadmin === true;
     }
 }

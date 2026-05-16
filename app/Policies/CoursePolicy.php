@@ -12,7 +12,7 @@ class CoursePolicy
      */
     public function viewAny(User $user): bool
     {
-        return $user->is_admin === true;
+        return $user->is_superadmin === true;
     }
 
     /**
@@ -20,7 +20,7 @@ class CoursePolicy
      */
     public function view(User $user, Course $course): bool
     {
-        return $user->is_admin === true;
+        return $user->is_superadmin === true;
     }
 
     /**
@@ -28,7 +28,7 @@ class CoursePolicy
      */
     public function create(User $user): bool
     {
-        return $user->is_admin === true;
+        return $user->is_superadmin === true;
     }
 
     /**
@@ -36,6 +36,6 @@ class CoursePolicy
      */
     public function update(User $user, Course $course): bool
     {
-        return $user->is_admin === true;
+        return $user->is_superadmin === true;
     }
 }

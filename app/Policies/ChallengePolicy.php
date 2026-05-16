@@ -12,7 +12,7 @@ class ChallengePolicy
      */
     public function viewAny(User $user): bool
     {
-        return $user->is_admin === true;
+        return $user->is_superadmin === true;
     }
 
     /**
@@ -20,7 +20,7 @@ class ChallengePolicy
      */
     public function view(User $user, Challenge $challenge): bool
     {
-        return $user->is_admin === true;
+        return $user->is_superadmin === true;
     }
 
     /**
@@ -28,7 +28,7 @@ class ChallengePolicy
      */
     public function create(User $user): bool
     {
-        return $user->is_admin === true;
+        return $user->is_superadmin === true;
     }
 
     /**
@@ -36,7 +36,7 @@ class ChallengePolicy
      */
     public function update(User $user, Challenge $challenge): bool
     {
-        return $user->is_admin === true;
+        return $user->is_superadmin === true;
     }
 
     /**
@@ -44,7 +44,7 @@ class ChallengePolicy
      */
     public function delete(User $user, Challenge $challenge): bool
     {
-        return $user->is_admin === true;
+        return $user->is_superadmin === true;
     }
 
     /**
@@ -52,6 +52,6 @@ class ChallengePolicy
      */
     public function manageInviteCodes(User $user, Challenge $challenge): bool
     {
-        return $user->is_admin === true;
+        return $user->is_superadmin === true;
     }
 }

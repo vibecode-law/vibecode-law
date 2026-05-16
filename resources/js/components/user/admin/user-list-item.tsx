@@ -52,7 +52,7 @@ export function UserListItem({
                     <h3 className="font-semibold text-neutral-900 dark:text-white">
                         {user.first_name} {user.last_name}
                     </h3>
-                    {user.is_admin === true && (
+                    {user.is_superadmin === true && (
                         <Badge className="gap-1 bg-amber-500 text-white hover:bg-amber-500">
                             <Star className="size-3" />
                             Admin

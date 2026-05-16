@@ -8,11 +8,11 @@ class SiteSettingPolicy
 {
     public function viewAny(User $user): bool
     {
-        return $user->is_admin === true;
+        return $user->is_superadmin === true;
     }
 
     public function update(User $user): bool
     {
-        return $user->is_admin === true;
+        return $user->is_superadmin === true;
     }
 }

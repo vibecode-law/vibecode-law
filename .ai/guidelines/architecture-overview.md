@@ -13,7 +13,7 @@ vibecode/
 ├── app/                  # Backend logic (Laravel application)
 ├── bootstrap/            # Application bootstrap configuration
 ├── config/               # Configuration files
-├── content/              # Markdown content 
+├── content/              # Markdown content
 ├── database/             # Migrations, factories, seeders
 ├── docs/                 # Setup and contribution guides
 ├── public/               # Publicly accessible files
@@ -128,7 +128,7 @@ Static content (legal, about, resources) is stored as Markdown files in `/conten
 - **Auth backend**: Laravel Fortify (headless authentication) with email/password, 2FA, and password reset.
 - **Social login**: LinkedIn OAuth via Socialite.
 - **Permissions**: Spatie Laravel Permission for roles and permissions.
-- **Admin gate**: Custom check via `is_admin` boolean on User model.
+- **Admin gate**: Custom check via `is_superadmin` boolean on User model.
 
 ## Key scripts
 

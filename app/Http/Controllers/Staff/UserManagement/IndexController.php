@@ -56,7 +56,7 @@ class IndexController extends BaseController
                 'avatar',
                 'email',
                 'organisation',
-                'is_admin',
+                'is_superadmin',
                 'roles',
                 'blocked_from_submissions_at',
                 'showcases_count',

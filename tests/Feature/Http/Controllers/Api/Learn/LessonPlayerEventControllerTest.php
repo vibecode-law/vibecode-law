@@ -141,7 +141,7 @@ describe('authenticated user progress', function () {
 describe('admin preview skips logging', function () {
     it('does not call the action for admin on unpublished lesson', function () {
         /** @var User */
-        $admin = User::factory()->create(['is_admin' => true]);
+        $admin = User::factory()->create(['is_superadmin' => true]);
         $course = Course::factory()->published()->create();
         $lesson = Lesson::factory()->for($course)->create(['publish_date' => null]);
 
@@ -156,7 +156,7 @@ describe('admin preview skips logging', function () {
 
     it('does not call the action for admin on unpublished course', function () {
         /** @var User */
-        $admin = User::factory()->create(['is_admin' => true]);
+        $admin = User::factory()->create(['is_superadmin' => true]);
         $course = Course::factory()->draft()->create();
         $lesson = Lesson::factory()->published()->for($course)->create();
 
@@ -172,7 +172,7 @@ describe('admin preview skips logging', function () {
 
     it('calls the action for admin on published lesson and course', function () {
         /** @var User */
-        $admin = User::factory()->create(['is_admin' => true]);
+        $admin = User::factory()->create(['is_superadmin' => true]);
         $course = Course::factory()->published()->create();
         $lesson = Lesson::factory()->published()->for($course)->create();
 

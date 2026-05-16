@@ -53,15 +53,15 @@ class CourseShowController extends BaseController
         $isPublished = $course->publish_date !== null && $course->publish_date->isPast();
         $isPreviewable = $course->allow_preview === true && $isPublished === false;
 
-        if ($isPublished === false && $isPreviewable === false && $user?->is_admin !== true) {
+        if ($isPublished === false && $isPreviewable === false && $user?->is_superadmin !== true) {
             abort(404);
         }
 
-        if ($isPreviewable === true && $course->visibleLessons()->count() === 0 && $user?->is_admin !== true) {
+        if ($isPreviewable === true && $course->visibleLessons()->count() === 0 && $user?->is_superadmin !== true) {
             abort(404);
         }
 
-        $this->isAdminPreview = $user?->is_admin === true && $isPublished === false && $isPreviewable === false;
+        $this->isAdminPreview = $user?->is_superadmin === true && $isPublished === false && $isPreviewable === false;
     }
 
     /**

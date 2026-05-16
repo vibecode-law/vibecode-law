@@ -58,7 +58,7 @@ class ChallengeShowController extends BaseController
             return false;
         }
 
-        return $user->is_admin === true
+        return $user->is_superadmin === true
             || $user->hasChallengeAccess($challenge, InviteCodeScope::View) === true;
     }
 
@@ -128,7 +128,7 @@ class ChallengeShowController extends BaseController
             return false;
         }
 
-        if ($user->is_admin === true) {
+        if ($user->is_superadmin === true) {
             return true;
         }
 

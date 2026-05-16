@@ -258,7 +258,7 @@ describe('lesson access control', function () {
         $lesson = Lesson::factory()->previewable()->for($course)->create();
 
         /** @var User $admin */
-        $admin = User::factory()->create(['is_admin' => true]);
+        $admin = User::factory()->create(['is_superadmin' => true]);
 
         actingAs($admin)
             ->get(route('learn.courses.lessons.show', [$course, $lesson]))
@@ -286,7 +286,7 @@ describe('lesson access control', function () {
         $lesson = Lesson::factory()->published()->for($course)->create();
 
         /** @var User $admin */
-        $admin = User::factory()->create(['is_admin' => true]);
+        $admin = User::factory()->create(['is_superadmin' => true]);
 
         actingAs($admin)
             ->get(route('learn.courses.lessons.show', [$course, $lesson]))
@@ -522,7 +522,7 @@ describe('lesson view logging', function () {
 
     test('show does not log viewed_at for admin previewing unpublished lesson', function () {
         /** @var User $admin */
-        $admin = User::factory()->create(['is_admin' => true]);
+        $admin = User::factory()->create(['is_superadmin' => true]);
         $course = Course::factory()->published()->create();
         $lesson = Lesson::factory()->previewable()->for($course)->create();
 
@@ -535,7 +535,7 @@ describe('lesson view logging', function () {
 
     test('show does not log viewed_at for admin previewing lesson on unpublished course', function () {
         /** @var User $admin */
-        $admin = User::factory()->create(['is_admin' => true]);
+        $admin = User::factory()->create(['is_superadmin' => true]);
         $course = Course::factory()->draft()->create();
         $lesson = Lesson::factory()->published()->for($course)->create();
 

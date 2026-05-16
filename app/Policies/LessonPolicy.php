@@ -12,7 +12,7 @@ class LessonPolicy
      */
     public function viewAny(User $user): bool
     {
-        return $user->is_admin === true;
+        return $user->is_superadmin === true;
     }
 
     /**
@@ -20,7 +20,7 @@ class LessonPolicy
      */
     public function view(User $user, Lesson $lesson): bool
     {
-        return $user->is_admin === true;
+        return $user->is_superadmin === true;
     }
 
     /**
@@ -28,7 +28,7 @@ class LessonPolicy
      */
     public function create(User $user): bool
     {
-        return $user->is_admin === true;
+        return $user->is_superadmin === true;
     }
 
     /**
@@ -36,6 +36,6 @@ class LessonPolicy
      */
     public function update(User $user, Lesson $lesson): bool
     {
-        return $user->is_admin === true;
+        return $user->is_superadmin === true;
     }
 }

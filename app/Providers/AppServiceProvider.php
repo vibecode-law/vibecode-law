@@ -69,7 +69,7 @@ class AppServiceProvider extends ServiceProvider
         Model::shouldBeStrict();
 
         Gate::before(function (User $user, string $ability) {
-            if ($user->is_admin) {
+            if ($user->is_superadmin) {
                 return true;
             }
         });

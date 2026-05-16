@@ -89,7 +89,7 @@ describe('data', function () {
                 ->where('email', 'testuser@example.com')
                 ->where('organisation', 'Test Org')
                 ->where('avatar', $user->avatar)
-                ->where('is_admin', false)
+                ->where('is_superadmin', false)
                 ->where('blocked_from_submissions_at', null)
                 ->whereType('created_at', 'string')
                 ->where('roles', ['Moderator'])

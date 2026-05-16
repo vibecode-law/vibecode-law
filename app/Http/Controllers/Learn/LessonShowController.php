@@ -77,7 +77,7 @@ class LessonShowController extends BaseController
 
         $isUnpublished = $isCoursePublished === false || $isLessonPublished === false;
 
-        if ($isUnpublished === true && $this->user?->is_admin !== true) {
+        if ($isUnpublished === true && $this->user?->is_superadmin !== true) {
             abort(404);
         }
 

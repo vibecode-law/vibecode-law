@@ -187,7 +187,7 @@ describe('course access control', function () {
         $course = Course::factory()->previewable()->create();
 
         /** @var User $admin */
-        $admin = User::factory()->create(['is_admin' => true]);
+        $admin = User::factory()->create(['is_superadmin' => true]);
 
         actingAs($admin)
             ->get(route('learn.courses.show', $course))
@@ -198,7 +198,7 @@ describe('course access control', function () {
         $course = Course::factory()->draft()->create();
 
         /** @var User $admin */
-        $admin = User::factory()->create(['is_admin' => true]);
+        $admin = User::factory()->create(['is_superadmin' => true]);
 
         actingAs($admin)
             ->get(route('learn.courses.show', $course))
@@ -374,7 +374,7 @@ describe('course view logging', function () {
 
     test('show does not call LogCourseViewAction for admin previewing draft course', function () {
         /** @var User $admin */
-        $admin = User::factory()->create(['is_admin' => true]);
+        $admin = User::factory()->create(['is_superadmin' => true]);
         $course = Course::factory()->draft()->create();
 
         $action = mock(LogCourseViewAction::class);
@@ -387,7 +387,7 @@ describe('course view logging', function () {
 
     test('show calls LogCourseViewAction for admin viewing published course', function () {
         /** @var User $admin */
-        $admin = User::factory()->create(['is_admin' => true]);
+        $admin = User::factory()->create(['is_superadmin' => true]);
         $course = Course::factory()->published()->create();
 
         $action = mock(LogCourseViewAction::class);

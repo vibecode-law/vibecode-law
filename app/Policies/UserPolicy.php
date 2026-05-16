@@ -11,7 +11,7 @@ class UserPolicy
      */
     public function viewAny(User $user): bool
     {
-        return $user->is_admin === true;
+        return $user->is_superadmin === true;
     }
 
     /**
@@ -19,7 +19,7 @@ class UserPolicy
      */
     public function view(User $user, User $model): bool
     {
-        return $user->is_admin === true;
+        return $user->is_superadmin === true;
     }
 
     /**
@@ -27,7 +27,7 @@ class UserPolicy
      */
     public function create(User $user): bool
     {
-        return $user->is_admin === true;
+        return $user->is_superadmin === true;
     }
 
     /**
@@ -35,7 +35,7 @@ class UserPolicy
      */
     public function update(User $user, User $model): bool
     {
-        return $user->is_admin === true;
+        return $user->is_superadmin === true;
     }
 
     /**
@@ -43,7 +43,7 @@ class UserPolicy
      */
     public function delete(User $user, User $model): bool
     {
-        return $user->is_admin === true && $user->id !== $model->id;
+        return $user->is_superadmin === true && $user->id !== $model->id;
     }
 
     /**
@@ -51,7 +51,7 @@ class UserPolicy
      */
     public function toggleSubmissions(User $user, User $model): bool
     {
-        return $user->is_admin === true;
+        return $user->is_superadmin === true;
     }
 
     /**
@@ -59,6 +59,6 @@ class UserPolicy
      */
     public function sendPasswordReset(User $user, User $model): bool
     {
-        return $user->is_admin === true;
+        return $user->is_superadmin === true;
     }
 }

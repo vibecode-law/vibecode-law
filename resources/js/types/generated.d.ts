@@ -263,7 +263,7 @@ declare namespace App.Http.Resources.User {
         linkedin_url: string | null;
         bio: string | null;
         email: string;
-        is_admin: boolean;
+        is_superadmin: boolean;
         blocked_from_submissions_at: string | null;
         marketing_opt_out_at: string | null;
         created_at: string;
