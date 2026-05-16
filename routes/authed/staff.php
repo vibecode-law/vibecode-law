@@ -25,6 +25,7 @@ use App\Http\Controllers\Staff\Courses\PublishDateController as CoursePublishDat
 use App\Http\Controllers\Staff\Courses\ReorderController as CourseReorderController;
 use App\Http\Controllers\Staff\Courses\StoreController as CourseStoreController;
 use App\Http\Controllers\Staff\Courses\UpdateController as CourseUpdateController;
+use App\Http\Controllers\Staff\IndexController as StaffIndexController;
 use App\Http\Controllers\Staff\Organisations\StoreController as OrganisationStoreController;
 use App\Http\Controllers\Staff\Organisations\UpdateController as OrganisationUpdateController;
 use App\Http\Controllers\Staff\PracticeAreaController;
@@ -58,9 +59,15 @@ use App\Http\Controllers\Staff\UserManagement\SendPasswordResetController as Use
 use App\Http\Controllers\Staff\UserManagement\StoreController as UserStoreController;
 use App\Http\Controllers\Staff\UserManagement\ToggleSubmissionsController as UserToggleSubmissionsController;
 use App\Http\Controllers\Staff\UserManagement\UpdateController as UserUpdateController;
+use App\Models\Challenge\Challenge;
+use App\Models\Course\Course;
+use App\Models\PressCoverage;
+use App\Models\Testimonial;
 use Illuminate\Support\Facades\Route;
 
 Route::middleware(['can:access-staff'])->prefix('staff')->name('staff.')->group(function () {
+    Route::get('/', StaffIndexController::class)->name('index');
+
     Route::prefix('metadata')->name('metadata.')->group(function () {
         Route::prefix('practice-areas')->name('practice-areas.')->group(function () {
             Route::get('/', [PracticeAreaController::class, 'index'])->name('index');
@@ -76,7 +83,7 @@ Route::middleware(['can:access-staff'])->prefix('staff')->name('staff.')->group(
         });
     });
 
-    Route::prefix('showcase-moderation')->name('showcase-moderation.')->group(function () {
+    Route::prefix('showcase-moderation')->name('showcase-moderation.')->middleware('can:showcase.approve-reject')->group(function () {
         Route::get('/', ShowcaseModerationIndexController::class)->name('index');
         Route::post('/{showcase}/approve', ShowcaseModerationApproveController::class)->name('approve');
         Route::post('/{showcase}/reject', ShowcaseModerationRejectController::class)->name('reject');
@@ -98,7 +105,7 @@ Route::middleware(['can:access-staff'])->prefix('staff')->name('staff.')->group(
         Route::post('/{user}/send-password-reset', UserSendPasswordResetController::class)->name('send-password-reset');
     });
 
-    Route::prefix('testimonials')->name('testimonials.')->group(function () {
+    Route::prefix('testimonials')->name('testimonials.')->middleware('can:manage,'.Testimonial::class)->group(function () {
         Route::get('/', TestimonialIndexController::class)->name('index');
         Route::post('/', TestimonialStoreController::class)->name('store');
         Route::post('/reorder', TestimonialReorderController::class)->name('reorder');
@@ -111,7 +118,7 @@ Route::middleware(['can:access-staff'])->prefix('staff')->name('staff.')->group(
         Route::patch('/{organisation}', OrganisationUpdateController::class)->name('update');
     });
 
-    Route::prefix('academy')->name('academy.')->group(function () {
+    Route::prefix('academy')->name('academy.')->middleware('can:viewAny,'.Course::class)->group(function () {
         Route::prefix('courses')->name('courses.')->group(function () {
             Route::get('/', CourseIndexController::class)->name('index');
             Route::get('/create', CourseCreateController::class)->name('create');
@@ -136,7 +143,7 @@ Route::middleware(['can:access-staff'])->prefix('staff')->name('staff.')->group(
         });
     });
 
-    Route::prefix('challenges')->name('challenges.')->group(function () {
+    Route::prefix('challenges')->name('challenges.')->middleware('can:viewAny,'.Challenge::class)->group(function () {
         Route::get('/', ChallengeIndexController::class)->name('index');
         Route::get('/create', ChallengeCreateController::class)->name('create');
         Route::post('/', ChallengeStoreController::class)->name('store');
@@ -155,7 +162,7 @@ Route::middleware(['can:access-staff'])->prefix('staff')->name('staff.')->group(
         Route::patch('/announcement', SettingsUpdateAnnouncementController::class)->name('update-announcement');
     });
 
-    Route::prefix('press-coverage')->name('press-coverage.')->group(function () {
+    Route::prefix('press-coverage')->name('press-coverage.')->middleware('can:manage,'.PressCoverage::class)->group(function () {
         Route::get('/', PressCoverageIndexController::class)->name('index');
         Route::post('/', PressCoverageStoreController::class)->name('store');
         Route::post('/reorder', PressCoverageReorderController::class)->name('reorder');

@@ -37,7 +37,7 @@ class UserFactory extends Factory
             'email' => fake()->unique()->safeEmail(),
             'email_verified_at' => now(),
             'password' => static::$password ??= Hash::make('password'),
-            'is_admin' => false,
+            'is_superadmin' => false,
             'remember_token' => Str::random(10),
             'two_factor_secret' => null,
             'two_factor_recovery_codes' => null,
@@ -82,7 +82,7 @@ class UserFactory extends Factory
     public function admin(): static
     {
         return $this->state(fn (array $attributes) => [
-            'is_admin' => true,
+            'is_superadmin' => true,
         ]);
     }
 
@@ -93,6 +93,36 @@ class UserFactory extends Factory
     {
         return $this->afterCreating(function (User $user) {
             $user->assignRole('Moderator');
+        });
+    }
+
+    /**
+     * Indicate that the user is a marketing manager.
+     */
+    public function marketingManager(): static
+    {
+        return $this->afterCreating(function (User $user) {
+            $user->assignRole('Marketing Manager');
+        });
+    }
+
+    /**
+     * Indicate that the user is an academy manager.
+     */
+    public function academyManager(): static
+    {
+        return $this->afterCreating(function (User $user) {
+            $user->assignRole('Academy Manager');
+        });
+    }
+
+    /**
+     * Indicate that the user is a challenge manager.
+     */
+    public function challengeManager(): static
+    {
+        return $this->afterCreating(function (User $user) {
+            $user->assignRole('Challenge Manager');
         });
     }
 

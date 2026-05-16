@@ -81,7 +81,7 @@ describe('data', function () {
                 ->where('avatar', $user->avatar)
                 ->where('linkedin_url', 'https://linkedin.com/in/testuser')
                 ->where('bio', 'A test bio')
-                ->where('is_admin', false)
+                ->where('is_superadmin', false)
                 ->where('blocked_from_submissions_at', null)
                 ->whereType('created_at', 'string')
                 ->where('team_type', TeamType::CoreTeam->value)
@@ -102,7 +102,7 @@ describe('data', function () {
         $response = get(route('staff.users.edit', $user));
 
         $response->assertInertia(fn (AssertableInertia $page) => $page
-            ->where('roles', ['Moderator'])
+            ->where('roles', ['Academy Manager', 'Challenge Manager', 'Marketing Manager', 'Moderator'])
         );
     });
 

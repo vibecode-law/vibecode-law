@@ -21,7 +21,7 @@ class ShowcaseDraftPolicy
      */
     public function view(User $user, ShowcaseDraft $draft): bool
     {
-        if ($user->is_admin === true) {
+        if ($user->is_superadmin === true) {
             return true;
         }
 
@@ -40,7 +40,7 @@ class ShowcaseDraftPolicy
      */
     public function update(User $user, ShowcaseDraft $draft): bool
     {
-        if ($user->is_admin === true) {
+        if ($user->is_superadmin === true) {
             return true;
         }
 
@@ -69,7 +69,7 @@ class ShowcaseDraftPolicy
      */
     public function delete(User $user, ShowcaseDraft $draft): bool
     {
-        if ($user->is_admin === true) {
+        if ($user->is_superadmin === true) {
             return true;
         }
 

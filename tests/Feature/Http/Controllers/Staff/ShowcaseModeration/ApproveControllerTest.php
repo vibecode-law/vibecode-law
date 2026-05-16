@@ -43,6 +43,18 @@ describe('auth', function () {
 
         $response->assertRedirect();
     });
+
+    test('forbids manager roles without showcase.approve-reject', function () {
+        $showcase = Showcase::factory()->pending()->create();
+
+        foreach (['marketingManager', 'academyManager', 'challengeManager'] as $state) {
+            $user = User::factory()->{$state}()->create();
+            actingAs($user);
+
+            post(route('staff.showcase-moderation.approve', $showcase))
+                ->assertForbidden();
+        }
+    });
 });
 
 describe('approval', function () {

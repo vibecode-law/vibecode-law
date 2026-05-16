@@ -285,7 +285,7 @@ export default function UserFormFields({
                         <p className="text-sm text-neutral-500 dark:text-neutral-400">
                             Assign roles to control user permissions.
                             {isCreate === false &&
-                                ' Admin status is managed separately.'}
+                                ' Super admin status is managed separately.'}
                         </p>
                         <div className="space-y-2">
                             {roles.map((role) => (

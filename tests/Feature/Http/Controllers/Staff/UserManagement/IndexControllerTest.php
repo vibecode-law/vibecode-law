@@ -89,7 +89,7 @@ describe('data', function () {
                 ->where('email', 'testuser@example.com')
                 ->where('organisation', 'Test Org')
                 ->where('avatar', $user->avatar)
-                ->where('is_admin', false)
+                ->where('is_superadmin', false)
                 ->where('blocked_from_submissions_at', null)
                 ->whereType('created_at', 'string')
                 ->where('roles', ['Moderator'])
@@ -110,7 +110,7 @@ describe('data', function () {
         $response = get(route('staff.users.index'));
 
         $response->assertInertia(fn (AssertableInertia $page) => $page
-            ->where('roles', ['Moderator'])
+            ->where('roles', ['Academy Manager', 'Challenge Manager', 'Marketing Manager', 'Moderator'])
         );
     });
 

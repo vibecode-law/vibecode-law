@@ -35,7 +35,7 @@ class LessonPlayerEventController extends BaseController
 
     private function isAdminPreview(Course $course, Lesson $lesson, ?User $user): bool
     {
-        if ($user?->is_admin !== true) {
+        if ($user?->is_superadmin !== true) {
             return false;
         }
 

@@ -23,29 +23,13 @@ describe('auth', function () {
         ])->assertRedirect(route('login'));
     });
 
-    test('allows admin to update lessons', function () {
-        $admin = User::factory()->admin()->create();
+    test('does not allow regular users to update lessons', function () {
+        /** @var User */
+        $user = User::factory()->create();
         $course = Course::factory()->create();
         $lesson = Lesson::factory()->create(['course_id' => $course->id, 'allow_preview' => false, 'publish_date' => null]);
 
-        actingAs($admin);
-
-        patch(route('staff.academy.courses.lessons.update', [$course, $lesson]), [
-            'title' => 'Updated Lesson',
-            'slug' => $lesson->slug,
-            'tagline' => 'Updated tagline',
-            'description' => 'Updated description',
-            'learning_objectives' => 'Objectives',
-            'gated' => true,
-        ])->assertRedirect();
-    });
-
-    test('does not allow moderators to update lessons', function () {
-        $moderator = User::factory()->moderator()->create();
-        $course = Course::factory()->create();
-        $lesson = Lesson::factory()->create(['course_id' => $course->id, 'allow_preview' => false, 'publish_date' => null]);
-
-        actingAs($moderator);
+        actingAs($user);
 
         patch(route('staff.academy.courses.lessons.update', [$course, $lesson]), [
             'title' => 'Updated Lesson',
@@ -57,9 +41,25 @@ describe('auth', function () {
         ])->assertForbidden();
     });
 
-    test('does not allow regular users to update lessons', function () {
-        /** @var User */
-        $user = User::factory()->create();
+    test('allows a user with lesson.update permission', function () {
+        $user = userWithPermissions(['course.view', 'lesson.update']);
+        $course = Course::factory()->create();
+        $lesson = Lesson::factory()->create(['course_id' => $course->id, 'allow_preview' => false, 'publish_date' => null]);
+
+        actingAs($user);
+
+        patch(route('staff.academy.courses.lessons.update', [$course, $lesson]), [
+            'title' => 'Updated Lesson',
+            'slug' => $lesson->slug,
+            'tagline' => 'Updated tagline',
+            'description' => 'Updated description',
+            'learning_objectives' => 'Objectives',
+            'gated' => true,
+        ])->assertRedirect();
+    });
+
+    test('forbids a staff user without lesson.update permission', function () {
+        $user = userWithPermissions(['course.view']);
         $course = Course::factory()->create();
         $lesson = Lesson::factory()->create(['course_id' => $course->id, 'allow_preview' => false, 'publish_date' => null]);
 

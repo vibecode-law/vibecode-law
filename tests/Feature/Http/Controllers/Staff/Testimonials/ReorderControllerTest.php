@@ -31,11 +31,11 @@ describe('auth', function () {
         ])->assertForbidden();
     });
 
-    test('allows moderators to reorder testimonials', function () {
-        $moderator = User::factory()->moderator()->create();
+    test('allows marketing managers to reorder testimonials', function () {
+        $marketingManager = User::factory()->marketingManager()->create();
         $testimonial = Testimonial::factory()->create();
 
-        actingAs($moderator);
+        actingAs($marketingManager);
 
         post(route('staff.testimonials.reorder'), [
             'items' => [
@@ -47,12 +47,12 @@ describe('auth', function () {
 
 describe('reordering', function () {
     test('updates display_order for multiple testimonials', function () {
-        $moderator = User::factory()->moderator()->create();
+        $marketingManager = User::factory()->marketingManager()->create();
         $first = Testimonial::factory()->create(['display_order' => 0]);
         $second = Testimonial::factory()->create(['display_order' => 1]);
         $third = Testimonial::factory()->create(['display_order' => 2]);
 
-        actingAs($moderator);
+        actingAs($marketingManager);
 
         post(route('staff.testimonials.reorder'), [
             'items' => [
@@ -70,9 +70,9 @@ describe('reordering', function () {
 
 describe('validation', function () {
     test('validates required and invalid data', function (array $data, array $invalidFields) {
-        $moderator = User::factory()->moderator()->create();
+        $marketingManager = User::factory()->marketingManager()->create();
 
-        actingAs($moderator);
+        actingAs($marketingManager);
 
         post(route('staff.testimonials.reorder'), $data)
             ->assertInvalid($invalidFields);

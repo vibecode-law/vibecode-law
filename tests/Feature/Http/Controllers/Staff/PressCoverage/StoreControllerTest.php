@@ -36,10 +36,10 @@ describe('auth', function () {
         ])->assertForbidden();
     });
 
-    test('allows moderators to store press coverage', function () {
-        $moderator = User::factory()->moderator()->create();
+    test('allows a user with press-coverage.create permission', function () {
+        $user = userWithPermissions(['press-coverage.view', 'press-coverage.create']);
 
-        actingAs($moderator);
+        actingAs($user);
 
         post(route('staff.press-coverage.store'), [
             'title' => 'Test Article',
@@ -48,13 +48,26 @@ describe('auth', function () {
             'url' => 'https://example.com/article',
         ])->assertRedirect();
     });
+
+    test('forbids a staff user without press-coverage.create permission', function () {
+        $user = userWithPermissions(['press-coverage.view']);
+
+        actingAs($user);
+
+        post(route('staff.press-coverage.store'), [
+            'title' => 'Test Article',
+            'publication_name' => 'Test Publication',
+            'publication_date' => '2026-01-01',
+            'url' => 'https://example.com/article',
+        ])->assertForbidden();
+    });
 });
 
 describe('storing', function () {
     test('creates press coverage with all fields', function () {
-        $moderator = User::factory()->moderator()->create();
+        $marketingManager = User::factory()->marketingManager()->create();
 
-        actingAs($moderator);
+        actingAs($marketingManager);
 
         post(route('staff.press-coverage.store'), [
             'title' => 'AI in Legal',
@@ -78,9 +91,9 @@ describe('storing', function () {
     });
 
     test('creates press coverage with only required fields', function () {
-        $moderator = User::factory()->moderator()->create();
+        $marketingManager = User::factory()->marketingManager()->create();
 
-        actingAs($moderator);
+        actingAs($marketingManager);
 
         post(route('staff.press-coverage.store'), [
             'title' => 'Minimal Article',
@@ -98,9 +111,9 @@ describe('storing', function () {
     });
 
     test('handles thumbnail upload', function () {
-        $moderator = User::factory()->moderator()->create();
+        $marketingManager = User::factory()->marketingManager()->create();
 
-        actingAs($moderator);
+        actingAs($marketingManager);
 
         post(route('staff.press-coverage.store'), [
             'title' => 'With Thumbnail',
@@ -117,9 +130,9 @@ describe('storing', function () {
     });
 
     test('handles thumbnail upload with crop data', function () {
-        $moderator = User::factory()->moderator()->create();
+        $marketingManager = User::factory()->marketingManager()->create();
 
-        actingAs($moderator);
+        actingAs($marketingManager);
 
         post(route('staff.press-coverage.store'), [
             'title' => 'With Crop',
@@ -137,9 +150,9 @@ describe('storing', function () {
     });
 
     test('strips extra fields from thumbnail crop', function () {
-        $moderator = User::factory()->moderator()->create();
+        $marketingManager = User::factory()->marketingManager()->create();
 
-        actingAs($moderator);
+        actingAs($marketingManager);
 
         post(route('staff.press-coverage.store'), [
             'title' => 'With Extra Crop Fields',
@@ -158,9 +171,9 @@ describe('storing', function () {
 
 describe('validation', function () {
     test('validates required and invalid data', function (array $data, array $invalidFields) {
-        $moderator = User::factory()->moderator()->create();
+        $marketingManager = User::factory()->marketingManager()->create();
 
-        actingAs($moderator);
+        actingAs($marketingManager);
 
         post(route('staff.press-coverage.store'), $data)
             ->assertInvalid($invalidFields);
@@ -216,9 +229,9 @@ describe('validation', function () {
     ]);
 
     test('rejects invalid thumbnail file types', function (string $extension) {
-        $moderator = User::factory()->moderator()->create();
+        $marketingManager = User::factory()->marketingManager()->create();
 
-        actingAs($moderator);
+        actingAs($marketingManager);
 
         post(route('staff.press-coverage.store'), [
             'title' => 'Title',
@@ -234,9 +247,9 @@ describe('validation', function () {
     ]);
 
     test('accepts valid thumbnail file types', function (string $extension) {
-        $moderator = User::factory()->moderator()->create();
+        $marketingManager = User::factory()->marketingManager()->create();
 
-        actingAs($moderator);
+        actingAs($marketingManager);
 
         post(route('staff.press-coverage.store'), [
             'title' => 'Title',

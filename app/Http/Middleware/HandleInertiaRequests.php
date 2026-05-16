@@ -87,7 +87,7 @@ class HandleInertiaRequests extends Middleware
     private function getUserPermissions(User $user): array
     {
         // Admins get all permissions (represented as wildcard)
-        if ($user->is_admin === true) {
+        if ($user->is_superadmin === true) {
             return ['*'];
         }
 

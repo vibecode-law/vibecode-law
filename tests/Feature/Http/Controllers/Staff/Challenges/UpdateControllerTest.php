@@ -22,25 +22,12 @@ describe('auth', function () {
         ])->assertRedirect(route('login'));
     });
 
-    test('allows admin to update challenges', function () {
-        $admin = User::factory()->admin()->create();
+    test('does not allow regular users to update challenges', function () {
+        /** @var User */
+        $user = User::factory()->create();
         $challenge = Challenge::factory()->create();
 
-        actingAs($admin);
-
-        patch(route('staff.challenges.update', $challenge), [
-            'title' => 'Updated',
-            'slug' => $challenge->slug,
-            'tagline' => 'Updated tagline',
-            'description' => 'Updated description',
-        ])->assertRedirect();
-    });
-
-    test('does not allow moderators to update challenges', function () {
-        $moderator = User::factory()->moderator()->create();
-        $challenge = Challenge::factory()->create();
-
-        actingAs($moderator);
+        actingAs($user);
 
         patch(route('staff.challenges.update', $challenge), [
             'title' => 'Updated',
@@ -50,9 +37,22 @@ describe('auth', function () {
         ])->assertForbidden();
     });
 
-    test('does not allow regular users to update challenges', function () {
-        /** @var User */
-        $user = User::factory()->create();
+    test('allows a user with challenge.update permission', function () {
+        $user = userWithPermissions(['challenge.view', 'challenge.update']);
+        $challenge = Challenge::factory()->create();
+
+        actingAs($user);
+
+        patch(route('staff.challenges.update', $challenge), [
+            'title' => 'Updated',
+            'slug' => $challenge->slug,
+            'tagline' => 'Updated tagline',
+            'description' => 'Updated description',
+        ])->assertRedirect();
+    });
+
+    test('forbids a staff user without challenge.update permission', function () {
+        $user = userWithPermissions(['challenge.view']);
         $challenge = Challenge::factory()->create();
 
         actingAs($user);

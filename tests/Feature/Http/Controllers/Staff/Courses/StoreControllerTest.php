@@ -20,10 +20,25 @@ describe('auth', function () {
         ])->assertRedirect(route('login'));
     });
 
-    test('allows admin to create courses', function () {
-        $admin = User::factory()->admin()->create();
+    test('does not allow regular users to create courses', function () {
+        /** @var User */
+        $user = User::factory()->create();
 
-        actingAs($admin);
+        actingAs($user);
+
+        post(route('staff.academy.courses.store'), [
+            'title' => 'Test Course',
+            'slug' => 'test-course',
+            'tagline' => 'A test tagline',
+            'description' => 'A test description',
+            'is_featured' => false,
+        ])->assertForbidden();
+    });
+
+    test('allows a user with course.create permission', function () {
+        $user = userWithPermissions(['course.view', 'course.create']);
+
+        actingAs($user);
 
         post(route('staff.academy.courses.store'), [
             'title' => 'Test Course',
@@ -36,23 +51,8 @@ describe('auth', function () {
         ])->assertRedirect();
     });
 
-    test('does not allow moderators to create courses', function () {
-        $moderator = User::factory()->moderator()->create();
-
-        actingAs($moderator);
-
-        post(route('staff.academy.courses.store'), [
-            'title' => 'Test Course',
-            'slug' => 'test-course',
-            'tagline' => 'A test tagline',
-            'description' => 'A test description',
-            'is_featured' => false,
-        ])->assertForbidden();
-    });
-
-    test('does not allow regular users to create courses', function () {
-        /** @var User */
-        $user = User::factory()->create();
+    test('forbids a staff user without course.create permission', function () {
+        $user = userWithPermissions(['course.view']);
 
         actingAs($user);
 

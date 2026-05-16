@@ -90,7 +90,7 @@ class User extends Authenticatable implements MustVerifyEmail
         return [
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
-            'is_admin' => 'boolean',
+            'is_superadmin' => 'boolean',
             'two_factor_confirmed_at' => 'datetime',
             'blocked_from_submissions_at' => 'datetime',
             'team_type' => TeamType::class,

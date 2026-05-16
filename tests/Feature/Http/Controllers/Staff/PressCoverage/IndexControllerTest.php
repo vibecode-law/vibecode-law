@@ -23,10 +23,10 @@ describe('auth', function () {
             ->assertForbidden();
     });
 
-    test('allows moderators to view press coverage index', function () {
-        $moderator = User::factory()->moderator()->create();
+    test('allows marketing managers to view press coverage index', function () {
+        $marketingManager = User::factory()->marketingManager()->create();
 
-        actingAs($moderator);
+        actingAs($marketingManager);
 
         get(route('staff.press-coverage.index'))
             ->assertSuccessful();
@@ -35,9 +35,9 @@ describe('auth', function () {
 
 describe('data', function () {
     test('renders the correct Inertia component', function () {
-        $moderator = User::factory()->moderator()->create();
+        $marketingManager = User::factory()->marketingManager()->create();
 
-        actingAs($moderator);
+        actingAs($marketingManager);
 
         get(route('staff.press-coverage.index'))
             ->assertInertia(fn (AssertableInertia $page) => $page
@@ -46,10 +46,10 @@ describe('data', function () {
     });
 
     test('returns all press coverage items', function () {
-        $moderator = User::factory()->moderator()->create();
+        $marketingManager = User::factory()->marketingManager()->create();
         PressCoverage::factory()->count(4)->create();
 
-        actingAs($moderator);
+        actingAs($marketingManager);
 
         get(route('staff.press-coverage.index'))
             ->assertInertia(fn (AssertableInertia $page) => $page
@@ -58,11 +58,11 @@ describe('data', function () {
     });
 
     test('returns both published and unpublished items', function () {
-        $moderator = User::factory()->moderator()->create();
+        $marketingManager = User::factory()->marketingManager()->create();
         PressCoverage::factory()->published()->count(2)->create();
         PressCoverage::factory()->count(1)->create();
 
-        actingAs($moderator);
+        actingAs($marketingManager);
 
         get(route('staff.press-coverage.index'))
             ->assertInertia(fn (AssertableInertia $page) => $page
@@ -71,7 +71,7 @@ describe('data', function () {
     });
 
     test('orders by display_order then publication_date desc', function () {
-        $moderator = User::factory()->moderator()->create();
+        $marketingManager = User::factory()->marketingManager()->create();
 
         $second = PressCoverage::factory()->create([
             'display_order' => 1,
@@ -86,7 +86,7 @@ describe('data', function () {
             'publication_date' => '2025-01-01',
         ]);
 
-        actingAs($moderator);
+        actingAs($marketingManager);
 
         get(route('staff.press-coverage.index'))
             ->assertInertia(fn (AssertableInertia $page) => $page
@@ -106,7 +106,7 @@ describe('data', function () {
     });
 
     test('returns the expected data structure', function () {
-        $moderator = User::factory()->moderator()->create();
+        $marketingManager = User::factory()->marketingManager()->create();
 
         $item = PressCoverage::factory()->published()->create([
             'title' => 'AI in Law',
@@ -119,7 +119,7 @@ describe('data', function () {
             'display_order' => 2,
         ]);
 
-        actingAs($moderator);
+        actingAs($marketingManager);
 
         get(route('staff.press-coverage.index'))
             ->assertInertia(fn (AssertableInertia $page) => $page

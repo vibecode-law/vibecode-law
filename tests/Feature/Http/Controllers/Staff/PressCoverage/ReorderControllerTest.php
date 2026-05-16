@@ -31,11 +31,11 @@ describe('auth', function () {
         ])->assertForbidden();
     });
 
-    test('allows moderators to reorder press coverage', function () {
-        $moderator = User::factory()->moderator()->create();
+    test('allows marketing managers to reorder press coverage', function () {
+        $marketingManager = User::factory()->marketingManager()->create();
         $pressCoverage = PressCoverage::factory()->create();
 
-        actingAs($moderator);
+        actingAs($marketingManager);
 
         post(route('staff.press-coverage.reorder'), [
             'items' => [
@@ -47,12 +47,12 @@ describe('auth', function () {
 
 describe('reordering', function () {
     test('updates display_order for multiple items', function () {
-        $moderator = User::factory()->moderator()->create();
+        $marketingManager = User::factory()->marketingManager()->create();
         $first = PressCoverage::factory()->create(['display_order' => 0]);
         $second = PressCoverage::factory()->create(['display_order' => 1]);
         $third = PressCoverage::factory()->create(['display_order' => 2]);
 
-        actingAs($moderator);
+        actingAs($marketingManager);
 
         post(route('staff.press-coverage.reorder'), [
             'items' => [
@@ -70,9 +70,9 @@ describe('reordering', function () {
 
 describe('validation', function () {
     test('validates required and invalid data', function (array $data, array $invalidFields) {
-        $moderator = User::factory()->moderator()->create();
+        $marketingManager = User::factory()->marketingManager()->create();
 
-        actingAs($moderator);
+        actingAs($marketingManager);
 
         post(route('staff.press-coverage.reorder'), $data)
             ->assertInvalid($invalidFields);

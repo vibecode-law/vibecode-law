@@ -16,7 +16,7 @@ class ShowcaseUpdateController extends BaseController
     public function __invoke(ShowcaseWriteRequest $request, Showcase $showcase, ShowcaseMediaService $mediaService): RedirectResponse
     {
         $wasApproved = $showcase->isApproved();
-        $isAdmin = $request->user()->is_admin;
+        $isAdmin = $request->user()->is_superadmin;
 
         $excludeFields = ['images', 'image_crops', 'image_crop_updates', 'practice_area_ids', 'thumbnail', 'remove_thumbnail', 'removed_images', 'submit', 'challenge_id'];
 

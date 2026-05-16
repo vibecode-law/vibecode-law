@@ -41,6 +41,33 @@ describe('auth', function () {
         get(route('staff.academy.courses.index'))
             ->assertForbidden();
     });
+
+    test('allows academy managers to view courses', function () {
+        $user = User::factory()->academyManager()->create();
+
+        actingAs($user);
+
+        get(route('staff.academy.courses.index'))
+            ->assertOk();
+    });
+
+    test('forbids marketing managers', function () {
+        $user = User::factory()->marketingManager()->create();
+
+        actingAs($user);
+
+        get(route('staff.academy.courses.index'))
+            ->assertForbidden();
+    });
+
+    test('forbids challenge managers', function () {
+        $user = User::factory()->challengeManager()->create();
+
+        actingAs($user);
+
+        get(route('staff.academy.courses.index'))
+            ->assertForbidden();
+    });
 });
 
 describe('data', function () {

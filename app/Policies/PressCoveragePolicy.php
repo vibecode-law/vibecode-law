@@ -12,6 +12,11 @@ class PressCoveragePolicy
         return true;
     }
 
+    public function manage(User $user): bool
+    {
+        return $user->can('press-coverage.view');
+    }
+
     public function view(?User $user, PressCoverage $pressCoverage): bool
     {
         return true;

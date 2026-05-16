@@ -30,24 +30,35 @@ describe('auth', function () {
         ])->assertForbidden();
     });
 
-    test('allows moderators to store testimonials', function () {
-        $moderator = User::factory()->moderator()->create();
+    test('allows a user with testimonial.create permission', function () {
+        $user = userWithPermissions(['testimonial.view', 'testimonial.create']);
 
-        actingAs($moderator);
+        actingAs($user);
 
         post(route('staff.testimonials.store'), [
             'name' => 'Jane Doe',
             'content' => 'A great testimonial.',
         ])->assertRedirect();
     });
+
+    test('forbids a staff user without testimonial.create permission', function () {
+        $user = userWithPermissions(['testimonial.view']);
+
+        actingAs($user);
+
+        post(route('staff.testimonials.store'), [
+            'name' => 'Jane Doe',
+            'content' => 'A great testimonial.',
+        ])->assertForbidden();
+    });
 });
 
 describe('storing', function () {
     test('creates a testimonial with all fields', function () {
-        $moderator = User::factory()->moderator()->create();
+        $marketingManager = User::factory()->marketingManager()->create();
         $user = User::factory()->create();
 
-        actingAs($moderator);
+        actingAs($marketingManager);
 
         post(route('staff.testimonials.store'), [
             'user_id' => $user->id,
@@ -71,9 +82,9 @@ describe('storing', function () {
     });
 
     test('creates a testimonial with only required fields', function () {
-        $moderator = User::factory()->moderator()->create();
+        $marketingManager = User::factory()->marketingManager()->create();
 
-        actingAs($moderator);
+        actingAs($marketingManager);
 
         post(route('staff.testimonials.store'), [
             'name' => 'Jane Doe',
@@ -90,10 +101,10 @@ describe('storing', function () {
     });
 
     test('does not require name when user_id is provided', function () {
-        $moderator = User::factory()->moderator()->create();
+        $marketingManager = User::factory()->marketingManager()->create();
         $user = User::factory()->create();
 
-        actingAs($moderator);
+        actingAs($marketingManager);
 
         post(route('staff.testimonials.store'), [
             'user_id' => $user->id,
@@ -107,9 +118,9 @@ describe('storing', function () {
     });
 
     test('handles avatar upload', function () {
-        $moderator = User::factory()->moderator()->create();
+        $marketingManager = User::factory()->marketingManager()->create();
 
-        actingAs($moderator);
+        actingAs($marketingManager);
 
         post(route('staff.testimonials.store'), [
             'name' => 'Jane Doe',
@@ -125,9 +136,9 @@ describe('storing', function () {
     });
 
     test('handles avatar upload with crop data', function () {
-        $moderator = User::factory()->moderator()->create();
+        $marketingManager = User::factory()->marketingManager()->create();
 
-        actingAs($moderator);
+        actingAs($marketingManager);
 
         post(route('staff.testimonials.store'), [
             'name' => 'Jane Doe',
@@ -144,9 +155,9 @@ describe('storing', function () {
     });
 
     test('strips extra fields from avatar crop', function () {
-        $moderator = User::factory()->moderator()->create();
+        $marketingManager = User::factory()->marketingManager()->create();
 
-        actingAs($moderator);
+        actingAs($marketingManager);
 
         post(route('staff.testimonials.store'), [
             'name' => 'Jane Doe',
@@ -163,9 +174,9 @@ describe('storing', function () {
 
 describe('validation', function () {
     test('validates required and invalid data', function (array $data, array $invalidFields) {
-        $moderator = User::factory()->moderator()->create();
+        $marketingManager = User::factory()->marketingManager()->create();
 
-        actingAs($moderator);
+        actingAs($marketingManager);
 
         post(route('staff.testimonials.store'), $data)
             ->assertInvalid($invalidFields);
@@ -221,9 +232,9 @@ describe('validation', function () {
     ]);
 
     test('rejects invalid avatar file types', function (string $extension) {
-        $moderator = User::factory()->moderator()->create();
+        $marketingManager = User::factory()->marketingManager()->create();
 
-        actingAs($moderator);
+        actingAs($marketingManager);
 
         post(route('staff.testimonials.store'), [
             'content' => 'Valid content',
@@ -236,9 +247,9 @@ describe('validation', function () {
     ]);
 
     test('accepts valid avatar file types', function (string $extension) {
-        $moderator = User::factory()->moderator()->create();
+        $marketingManager = User::factory()->marketingManager()->create();
 
-        actingAs($moderator);
+        actingAs($marketingManager);
 
         post(route('staff.testimonials.store'), [
             'name' => 'Jane Doe',

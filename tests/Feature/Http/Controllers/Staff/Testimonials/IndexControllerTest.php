@@ -23,21 +23,49 @@ describe('auth', function () {
             ->assertForbidden();
     });
 
-    test('allows moderators to view testimonials index', function () {
-        $moderator = User::factory()->moderator()->create();
+    test('allows marketing managers to view testimonials index', function () {
+        $user = User::factory()->marketingManager()->create();
 
-        actingAs($moderator);
+        actingAs($user);
 
         get(route('staff.testimonials.index'))
             ->assertSuccessful();
+    });
+
+    test('forbids academy managers', function () {
+        $user = User::factory()->academyManager()->create();
+
+        actingAs($user);
+
+        get(route('staff.testimonials.index'))
+            ->assertForbidden();
+    });
+
+    test('forbids challenge managers', function () {
+        $user = User::factory()->challengeManager()->create();
+
+        actingAs($user);
+
+        get(route('staff.testimonials.index'))
+            ->assertForbidden();
+    });
+
+    test('a user with multiple manager roles gets the combined access', function () {
+        $user = User::factory()->marketingManager()->challengeManager()->create();
+
+        actingAs($user);
+
+        get(route('staff.testimonials.index'))->assertSuccessful();
+        get(route('staff.challenges.index'))->assertSuccessful();
+        get(route('staff.academy.courses.index'))->assertForbidden();
     });
 });
 
 describe('data', function () {
     test('renders the correct Inertia component', function () {
-        $moderator = User::factory()->moderator()->create();
+        $marketingManager = User::factory()->marketingManager()->create();
 
-        actingAs($moderator);
+        actingAs($marketingManager);
 
         get(route('staff.testimonials.index'))
             ->assertInertia(fn (AssertableInertia $page) => $page
@@ -46,10 +74,10 @@ describe('data', function () {
     });
 
     test('returns all testimonials', function () {
-        $moderator = User::factory()->moderator()->create();
+        $marketingManager = User::factory()->marketingManager()->create();
         Testimonial::factory()->count(3)->create();
 
-        actingAs($moderator);
+        actingAs($marketingManager);
 
         get(route('staff.testimonials.index'))
             ->assertInertia(fn (AssertableInertia $page) => $page
@@ -58,11 +86,11 @@ describe('data', function () {
     });
 
     test('returns both published and unpublished testimonials', function () {
-        $moderator = User::factory()->moderator()->create();
+        $marketingManager = User::factory()->marketingManager()->create();
         Testimonial::factory()->published()->count(2)->create();
         Testimonial::factory()->count(1)->create();
 
-        actingAs($moderator);
+        actingAs($marketingManager);
 
         get(route('staff.testimonials.index'))
             ->assertInertia(fn (AssertableInertia $page) => $page
@@ -71,7 +99,7 @@ describe('data', function () {
     });
 
     test('orders testimonials by display_order then created_at desc', function () {
-        $moderator = User::factory()->moderator()->create();
+        $marketingManager = User::factory()->marketingManager()->create();
 
         $second = Testimonial::factory()->create([
             'display_order' => 1,
@@ -86,7 +114,7 @@ describe('data', function () {
             'created_at' => now(),
         ]);
 
-        actingAs($moderator);
+        actingAs($marketingManager);
 
         get(route('staff.testimonials.index'))
             ->assertInertia(fn (AssertableInertia $page) => $page
@@ -106,7 +134,7 @@ describe('data', function () {
     });
 
     test('returns the expected data structure', function () {
-        $moderator = User::factory()->moderator()->create();
+        $marketingManager = User::factory()->marketingManager()->create();
         $user = User::factory()->create();
 
         $testimonial = Testimonial::factory()->for($user)->published()->create([
@@ -117,7 +145,7 @@ describe('data', function () {
             'display_order' => 5,
         ]);
 
-        actingAs($moderator);
+        actingAs($marketingManager);
 
         get(route('staff.testimonials.index'))
             ->assertInertia(fn (AssertableInertia $page) => $page
@@ -142,12 +170,12 @@ describe('data', function () {
     });
 
     test('includes user relationship data', function () {
-        $moderator = User::factory()->moderator()->create();
+        $marketingManager = User::factory()->marketingManager()->create();
         $user = User::factory()->create();
 
         Testimonial::factory()->for($user)->create();
 
-        actingAs($moderator);
+        actingAs($marketingManager);
 
         get(route('staff.testimonials.index'))
             ->assertInertia(fn (AssertableInertia $page) => $page
@@ -156,14 +184,14 @@ describe('data', function () {
     });
 
     test('handles testimonials without user', function () {
-        $moderator = User::factory()->moderator()->create();
+        $marketingManager = User::factory()->marketingManager()->create();
 
         Testimonial::factory()->create([
             'user_id' => null,
             'name' => 'External Person',
         ]);
 
-        actingAs($moderator);
+        actingAs($marketingManager);
 
         get(route('staff.testimonials.index'))
             ->assertInertia(fn (AssertableInertia $page) => $page

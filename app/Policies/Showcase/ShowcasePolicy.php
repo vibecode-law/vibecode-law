@@ -28,7 +28,7 @@ class ShowcasePolicy
             return true;
         }
 
-        if ($user && $user->is_admin) {
+        if ($user !== null && $user->is_superadmin === true) {
             return true;
         }
 
@@ -48,7 +48,7 @@ class ShowcasePolicy
      */
     public function update(User $user, Showcase $showcase): bool
     {
-        if ($user->is_admin) {
+        if ($user->is_superadmin === true) {
             return true;
         }
 
@@ -78,7 +78,7 @@ class ShowcasePolicy
      */
     public function delete(User $user, Showcase $showcase): bool
     {
-        if ($user->is_admin) {
+        if ($user->is_superadmin === true) {
             return true;
         }
 
@@ -94,7 +94,7 @@ class ShowcasePolicy
      */
     public function restore(User $user, Showcase $showcase): bool
     {
-        if ($user->is_admin) {
+        if ($user->is_superadmin === true) {
             return true;
         }
 
@@ -110,7 +110,7 @@ class ShowcasePolicy
      */
     public function forceDelete(User $user, Showcase $showcase): bool
     {
-        if ($user->is_admin) {
+        if ($user->is_superadmin === true) {
             return true;
         }
 

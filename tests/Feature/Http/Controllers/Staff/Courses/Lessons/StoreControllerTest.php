@@ -23,27 +23,12 @@ describe('auth', function () {
         ])->assertRedirect(route('login'));
     });
 
-    test('allows admin to create lessons', function () {
-        $admin = User::factory()->admin()->create();
+    test('does not allow regular users to create lessons', function () {
+        /** @var User */
+        $user = User::factory()->create();
         $course = Course::factory()->create();
 
-        actingAs($admin);
-
-        post(route('staff.academy.courses.lessons.store', $course), [
-            'title' => 'Test Lesson',
-            'slug' => 'test-lesson',
-            'tagline' => 'A test tagline',
-            'description' => 'A test description',
-            'learning_objectives' => 'Test objectives',
-            'gated' => true,
-        ])->assertRedirect();
-    });
-
-    test('does not allow moderators to create lessons', function () {
-        $moderator = User::factory()->moderator()->create();
-        $course = Course::factory()->create();
-
-        actingAs($moderator);
+        actingAs($user);
 
         post(route('staff.academy.courses.lessons.store', $course), [
             'title' => 'Test Lesson',
@@ -55,9 +40,24 @@ describe('auth', function () {
         ])->assertForbidden();
     });
 
-    test('does not allow regular users to create lessons', function () {
-        /** @var User */
-        $user = User::factory()->create();
+    test('allows a user with lesson.create permission', function () {
+        $user = userWithPermissions(['course.view', 'lesson.create']);
+        $course = Course::factory()->create();
+
+        actingAs($user);
+
+        post(route('staff.academy.courses.lessons.store', $course), [
+            'title' => 'Test Lesson',
+            'slug' => 'test-lesson',
+            'tagline' => 'A test tagline',
+            'description' => 'A test description',
+            'learning_objectives' => 'Test objectives',
+            'gated' => true,
+        ])->assertRedirect();
+    });
+
+    test('forbids a staff user without lesson.create permission', function () {
+        $user = userWithPermissions(['course.view']);
         $course = Course::factory()->create();
 
         actingAs($user);

@@ -104,7 +104,7 @@ class ShowcaseResource extends Resource
         $currentUser = Auth::user();
 
         $isOwner = $currentUser?->id === $showcase->user_id;
-        $isAdmin = $currentUser?->is_admin === true;
+        $isAdmin = $currentUser?->is_superadmin === true;
         $canViewOwnerFields = $isOwner || $isAdmin;
 
         $markdown = app(abstract: MarkdownService::class);

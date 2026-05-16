@@ -35,18 +35,28 @@ describe('auth', function () {
         $response->assertForbidden();
     });
 
-    test('allows admin to create organisation', function () {
-        $admin = User::factory()->admin()->create();
+    test('allows a user with organisation.create permission', function () {
+        $user = userWithPermissions(['organisation.create']);
 
-        actingAs($admin);
+        actingAs($user);
 
-        $response = post(route('staff.organisations.store'), [
+        post(route('staff.organisations.store'), [
             'name' => 'Test Organisation',
             'tagline' => 'A test tagline',
             'about' => 'Some about text',
-        ]);
+        ])->assertRedirect();
+    });
 
-        $response->assertRedirect();
+    test('forbids a staff user without organisation.create permission', function () {
+        $user = userWithPermissions([]);
+
+        actingAs($user);
+
+        post(route('staff.organisations.store'), [
+            'name' => 'Test Organisation',
+            'tagline' => 'A test tagline',
+            'about' => 'Some about text',
+        ])->assertForbidden();
     });
 });
 

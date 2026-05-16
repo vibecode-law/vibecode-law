@@ -1,6 +1,11 @@
 import { TabNav, type TabNavItem } from '@/components/navigation/tab-nav';
 import { useActiveUrl } from '@/hooks/use-active-url';
 import { usePermissions } from '@/hooks/use-permissions';
+import {
+    canAccessStaffSection,
+    type StaffSectionAccess,
+} from '@/lib/staff-utils';
+import { index as staffIndex } from '@/routes/staff';
 import { index as coursesIndex } from '@/routes/staff/academy/courses';
 import { index as challengesIndex } from '@/routes/staff/challenges';
 import { index as practiceAreasIndex } from '@/routes/staff/metadata/practice-areas';
@@ -11,10 +16,7 @@ import { index as testimonialsIndex } from '@/routes/staff/testimonials';
 import { index as usersIndex } from '@/routes/staff/users';
 import { useMemo } from 'react';
 
-interface StaffNavItem extends TabNavItem {
-    permission?: string;
-    adminOnly?: boolean;
-}
+interface StaffNavItem extends TabNavItem, StaffSectionAccess {}
 
 export function useStaffAreaNavItems(): TabNavItem[] {
     const { hasPermission, isAdmin } = usePermissions();
@@ -23,8 +25,14 @@ export function useStaffAreaNavItems(): TabNavItem[] {
     return useMemo(() => {
         const allStaffAreaNavItems: StaffNavItem[] = [
             {
+                title: 'Home',
+                href: staffIndex().url,
+                isActive: currentUrl === staffIndex().url,
+            },
+            {
                 title: 'Showcase Moderation',
                 href: showcaseModerationIndex().url,
+                permission: 'showcase.approve-reject',
             },
             {
                 title: 'Testimonials',
@@ -37,20 +45,20 @@ export function useStaffAreaNavItems(): TabNavItem[] {
                 permission: 'press-coverage.view',
             },
             {
-                title: 'Metadata',
-                href: practiceAreasIndex().url,
-                isActive: currentUrl.startsWith('/staff/metadata'),
-                adminOnly: true,
-            },
-            {
                 title: 'Academy',
                 href: coursesIndex().url,
                 isActive: currentUrl.startsWith('/staff/academy'),
-                adminOnly: true,
+                permission: 'course.view',
             },
             {
                 title: 'Challenges',
                 href: challengesIndex().url,
+                permission: 'challenge.view',
+            },
+            {
+                title: 'Metadata',
+                href: practiceAreasIndex().url,
+                isActive: currentUrl.startsWith('/staff/metadata'),
                 adminOnly: true,
             },
             {
@@ -65,17 +73,9 @@ export function useStaffAreaNavItems(): TabNavItem[] {
             },
         ];
 
-        return allStaffAreaNavItems.filter((item) => {
-            if (item.adminOnly === true) {
-                return isAdmin;
-            }
-
-            if (item.permission === undefined) {
-                return true;
-            }
-
-            return hasPermission(item.permission);
-        });
+        return allStaffAreaNavItems.filter((item) =>
+            canAccessStaffSection(item, isAdmin, hasPermission),
+        );
     }, [hasPermission, isAdmin, currentUrl]);
 }
 

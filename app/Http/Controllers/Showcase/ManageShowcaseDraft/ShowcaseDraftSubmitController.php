@@ -30,7 +30,7 @@ class ShowcaseDraftSubmitController extends BaseController
     private function notifyStaffAboutSubmission(ShowcaseDraft $draft): void
     {
         $staffToNotify = User::query()
-            ->where('is_admin', true)
+            ->where('is_superadmin', true)
             ->orWhereHas('permissions', fn ($query) => $query->where('name', 'showcase.approve-reject'))
             ->get();
 

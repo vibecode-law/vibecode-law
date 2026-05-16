@@ -32,7 +32,7 @@ class AdminUserResource extends Resource
 
     public string $email;
 
-    public bool $is_admin;
+    public bool $is_superadmin;
 
     public ?Carbon $blocked_from_submissions_at;
 
@@ -62,7 +62,7 @@ class AdminUserResource extends Resource
             'linkedin_url' => $user->linkedin_url,
             'bio' => $user->bio,
             'email' => $user->email,
-            'is_admin' => $user->is_admin,
+            'is_superadmin' => $user->is_superadmin,
             'blocked_from_submissions_at' => $user->blocked_from_submissions_at,
             'marketing_opt_out_at' => $user->marketing_opt_out_at,
             'created_at' => $user->created_at,

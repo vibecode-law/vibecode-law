@@ -22,7 +22,7 @@ class SubmitShowcaseAction
 
     private function notifyStaff(Showcase $showcase): void
     {
-        $admins = User::query()->where('is_admin', '=', true)->get();
+        $admins = User::query()->where('is_superadmin', '=', true)->get();
         $moderators = User::role('Moderator')->get();
 
         $staff = $admins->merge($moderators)->unique('id');

@@ -39,7 +39,7 @@ export default function UsersEdit({ user, roles, teamTypes }: UsersEditProps) {
                         description="Update user details and roles"
                     />
                     <div className="flex items-center gap-2">
-                        {user.is_admin === true && (
+                        {user.is_superadmin === true && (
                             <Badge className="gap-1 bg-amber-500 text-white hover:bg-amber-600">
                                 <Star className="size-3" />
                                 Admin
