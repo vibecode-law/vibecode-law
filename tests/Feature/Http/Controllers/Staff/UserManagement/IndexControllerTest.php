@@ -110,7 +110,7 @@ describe('data', function () {
         $response = get(route('staff.users.index'));
 
         $response->assertInertia(fn (AssertableInertia $page) => $page
-            ->where('roles', ['Moderator'])
+            ->where('roles', ['Academy Manager', 'Challenge Manager', 'Marketing Manager', 'Moderator'])
         );
     });
 

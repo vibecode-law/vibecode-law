@@ -31,23 +31,33 @@ describe('auth', function () {
             ->assertForbidden();
     });
 
-    test('allows moderators to delete testimonials', function () {
-        $moderator = User::factory()->moderator()->create();
+    test('allows a user with testimonial.delete permission', function () {
+        $user = userWithPermissions(['testimonial.view', 'testimonial.delete']);
         $testimonial = Testimonial::factory()->create();
 
-        actingAs($moderator);
+        actingAs($user);
 
         delete(route('staff.testimonials.destroy', $testimonial))
             ->assertRedirect();
+    });
+
+    test('forbids a staff user without testimonial.delete permission', function () {
+        $user = userWithPermissions(['testimonial.view']);
+        $testimonial = Testimonial::factory()->create();
+
+        actingAs($user);
+
+        delete(route('staff.testimonials.destroy', $testimonial))
+            ->assertForbidden();
     });
 });
 
 describe('destroying', function () {
     test('deletes the testimonial from the database', function () {
-        $moderator = User::factory()->moderator()->create();
+        $marketingManager = User::factory()->marketingManager()->create();
         $testimonial = Testimonial::factory()->create();
 
-        actingAs($moderator);
+        actingAs($marketingManager);
 
         delete(route('staff.testimonials.destroy', $testimonial))
             ->assertRedirect();
@@ -56,7 +66,7 @@ describe('destroying', function () {
     });
 
     test('deletes the avatar file via model event when testimonial has avatar', function () {
-        $moderator = User::factory()->moderator()->create();
+        $marketingManager = User::factory()->marketingManager()->create();
         $avatarPath = 'testimonials/avatars/test-avatar.jpg';
 
         Storage::disk('public')->put($avatarPath, 'avatar content');
@@ -65,7 +75,7 @@ describe('destroying', function () {
             'avatar_path' => $avatarPath,
         ]);
 
-        actingAs($moderator);
+        actingAs($marketingManager);
 
         delete(route('staff.testimonials.destroy', $testimonial))
             ->assertRedirect();
@@ -75,12 +85,12 @@ describe('destroying', function () {
     });
 
     test('does not error when deleting testimonial without avatar', function () {
-        $moderator = User::factory()->moderator()->create();
+        $marketingManager = User::factory()->marketingManager()->create();
         $testimonial = Testimonial::factory()->create([
             'avatar_path' => null,
         ]);
 
-        actingAs($moderator);
+        actingAs($marketingManager);
 
         delete(route('staff.testimonials.destroy', $testimonial))
             ->assertRedirect();

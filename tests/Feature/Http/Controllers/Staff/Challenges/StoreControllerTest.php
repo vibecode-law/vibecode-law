@@ -20,23 +20,11 @@ describe('auth', function () {
         ])->assertRedirect(route('login'));
     });
 
-    test('allows admin to create challenges', function () {
-        $admin = User::factory()->admin()->create();
+    test('does not allow regular users to create challenges', function () {
+        /** @var User */
+        $user = User::factory()->create();
 
-        actingAs($admin);
-
-        post(route('staff.challenges.store'), [
-            'title' => 'Test Challenge',
-            'slug' => 'test-challenge',
-            'tagline' => 'A test tagline',
-            'description' => 'A test description',
-        ])->assertRedirect();
-    });
-
-    test('does not allow moderators to create challenges', function () {
-        $moderator = User::factory()->moderator()->create();
-
-        actingAs($moderator);
+        actingAs($user);
 
         post(route('staff.challenges.store'), [
             'title' => 'Test Challenge',
@@ -46,9 +34,21 @@ describe('auth', function () {
         ])->assertForbidden();
     });
 
-    test('does not allow regular users to create challenges', function () {
-        /** @var User */
-        $user = User::factory()->create();
+    test('allows a user with challenge.create permission', function () {
+        $user = userWithPermissions(['challenge.view', 'challenge.create']);
+
+        actingAs($user);
+
+        post(route('staff.challenges.store'), [
+            'title' => 'Test Challenge',
+            'slug' => 'test-challenge',
+            'tagline' => 'A test tagline',
+            'description' => 'A test description',
+        ])->assertRedirect();
+    });
+
+    test('forbids a staff user without challenge.create permission', function () {
+        $user = userWithPermissions(['challenge.view']);
 
         actingAs($user);
 

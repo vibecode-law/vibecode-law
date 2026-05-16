@@ -12,6 +12,11 @@ class TestimonialPolicy
         return true;
     }
 
+    public function manage(User $user): bool
+    {
+        return $user->can('testimonial.view');
+    }
+
     public function view(?User $user, Testimonial $testimonial): bool
     {
         return true;

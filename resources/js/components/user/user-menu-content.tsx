@@ -12,7 +12,7 @@ import { Appearance, useAppearance } from '@/hooks/use-appearance';
 import { useMobileNavigation } from '@/hooks/use-mobile-navigation';
 import { usePermissions } from '@/hooks/use-permissions';
 import { logout } from '@/routes';
-import { index as staffShowcaseModeration } from '@/routes/staff/showcase-moderation';
+import { index as staffIndex } from '@/routes/staff';
 import { edit } from '@/routes/user-area/profile';
 import { index as myShowcases } from '@/routes/user-area/showcases';
 import { Link, router } from '@inertiajs/react';
@@ -91,7 +91,7 @@ export function UserMenuContent({ user }: UserMenuContentProps) {
                         <DropdownMenuItem asChild>
                             <Link
                                 className="block w-full cursor-pointer"
-                                href={staffShowcaseModeration.url()}
+                                href={staffIndex.url()}
                                 prefetch
                                 onClick={cleanup}
                             >

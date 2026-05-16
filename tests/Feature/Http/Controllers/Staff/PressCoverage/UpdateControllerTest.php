@@ -39,11 +39,11 @@ describe('auth', function () {
         ])->assertForbidden();
     });
 
-    test('allows moderators to update press coverage', function () {
-        $moderator = User::factory()->moderator()->create();
+    test('allows a user with press-coverage.update permission', function () {
+        $user = userWithPermissions(['press-coverage.view', 'press-coverage.update']);
         $pressCoverage = PressCoverage::factory()->create();
 
-        actingAs($moderator);
+        actingAs($user);
 
         put(route('staff.press-coverage.update', $pressCoverage), [
             'title' => 'Updated Title',
@@ -52,14 +52,28 @@ describe('auth', function () {
             'url' => 'https://example.com/updated',
         ])->assertRedirect();
     });
+
+    test('forbids a staff user without press-coverage.update permission', function () {
+        $user = userWithPermissions(['press-coverage.view']);
+        $pressCoverage = PressCoverage::factory()->create();
+
+        actingAs($user);
+
+        put(route('staff.press-coverage.update', $pressCoverage), [
+            'title' => 'Updated Title',
+            'publication_name' => 'Updated Publication',
+            'publication_date' => '2026-01-01',
+            'url' => 'https://example.com/updated',
+        ])->assertForbidden();
+    });
 });
 
 describe('updating', function () {
     test('updates press coverage fields', function () {
-        $moderator = User::factory()->moderator()->create();
+        $marketingManager = User::factory()->marketingManager()->create();
         $pressCoverage = PressCoverage::factory()->create();
 
-        actingAs($moderator);
+        actingAs($marketingManager);
 
         put(route('staff.press-coverage.update', $pressCoverage), [
             'title' => 'New Title',
@@ -83,10 +97,10 @@ describe('updating', function () {
     });
 
     test('handles thumbnail upload', function () {
-        $moderator = User::factory()->moderator()->create();
+        $marketingManager = User::factory()->marketingManager()->create();
         $pressCoverage = PressCoverage::factory()->create();
 
-        actingAs($moderator);
+        actingAs($marketingManager);
 
         put(route('staff.press-coverage.update', $pressCoverage), [
             'title' => $pressCoverage->title,
@@ -103,13 +117,13 @@ describe('updating', function () {
     });
 
     test('deletes old thumbnail when uploading new one', function () {
-        $moderator = User::factory()->moderator()->create();
+        $marketingManager = User::factory()->marketingManager()->create();
         $pressCoverage = PressCoverage::factory()->create([
             'thumbnail_extension' => 'jpg',
         ]);
         Storage::disk('public')->put("press-coverage/{$pressCoverage->id}/thumbnail.jpg", 'old content');
 
-        actingAs($moderator);
+        actingAs($marketingManager);
 
         put(route('staff.press-coverage.update', $pressCoverage), [
             'title' => $pressCoverage->title,
@@ -124,10 +138,10 @@ describe('updating', function () {
     });
 
     test('strips extra fields from thumbnail crop', function () {
-        $moderator = User::factory()->moderator()->create();
+        $marketingManager = User::factory()->marketingManager()->create();
         $pressCoverage = PressCoverage::factory()->create();
 
-        actingAs($moderator);
+        actingAs($marketingManager);
 
         put(route('staff.press-coverage.update', $pressCoverage), [
             'title' => $pressCoverage->title,
@@ -144,14 +158,14 @@ describe('updating', function () {
     });
 
     test('removes thumbnail when remove_thumbnail is true', function () {
-        $moderator = User::factory()->moderator()->create();
+        $marketingManager = User::factory()->marketingManager()->create();
         $pressCoverage = PressCoverage::factory()->create([
             'thumbnail_extension' => 'jpg',
             'thumbnail_crop' => ['x' => 0, 'y' => 0, 'width' => 100, 'height' => 100],
         ]);
         Storage::disk('public')->put("press-coverage/{$pressCoverage->id}/thumbnail.jpg", 'content');
 
-        actingAs($moderator);
+        actingAs($marketingManager);
 
         put(route('staff.press-coverage.update', $pressCoverage), [
             'title' => $pressCoverage->title,
@@ -169,13 +183,13 @@ describe('updating', function () {
     });
 
     test('preserves thumbnail when updating without thumbnail changes', function () {
-        $moderator = User::factory()->moderator()->create();
+        $marketingManager = User::factory()->marketingManager()->create();
         $pressCoverage = PressCoverage::factory()->create([
             'thumbnail_extension' => 'jpg',
         ]);
         Storage::disk('public')->put("press-coverage/{$pressCoverage->id}/thumbnail.jpg", 'content');
 
-        actingAs($moderator);
+        actingAs($marketingManager);
 
         put(route('staff.press-coverage.update', $pressCoverage), [
             'title' => 'Updated Title Only',
@@ -193,10 +207,10 @@ describe('updating', function () {
 
 describe('validation', function () {
     test('validates required and invalid data', function (array $data, array $invalidFields) {
-        $moderator = User::factory()->moderator()->create();
+        $marketingManager = User::factory()->marketingManager()->create();
         $pressCoverage = PressCoverage::factory()->create();
 
-        actingAs($moderator);
+        actingAs($marketingManager);
 
         put(route('staff.press-coverage.update', $pressCoverage), $data)
             ->assertInvalid($invalidFields);

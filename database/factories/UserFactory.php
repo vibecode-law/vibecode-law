@@ -97,6 +97,36 @@ class UserFactory extends Factory
     }
 
     /**
+     * Indicate that the user is a marketing manager.
+     */
+    public function marketingManager(): static
+    {
+        return $this->afterCreating(function (User $user) {
+            $user->assignRole('Marketing Manager');
+        });
+    }
+
+    /**
+     * Indicate that the user is an academy manager.
+     */
+    public function academyManager(): static
+    {
+        return $this->afterCreating(function (User $user) {
+            $user->assignRole('Academy Manager');
+        });
+    }
+
+    /**
+     * Indicate that the user is a challenge manager.
+     */
+    public function challengeManager(): static
+    {
+        return $this->afterCreating(function (User $user) {
+            $user->assignRole('Challenge Manager');
+        });
+    }
+
+    /**
      * Indicate that the user is blocked from submissions.
      */
     public function blockedFromSubmissions(): static

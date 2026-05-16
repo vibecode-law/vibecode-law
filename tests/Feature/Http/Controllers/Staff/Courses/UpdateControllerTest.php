@@ -22,28 +22,12 @@ describe('auth', function () {
         ])->assertRedirect(route('login'));
     });
 
-    test('allows admin to update courses', function () {
-        $admin = User::factory()->admin()->create();
+    test('does not allow regular users to update courses', function () {
+        /** @var User */
+        $user = User::factory()->create();
         $course = Course::factory()->create(['allow_preview' => false, 'publish_date' => null]);
 
-        actingAs($admin);
-
-        patch(route('staff.academy.courses.update', $course), [
-            'title' => 'Updated Course',
-            'slug' => $course->slug,
-            'tagline' => 'Updated tagline',
-            'description' => 'Updated description',
-            'learning_objectives' => 'Objectives',
-            'experience_level' => ExperienceLevel::Foundation->value,
-            'is_featured' => false,
-        ])->assertRedirect();
-    });
-
-    test('does not allow moderators to update courses', function () {
-        $moderator = User::factory()->moderator()->create();
-        $course = Course::factory()->create(['allow_preview' => false, 'publish_date' => null]);
-
-        actingAs($moderator);
+        actingAs($user);
 
         patch(route('staff.academy.courses.update', $course), [
             'title' => 'Updated Course',
@@ -56,9 +40,25 @@ describe('auth', function () {
         ])->assertForbidden();
     });
 
-    test('does not allow regular users to update courses', function () {
-        /** @var User */
-        $user = User::factory()->create();
+    test('allows a user with course.update permission', function () {
+        $user = userWithPermissions(['course.view', 'course.update']);
+        $course = Course::factory()->create(['allow_preview' => false, 'publish_date' => null]);
+
+        actingAs($user);
+
+        patch(route('staff.academy.courses.update', $course), [
+            'title' => 'Updated Course',
+            'slug' => $course->slug,
+            'tagline' => 'Updated tagline',
+            'description' => 'Updated description',
+            'learning_objectives' => 'Objectives',
+            'experience_level' => ExperienceLevel::Foundation->value,
+            'is_featured' => false,
+        ])->assertRedirect();
+    });
+
+    test('forbids a staff user without course.update permission', function () {
+        $user = userWithPermissions(['course.view']);
         $course = Course::factory()->create(['allow_preview' => false, 'publish_date' => null]);
 
         actingAs($user);

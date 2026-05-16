@@ -33,28 +33,40 @@ describe('auth', function () {
         ])->assertForbidden();
     });
 
-    test('allows moderators to update testimonials', function () {
-        $moderator = User::factory()->moderator()->create();
+    test('allows a user with testimonial.update permission', function () {
+        $user = userWithPermissions(['testimonial.view', 'testimonial.update']);
         $testimonial = Testimonial::factory()->create();
 
-        actingAs($moderator);
+        actingAs($user);
 
         put(route('staff.testimonials.update', $testimonial), [
             'name' => 'Jane Doe',
             'content' => 'Updated content.',
         ])->assertRedirect();
     });
+
+    test('forbids a staff user without testimonial.update permission', function () {
+        $user = userWithPermissions(['testimonial.view']);
+        $testimonial = Testimonial::factory()->create();
+
+        actingAs($user);
+
+        put(route('staff.testimonials.update', $testimonial), [
+            'name' => 'Jane Doe',
+            'content' => 'Updated content.',
+        ])->assertForbidden();
+    });
 });
 
 describe('updating', function () {
     test('updates testimonial fields', function () {
-        $moderator = User::factory()->moderator()->create();
+        $marketingManager = User::factory()->marketingManager()->create();
         $user = User::factory()->create();
         $testimonial = Testimonial::factory()->create([
             'content' => 'Original content.',
         ]);
 
-        actingAs($moderator);
+        actingAs($marketingManager);
 
         put(route('staff.testimonials.update', $testimonial), [
             'user_id' => $user->id,
@@ -78,10 +90,10 @@ describe('updating', function () {
     });
 
     test('handles avatar upload', function () {
-        $moderator = User::factory()->moderator()->create();
+        $marketingManager = User::factory()->marketingManager()->create();
         $testimonial = Testimonial::factory()->create();
 
-        actingAs($moderator);
+        actingAs($marketingManager);
 
         put(route('staff.testimonials.update', $testimonial), [
             'name' => $testimonial->name,
@@ -96,13 +108,13 @@ describe('updating', function () {
     });
 
     test('deletes old avatar when uploading new one', function () {
-        $moderator = User::factory()->moderator()->create();
+        $marketingManager = User::factory()->marketingManager()->create();
         $testimonial = Testimonial::factory()->create([
             'avatar_path' => 'testimonials/avatars/old-avatar.jpg',
         ]);
         Storage::disk('public')->put('testimonials/avatars/old-avatar.jpg', 'old content');
 
-        actingAs($moderator);
+        actingAs($marketingManager);
 
         put(route('staff.testimonials.update', $testimonial), [
             'name' => $testimonial->name,
@@ -115,13 +127,13 @@ describe('updating', function () {
     });
 
     test('removes avatar when remove_avatar is true', function () {
-        $moderator = User::factory()->moderator()->create();
+        $marketingManager = User::factory()->marketingManager()->create();
         $testimonial = Testimonial::factory()->create([
             'avatar_path' => 'testimonials/avatars/existing.jpg',
         ]);
         Storage::disk('public')->put('testimonials/avatars/existing.jpg', 'content');
 
-        actingAs($moderator);
+        actingAs($marketingManager);
 
         put(route('staff.testimonials.update', $testimonial), [
             'name' => $testimonial->name,
@@ -136,10 +148,10 @@ describe('updating', function () {
     });
 
     test('handles avatar upload with crop data', function () {
-        $moderator = User::factory()->moderator()->create();
+        $marketingManager = User::factory()->marketingManager()->create();
         $testimonial = Testimonial::factory()->create();
 
-        actingAs($moderator);
+        actingAs($marketingManager);
 
         put(route('staff.testimonials.update', $testimonial), [
             'name' => $testimonial->name,
@@ -156,10 +168,10 @@ describe('updating', function () {
     });
 
     test('strips extra fields from avatar crop', function () {
-        $moderator = User::factory()->moderator()->create();
+        $marketingManager = User::factory()->marketingManager()->create();
         $testimonial = Testimonial::factory()->create();
 
-        actingAs($moderator);
+        actingAs($marketingManager);
 
         put(route('staff.testimonials.update', $testimonial), [
             'name' => $testimonial->name,
@@ -174,14 +186,14 @@ describe('updating', function () {
     });
 
     test('updates crop data without replacing avatar file', function () {
-        $moderator = User::factory()->moderator()->create();
+        $marketingManager = User::factory()->marketingManager()->create();
         $testimonial = Testimonial::factory()->create([
             'avatar_path' => 'testimonials/avatars/existing.jpg',
             'avatar_crop' => ['x' => 0, 'y' => 0, 'width' => 50, 'height' => 50],
         ]);
         Storage::disk('public')->put('testimonials/avatars/existing.jpg', 'content');
 
-        actingAs($moderator);
+        actingAs($marketingManager);
 
         put(route('staff.testimonials.update', $testimonial), [
             'name' => $testimonial->name,
@@ -197,14 +209,14 @@ describe('updating', function () {
     });
 
     test('clears crop data when avatar is removed', function () {
-        $moderator = User::factory()->moderator()->create();
+        $marketingManager = User::factory()->marketingManager()->create();
         $testimonial = Testimonial::factory()->create([
             'avatar_path' => 'testimonials/avatars/existing.jpg',
             'avatar_crop' => ['x' => 10, 'y' => 20, 'width' => 100, 'height' => 100],
         ]);
         Storage::disk('public')->put('testimonials/avatars/existing.jpg', 'content');
 
-        actingAs($moderator);
+        actingAs($marketingManager);
 
         put(route('staff.testimonials.update', $testimonial), [
             'name' => $testimonial->name,
@@ -219,11 +231,11 @@ describe('updating', function () {
     });
 
     test('preserves user_id when not included in request', function () {
-        $moderator = User::factory()->moderator()->create();
+        $marketingManager = User::factory()->marketingManager()->create();
         $user = User::factory()->create();
         $testimonial = Testimonial::factory()->for($user)->create();
 
-        actingAs($moderator);
+        actingAs($marketingManager);
 
         put(route('staff.testimonials.update', $testimonial), [
             'user_id' => $user->id,
@@ -236,11 +248,11 @@ describe('updating', function () {
     });
 
     test('unlinks user when user_id is empty', function () {
-        $moderator = User::factory()->moderator()->create();
+        $marketingManager = User::factory()->marketingManager()->create();
         $user = User::factory()->create();
         $testimonial = Testimonial::factory()->for($user)->create();
 
-        actingAs($moderator);
+        actingAs($marketingManager);
 
         put(route('staff.testimonials.update', $testimonial), [
             'user_id' => null,
@@ -255,13 +267,13 @@ describe('updating', function () {
     });
 
     test('preserves avatar when updating without avatar changes', function () {
-        $moderator = User::factory()->moderator()->create();
+        $marketingManager = User::factory()->marketingManager()->create();
         $testimonial = Testimonial::factory()->create([
             'avatar_path' => 'testimonials/avatars/existing.jpg',
         ]);
         Storage::disk('public')->put('testimonials/avatars/existing.jpg', 'content');
 
-        actingAs($moderator);
+        actingAs($marketingManager);
 
         put(route('staff.testimonials.update', $testimonial), [
             'name' => $testimonial->name,
@@ -277,10 +289,10 @@ describe('updating', function () {
 
 describe('validation', function () {
     test('validates required and invalid data', function (array $data, array $invalidFields) {
-        $moderator = User::factory()->moderator()->create();
+        $marketingManager = User::factory()->marketingManager()->create();
         $testimonial = Testimonial::factory()->create();
 
-        actingAs($moderator);
+        actingAs($marketingManager);
 
         put(route('staff.testimonials.update', $testimonial), $data)
             ->assertInvalid($invalidFields);

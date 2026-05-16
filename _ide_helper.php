@@ -5,7 +5,7 @@
 
 /**
  * A helper file for Laravel, to provide autocomplete information to your IDE
- * Generated for Laravel 13.8.0.
+ * Generated for Laravel 13.4.0.
  *
  * This file should not be included in your code, only analyzed by your IDE!
  *
@@ -2227,7 +2227,7 @@ namespace Illuminate\Support\Facades {
         /**
          * Attempt to get the guard from the local cache.
          *
-         * @param \UnitEnum|string|null $name
+         * @param string|null $name
          * @return \Illuminate\Contracts\Auth\Guard|\Illuminate\Contracts\Auth\StatefulGuard
          * @static
          */
@@ -2280,7 +2280,7 @@ namespace Illuminate\Support\Facades {
         /**
          * Set the default guard driver the factory should serve.
          *
-         * @param \UnitEnum|string|null $name
+         * @param string $name
          * @return void
          * @static
          */
@@ -2293,7 +2293,7 @@ namespace Illuminate\Support\Facades {
         /**
          * Set the default authentication driver name.
          *
-         * @param \UnitEnum|string $name
+         * @param string $name
          * @return void
          * @static
          */
@@ -3675,9 +3675,9 @@ namespace Illuminate\Support\Facades {
         }
 
         /**
-         * Get a broadcaster instance by name.
+         * Get a driver instance.
          *
-         * @param \UnitEnum|string|null $name
+         * @param string|null $name
          * @return mixed
          * @static
          */
@@ -3690,7 +3690,7 @@ namespace Illuminate\Support\Facades {
         /**
          * Get a driver instance.
          *
-         * @param \UnitEnum|string|null $name
+         * @param string|null $name
          * @return mixed
          * @static
          */
@@ -3741,7 +3741,7 @@ namespace Illuminate\Support\Facades {
         /**
          * Set the default driver name.
          *
-         * @param \UnitEnum|string $name
+         * @param string $name
          * @return void
          * @static
          */
@@ -3754,7 +3754,7 @@ namespace Illuminate\Support\Facades {
         /**
          * Disconnect the given driver / connection and remove it from local cache.
          *
-         * @param \UnitEnum|string|null $name
+         * @param string|null $name
          * @return void
          * @static
          */
@@ -4477,7 +4477,7 @@ namespace Illuminate\Support\Facades {
         /**
          * Get a cache store instance by name, wrapped in a repository.
          *
-         * @param \UnitEnum|string|null $name
+         * @param string|null $name
          * @return \Illuminate\Contracts\Cache\Repository
          * @static
          */
@@ -4490,7 +4490,7 @@ namespace Illuminate\Support\Facades {
         /**
          * Get a cache driver instance.
          *
-         * @param \UnitEnum|string|null $driver
+         * @param string|null $driver
          * @return \Illuminate\Contracts\Cache\Repository
          * @static
          */
@@ -4503,7 +4503,7 @@ namespace Illuminate\Support\Facades {
         /**
          * Get a memoized cache driver instance.
          *
-         * @param \UnitEnum|string|null $driver
+         * @param string|null $driver
          * @return \Illuminate\Contracts\Cache\Repository
          * @static
          */
@@ -4582,7 +4582,7 @@ namespace Illuminate\Support\Facades {
         /**
          * Set the default cache driver name.
          *
-         * @param \UnitEnum|string $name
+         * @param string $name
          * @return void
          * @static
          */
@@ -4595,7 +4595,7 @@ namespace Illuminate\Support\Facades {
         /**
          * Unset the given driver instances.
          *
-         * @param array|\UnitEnum|string|null $name
+         * @param array|string|null $name
          * @return \Illuminate\Cache\CacheManager
          * @static
          */
@@ -4608,7 +4608,7 @@ namespace Illuminate\Support\Facades {
         /**
          * Disconnect the given driver and remove from local cache.
          *
-         * @param \UnitEnum|string|null $name
+         * @param string|null $name
          * @return void
          * @static
          */
@@ -4644,19 +4644,6 @@ namespace Illuminate\Support\Facades {
         {
             /** @var \Illuminate\Cache\CacheManager $instance */
             return $instance->setApplication($app);
-        }
-
-        /**
-         * Register a callback to be invoked when an unserializable class is encountered.
-         *
-         * @param callable|null $callback
-         * @return void
-         * @static
-         */
-        public static function handleUnserializableClassUsing($callback)
-        {
-            /** @var \Illuminate\Cache\CacheManager $instance */
-            $instance->handleUnserializableClassUsing($callback);
         }
 
         /**
@@ -4998,7 +4985,7 @@ namespace Illuminate\Support\Facades {
         /**
          * Set the expiration of a cached item.
          *
-         * @param \UnitEnum|string $key
+         * @param string $key
          * @param \DateTimeInterface|\DateInterval|int $ttl
          * @return bool
          * @static
@@ -5196,7 +5183,7 @@ namespace Illuminate\Support\Facades {
          * Set the cache store implementation.
          *
          * @param \Illuminate\Contracts\Cache\Store $store
-         * @return \Illuminate\Cache\Repository
+         * @return static
          * @static
          */
         public static function setStore($store)
@@ -5495,7 +5482,7 @@ namespace Illuminate\Support\Facades {
         /**
          * Get a driver instance by name.
          *
-         * @param \UnitEnum|string|null $name
+         * @param string|null $name
          * @return mixed
          * @static
          */
@@ -6420,7 +6407,7 @@ namespace Illuminate\Support\Facades {
          * Handle unserialize exceptions using the given callback.
          *
          * @param callable|null $callback
-         * @return \Illuminate\Log\Context\Repository
+         * @return static
          * @static
          */
         public static function handleUnserializeExceptionsUsing($callback)
@@ -7146,7 +7133,7 @@ namespace Illuminate\Support\Facades {
          * @param \UnitEnum|string $name
          * @param array $config
          * @param bool $force
-         * @return \Illuminate\Database\PostgresConnection
+         * @return \Illuminate\Database\SQLiteConnection
          * @throws \RuntimeException
          * @static
          */
@@ -7555,7 +7542,7 @@ namespace Illuminate\Support\Facades {
         public static function select($query, $bindings = [], $useReadPdo = true, $fetchUsing = [])
         {
             //Method inherited from \Illuminate\Database\Connection 
-            /** @var \Illuminate\Database\PostgresConnection $instance */
+            /** @var \Illuminate\Database\SQLiteConnection $instance */
             return $instance->select($query, $bindings, $useReadPdo, $fetchUsing);
         }
 
@@ -7572,7 +7559,7 @@ namespace Illuminate\Support\Facades {
         public static function selectResultSets($query, $bindings = [], $useReadPdo = true, $fetchUsing = [])
         {
             //Method inherited from \Illuminate\Database\Connection 
-            /** @var \Illuminate\Database\PostgresConnection $instance */
+            /** @var \Illuminate\Database\SQLiteConnection $instance */
             return $instance->selectResultSets($query, $bindings, $useReadPdo, $fetchUsing);
         }
 
@@ -7589,7 +7576,7 @@ namespace Illuminate\Support\Facades {
         public static function cursor($query, $bindings = [], $useReadPdo = true, $fetchUsing = [])
         {
             //Method inherited from \Illuminate\Database\Connection 
-            /** @var \Illuminate\Database\PostgresConnection $instance */
+            /** @var \Illuminate\Database\SQLiteConnection $instance */
             return $instance->cursor($query, $bindings, $useReadPdo, $fetchUsing);
         }
 
@@ -10280,7 +10267,7 @@ namespace Illuminate\Support\Facades {
         /**
          * Get a driver instance.
          *
-         * @param \UnitEnum|string|null $driver
+         * @param string|null $driver
          * @return mixed
          * @throws \InvalidArgumentException
          * @static
@@ -10296,6 +10283,7 @@ namespace Illuminate\Support\Facades {
          * Register a custom driver creator Closure.
          *
          * @param string $driver
+         * @param \Closure $callback
          * @param-closure-this $this  $callback
          * @return \Illuminate\Hashing\HashManager
          * @static
@@ -10408,7 +10396,7 @@ namespace Illuminate\Support\Facades {
      * @method static \Illuminate\Http\Client\Response|\GuzzleHttp\Promise\PromiseInterface patch(string $url, array|\JsonSerializable|\Illuminate\Contracts\Support\Arrayable $data = [])
      * @method static \Illuminate\Http\Client\Response|\GuzzleHttp\Promise\PromiseInterface put(string $url, array|\JsonSerializable|\Illuminate\Contracts\Support\Arrayable $data = [])
      * @method static \Illuminate\Http\Client\Response|\GuzzleHttp\Promise\PromiseInterface delete(string $url, array|\JsonSerializable|\Illuminate\Contracts\Support\Arrayable $data = [])
-     * @method static array pool(callable $callback, int|null $concurrency = 0)
+     * @method static array<array-key, \Illuminate\Http\Client\Response|\Throwable> pool(callable $callback, int|null $concurrency = 0)
      * @method static \Illuminate\Http\Client\Batch batch(callable $callback)
      * @method static \Illuminate\Http\Client\Response|\Illuminate\Http\Client\Promises\LazyPromise send(string $method, string $url, array $options = [])
      * @method static \GuzzleHttp\Client buildClient()
@@ -10948,7 +10936,7 @@ namespace Illuminate\Support\Facades {
          * Register a callback that is responsible for handling missing translation keys.
          *
          * @param callable|null $callback
-         * @return \Illuminate\Translation\Translator
+         * @return static
          * @static
          */
         public static function handleMissingKeysUsing($callback)
@@ -11360,7 +11348,7 @@ namespace Illuminate\Support\Facades {
         /**
          * Set the default log driver name.
          *
-         * @param \UnitEnum|string $name
+         * @param string $name
          * @return void
          * @static
          */
@@ -11588,7 +11576,7 @@ namespace Illuminate\Support\Facades {
         /**
          * Get a mailer instance by name.
          *
-         * @param \UnitEnum|string|null $name
+         * @param string|null $name
          * @return \Illuminate\Contracts\Mail\Mailer
          * @static
          */
@@ -11601,7 +11589,7 @@ namespace Illuminate\Support\Facades {
         /**
          * Get a mailer driver instance.
          *
-         * @param \UnitEnum|string|null $driver
+         * @param string|null $driver
          * @return \Illuminate\Mail\Mailer
          * @static
          */
@@ -11653,7 +11641,7 @@ namespace Illuminate\Support\Facades {
         /**
          * Set the default mail driver name.
          *
-         * @param \UnitEnum|string $name
+         * @param string $name
          * @return void
          * @static
          */
@@ -11666,7 +11654,7 @@ namespace Illuminate\Support\Facades {
         /**
          * Disconnect the given mailer and remove from local cache.
          *
-         * @param \UnitEnum|string|null $name
+         * @param string|null $name
          * @return void
          * @static
          */
@@ -12090,7 +12078,7 @@ namespace Illuminate\Support\Facades {
         /**
          * Get a channel instance.
          *
-         * @param \UnitEnum|string|null $name
+         * @param string|null $name
          * @return mixed
          * @static
          */
@@ -12098,19 +12086,6 @@ namespace Illuminate\Support\Facades {
         {
             /** @var \Illuminate\Notifications\ChannelManager $instance */
             return $instance->channel($name);
-        }
-
-        /**
-         * Get a driver instance.
-         *
-         * @param \UnitEnum|string|null $driver
-         * @return mixed
-         * @static
-         */
-        public static function driver($driver = null)
-        {
-            /** @var \Illuminate\Notifications\ChannelManager $instance */
-            return $instance->driver($driver);
         }
 
         /**
@@ -12164,9 +12139,25 @@ namespace Illuminate\Support\Facades {
         }
 
         /**
+         * Get a driver instance.
+         *
+         * @param string|null $driver
+         * @return mixed
+         * @throws \InvalidArgumentException
+         * @static
+         */
+        public static function driver($driver = null)
+        {
+            //Method inherited from \Illuminate\Support\Manager 
+            /** @var \Illuminate\Notifications\ChannelManager $instance */
+            return $instance->driver($driver);
+        }
+
+        /**
          * Register a custom driver creator Closure.
          *
          * @param string $driver
+         * @param \Closure $callback
          * @param-closure-this $this  $callback
          * @return \Illuminate\Notifications\ChannelManager
          * @static
@@ -12508,7 +12499,7 @@ namespace Illuminate\Support\Facades {
         /**
          * Attempt to get the broker from the local cache.
          *
-         * @param \UnitEnum|string|null $name
+         * @param string|null $name
          * @return \Illuminate\Contracts\Auth\PasswordBroker
          * @static
          */
@@ -12533,7 +12524,7 @@ namespace Illuminate\Support\Facades {
         /**
          * Set the default password broker name.
          *
-         * @param \UnitEnum|string $name
+         * @param string $name
          * @return void
          * @static
          */
@@ -13119,7 +13110,7 @@ namespace Illuminate\Support\Facades {
         /**
          * Set the name of the default queue connection.
          *
-         * @param \UnitEnum|string $name
+         * @param string $name
          * @return void
          * @static
          */
@@ -13237,7 +13228,7 @@ namespace Illuminate\Support\Facades {
         /**
          * Assert if a job was pushed based on a truth-test callback.
          *
-         * @param \UnitEnum|string $queue
+         * @param string $queue
          * @param string|\Closure $job
          * @param callable|null $callback
          * @return void
@@ -13486,42 +13477,6 @@ namespace Illuminate\Support\Facades {
         {
             /** @var \Illuminate\Support\Testing\Fakes\QueueFake $instance */
             return $instance->reservedJobs($queue);
-        }
-
-        /**
-         * Get all pending jobs across every queue.
-         *
-         * @return \Illuminate\Support\Collection<int, \Illuminate\Queue\Jobs\InspectedJob>
-         * @static
-         */
-        public static function allPendingJobs()
-        {
-            /** @var \Illuminate\Support\Testing\Fakes\QueueFake $instance */
-            return $instance->allPendingJobs();
-        }
-
-        /**
-         * Get all delayed jobs across every queue.
-         *
-         * @return \Illuminate\Support\Collection
-         * @static
-         */
-        public static function allDelayedJobs()
-        {
-            /** @var \Illuminate\Support\Testing\Fakes\QueueFake $instance */
-            return $instance->allDelayedJobs();
-        }
-
-        /**
-         * Get all reserved jobs across every queue.
-         *
-         * @return \Illuminate\Support\Collection
-         * @static
-         */
-        public static function allReservedJobs()
-        {
-            /** @var \Illuminate\Support\Testing\Fakes\QueueFake $instance */
-            return $instance->allReservedJobs();
         }
 
         /**
@@ -13883,7 +13838,7 @@ namespace Illuminate\Support\Facades {
         /**
          * Set the queue configuration array.
          *
-         * @return \Illuminate\Queue\SyncQueue
+         * @return \Illuminate\Queue\DatabaseQueue
          * @static
          */
         public static function setConfig($config)
@@ -18692,19 +18647,6 @@ namespace Illuminate\Support\Facades {
         }
 
         /**
-         * Get all of the events on the schedule which run on any of the provided environments.
-         *
-         * @param list<string> $environments
-         * @return \Illuminate\Console\Scheduling\Event[]
-         * @static
-         */
-        public static function eventsForEnvironments($environments)
-        {
-            /** @var \Illuminate\Console\Scheduling\Schedule $instance */
-            return $instance->eventsForEnvironments($environments);
-        }
-
-        /**
          * Specify the cache store that should be used to store mutexes.
          *
          * @param \UnitEnum|string $store
@@ -19029,7 +18971,7 @@ namespace Illuminate\Support\Facades {
          * Get the user-defined types that belong to the connection.
          *
          * @param string|string[]|null $schema
-         * @return \Illuminate\Database\Schema\list<array{name: string, schema: string, schema_qualified_name: string, type: string, category: string, implicit: bool}>
+         * @return \Illuminate\Database\Schema\list<array{name: string, schema: string, type: string, type: string, category: string, implicit: bool}>
          * @static
          */
         public static function getTypes($schema = null)
@@ -19167,20 +19109,6 @@ namespace Illuminate\Support\Facades {
         }
 
         /**
-         * Get the columns for a given table.
-         *
-         * @param string $table
-         * @return \Illuminate\Database\Schema\list<array{name: string, type: string, type_name: string, collation: string|null, nullable: bool, default: mixed, auto_increment: bool, comment: string|null, generation: array{type: string, expression: string|null}|null}>
-         * @static
-         */
-        public static function getColumns($table)
-        {
-            //Method inherited from \Illuminate\Database\Schema\Builder 
-            /** @var \Illuminate\Database\Schema\PostgresBuilder $instance */
-            return $instance->getColumns($table);
-        }
-
-        /**
          * Get the indexes for a given table.
          *
          * @param string $table
@@ -19228,7 +19156,7 @@ namespace Illuminate\Support\Facades {
          * Get the foreign keys for a given table.
          *
          * @param string $table
-         * @return \Illuminate\Database\Schema\list<array{name: string|null, columns: list<string>, foreign_schema: string|null, foreign_table: string, foreign_columns: list<string>, on_update: string|null, on_delete: string|null}>
+         * @return array
          * @static
          */
         public static function getForeignKeys($table)
@@ -19602,7 +19530,7 @@ namespace Illuminate\Support\Facades {
         /**
          * Set the default session driver name.
          *
-         * @param \UnitEnum|string $name
+         * @param string $name
          * @return void
          * @static
          */
@@ -19615,7 +19543,7 @@ namespace Illuminate\Support\Facades {
         /**
          * Get a driver instance.
          *
-         * @param \UnitEnum|string|null $driver
+         * @param string|null $driver
          * @return mixed
          * @throws \InvalidArgumentException
          * @static
@@ -19631,6 +19559,7 @@ namespace Illuminate\Support\Facades {
          * Register a custom driver creator Closure.
          *
          * @param string $driver
+         * @param \Closure $callback
          * @param-closure-this $this  $callback
          * @return \Illuminate\Session\SessionManager
          * @static
@@ -20924,7 +20853,6 @@ namespace Illuminate\Support\Facades {
          * @param array $headers
          * @param string|null $disposition
          * @return \Symfony\Component\HttpFoundation\StreamedResponse
-         * @throws UnableToRetrieveMetadata
          * @static
          */
         public static function response($path, $name = null, $headers = [], $disposition = 'inline')
@@ -20942,7 +20870,6 @@ namespace Illuminate\Support\Facades {
          * @param string|null $name
          * @param array $headers
          * @return \Symfony\Component\HttpFoundation\StreamedResponse
-         * @throws UnableToRetrieveMetadata
          * @static
          */
         public static function serve($request, $path, $name = null, $headers = [])
@@ -20959,7 +20886,6 @@ namespace Illuminate\Support\Facades {
          * @param string|null $name
          * @param array $headers
          * @return \Symfony\Component\HttpFoundation\StreamedResponse
-         * @throws UnableToRetrieveMetadata
          * @static
          */
         public static function download($path, $name = null, $headers = [])
@@ -21158,7 +21084,6 @@ namespace Illuminate\Support\Facades {
          *
          * @param string $path
          * @return string|false
-         * @throws UnableToRetrieveMetadata
          * @static
          */
         public static function mimeType($path)
@@ -23672,33 +23597,6 @@ namespace Illuminate\Support\Facades {
         }
 
         /**
-         * Render font preload links and inline styles.
-         *
-         * @param list<string>|string|null $aliases
-         * @return \Illuminate\Support\HtmlString
-         * @throws \Illuminate\Foundation\ViteException
-         * @static
-         */
-        public static function fonts($aliases = null)
-        {
-            /** @var \Illuminate\Foundation\Vite $instance */
-            return $instance->fonts($aliases);
-        }
-
-        /**
-         * Set the font manifest filename.
-         *
-         * @param string $filename
-         * @return \Illuminate\Foundation\Vite
-         * @static
-         */
-        public static function useFontsManifestFilename($filename)
-        {
-            /** @var \Illuminate\Foundation\Vite $instance */
-            return $instance->useFontsManifestFilename($filename);
-        }
-
-        /**
          * Determine if the HMR server is running.
          *
          * @return bool
@@ -23873,7 +23771,7 @@ namespace Laravel\Socialite\Facades {
         /**
          * Get a driver instance.
          *
-         * @param \UnitEnum|string|null $driver
+         * @param string|null $driver
          * @return mixed
          * @throws \InvalidArgumentException
          * @static
@@ -23889,6 +23787,7 @@ namespace Laravel\Socialite\Facades {
          * Register a custom driver creator Closure.
          *
          * @param string $driver
+         * @param \Closure $callback
          * @param-closure-this $this  $callback
          * @return \Laravel\Socialite\SocialiteManager
          * @static
@@ -25351,7 +25250,7 @@ namespace  {
          * Get the first record matching the attributes or instantiate it.
          *
          * @param array $attributes
-         * @param (\Closure(): array)|array $values
+         * @param array $values
          * @return TModel
          * @static
          */
@@ -25394,7 +25293,7 @@ namespace  {
          * Create or update a record matching the attributes, and fill it with values.
          *
          * @param array $attributes
-         * @param (\Closure(): array)|array $values
+         * @param array $values
          * @return TModel
          * @static
          */
@@ -26159,7 +26058,7 @@ namespace  {
          * @param callable(\Illuminate\Support\Collection<int, TValue>, int):  mixed  $callback
          * @param string|null $column
          * @param string|null $alias
-         * @param \SortDirection|bool $descending
+         * @param bool $descending
          * @return bool
          * @throws \RuntimeException
          * @static
@@ -28858,12 +28757,12 @@ namespace  {
          * Add an "order by" clause to the query.
          *
          * @param \Closure|\Illuminate\Database\Query\Builder|\Illuminate\Database\Eloquent\Builder<*>|\Illuminate\Contracts\Database\Query\Expression|string $column
-         * @param \SortDirection|'asc'|'desc' $direction
+         * @param string $direction
          * @return \Illuminate\Database\Eloquent\Builder<static>
          * @throws \InvalidArgumentException
          * @static
          */
-        public static function orderBy($column, $direction = \SortDirection::Ascending)
+        public static function orderBy($column, $direction = 'asc')
         {
             /** @var \Illuminate\Database\Query\Builder $instance */
             return $instance->orderBy($column, $direction);
@@ -29051,11 +28950,11 @@ namespace  {
          * Remove all existing orders and optionally add a new order.
          *
          * @param \Closure|\Illuminate\Database\Query\Builder|\Illuminate\Contracts\Database\Query\Expression|string|null $column
-         * @param \SortDirection|'asc'|'desc' $direction
+         * @param string $direction
          * @return \Illuminate\Database\Eloquent\Builder<static>
          * @static
          */
-        public static function reorder($column = null, $direction = \SortDirection::Ascending)
+        public static function reorder($column = null, $direction = 'asc')
         {
             /** @var \Illuminate\Database\Query\Builder $instance */
             return $instance->reorder($column, $direction);

@@ -102,7 +102,7 @@ describe('data', function () {
         $response = get(route('staff.users.edit', $user));
 
         $response->assertInertia(fn (AssertableInertia $page) => $page
-            ->where('roles', ['Moderator'])
+            ->where('roles', ['Academy Manager', 'Challenge Manager', 'Marketing Manager', 'Moderator'])
         );
     });
 

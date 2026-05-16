@@ -2,14 +2,24 @@
 
 namespace App\Providers;
 
+use App\Models\Challenge\Challenge;
+use App\Models\Course\Course;
+use App\Models\Course\Lesson;
+use App\Models\Organisation\Organisation;
 use App\Models\PressCoverage;
 use App\Models\Showcase\Showcase;
 use App\Models\SiteSetting;
+use App\Models\Tag;
 use App\Models\Testimonial;
 use App\Models\User;
+use App\Policies\ChallengePolicy;
+use App\Policies\CoursePolicy;
+use App\Policies\LessonPolicy;
+use App\Policies\OrganisationPolicy;
 use App\Policies\PressCoveragePolicy;
 use App\Policies\Showcase\ShowcasePolicy;
 use App\Policies\SiteSettingPolicy;
+use App\Policies\TagPolicy;
 use App\Policies\TestimonialPolicy;
 use App\Policies\UserPolicy;
 use App\Services\Content\ContentNavigationService;
@@ -75,7 +85,7 @@ class AppServiceProvider extends ServiceProvider
         });
 
         Gate::define('access-staff', function (User $user) {
-            return $user->hasRole('Moderator');
+            return $user->can('staff.access');
         });
 
         Gate::policy(Showcase::class, ShowcasePolicy::class);
@@ -83,5 +93,10 @@ class AppServiceProvider extends ServiceProvider
         Gate::policy(Testimonial::class, TestimonialPolicy::class);
         Gate::policy(PressCoverage::class, PressCoveragePolicy::class);
         Gate::policy(SiteSetting::class, SiteSettingPolicy::class);
+        Gate::policy(Challenge::class, ChallengePolicy::class);
+        Gate::policy(Course::class, CoursePolicy::class);
+        Gate::policy(Lesson::class, LessonPolicy::class);
+        Gate::policy(Tag::class, TagPolicy::class);
+        Gate::policy(Organisation::class, OrganisationPolicy::class);
     }
 }

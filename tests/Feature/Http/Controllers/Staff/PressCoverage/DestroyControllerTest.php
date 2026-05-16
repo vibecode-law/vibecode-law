@@ -31,23 +31,33 @@ describe('auth', function () {
             ->assertForbidden();
     });
 
-    test('allows moderators to delete press coverage', function () {
-        $moderator = User::factory()->moderator()->create();
+    test('allows a user with press-coverage.delete permission', function () {
+        $user = userWithPermissions(['press-coverage.view', 'press-coverage.delete']);
         $pressCoverage = PressCoverage::factory()->create();
 
-        actingAs($moderator);
+        actingAs($user);
 
         delete(route('staff.press-coverage.destroy', $pressCoverage))
             ->assertRedirect();
+    });
+
+    test('forbids a staff user without press-coverage.delete permission', function () {
+        $user = userWithPermissions(['press-coverage.view']);
+        $pressCoverage = PressCoverage::factory()->create();
+
+        actingAs($user);
+
+        delete(route('staff.press-coverage.destroy', $pressCoverage))
+            ->assertForbidden();
     });
 });
 
 describe('destroying', function () {
     test('deletes the press coverage from the database', function () {
-        $moderator = User::factory()->moderator()->create();
+        $marketingManager = User::factory()->marketingManager()->create();
         $pressCoverage = PressCoverage::factory()->create();
 
-        actingAs($moderator);
+        actingAs($marketingManager);
 
         delete(route('staff.press-coverage.destroy', $pressCoverage))
             ->assertRedirect();
@@ -56,7 +66,7 @@ describe('destroying', function () {
     });
 
     test('deletes the thumbnail file via model event when press coverage has thumbnail', function () {
-        $moderator = User::factory()->moderator()->create();
+        $marketingManager = User::factory()->marketingManager()->create();
         $pressCoverage = PressCoverage::factory()->create([
             'thumbnail_extension' => 'jpg',
         ]);
@@ -64,7 +74,7 @@ describe('destroying', function () {
         $thumbnailPath = "press-coverage/{$pressCoverage->id}/thumbnail.jpg";
         Storage::disk('public')->put($thumbnailPath, 'thumbnail content');
 
-        actingAs($moderator);
+        actingAs($marketingManager);
 
         delete(route('staff.press-coverage.destroy', $pressCoverage))
             ->assertRedirect();
@@ -74,12 +84,12 @@ describe('destroying', function () {
     });
 
     test('does not error when deleting press coverage without thumbnail', function () {
-        $moderator = User::factory()->moderator()->create();
+        $marketingManager = User::factory()->marketingManager()->create();
         $pressCoverage = PressCoverage::factory()->create([
             'thumbnail_extension' => null,
         ]);
 
-        actingAs($moderator);
+        actingAs($marketingManager);
 
         delete(route('staff.press-coverage.destroy', $pressCoverage))
             ->assertRedirect();
