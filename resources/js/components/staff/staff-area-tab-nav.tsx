@@ -1,6 +1,10 @@
 import { TabNav, type TabNavItem } from '@/components/navigation/tab-nav';
 import { useActiveUrl } from '@/hooks/use-active-url';
 import { usePermissions } from '@/hooks/use-permissions';
+import {
+    canAccessStaffSection,
+    type StaffSectionAccess,
+} from '@/lib/staff-utils';
 import { index as staffIndex } from '@/routes/staff';
 import { index as coursesIndex } from '@/routes/staff/academy/courses';
 import { index as challengesIndex } from '@/routes/staff/challenges';
@@ -12,10 +16,7 @@ import { index as testimonialsIndex } from '@/routes/staff/testimonials';
 import { index as usersIndex } from '@/routes/staff/users';
 import { useMemo } from 'react';
 
-interface StaffNavItem extends TabNavItem {
-    permission?: string;
-    adminOnly?: boolean;
-}
+interface StaffNavItem extends TabNavItem, StaffSectionAccess {}
 
 export function useStaffAreaNavItems(): TabNavItem[] {
     const { hasPermission, isAdmin } = usePermissions();
@@ -72,17 +73,9 @@ export function useStaffAreaNavItems(): TabNavItem[] {
             },
         ];
 
-        return allStaffAreaNavItems.filter((item) => {
-            if (item.adminOnly === true) {
-                return isAdmin;
-            }
-
-            if (item.permission === undefined) {
-                return true;
-            }
-
-            return hasPermission(item.permission);
-        });
+        return allStaffAreaNavItems.filter((item) =>
+            canAccessStaffSection(item, isAdmin, hasPermission),
+        );
     }, [hasPermission, isAdmin, currentUrl]);
 }
 

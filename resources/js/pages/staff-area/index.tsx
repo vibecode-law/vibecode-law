@@ -1,6 +1,10 @@
 import HeadingSmall from '@/components/heading/heading-small';
 import { usePermissions } from '@/hooks/use-permissions';
 import StaffAreaLayout from '@/layouts/staff-area/layout';
+import {
+    canAccessStaffSection,
+    type StaffSectionAccess,
+} from '@/lib/staff-utils';
 import { index as coursesIndex } from '@/routes/staff/academy/courses';
 import { index as challengesIndex } from '@/routes/staff/challenges';
 import { index as practiceAreasIndex } from '@/routes/staff/metadata/practice-areas';
@@ -12,12 +16,10 @@ import { index as usersIndex } from '@/routes/staff/users';
 import { Head, Link } from '@inertiajs/react';
 import { useMemo } from 'react';
 
-interface StaffSection {
+interface StaffSection extends StaffSectionAccess {
     title: string;
     description: string;
     href: string;
-    permission?: string;
-    adminOnly?: boolean;
 }
 
 export default function StaffIndex() {
@@ -75,17 +77,9 @@ export default function StaffIndex() {
             },
         ];
 
-        return all.filter((item) => {
-            if (item.adminOnly === true) {
-                return isAdmin;
-            }
-
-            if (item.permission === undefined) {
-                return true;
-            }
-
-            return hasPermission(item.permission);
-        });
+        return all.filter((item) =>
+            canAccessStaffSection(item, isAdmin, hasPermission),
+        );
     }, [hasPermission, isAdmin]);
 
     return (
