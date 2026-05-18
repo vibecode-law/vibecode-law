@@ -2,6 +2,7 @@ import HomeController from '@/actions/App/Http/Controllers/HomeController';
 import LearnIndexController from '@/actions/App/Http/Controllers/Learn/LearnIndexController';
 import HowItWorksController from '@/actions/App/Http/Controllers/Showcase/Help/HowItWorksController';
 import ShowcaseCreateController from '@/actions/App/Http/Controllers/Showcase/ManageShowcase/ShowcaseCreateController';
+import { BrowseAllCta } from '@/components/home/browse-all-cta';
 import { SidebarActiveChallenges } from '@/components/home/sidebar-active-challenges';
 import { SidebarRecentShowcases } from '@/components/home/sidebar-recent-showcases';
 import { ProjectMonthSection } from '@/components/showcase/showcase-month-section';
@@ -112,6 +113,8 @@ export default function Home({
                                 showcases={showcasesByMonth![month]}
                             />
                         ))}
+
+                        {months.length > 0 && <BrowseAllCta />}
                     </div>
 
                     {((recentShowcases && recentShowcases.length > 0) ||
