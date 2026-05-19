@@ -1,4 +1,5 @@
 declare namespace App.Enums {
+    export type ChallengeInviteCodeImportStatus = 1 | 2 | 3 | 4;
     export type ChallengeVisibility = 1 | 2 | 3;
     export type ExperienceLevel = 1 | 2 | 3 | 4;
     export type InviteCodeScope = 1 | 2;
@@ -58,6 +59,18 @@ declare namespace App.Http.Resources {
     };
 }
 declare namespace App.Http.Resources.Challenge {
+    export type ChallengeInviteCodeImportResource = {
+        id: number;
+        challenge_invite_code_id: number;
+        status: App.Enums.ChallengeInviteCodeImportStatus;
+        total_rows: number;
+        imported_count: number;
+        skipped_count: number;
+        skipped_rows: {
+            [key: number]: App.ValueObjects.SkippedImportRow;
+        } | null;
+        created_at: string;
+    };
     export type ChallengeInviteCodeResource = {
         id: number;
         code: string;
@@ -311,5 +324,10 @@ declare namespace App.ValueObjects {
         y: number;
         width: number;
         height: number;
+    };
+    export type SkippedImportRow = {
+        row: number;
+        email: string | null;
+        reason: string;
     };
 }

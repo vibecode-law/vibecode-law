@@ -92,6 +92,14 @@ class ChallengeFactory extends Factory
         ]);
     }
 
+    public function upcoming(): static
+    {
+        return $this->active()->state(fn () => [
+            'starts_at' => fake()->dateTimeBetween('+1 day', '+1 month'),
+            'ends_at' => fake()->dateTimeBetween('+2 months', '+3 months'),
+        ]);
+    }
+
     public function ended(): static
     {
         return $this->state(fn () => [

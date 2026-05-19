@@ -328,6 +328,15 @@ test('show canSubmit is true for public challenges', function () {
         );
 });
 
+test('show canSubmit is false when challenge has not started yet', function () {
+    $challenge = Challenge::factory()->upcoming()->create();
+
+    get(route('inspiration.challenges.show', $challenge))
+        ->assertInertia(fn (AssertableInertia $page) => $page
+            ->where('canSubmit', false)
+        );
+});
+
 test('show canSubmit is false for invite-to-submit challenge without invite', function () {
     /** @var User */
     $user = User::factory()->create();

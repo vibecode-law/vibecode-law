@@ -123,6 +123,22 @@ describe('challenge warning', function () {
             );
     });
 
+    test('returns warning when challenge has not started yet', function () {
+        /** @var User */
+        $user = User::factory()->create();
+        $challenge = Challenge::factory()->upcoming()->create(['visibility' => ChallengeVisibility::Public]);
+
+        actingAs($user);
+
+        get(route('showcase.manage.create', ['challenge' => $challenge->slug]))
+            ->assertOk()
+            ->assertInertia(fn (AssertableInertia $page) => $page
+                ->component('showcase/user/create')
+                ->where('challenge', null)
+                ->where('challengeWarning', "The {$challenge->title} challenge is not open for submissions yet.")
+            );
+    });
+
     test('returns no warning when no challenge query param', function () {
         /** @var User */
         $user = User::factory()->create();

@@ -51,6 +51,13 @@ class ShowcaseCreateController extends BaseController
             return ['challenge' => null, 'warning' => null];
         }
 
+        if ($challenge->hasStarted() === false) {
+            return [
+                'challenge' => null,
+                'warning' => "The {$challenge->title} challenge is not open for submissions yet.",
+            ];
+        }
+
         if ($challenge->requiresInviteToSubmit() === true) {
             if (Auth::user()->hasChallengeAccess($challenge, InviteCodeScope::ViewAndSubmit) === false) {
                 return [

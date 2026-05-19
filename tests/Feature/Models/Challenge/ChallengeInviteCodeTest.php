@@ -3,6 +3,7 @@
 use App\Enums\InviteCodeScope;
 use App\Models\Challenge\Challenge;
 use App\Models\Challenge\ChallengeInviteCode;
+use App\Models\Challenge\ChallengeInviteCodeImport;
 use App\Models\Challenge\ChallengeInviteCodeUser;
 use App\Models\User;
 
@@ -46,6 +47,25 @@ describe('users relationship', function () {
 
         expect($pivot->created_at)->not->toBeNull()
             ->and($pivot->updated_at)->not->toBeNull();
+    });
+});
+
+describe('imports relationship', function () {
+    test('invite code can have many imports', function () {
+        $inviteCode = ChallengeInviteCode::factory()->create();
+        ChallengeInviteCodeImport::factory()->count(3)->for($inviteCode, 'inviteCode')->create();
+
+        expect($inviteCode->imports)->toHaveCount(3)
+            ->each->toBeInstanceOf(ChallengeInviteCodeImport::class);
+    });
+
+    test('latestImport returns the most recently created import', function () {
+        $inviteCode = ChallengeInviteCode::factory()->create();
+        ChallengeInviteCodeImport::factory()->for($inviteCode, 'inviteCode')->create();
+        $latest = ChallengeInviteCodeImport::factory()->for($inviteCode, 'inviteCode')->create();
+
+        expect($inviteCode->latestImport)->toBeInstanceOf(ChallengeInviteCodeImport::class)
+            ->and($inviteCode->latestImport->id)->toBe($latest->id);
     });
 });
 

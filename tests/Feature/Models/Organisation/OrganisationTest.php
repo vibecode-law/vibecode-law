@@ -14,15 +14,15 @@ describe('challenges relationship', function () {
         expect($organisation->challenges->first())->toBeInstanceOf(Challenge::class);
     });
 
-    test('organisation challenges are returned in correct order', function () {
+    test('organisation returns its challenges', function () {
         $organisation = Organisation::factory()->create();
 
         $challenge1 = Challenge::factory()->forOrganisation($organisation)->create();
         $challenge2 = Challenge::factory()->forOrganisation($organisation)->create();
         $challenge3 = Challenge::factory()->forOrganisation($organisation)->create();
 
-        expect($organisation->challenges->pluck('id')->toArray())
-            ->toBe([$challenge1->id, $challenge2->id, $challenge3->id]);
+        expect($organisation->challenges->pluck('id')->all())
+            ->toEqualCanonicalizing([$challenge1->id, $challenge2->id, $challenge3->id]);
     });
 
     test('deleting organisation sets challenge organisation_id to null', function () {

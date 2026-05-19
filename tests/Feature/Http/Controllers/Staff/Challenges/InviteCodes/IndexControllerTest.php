@@ -1,8 +1,10 @@
 <?php
 
+use App\Enums\ChallengeInviteCodeImportStatus;
 use App\Enums\InviteCodeScope;
 use App\Models\Challenge\Challenge;
 use App\Models\Challenge\ChallengeInviteCode;
+use App\Models\Challenge\ChallengeInviteCodeImport;
 use App\Models\User;
 use Inertia\Testing\AssertableInertia;
 
@@ -49,6 +51,16 @@ describe('data', function () {
         $acceptedUser = User::factory()->create();
         $inviteCode->users()->attach($acceptedUser);
 
+        $import = ChallengeInviteCodeImport::factory()->completed()->create([
+            'challenge_invite_code_id' => $inviteCode->id,
+            'total_rows' => 5,
+            'imported_count' => 4,
+            'skipped_count' => 1,
+            'skipped_rows' => [
+                ['row' => 3, 'email' => 'bad@', 'reason' => 'Invalid email.'],
+            ],
+        ]);
+
         actingAs($admin)
             ->get(route('staff.challenges.invite-codes.index', $challenge))
             ->assertOk()
@@ -76,6 +88,22 @@ describe('data', function () {
                     ->where('label', InviteCodeScope::View->label())
                     ->has('name')
                 )
+                ->has('recentImports', 1)
+                ->has('recentImports.0', fn (AssertableInertia $ri) => $ri
+                    ->where('id', $import->id)
+                    ->where('challenge_invite_code_id', $inviteCode->id)
+                    ->where('status', ChallengeInviteCodeImportStatus::Completed->value)
+                    ->where('total_rows', 5)
+                    ->where('imported_count', 4)
+                    ->where('skipped_count', 1)
+                    ->has('skipped_rows', 1)
+                    ->has('skipped_rows.0', fn (AssertableInertia $sr) => $sr
+                        ->where('row', 3)
+                        ->where('email', 'bad@')
+                        ->where('reason', 'Invalid email.')
+                    )
+                    ->has('created_at')
+                )
             );
     });
 
@@ -88,6 +116,7 @@ describe('data', function () {
             ->assertOk()
             ->assertInertia(fn (AssertableInertia $page) => $page
                 ->has('inviteCodes', 0)
+                ->has('recentImports', 0)
             );
     });
 });
