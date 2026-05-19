@@ -1,6 +1,6 @@
 import { cn } from '@/lib/utils';
 import { MarkdownEditor } from '@/components/ui/markdown-editor';
-import { useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 
 interface InlineRichTextProps {
     name: string;
@@ -43,17 +43,63 @@ export function InlineRichText({
         }
     };
 
-    const handleBlur = (event: React.FocusEvent) => {
-        // Don't unfocus if focus is moving to another element within the editor container
-        // (e.g., toolbar buttons)
-        if (
-            containerRef.current !== null &&
-            event.relatedTarget instanceof Node &&
-            containerRef.current.contains(event.relatedTarget)
-        ) {
+    // Collapse back to the placeholder when a click lands outside the
+    // component. A click anywhere inside the container (textarea, toolbar
+    // command bar, chrome, hint) is never "outside", so toggling a toolbar
+    // button on an empty field no longer collapses it.
+    useEffect(() => {
+        if (isFocused === false) {
             return;
         }
-        setIsFocused(false);
+
+        const handleDocumentMouseDown = (event: MouseEvent) => {
+            if (
+                containerRef.current !== null &&
+                containerRef.current.contains(event.target as Node) === false
+            ) {
+                setIsFocused(false);
+            }
+        };
+
+        document.addEventListener('mousedown', handleDocumentMouseDown);
+
+        return () => {
+            document.removeEventListener('mousedown', handleDocumentMouseDown);
+        };
+    }, [isFocused]);
+
+    const handleBlur = (event: React.FocusEvent) => {
+        // Only collapse on a genuine focus move to a focusable element
+        // outside the container (e.g. keyboard tab-out). A null
+        // relatedTarget means focus went nowhere/non-focusable (toolbar
+        // mousedown, editor chrome) — leave that to the outside-click
+        // handler so the editor doesn't collapse mid-interaction.
+        if (
+            event.relatedTarget instanceof Node &&
+            containerRef.current !== null &&
+            containerRef.current.contains(event.relatedTarget) === false
+        ) {
+            setIsFocused(false);
+        }
+    };
+
+    const handleContainerMouseDown = (event: React.MouseEvent) => {
+        if (containerRef.current === null) {
+            return;
+        }
+
+        // Clicking the editor's non-focusable chrome (the area below the
+        // first line, the markdown hint, padding) would otherwise blur the
+        // textarea and collapse an empty field. Keep the caret in the
+        // textarea instead.
+        const target = event.target as HTMLElement;
+
+        if (target.closest('textarea, button, a, input, [role="button"]') !== null) {
+            return;
+        }
+
+        event.preventDefault();
+        containerRef.current.querySelector('textarea')?.focus();
     };
 
     const hasContent = currentValue.trim().length > 0;
@@ -73,6 +119,7 @@ export function InlineRichText({
             )}
             <div
                 ref={containerRef}
+                onMouseDown={handleContainerMouseDown}
                 className={cn(
                     'rounded-lg transition-all',
                     isFocused === false && hasContent === false && 'cursor-pointer',

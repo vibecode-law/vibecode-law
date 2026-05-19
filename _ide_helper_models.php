@@ -78,6 +78,9 @@ namespace App\Models\Challenge{
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
  * @property-read \App\Models\Challenge\Challenge $challenge
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\Challenge\ChallengeInviteCodeImport> $imports
+ * @property-read int|null $imports_count
+ * @property-read \App\Models\Challenge\ChallengeInviteCodeImport|null $latestImport
  * @property-read \App\Models\Challenge\ChallengeInviteCodeUser|null $pivot
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\User> $users
  * @property-read int|null $users_count
@@ -97,6 +100,42 @@ namespace App\Models\Challenge{
  */
 	#[\AllowDynamicProperties]
 	class IdeHelperChallengeInviteCode {}
+}
+
+namespace App\Models\Challenge{
+/**
+ * @property int $id
+ * @property int $challenge_invite_code_id
+ * @property int|null $user_id
+ * @property \App\Enums\ChallengeInviteCodeImportStatus $status
+ * @property string|null $custom_message
+ * @property int $total_rows
+ * @property int $imported_count
+ * @property int $skipped_count
+ * @property array<array-key, mixed>|null $skipped_rows
+ * @property \Illuminate\Support\Carbon|null $created_at
+ * @property \Illuminate\Support\Carbon|null $updated_at
+ * @property-read \App\Models\Challenge\ChallengeInviteCode $inviteCode
+ * @property-read \App\Models\User|null $user
+ * @method static \Database\Factories\Challenge\ChallengeInviteCodeImportFactory factory($count = null, $state = [])
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|ChallengeInviteCodeImport newModelQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|ChallengeInviteCodeImport newQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|ChallengeInviteCodeImport query()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|ChallengeInviteCodeImport whereChallengeInviteCodeId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|ChallengeInviteCodeImport whereCreatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|ChallengeInviteCodeImport whereCustomMessage($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|ChallengeInviteCodeImport whereId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|ChallengeInviteCodeImport whereImportedCount($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|ChallengeInviteCodeImport whereSkippedCount($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|ChallengeInviteCodeImport whereSkippedRows($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|ChallengeInviteCodeImport whereStatus($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|ChallengeInviteCodeImport whereTotalRows($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|ChallengeInviteCodeImport whereUpdatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|ChallengeInviteCodeImport whereUserId($value)
+ * @mixin \Eloquent
+ */
+	#[\AllowDynamicProperties]
+	class IdeHelperChallengeInviteCodeImport {}
 }
 
 namespace App\Models\Challenge{

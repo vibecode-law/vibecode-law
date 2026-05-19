@@ -132,6 +132,10 @@ export function MarkdownEditor({
                 }}
                 className="rounded-md! border-input! border! bg-transparent! shadow-xs! dark:bg-transparent! dark:text-neutral-400!"
             />
+            <p className="text-muted-foreground mt-1.5 text-xs">
+                Leave a blank line between paragraphs (press Enter twice) to
+                start a new paragraph.
+            </p>
         </div>
     );
 }

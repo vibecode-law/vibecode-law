@@ -138,6 +138,11 @@ class Challenge extends Model
             || $this->visibility === ChallengeVisibility::InviteToViewAndSubmit;
     }
 
+    public function hasStarted(): bool
+    {
+        return $this->starts_at === null || now()->isAfter($this->starts_at);
+    }
+
     //
     // Attributes
     //

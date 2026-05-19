@@ -1,4 +1,9 @@
 import AcceptInviteCodeController from '@/actions/App/Http/Controllers/Challenge/AcceptInviteCodeController';
+import { ImportInviteesDialog } from '@/components/challenges/import-invitees-dialog';
+import {
+    IMPORT_STATUS,
+    ImportSummary,
+} from '@/components/challenges/import-summary';
 import HeadingSmall from '@/components/heading/heading-small';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
@@ -25,14 +30,20 @@ import { store, toggle } from '@/routes/staff/challenges/invite-codes';
 import { type SharedData } from '@/types';
 import { Form, Head, Link, router, usePage } from '@inertiajs/react';
 import { ArrowLeft, Check, Copy, X } from 'lucide-react';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
+
+type InviteCodeResource =
+    App.Http.Resources.Challenge.ChallengeInviteCodeResource;
+type ImportResource =
+    App.Http.Resources.Challenge.ChallengeInviteCodeImportResource;
 
 interface InviteCodesIndexProps {
     challenge: Pick<
         App.Http.Resources.Challenge.ChallengeResource,
         'id' | 'slug' | 'title' | 'visibility'
     >;
-    inviteCodes: App.Http.Resources.Challenge.ChallengeInviteCodeResource[];
+    inviteCodes: InviteCodeResource[];
+    recentImports: ImportResource[];
     scopeOptions: App.ValueObjects.FrontendEnum[];
 }
 
@@ -77,17 +88,41 @@ function CopyButton({ text }: { text: string }) {
 export default function InviteCodesIndex({
     challenge,
     inviteCodes,
+    recentImports,
     scopeOptions,
 }: InviteCodesIndexProps) {
     const { appUrl } = usePage<SharedData>().props;
     const [scope, setScope] = useState('2');
 
+    const importsByCode = new Map<number, ImportResource>(
+        recentImports.map((summary) => [
+            summary.challenge_invite_code_id,
+            summary,
+        ]),
+    );
+
+    const hasInProgressImport = recentImports.some(
+        (summary) =>
+            summary.status === IMPORT_STATUS.Pending ||
+            summary.status === IMPORT_STATUS.Processing,
+    );
+
+    useEffect(() => {
+        if (hasInProgressImport === false) {
+            return;
+        }
+
+        const interval = setInterval(() => {
+            router.reload({ only: ['recentImports'] });
+        }, 4000);
+
+        return () => clearInterval(interval);
+    }, [hasInProgressImport]);
+
     const getInviteUrl = (code: string) =>
         `${appUrl}${AcceptInviteCodeController.url({ code })}`;
 
-    const handleToggle = (
-        inviteCode: App.Http.Resources.Challenge.ChallengeInviteCodeResource,
-    ) => {
+    const handleToggle = (inviteCode: InviteCodeResource) => {
         router.post(
             toggle.url({
                 challenge: challenge.slug,
@@ -127,6 +162,8 @@ export default function InviteCodesIndex({
                     </h3>
                     <Form
                         {...store.form({ challenge: challenge.slug })}
+                        resetOnSuccess
+                        onSuccess={() => setScope('2')}
                         className="flex items-start gap-3"
                     >
                         {({ processing, errors }) => (
@@ -213,90 +250,114 @@ export default function InviteCodesIndex({
                     {inviteCodes.length > 0 ? (
                         <ListCardContent>
                             <div className="divide-y divide-neutral-100 dark:divide-neutral-800">
-                                {inviteCodes.map((inviteCode) => (
-                                    <div
-                                        key={inviteCode.id}
-                                        className="flex items-center gap-4 py-4"
-                                    >
-                                        <div className="min-w-0 flex-1">
-                                            <div className="flex items-center gap-2">
-                                                <span className="text-sm font-medium text-neutral-900 dark:text-white">
-                                                    {inviteCode.label}
-                                                </span>
-                                                <Badge
-                                                    variant="outline"
-                                                    className="text-xs"
-                                                >
-                                                    {scopeOptions.find(
-                                                        (o) =>
-                                                            o.value ===
-                                                            String(
-                                                                inviteCode.scope,
-                                                            ),
-                                                    )?.label ?? 'Unknown'}
-                                                </Badge>
-                                                {inviteCode.users_count !==
-                                                    undefined &&
-                                                    inviteCode.users_count !==
-                                                        null && (
-                                                        <span className="text-xs text-neutral-500 dark:text-neutral-400">
-                                                            {
-                                                                inviteCode.users_count
-                                                            }{' '}
-                                                            {inviteCode.users_count ===
-                                                            1
-                                                                ? 'user'
-                                                                : 'users'}
-                                                        </span>
-                                                    )}
-                                            </div>
-                                            <div className="mt-1 flex items-center gap-2">
-                                                <span className="truncate text-xs text-neutral-500 dark:text-neutral-400">
-                                                    {getInviteUrl(
-                                                        inviteCode.code,
-                                                    )}
-                                                </span>
-                                                <CopyButton
-                                                    text={getInviteUrl(
-                                                        inviteCode.code,
-                                                    )}
-                                                />
-                                            </div>
-                                        </div>
+                                {inviteCodes.map((inviteCode) => {
+                                    const summary = importsByCode.get(
+                                        inviteCode.id,
+                                    );
 
-                                        <div className="flex shrink-0 items-center gap-2">
-                                            {inviteCode.is_active === true ? (
-                                                <Badge className="bg-green-500 text-white hover:bg-green-500">
-                                                    Active
-                                                </Badge>
-                                            ) : (
-                                                <Badge className="bg-red-500 text-white hover:bg-red-500">
-                                                    Disabled
-                                                </Badge>
+                                    return (
+                                        <div
+                                            key={inviteCode.id}
+                                            className="py-4"
+                                        >
+                                            <div className="flex items-center gap-4">
+                                                <div className="min-w-0 flex-1">
+                                                    <div className="flex items-center gap-2">
+                                                        <span className="text-sm font-medium text-neutral-900 dark:text-white">
+                                                            {inviteCode.label}
+                                                        </span>
+                                                        <Badge
+                                                            variant="outline"
+                                                            className="text-xs"
+                                                        >
+                                                            {scopeOptions.find(
+                                                                (o) =>
+                                                                    o.value ===
+                                                                    String(
+                                                                        inviteCode.scope,
+                                                                    ),
+                                                            )?.label ??
+                                                                'Unknown'}
+                                                        </Badge>
+                                                        {inviteCode.users_count !==
+                                                            undefined &&
+                                                            inviteCode.users_count !==
+                                                                null && (
+                                                                <span className="text-xs text-neutral-500 dark:text-neutral-400">
+                                                                    {
+                                                                        inviteCode.users_count
+                                                                    }{' '}
+                                                                    {inviteCode.users_count ===
+                                                                    1
+                                                                        ? 'user'
+                                                                        : 'users'}
+                                                                </span>
+                                                            )}
+                                                    </div>
+                                                    <div className="mt-1 flex items-center gap-2">
+                                                        <span className="truncate text-xs text-neutral-500 dark:text-neutral-400">
+                                                            {getInviteUrl(
+                                                                inviteCode.code,
+                                                            )}
+                                                        </span>
+                                                        <CopyButton
+                                                            text={getInviteUrl(
+                                                                inviteCode.code,
+                                                            )}
+                                                        />
+                                                    </div>
+                                                </div>
+
+                                                <div className="flex shrink-0 items-center gap-2">
+                                                    {inviteCode.is_active ===
+                                                    true ? (
+                                                        <Badge className="bg-green-500 text-white hover:bg-green-500">
+                                                            Active
+                                                        </Badge>
+                                                    ) : (
+                                                        <Badge className="bg-red-500 text-white hover:bg-red-500">
+                                                            Disabled
+                                                        </Badge>
+                                                    )}
+                                                    <ImportInviteesDialog
+                                                        challengeSlug={
+                                                            challenge.slug
+                                                        }
+                                                        inviteCode={inviteCode}
+                                                    />
+                                                    <Button
+                                                        variant="outline"
+                                                        size="sm"
+                                                        onClick={() =>
+                                                            handleToggle(
+                                                                inviteCode,
+                                                            )
+                                                        }
+                                                    >
+                                                        {inviteCode.is_active ===
+                                                        true ? (
+                                                            <>
+                                                                <X className="size-4" />
+                                                                Disable
+                                                            </>
+                                                        ) : (
+                                                            <>
+                                                                <Check className="size-4" />
+                                                                Enable
+                                                            </>
+                                                        )}
+                                                    </Button>
+                                                </div>
+                                            </div>
+
+                                            {summary !== undefined && (
+                                                <ImportSummary
+                                                    summary={summary}
+                                                />
                                             )}
-                                            <Button
-                                                variant="outline"
-                                                size="sm"
-                                                onClick={() =>
-                                                    handleToggle(inviteCode)
-                                                }
-                                            >
-                                                {inviteCode.is_active ===
-                                                true ? (
-                                                    <>
-                                                        <X className="size-4" />
-                                                        Disable
-                                                    </>
-                                                ) : (
-                                                    <>
-                                                        <Check className="size-4" />
-                                                        Enable
-                                                    </>
-                                                )}
-                                            </Button>
                                         </div>
-                                    </div>
-                                ))}
+                                    );
+                                })}
                             </div>
                         </ListCardContent>
                     ) : (

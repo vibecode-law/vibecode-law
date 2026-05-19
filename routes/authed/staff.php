@@ -3,6 +3,7 @@
 use App\Http\Controllers\Staff\Challenges\CreateController as ChallengeCreateController;
 use App\Http\Controllers\Staff\Challenges\EditController as ChallengeEditController;
 use App\Http\Controllers\Staff\Challenges\IndexController as ChallengeIndexController;
+use App\Http\Controllers\Staff\Challenges\InviteCodes\ImportStoreController as InviteCodeImportStoreController;
 use App\Http\Controllers\Staff\Challenges\InviteCodes\IndexController as InviteCodeIndexController;
 use App\Http\Controllers\Staff\Challenges\InviteCodes\StoreController as InviteCodeStoreController;
 use App\Http\Controllers\Staff\Challenges\InviteCodes\ToggleActiveController as InviteCodeToggleActiveController;
@@ -154,6 +155,7 @@ Route::middleware(['can:access-staff'])->prefix('staff')->name('staff.')->group(
             Route::get('/', InviteCodeIndexController::class)->name('index');
             Route::post('/', InviteCodeStoreController::class)->name('store');
             Route::post('/{inviteCode}/toggle', InviteCodeToggleActiveController::class)->name('toggle');
+            Route::post('/{inviteCode}/import', InviteCodeImportStoreController::class)->name('import');
         });
     });
 

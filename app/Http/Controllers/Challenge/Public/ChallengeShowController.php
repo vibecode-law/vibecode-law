@@ -118,6 +118,10 @@ class ChallengeShowController extends BaseController
 
     private function determineCanSubmit(Challenge $challenge): bool
     {
+        if ($challenge->hasStarted() === false) {
+            return false;
+        }
+
         if ($challenge->visibility === ChallengeVisibility::Public) {
             return true;
         }

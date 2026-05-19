@@ -33,6 +33,15 @@ test('avatar returns image transform url when image transform base url is set', 
     expect($user->avatar)->toBe('https://images.example.com/avatars/test-avatar.jpg');
 });
 
+describe('email normalisation', function () {
+    test('email is lowercased and trimmed when set', function () {
+        $user = User::factory()->create(['email' => '  John.Doe@Example.COM  ']);
+
+        expect($user->email)->toBe('john.doe@example.com')
+            ->and($user->fresh()->email)->toBe('john.doe@example.com');
+    });
+});
+
 describe('hostedChallenges relationship', function () {
     test('user can have many hosted challenges', function () {
         $user = User::factory()->create();

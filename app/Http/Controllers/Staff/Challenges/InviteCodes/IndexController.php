@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Staff\Challenges\InviteCodes;
 
 use App\Enums\InviteCodeScope;
 use App\Http\Controllers\BaseController;
+use App\Http\Resources\Challenge\ChallengeInviteCodeImportResource;
 use App\Http\Resources\Challenge\ChallengeInviteCodeResource;
 use App\Http\Resources\Challenge\ChallengeResource;
 use App\Models\Challenge\Challenge;
@@ -19,8 +20,14 @@ class IndexController extends BaseController
 
         $inviteCodes = $challenge->inviteCodes()
             ->withCount('users')
+            ->with('latestImport')
             ->latest()
             ->get();
+
+        $recentImports = $inviteCodes
+            ->pluck('latestImport')
+            ->filter()
+            ->values();
 
         return Inertia::render('staff-area/challenges/invite-codes/index', [
             'challenge' => ChallengeResource::from($challenge)
@@ -28,6 +35,7 @@ class IndexController extends BaseController
                 ->only('id', 'slug', 'title', 'visibility'),
             'inviteCodes' => ChallengeInviteCodeResource::collect($inviteCodes, DataCollection::class)
                 ->include('users_count'),
+            'recentImports' => ChallengeInviteCodeImportResource::collect($recentImports, DataCollection::class),
             'scopeOptions' => collect(InviteCodeScope::cases())->map->forFrontend()->values()->all(),
         ]);
     }

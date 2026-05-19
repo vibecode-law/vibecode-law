@@ -2,23 +2,29 @@
 
 namespace App\Actions\Challenge;
 
+use App\Jobs\MarketingEmail\AddTagToSubscriberJob;
+use App\Jobs\MarketingEmail\RemoveTagFromSubscriberJob;
 use App\Models\Challenge\Challenge;
 use App\Models\Challenge\ChallengeInviteCode;
 use App\Models\User;
+use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Support\Str;
 
 class AcceptChallengeInviteCodeAction
 {
     public function accept(ChallengeInviteCode $inviteCode, User $user): Challenge
     {
         if ($this->alreadyHasSufficientAccess(inviteCode: $inviteCode, user: $user) === false) {
-            $this->replaceLowerScopedInvites(inviteCode: $inviteCode, user: $user);
+            $replaced = $this->replaceLowerScopedInvites(inviteCode: $inviteCode, user: $user);
             $inviteCode->users()->syncWithoutDetaching($user->id);
+
+            $this->syncMarketingTags(user: $user, accepted: $inviteCode, replaced: $replaced);
         }
 
         return $inviteCode->challenge;
     }
 
-    private function alreadyHasSufficientAccess(ChallengeInviteCode $inviteCode, User $user): bool
+    public function alreadyHasSufficientAccess(ChallengeInviteCode $inviteCode, User $user): bool
     {
         return $user->acceptedChallengeInviteCodes()
             ->where('challenge_id', $inviteCode->challenge_id)
@@ -26,14 +32,48 @@ class AcceptChallengeInviteCodeAction
             ->exists();
     }
 
-    private function replaceLowerScopedInvites(ChallengeInviteCode $inviteCode, User $user): void
+    /**
+     * @return Collection<int, ChallengeInviteCode>
+     */
+    private function replaceLowerScopedInvites(ChallengeInviteCode $inviteCode, User $user): Collection
     {
-        $lowerScopedIds = $user->acceptedChallengeInviteCodes()
+        /** @var Collection<int, ChallengeInviteCode> $lowerScoped */
+        $lowerScoped = $user->acceptedChallengeInviteCodes()
             ->where('challenge_id', $inviteCode->challenge_id)
-            ->pluck('challenge_invite_codes.id');
+            ->with('challenge')
+            ->get();
 
-        if ($lowerScopedIds->isNotEmpty() === true) {
-            $user->acceptedChallengeInviteCodes()->detach($lowerScopedIds);
+        if ($lowerScoped->isNotEmpty() === true) {
+            $user->acceptedChallengeInviteCodes()->detach($lowerScoped->pluck('id'));
         }
+
+        return $lowerScoped;
+    }
+
+    /**
+     * @param  Collection<int, ChallengeInviteCode>  $replaced
+     */
+    private function syncMarketingTags(User $user, ChallengeInviteCode $accepted, Collection $replaced): void
+    {
+        if ($user->external_subscriber_uuid === null) {
+            return;
+        }
+
+        foreach ($replaced as $replacedInviteCode) {
+            RemoveTagFromSubscriberJob::dispatch(
+                externalSubscriberUuid: $user->external_subscriber_uuid,
+                tag: $this->tagFor($replacedInviteCode),
+            );
+        }
+
+        AddTagToSubscriberJob::dispatch(
+            externalSubscriberUuid: $user->external_subscriber_uuid,
+            tag: $this->tagFor($accepted),
+        );
+    }
+
+    private function tagFor(ChallengeInviteCode $inviteCode): string
+    {
+        return "challengeInvite:{$inviteCode->challenge->slug}:".Str::slug($inviteCode->label).":{$inviteCode->code}";
     }
 }
