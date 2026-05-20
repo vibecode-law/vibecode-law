@@ -67,6 +67,9 @@ jobs:
       - name: Generate Application Key
         run: php artisan key:generate
 
+      - name: Generate Passport Keys
+        run: php artisan passport:keys --no-interaction
+
       - name: Start Application Server
         run: php artisan serve &
 
