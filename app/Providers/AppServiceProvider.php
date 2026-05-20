@@ -36,6 +36,7 @@ use Illuminate\Foundation\AliasLoader;
 use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\ServiceProvider;
+use Laravel\Passport\Passport;
 use Spatie\MailcoachSdk\Facades\Mailcoach;
 
 class AppServiceProvider extends ServiceProvider
@@ -77,6 +78,14 @@ class AppServiceProvider extends ServiceProvider
     public function boot(): void
     {
         Model::shouldBeStrict();
+
+        Passport::authorizationView('mcp.authorize');
+
+        Passport::tokensCan([
+            'mcp:use' => 'Use available MCP functionality.',
+        ]);
+
+        Passport::defaultScopes(['mcp:use']);
 
         Gate::before(function (User $user, string $ability) {
             if ($user->is_superadmin) {

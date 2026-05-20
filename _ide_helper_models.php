@@ -852,6 +852,8 @@ namespace App\Models{
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\Challenge\ChallengeInviteCode> $acceptedChallengeInviteCodes
  * @property-read int|null $accepted_challenge_invite_codes_count
  * @property-read string|null $avatar
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \Laravel\Passport\Client> $clients
+ * @property-read int|null $clients_count
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\Course\Course> $courses
  * @property-read int|null $courses_count
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\Challenge\Challenge> $hostedChallenges
@@ -860,12 +862,16 @@ namespace App\Models{
  * @property-read int|null $lessons_count
  * @property-read \Illuminate\Notifications\DatabaseNotificationCollection<int, \Illuminate\Notifications\DatabaseNotification> $notifications
  * @property-read int|null $notifications_count
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \Laravel\Passport\Client> $oauthApps
+ * @property-read int|null $oauth_apps_count
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \Spatie\Permission\Models\Permission> $permissions
  * @property-read int|null $permissions_count
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \Spatie\Permission\Models\Role> $roles
  * @property-read int|null $roles_count
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\Showcase\Showcase> $showcases
  * @property-read int|null $showcases_count
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \Laravel\Passport\Token> $tokens
+ * @property-read int|null $tokens_count
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\Showcase\Showcase> $upvotedShowcases
  * @property-read int|null $upvoted_showcases_count
  * @method static \Illuminate\Database\Eloquent\Builder<static>|User collaborators()
