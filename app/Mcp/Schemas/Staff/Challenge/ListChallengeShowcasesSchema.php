@@ -3,6 +3,7 @@
 namespace App\Mcp\Schemas\Staff\Challenge;
 
 use App\Mcp\Requests\Challenge\ListChallengeShowcasesRequest;
+use App\Mcp\Shapes\Showcase\ShowcaseColumn;
 use Illuminate\Contracts\JsonSchema\JsonSchema;
 
 class ListChallengeShowcasesSchema
@@ -20,6 +21,9 @@ class ListChallengeShowcasesSchema
             'status' => $schema->string()
                 ->enum(['Draft', 'Pending', 'Approved', 'Rejected'])
                 ->description('Filter the attached showcases by status.'),
+            'columns' => $schema->array()
+                ->items($schema->string()->enum(ShowcaseColumn::values()))
+                ->description('Additional fields to return per showcase on top of the default summary (id, slug, title, tagline, status, submitted_date). Choose only what you need to keep responses small.'),
             'limit' => $schema->integer()
                 ->min(1)
                 ->max(ListChallengeShowcasesRequest::MAX_LIMIT)

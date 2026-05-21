@@ -105,7 +105,7 @@ it('configures the server name, version, and instructions', function (): void {
     expect($attributes[Name::class]->value)
         ->toBe('vibecode.law Staff MCP');
     expect($attributes[Version::class]->value)
-        ->toBe('0.0.1');
+        ->toBe('0.0.2');
     expect($attributes[Instructions::class]->value)
         ->toContain('staff-only');
 });

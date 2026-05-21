@@ -2,21 +2,24 @@
 
 use App\Mcp\Servers\StaffServer;
 use App\Mcp\Tools\Staff\Showcase\GetShowcaseTool;
+use App\Models\Challenge\Challenge;
 use App\Models\PracticeArea;
 use App\Models\Showcase\Showcase;
 
 it('returns the full details for a showcase by id', function (): void {
     $area = PracticeArea::factory()->create(['name' => 'IP', 'slug' => 'ip']);
+    $challenge = Challenge::factory()->create(['title' => 'Summer Build']);
 
     $showcase = Showcase::factory()->approved()->create([
         'title' => 'Patent Drafter',
         'tagline' => 'Drafts patents.',
     ]);
     $showcase->practiceAreas()->sync([$area->id]);
+    $showcase->challenges()->sync([$challenge->id]);
 
     StaffServer::tool(GetShowcaseTool::class, ['id' => $showcase->id])
         ->assertOk()
-        ->assertStructuredContent(function ($json) use ($showcase, $area): bool {
+        ->assertStructuredContent(function ($json) use ($showcase, $area, $challenge): bool {
             $json->where('id', $showcase->id)
                 ->where('slug', $showcase->slug)
                 ->where('title', 'Patent Drafter')
@@ -30,14 +33,19 @@ it('returns the full details for a showcase by id', function (): void {
                 ->where('source_url', $showcase->source_url)
                 ->where('status', 'Approved')
                 ->where('submitted_date', $showcase->submitted_date?->toIso8601String())
+                ->where('user_id', $showcase->user_id)
                 ->where('view_count', $showcase->view_count)
                 ->where('upvote_count', 0)
                 ->where('thumbnail_url', null)
                 ->where('image_urls', [])
-                ->where('user_id', $showcase->user_id)
+                ->where('user.id', $showcase->user_id)
+                ->where('user.first_name', $showcase->user->first_name)
+                ->where('user.last_name', $showcase->user->last_name)
                 ->where('practice_areas.0.id', $area->id)
                 ->where('practice_areas.0.slug', 'ip')
                 ->where('practice_areas.0.name', 'IP')
+                ->where('challenges.0.id', $challenge->id)
+                ->where('challenges.0.title', 'Summer Build')
                 ->where('youtube_id', null)
                 ->where('created_at', $showcase->created_at?->toIso8601String())
                 ->where('updated_at', $showcase->updated_at?->toIso8601String());

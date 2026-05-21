@@ -14,6 +14,7 @@ use App\Mcp\Tools\Staff\Showcase\GetShowcaseTool;
 use App\Mcp\Tools\Staff\Showcase\ListShowcasesTool;
 use App\Mcp\Tools\Staff\Showcase\ListShowcaseUpvotersTool;
 use App\Mcp\Tools\Staff\User\GetUserTool;
+use App\Mcp\Tools\Staff\User\ListUsersTool;
 use Laravel\Mcp\Server;
 use Laravel\Mcp\Server\Attributes\Instructions;
 use Laravel\Mcp\Server\Attributes\Name;
@@ -22,7 +23,7 @@ use Laravel\Mcp\Server\Prompt;
 use Laravel\Mcp\Server\Tool;
 
 #[Name('vibecode.law Staff MCP')]
-#[Version('0.0.1')]
+#[Version('0.0.2')]
 #[Instructions('Provides staff-only tools and resources for analysing vibecode.law data. Requires explicitly granted permission to use.')]
 class StaffServer extends Server
 {
@@ -41,6 +42,7 @@ class StaffServer extends Server
         ListLessonsTool::class,
         GetLessonTool::class,
         ListPracticeAreasTool::class,
+        ListUsersTool::class,
         GetUserTool::class,
     ];
 

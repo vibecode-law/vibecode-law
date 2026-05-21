@@ -3,6 +3,7 @@
 namespace App\Mcp\Requests\Course;
 
 use App\Enums\ExperienceLevel;
+use App\Mcp\Shapes\Course\CourseColumn;
 use Illuminate\Validation\Rule;
 
 class ListCoursesRequest
@@ -21,6 +22,10 @@ class ListCoursesRequest
             'is_featured' => ['nullable', 'boolean'],
             'published' => ['nullable', 'boolean'],
             'query' => ['nullable', 'string', 'max:200'],
+            'ids' => ['nullable', 'array'],
+            'ids.*' => ['integer', 'min:1'],
+            'columns' => ['nullable', 'array'],
+            'columns.*' => [Rule::in(CourseColumn::values())],
             'limit' => ['nullable', 'integer', 'min:1', 'max:'.self::MAX_LIMIT],
             'cursor' => ['nullable', 'string'],
         ];
@@ -33,6 +38,7 @@ class ListCoursesRequest
     {
         return [
             'experience_level.in' => 'The experience_level must be one of: Foundation, Intermediate, Advanced, Professional.',
+            'columns.*.in' => 'Each column must be one of: '.implode(', ', CourseColumn::values()).'.',
             'limit.max' => 'The limit may not be greater than '.self::MAX_LIMIT.'.',
         ];
     }

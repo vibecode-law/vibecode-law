@@ -15,7 +15,8 @@ arch('concerns')
 arch('enums should be in App\Enums')
     ->expect('App')
     ->not->toBeEnums()
-    ->ignoring('App\Enums');
+    ->ignoring('App\Enums')
+    ->ignoring('App\Mcp\Shapes');
 
 arch('App\Enums should only contain enums')
     ->expect('App\Enums')

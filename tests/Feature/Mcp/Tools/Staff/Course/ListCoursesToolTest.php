@@ -7,10 +7,34 @@ use App\Models\Course\Course;
 use App\Models\Course\Lesson;
 use App\Models\User;
 
-it('returns a condensed index with engagement counts', function (): void {
+it('returns only the default summary fields', function (): void {
     $course = Course::factory()->published()->create([
         'title' => 'Prompting Fundamentals',
         'tagline' => 'Talk to LLMs well.',
+    ]);
+
+    StaffServer::tool(ListCoursesTool::class)
+        ->assertOk()
+        ->assertStructuredContent(function ($json) use ($course): bool {
+            $json->where('items.0.id', $course->id)
+                ->where('items.0.slug', $course->slug)
+                ->where('items.0.title', 'Prompting Fundamentals')
+                ->where('items.0.tagline', 'Talk to LLMs well.')
+                ->where('items.0.publish_date', $course->publish_date?->toDateString())
+                ->where('total_count', 1)
+                ->where('next_cursor', null);
+
+            $first = $json->toArray()['items'][0];
+            expect(array_keys($first))->toEqualCanonicalizing([
+                'id', 'slug', 'title', 'tagline', 'publish_date',
+            ]);
+
+            return true;
+        });
+});
+
+it('returns engagement counts and metadata when requested as columns', function (): void {
+    $course = Course::factory()->published()->create([
         'experience_level' => ExperienceLevel::Foundation,
         'is_featured' => true,
         'duration_seconds' => 1800,
@@ -24,16 +48,14 @@ it('returns a condensed index with engagement counts', function (): void {
     $course->users()->attach($started->id, ['started_at' => now()]);
     $course->users()->attach($completed->id, ['started_at' => now()->subDay(), 'completed_at' => now()]);
 
-    StaffServer::tool(ListCoursesTool::class)
+    StaffServer::tool(ListCoursesTool::class, [
+        'columns' => ['experience_level', 'is_featured', 'duration_seconds', 'lessons_count', 'started_count', 'completed_count'],
+    ])
         ->assertOk()
         ->assertStructuredContent(function ($json) use ($course): bool {
             $json->where('items.0.id', $course->id)
-                ->where('items.0.slug', $course->slug)
-                ->where('items.0.title', 'Prompting Fundamentals')
-                ->where('items.0.tagline', 'Talk to LLMs well.')
                 ->where('items.0.experience_level', 'Foundation')
                 ->where('items.0.is_featured', true)
-                ->where('items.0.publish_date', $course->publish_date?->toDateString())
                 ->where('items.0.duration_seconds', $course->duration_seconds)
                 ->where('items.0.lessons_count', 2)
                 ->where('items.0.started_count', 2)
@@ -41,8 +63,64 @@ it('returns a condensed index with engagement counts', function (): void {
                 ->where('total_count', 1)
                 ->where('next_cursor', null);
 
+            $first = $json->toArray()['items'][0];
+            expect(array_keys($first))->toEqualCanonicalizing([
+                'id', 'slug', 'title', 'tagline', 'publish_date',
+                'experience_level', 'is_featured', 'duration_seconds', 'lessons_count', 'started_count', 'completed_count',
+            ]);
+
             return true;
         });
+});
+
+it('filters by a list of ids', function (): void {
+    $first = Course::factory()->create();
+    Course::factory()->create();
+    $third = Course::factory()->create();
+
+    StaffServer::tool(ListCoursesTool::class, ['ids' => [$first->id, $third->id]])
+        ->assertOk()
+        ->assertStructuredContent(function ($json) use ($first, $third): bool {
+            $json->where('total_count', 2)
+                ->where('items.0.id', $third->id)
+                ->where('items.1.id', $first->id)
+                ->etc();
+
+            return true;
+        });
+});
+
+it('returns additional columns when requested', function (): void {
+    $course = Course::factory()->create([
+        'description' => 'Deep dive.',
+        'allow_preview' => true,
+    ]);
+    $course->users()->attach(User::factory()->create()->id, ['viewed_at' => now()]);
+    $course->users()->attach(User::factory()->create()->id, ['started_at' => now()]);
+
+    StaffServer::tool(ListCoursesTool::class, ['columns' => ['description', 'allow_preview', 'viewed_count', 'enrolled_count']])
+        ->assertOk()
+        ->assertStructuredContent(function ($json) use ($course): bool {
+            $json->where('items.0.id', $course->id)
+                ->where('items.0.description', 'Deep dive.')
+                ->where('items.0.allow_preview', true)
+                ->where('items.0.viewed_count', 1)
+                ->where('items.0.enrolled_count', 2)
+                ->where('total_count', 1)
+                ->where('next_cursor', null);
+
+            $first = $json->toArray()['items'][0];
+            expect(array_keys($first))->toEqualCanonicalizing([
+                'id', 'slug', 'title', 'tagline', 'publish_date',
+                'description', 'allow_preview', 'viewed_count', 'enrolled_count',
+            ]);
+
+            return true;
+        });
+});
+
+it('rejects unknown columns', function (): void {
+    StaffServer::tool(ListCoursesTool::class, ['columns' => ['not_a_column']])->assertHasErrors();
 });
 
 it('filters by experience_level', function (): void {
