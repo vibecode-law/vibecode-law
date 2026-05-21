@@ -1,12 +1,11 @@
 <?php
 
-namespace App\Mcp\Requests\Challenge;
+namespace App\Mcp\Requests\User;
 
-use App\Enums\ShowcaseStatus;
-use App\Mcp\Shapes\Showcase\ShowcaseColumn;
+use App\Mcp\Shapes\User\UserColumn;
 use Illuminate\Validation\Rule;
 
-class ListChallengeShowcasesRequest
+class ListUsersRequest
 {
     public const DEFAULT_LIMIT = 25;
 
@@ -18,10 +17,12 @@ class ListChallengeShowcasesRequest
     public function rules(): array
     {
         return [
-            'challenge_id' => ['required', 'integer', 'min:1'],
-            'status' => ['nullable', Rule::in(array_map(fn (ShowcaseStatus $case): string => $case->name, ShowcaseStatus::cases()))],
+            'first_name' => ['nullable', 'string', 'max:200'],
+            'last_name' => ['nullable', 'string', 'max:200'],
+            'ids' => ['nullable', 'array'],
+            'ids.*' => ['integer', 'min:1'],
             'columns' => ['nullable', 'array'],
-            'columns.*' => [Rule::in(ShowcaseColumn::values())],
+            'columns.*' => [Rule::in(UserColumn::values())],
             'limit' => ['nullable', 'integer', 'min:1', 'max:'.self::MAX_LIMIT],
             'cursor' => ['nullable', 'string'],
         ];
@@ -33,8 +34,7 @@ class ListChallengeShowcasesRequest
     public function messages(): array
     {
         return [
-            'status.in' => 'The status must be one of: Draft, Pending, Approved, Rejected.',
-            'columns.*.in' => 'Each column must be one of: '.implode(', ', ShowcaseColumn::values()).'.',
+            'columns.*.in' => 'Each column must be one of: '.implode(', ', UserColumn::values()).'.',
             'limit.max' => 'The limit may not be greater than '.self::MAX_LIMIT.'.',
         ];
     }

@@ -5,7 +5,8 @@ namespace App\Mcp\Tools\Staff\Course;
 use App\Enums\ExperienceLevel;
 use App\Mcp\Requests\Course\ListCoursesRequest;
 use App\Mcp\Schemas\Staff\Course\ListCoursesSchema;
-use App\Mcp\Shapes\Course\CourseSummaryResource;
+use App\Mcp\Shapes\Course\CourseColumn;
+use App\Mcp\Shapes\Course\CourseDetailResource;
 use App\Models\Course\Course;
 use Illuminate\Contracts\JsonSchema\JsonSchema;
 use Illuminate\Contracts\Pagination\CursorPaginator;
@@ -17,12 +18,18 @@ use Laravel\Mcp\ResponseFactory;
 use Laravel\Mcp\Server\Attributes\Description;
 use Laravel\Mcp\Server\Attributes\Name;
 use Laravel\Mcp\Server\Tool;
-use Spatie\LaravelData\DataCollection;
 
 #[Name('list_courses')]
-#[Description('List courses as a condensed index with engagement counts. Returns id, slug, title, tagline, experience_level, is_featured, publish_date, duration_seconds, lessons_count, started_count and completed_count per entry. Use get_course to fetch full details. Supports filters (experience_level, is_featured, published, query) and cursor pagination.')]
+#[Description('List courses as a condensed index. Returns id, slug, title, tagline and publish_date per entry by default; request additional fields (including engagement counts) with the columns parameter. Use get_course to fetch full details. Supports filters (experience_level, is_featured, published, query, ids) and cursor pagination.')]
 class ListCoursesTool extends Tool
 {
+    /**
+     * Fields returned for every course regardless of the requested columns.
+     *
+     * @var array<int, string>
+     */
+    public const SUMMARY_FIELDS = ['id', 'slug', 'title', 'tagline', 'publish_date'];
+
     public function handle(Request $request): ResponseFactory
     {
         $validated = $this->validated($request);
@@ -33,7 +40,7 @@ class ListCoursesTool extends Tool
 
         $paginator = $this->paginate($query, $validated);
 
-        return Response::structured($this->formatResponse($paginator, $totalCount));
+        return Response::structured($this->formatResponse($paginator, $totalCount, $this->resolveColumns($validated)));
     }
 
     /**
@@ -56,13 +63,27 @@ class ListCoursesTool extends Tool
 
     /**
      * @param  array<string, mixed>  $validated
+     * @return array<int, CourseColumn>
+     */
+    private function resolveColumns(array $validated): array
+    {
+        return array_map(
+            fn (string $column): CourseColumn => CourseColumn::from($column),
+            $validated['columns'] ?? [],
+        );
+    }
+
+    /**
+     * @param  array<string, mixed>  $validated
      * @return Builder<Course>
      */
     private function buildQuery(array $validated): Builder
     {
         return Course::query()
             ->withCount('lessons')
+            ->withCount('users')
             ->withCount([
+                'users as users_viewed_count' => fn (Builder $q) => $q->whereNotNull('viewed_at'),
                 'users as users_started_count' => fn (Builder $q) => $q->whereNotNull('started_at'),
                 'users as users_completed_count' => fn (Builder $q) => $q->whereNotNull('completed_at'),
             ])
@@ -77,6 +98,10 @@ class ListCoursesTool extends Tool
             ->when(
                 array_key_exists('published', $validated) && $validated['published'] !== null,
                 fn (Builder $builder) => $this->applyPublishedFilter($builder, (bool) $validated['published']),
+            )
+            ->when(
+                isset($validated['ids']),
+                fn (Builder $builder) => $builder->whereIn('id', $validated['ids']),
             )
             ->when(
                 isset($validated['query']),
@@ -125,12 +150,22 @@ class ListCoursesTool extends Tool
     }
 
     /**
+     * @param  array<int, CourseColumn>  $columns
      * @return array<string, mixed>
      */
-    private function formatResponse(CursorPaginator $paginator, int $totalCount): array
+    private function formatResponse(CursorPaginator $paginator, int $totalCount, array $columns): array
     {
+        $requested = array_map(fn (CourseColumn $column): string => $column->value, $columns);
+
+        $fields = [...self::SUMMARY_FIELDS, ...$requested];
+
+        $items = array_map(
+            fn (Course $course): array => CourseDetailResource::from($course)->only(...$fields)->toArray(),
+            $paginator->items(),
+        );
+
         return [
-            'items' => CourseSummaryResource::collect($paginator->items(), DataCollection::class)->toArray(),
+            'items' => $items,
             'total_count' => $totalCount,
             'next_cursor' => $paginator->nextCursor()?->encode(),
         ];

@@ -3,6 +3,7 @@
 namespace App\Mcp\Requests\Challenge;
 
 use App\Enums\ChallengeVisibility;
+use App\Mcp\Shapes\Challenge\ChallengeColumn;
 use Illuminate\Validation\Rule;
 
 class ListChallengesRequest
@@ -20,6 +21,10 @@ class ListChallengesRequest
             'visibility' => ['nullable', Rule::in(array_map(fn (ChallengeVisibility $case): string => $case->name, ChallengeVisibility::cases()))],
             'active' => ['nullable', 'boolean'],
             'query' => ['nullable', 'string', 'max:200'],
+            'ids' => ['nullable', 'array'],
+            'ids.*' => ['integer', 'min:1'],
+            'columns' => ['nullable', 'array'],
+            'columns.*' => [Rule::in(ChallengeColumn::values())],
             'limit' => ['nullable', 'integer', 'min:1', 'max:'.self::MAX_LIMIT],
             'cursor' => ['nullable', 'string'],
         ];
@@ -32,6 +37,7 @@ class ListChallengesRequest
     {
         return [
             'visibility.in' => 'The visibility must be one of: Public, InviteToSubmit, InviteToViewAndSubmit.',
+            'columns.*.in' => 'Each column must be one of: '.implode(', ', ChallengeColumn::values()).'.',
             'limit.max' => 'The limit may not be greater than '.self::MAX_LIMIT.'.',
         ];
     }

@@ -4,6 +4,7 @@ use App\Enums\ChallengeVisibility;
 use App\Mcp\Servers\StaffServer;
 use App\Mcp\Tools\Staff\Challenge\ListChallengesTool;
 use App\Models\Challenge\Challenge;
+use App\Models\Showcase\Showcase;
 
 it('returns a condensed index with only the expected fields per item', function (): void {
     $challenge = Challenge::factory()->active()->create([
@@ -77,6 +78,52 @@ it('filters by text query against title and tagline', function (): void {
 
             return true;
         });
+});
+
+it('filters by a list of ids', function (): void {
+    $first = Challenge::factory()->create();
+    Challenge::factory()->create();
+    $third = Challenge::factory()->create();
+
+    StaffServer::tool(ListChallengesTool::class, ['ids' => [$first->id, $third->id]])
+        ->assertOk()
+        ->assertStructuredContent(function ($json) use ($first, $third): bool {
+            $json->where('total_count', 2)
+                ->where('items.0.id', $third->id)
+                ->where('items.1.id', $first->id)
+                ->etc();
+
+            return true;
+        });
+});
+
+it('returns additional columns when requested', function (): void {
+    $challenge = Challenge::factory()->create(['description' => 'A detailed brief.']);
+    $challenge->showcases()->attach(Showcase::factory()->approved()->create());
+
+    StaffServer::tool(ListChallengesTool::class, ['columns' => ['description', 'showcases_count', 'total_upvotes_count']])
+        ->assertOk()
+        ->assertStructuredContent(function ($json) use ($challenge): bool {
+            $json->where('items.0.id', $challenge->id)
+                ->where('items.0.description', 'A detailed brief.')
+                ->where('items.0.showcases_count', 1)
+                ->where('items.0.total_upvotes_count', 0)
+                ->where('total_count', 1)
+                ->where('next_cursor', null);
+
+            $first = $json->toArray()['items'][0];
+            expect(array_keys($first))->toEqualCanonicalizing([
+                'id', 'slug', 'title', 'tagline', 'starts_at', 'ends_at', 'is_active', 'visibility',
+                'description', 'showcases_count', 'total_upvotes_count',
+            ]);
+
+            return true;
+        });
+});
+
+it('rejects unknown columns', function (): void {
+    StaffServer::tool(ListChallengesTool::class, ['columns' => ['not_a_column']])
+        ->assertHasErrors();
 });
 
 it('paginates results with limit and returns a next_cursor when more remain', function (): void {

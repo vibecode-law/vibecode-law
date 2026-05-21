@@ -3,7 +3,9 @@
 use App\Mcp\Servers\StaffServer;
 use App\Mcp\Tools\Staff\Challenge\ListChallengeShowcasesTool;
 use App\Models\Challenge\Challenge;
+use App\Models\PracticeArea;
 use App\Models\Showcase\Showcase;
+use App\Models\User;
 
 it('returns the showcases attached to a challenge in the condensed summary form', function (): void {
     $challenge = Challenge::factory()->create();
@@ -23,12 +25,13 @@ it('returns the showcases attached to a challenge in the condensed summary form'
                 ->where('items.0.tagline', 'Drafts pleadings.')
                 ->where('items.0.status', 'Approved')
                 ->where('items.0.submitted_date', $showcase->submitted_date?->toIso8601String())
+                ->where('items.0.user_id', $showcase->user_id)
                 ->where('total_count', 1)
                 ->where('next_cursor', null);
 
             $first = $json->toArray()['items'][0];
             expect(array_keys($first))->toEqualCanonicalizing([
-                'id', 'slug', 'title', 'tagline', 'status', 'submitted_date',
+                'id', 'slug', 'title', 'tagline', 'status', 'submitted_date', 'user_id',
             ]);
 
             return true;
@@ -55,6 +58,56 @@ it('filters attached showcases by status', function (): void {
 
             return true;
         });
+});
+
+it('returns additional columns when requested', function (): void {
+    $challenge = Challenge::factory()->create();
+
+    $area = PracticeArea::factory()->create();
+    $showcase = Showcase::factory()->approved()->create([
+        'description' => 'A detailed description.',
+        'url' => 'https://example.test',
+    ]);
+    $showcase->practiceAreas()->sync([$area->id]);
+    $showcase->upvoters()->sync([User::factory()->create()->id]);
+    $challenge->showcases()->attach($showcase);
+
+    StaffServer::tool(ListChallengeShowcasesTool::class, [
+        'challenge_id' => $challenge->id,
+        'columns' => ['description', 'url', 'upvote_count', 'practice_areas'],
+    ])
+        ->assertOk()
+        ->assertStructuredContent(function ($json) use ($showcase, $area): bool {
+            $json->where('items.0.id', $showcase->id)
+                ->where('items.0.slug', $showcase->slug)
+                ->where('items.0.title', $showcase->title)
+                ->where('items.0.tagline', $showcase->tagline)
+                ->where('items.0.status', 'Approved')
+                ->where('items.0.submitted_date', $showcase->submitted_date?->toIso8601String())
+                ->where('items.0.description', 'A detailed description.')
+                ->where('items.0.url', 'https://example.test')
+                ->where('items.0.upvote_count', 1)
+                ->where('items.0.practice_areas.0.id', $area->id)
+                ->where('total_count', 1)
+                ->where('next_cursor', null);
+
+            $first = $json->toArray()['items'][0];
+            expect(array_keys($first))->toEqualCanonicalizing([
+                'id', 'slug', 'title', 'tagline', 'status', 'submitted_date', 'user_id',
+                'description', 'url', 'upvote_count', 'practice_areas',
+            ]);
+
+            return true;
+        });
+});
+
+it('rejects unknown columns', function (): void {
+    $challenge = Challenge::factory()->create();
+
+    StaffServer::tool(ListChallengeShowcasesTool::class, [
+        'challenge_id' => $challenge->id,
+        'columns' => ['not_a_column'],
+    ])->assertHasErrors();
 });
 
 it('returns an empty list when the challenge has no showcases', function (): void {

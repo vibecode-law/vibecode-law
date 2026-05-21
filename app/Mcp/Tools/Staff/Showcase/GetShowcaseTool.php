@@ -3,6 +3,7 @@
 namespace App\Mcp\Tools\Staff\Showcase;
 
 use App\Mcp\Requests\Showcase\GetShowcaseRequest;
+use App\Mcp\Shapes\Showcase\ShowcaseColumn;
 use App\Mcp\Shapes\Showcase\ShowcaseDetailResource;
 use App\Models\Showcase\Showcase;
 use Illuminate\Contracts\JsonSchema\JsonSchema;
@@ -22,7 +23,7 @@ class GetShowcaseTool extends Tool
         $validated = $request->validate((new GetShowcaseRequest)->rules());
 
         $showcase = Showcase::query()
-            ->with(['practiceAreas', 'images'])
+            ->with(['practiceAreas', 'images', 'user', 'challenges'])
             ->withCount(['upvoters'])
             ->find($validated['id']);
 
@@ -30,7 +31,9 @@ class GetShowcaseTool extends Tool
             return Response::error("Showcase with id [{$validated['id']}] was not found.");
         }
 
-        return Response::structured(ShowcaseDetailResource::from($showcase)->toArray());
+        return Response::structured(
+            ShowcaseDetailResource::from($showcase)->include(...ShowcaseColumn::values())->toArray()
+        );
     }
 
     /**
