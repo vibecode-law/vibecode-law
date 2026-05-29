@@ -7,6 +7,7 @@ use App\Services\MarketingEmail\Recipients\ValueObjects\CreateRecipientData;
 use App\Services\MarketingEmail\Recipients\ValueObjects\RecipientData;
 use App\Services\MarketingEmail\Recipients\ValueObjects\UpdateRecipientData;
 use Illuminate\Support\Carbon;
+use Spatie\MailcoachSdk\Exceptions\InvalidData;
 use Spatie\MailcoachSdk\Facades\Mailcoach;
 use Spatie\MailcoachSdk\Resources\Subscriber;
 
@@ -14,22 +15,32 @@ class MailcoachRecipientService implements RecipientService
 {
     public function createRecipient(CreateRecipientData $data, bool $skipConfirmation = false): string
     {
-        $subscriber = Mailcoach::createSubscriber(
-            emailListUuid: $data->listId,
-            attributes: array_filter(
-                [
-                    'email' => $data->email,
-                    'first_name' => $data->firstName,
-                    'last_name' => $data->lastName,
-                    'extra_attributes' => $data->extraAttributes ?: null,
-                    'tags' => $data->tags ?: null,
-                    'skip_confirmation' => $skipConfirmation ?: null,
-                ],
-                fn ($value) => $value !== null,
-            ),
-        );
+        try {
+            $subscriber = Mailcoach::createSubscriber(
+                emailListUuid: $data->listId,
+                attributes: array_filter(
+                    [
+                        'email' => $data->email,
+                        'first_name' => $data->firstName,
+                        'last_name' => $data->lastName,
+                        'extra_attributes' => $data->extraAttributes ?: null,
+                        'tags' => $data->tags ?: null,
+                        'skip_confirmation' => $skipConfirmation ?: null,
+                    ],
+                    fn ($value) => $value !== null,
+                ),
+            );
 
-        return $subscriber->uuid;
+            return $subscriber->uuid;
+        } catch (InvalidData $exception) {
+            $existing = Mailcoach::findByEmail(emailListUuid: $data->listId, email: $data->email);
+
+            if ($existing === null) {
+                throw $exception;
+            }
+
+            return $existing->uuid;
+        }
     }
 
     public function updateRecipient(string $externalId, UpdateRecipientData $data): void

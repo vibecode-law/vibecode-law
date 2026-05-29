@@ -5,6 +5,7 @@ use App\Services\MarketingEmail\Recipients\ValueObjects\CreateRecipientData;
 use App\Services\MarketingEmail\Recipients\ValueObjects\RecipientData;
 use App\Services\MarketingEmail\Recipients\ValueObjects\UpdateRecipientData;
 use Illuminate\Support\Facades\Config;
+use Spatie\MailcoachSdk\Exceptions\InvalidData;
 use Spatie\MailcoachSdk\Facades\Mailcoach;
 use Spatie\MailcoachSdk\Resources\Subscriber;
 
@@ -106,6 +107,50 @@ describe('createRecipient', function () {
             extraAttributes: [],
             tags: [],
         ));
+    });
+
+    it('returns the existing uuid when the email is already subscribed', function () {
+        $existing = createMockSubscriber(attributes: [
+            'uuid' => 'existing-subscriber-uuid',
+            'email' => 'existing@example.com',
+        ]);
+
+        Mailcoach::shouldReceive('createSubscriber')
+            ->once()
+            ->andThrow(new InvalidData(['email' => ['The email has already been taken.']]));
+
+        Mailcoach::shouldReceive('findByEmail')
+            ->once()
+            ->with('list-uuid', 'existing@example.com')
+            ->andReturn($existing);
+
+        $service = new MailcoachRecipientService;
+        $result = $service->createRecipient(data: new CreateRecipientData(
+            email: 'existing@example.com',
+            listId: 'list-uuid',
+        ));
+
+        expect($result)->toBe('existing-subscriber-uuid');
+    });
+
+    it('re-throws when the data is invalid and no existing subscriber is found', function () {
+        $exception = new InvalidData(['email' => ['The email must be a valid email address.']]);
+
+        Mailcoach::shouldReceive('createSubscriber')
+            ->once()
+            ->andThrow($exception);
+
+        Mailcoach::shouldReceive('findByEmail')
+            ->once()
+            ->with('list-uuid', 'not-an-email')
+            ->andReturnNull();
+
+        $service = new MailcoachRecipientService;
+
+        expect(fn () => $service->createRecipient(data: new CreateRecipientData(
+            email: 'not-an-email',
+            listId: 'list-uuid',
+        )))->toThrow(InvalidData::class);
     });
 });
 
