@@ -104,34 +104,13 @@ namespace App\Models\Challenge{
 
 namespace App\Models\Challenge{
 /**
- * @property int $id
- * @property int $challenge_invite_code_id
- * @property int|null $user_id
  * @property \App\Enums\ChallengeInviteCodeImportStatus $status
- * @property string|null $custom_message
- * @property int $total_rows
- * @property int $imported_count
- * @property int $skipped_count
- * @property array<array-key, mixed>|null $skipped_rows
- * @property \Illuminate\Support\Carbon|null $created_at
- * @property \Illuminate\Support\Carbon|null $updated_at
- * @property-read \App\Models\Challenge\ChallengeInviteCode $inviteCode
+ * @property-read \App\Models\Challenge\ChallengeInviteCode|null $inviteCode
  * @property-read \App\Models\User|null $user
  * @method static \Database\Factories\Challenge\ChallengeInviteCodeImportFactory factory($count = null, $state = [])
  * @method static \Illuminate\Database\Eloquent\Builder<static>|ChallengeInviteCodeImport newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|ChallengeInviteCodeImport newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|ChallengeInviteCodeImport query()
- * @method static \Illuminate\Database\Eloquent\Builder<static>|ChallengeInviteCodeImport whereChallengeInviteCodeId($value)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|ChallengeInviteCodeImport whereCreatedAt($value)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|ChallengeInviteCodeImport whereCustomMessage($value)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|ChallengeInviteCodeImport whereId($value)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|ChallengeInviteCodeImport whereImportedCount($value)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|ChallengeInviteCodeImport whereSkippedCount($value)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|ChallengeInviteCodeImport whereSkippedRows($value)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|ChallengeInviteCodeImport whereStatus($value)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|ChallengeInviteCodeImport whereTotalRows($value)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|ChallengeInviteCodeImport whereUpdatedAt($value)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|ChallengeInviteCodeImport whereUserId($value)
  * @mixin \Eloquent
  */
 	#[\AllowDynamicProperties]
@@ -831,7 +810,7 @@ namespace App\Models{
  * @property string $email
  * @property \Illuminate\Support\Carbon|null $email_verified_at
  * @property string|null $password
- * @property bool $is_superadmin
+ * @property bool $is_admin
  * @property string|null $avatar_path
  * @property string|null $linkedin_url
  * @property string|null $bio
@@ -893,7 +872,7 @@ namespace App\Models{
  * @method static \Illuminate\Database\Eloquent\Builder<static>|User whereFirstName($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|User whereHandle($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|User whereId($value)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|User whereIsSuperadmin($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|User whereIsAdmin($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|User whereJobTitle($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|User whereLastName($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|User whereLinkedinId($value)
