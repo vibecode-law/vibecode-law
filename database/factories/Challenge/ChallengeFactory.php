@@ -36,6 +36,8 @@ class ChallengeFactory extends Factory
             'slug' => $slug,
             'tagline' => fake()->sentence(),
             'description' => fake()->paragraphs(nb: 3, asText: true),
+            'involvement_instructions' => null,
+            'participant_instructions' => null,
             'starts_at' => null,
             'ends_at' => null,
             'is_active' => false,
@@ -113,6 +115,7 @@ class ChallengeFactory extends Factory
     {
         return $this->state(fn () => [
             'visibility' => ChallengeVisibility::InviteToSubmit,
+            'involvement_instructions' => fake()->paragraph(),
         ]);
     }
 
@@ -120,6 +123,7 @@ class ChallengeFactory extends Factory
     {
         return $this->state(fn () => [
             'visibility' => ChallengeVisibility::InviteToViewAndSubmit,
+            'involvement_instructions' => fake()->paragraph(),
         ]);
     }
 

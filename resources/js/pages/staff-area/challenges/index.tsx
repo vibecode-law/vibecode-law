@@ -11,6 +11,7 @@ import {
 } from '@/components/ui/list-card';
 import { Pagination } from '@/components/ui/pagination';
 import StaffAreaLayout from '@/layouts/staff-area/layout';
+import { CHALLENGE_VISIBILITY } from '@/lib/challenge-utils';
 import { create, edit } from '@/routes/staff/challenges';
 import { type PaginatedData } from '@/types';
 import { Head, Link } from '@inertiajs/react';
@@ -72,12 +73,14 @@ export default function ChallengesIndex({ challenges }: ChallengesIndexProps) {
                                                     Featured
                                                 </Badge>
                                             )}
-                                            {challenge.visibility === 3 && (
+                                            {challenge.visibility ===
+                                                CHALLENGE_VISIBILITY.InviteToViewAndSubmit && (
                                                 <Badge className="bg-purple-500 text-white hover:bg-purple-500">
                                                     Private
                                                 </Badge>
                                             )}
-                                            {challenge.visibility === 2 && (
+                                            {challenge.visibility ===
+                                                CHALLENGE_VISIBILITY.InviteToSubmit && (
                                                 <Badge className="bg-blue-500 text-white hover:bg-blue-500">
                                                     Invite Only Subs
                                                 </Badge>

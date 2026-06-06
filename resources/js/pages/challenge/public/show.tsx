@@ -1,5 +1,7 @@
 import ChallengeIndexController from '@/actions/App/Http/Controllers/Challenge/Public/ChallengeIndexController';
 import ShowcaseCreateController from '@/actions/App/Http/Controllers/Showcase/ManageShowcase/ShowcaseCreateController';
+import { GetInvolvedDialog } from '@/components/challenges/get-involved-dialog';
+import { ParticipantInstructionsDialog } from '@/components/challenges/participant-instructions-dialog';
 import { Participants } from '@/components/challenges/participants';
 import { RichTextContent } from '@/components/showcase/rich-text-content';
 import { ProjectItem } from '@/components/showcase/showcase-item';
@@ -17,13 +19,15 @@ import { cn } from '@/lib/utils';
 import { home } from '@/routes';
 import { type SharedData } from '@/types';
 import { Head, Link, usePage } from '@inertiajs/react';
-import { Trophy } from 'lucide-react';
+import { Check, Trophy } from 'lucide-react';
+import { useState } from 'react';
 
 interface ChallengeShowProps {
     challenge: App.Http.Resources.Challenge.ChallengeResource;
     showcases: App.Http.Resources.Showcase.ShowcaseResource[];
     participants: App.Http.Resources.User.UserResource[];
     canSubmit: boolean;
+    isEligibleToSubmit: boolean;
     requiresInviteToSubmit: boolean;
 }
 
@@ -32,11 +36,26 @@ export default function ChallengeShow({
     showcases,
     participants,
     canSubmit,
+    isEligibleToSubmit,
     requiresInviteToSubmit,
 }: ChallengeShowProps) {
-    const { name, appUrl, transformImages } = usePage<SharedData>().props;
+    const { name, appUrl, transformImages, auth } = usePage<SharedData>().props;
+    const isAuthenticated = auth?.user !== undefined && auth?.user !== null;
     const status = getChallengeStatus(challenge.starts_at, challenge.ends_at);
     const timeInfo = getTimeInfo(challenge.starts_at, challenge.ends_at);
+    const isClosed = status === 'ended';
+    const [getInvolvedOpen, setGetInvolvedOpen] = useState(false);
+    const [participantInstructionsOpen, setParticipantInstructionsOpen] =
+        useState(false);
+
+    // The backend only sends this to viewers who are eligible to enter
+    // (everyone, including guests, for public challenges).
+    const participantInstructionsHtml =
+        challenge.participant_instructions_html ?? null;
+
+    const submitHref = ShowcaseCreateController.url({
+        query: { challenge: challenge.slug },
+    });
 
     const squareRect =
         challenge.thumbnail_rect_strings?.square ??
@@ -143,73 +162,104 @@ export default function ChallengeShow({
                             )}
 
                             <div className="mt-8 flex flex-col gap-4 sm:flex-row sm:items-center">
-                                {canSubmit === true && (
+                                {isClosed === true && (
+                                    <p className="text-sm text-neutral-500 italic dark:text-neutral-400">
+                                        This challenge has closed.
+                                    </p>
+                                )}
+                                {isClosed === false && canSubmit === true && (
                                     <Button asChild>
-                                        <Link
-                                            href={
-                                                ShowcaseCreateController.url() +
-                                                '?challenge=' +
-                                                challenge.slug
-                                            }
-                                        >
+                                        <Link href={submitHref}>
                                             Submit Your Project
                                         </Link>
                                     </Button>
                                 )}
-                                {canSubmit === false &&
-                                    requiresInviteToSubmit === true && (
-                                        <p className="text-sm text-neutral-500 italic dark:text-neutral-400">
-                                            Submissions to this challenge are by
-                                            invitation only.
-                                        </p>
+                                {isClosed === false &&
+                                    requiresInviteToSubmit === true &&
+                                    isEligibleToSubmit === true &&
+                                    status === 'upcoming' && (
+                                        <span className="flex items-center gap-1.5 text-sm font-medium text-emerald-700 dark:text-emerald-400">
+                                            <Check className="size-4" />
+                                            Eligible to enter
+                                        </span>
                                     )}
-                                {(challenge.starts_at !== null ||
-                                    challenge.ends_at !== null) && (
-                                    <p className="text-sm text-neutral-500 dark:text-neutral-400">
-                                        {challenge.starts_at !== null && (
-                                            <span>
-                                                Opens{' '}
-                                                {new Date(
-                                                    challenge.starts_at,
-                                                ).toLocaleDateString(
-                                                    undefined,
-                                                    {
-                                                        year: 'numeric',
-                                                        month: 'long',
-                                                        day: 'numeric',
-                                                    },
+                                {isClosed === false &&
+                                    requiresInviteToSubmit === true &&
+                                    isEligibleToSubmit === false && (
+                                        <Button
+                                            variant="outline"
+                                            onClick={() =>
+                                                setGetInvolvedOpen(true)
+                                            }
+                                        >
+                                            How to Get Involved
+                                        </Button>
+                                    )}
+                                {isClosed === false &&
+                                    ((status === 'upcoming' &&
+                                        challenge.starts_at !== null) ||
+                                        challenge.ends_at !== null) && (
+                                        <p className="text-sm text-neutral-500 dark:text-neutral-400">
+                                            {status === 'upcoming' &&
+                                                challenge.starts_at !==
+                                                    null && (
+                                                    <span>
+                                                        Opens{' '}
+                                                        {new Date(
+                                                            challenge.starts_at,
+                                                        ).toLocaleDateString(
+                                                            undefined,
+                                                            {
+                                                                year: 'numeric',
+                                                                month: 'long',
+                                                                day: 'numeric',
+                                                            },
+                                                        )}
+                                                    </span>
                                                 )}
-                                            </span>
-                                        )}
-                                        {challenge.starts_at !== null &&
-                                            challenge.ends_at !== null && (
-                                                <span className="mx-1.5">
-                                                    &middot;
+                                            {status === 'upcoming' &&
+                                                challenge.starts_at !== null &&
+                                                challenge.ends_at !== null && (
+                                                    <span className="mx-1.5">
+                                                        &middot;
+                                                    </span>
+                                                )}
+                                            {challenge.ends_at !== null && (
+                                                <span>
+                                                    Closes{' '}
+                                                    {new Date(
+                                                        challenge.ends_at,
+                                                    ).toLocaleDateString(
+                                                        undefined,
+                                                        {
+                                                            year: 'numeric',
+                                                            month: 'long',
+                                                            day: 'numeric',
+                                                        },
+                                                    )}
                                                 </span>
                                             )}
-                                        {challenge.ends_at !== null && (
-                                            <span>
-                                                Closes{' '}
-                                                {new Date(
-                                                    challenge.ends_at,
-                                                ).toLocaleDateString(
-                                                    undefined,
-                                                    {
-                                                        year: 'numeric',
-                                                        month: 'long',
-                                                        day: 'numeric',
-                                                    },
-                                                )}
-                                            </span>
-                                        )}
-                                    </p>
-                                )}
+                                        </p>
+                                    )}
                             </div>
+
+                            {requiresInviteToSubmit === true && (
+                                <GetInvolvedDialog
+                                    open={getInvolvedOpen}
+                                    onOpenChange={setGetInvolvedOpen}
+                                    instructionsHtml={
+                                        challenge.involvement_instructions_html ??
+                                        null
+                                    }
+                                    isAuthenticated={isAuthenticated}
+                                />
+                            )}
                         </div>
 
                         {(challenge.organisation ||
                             thumbnailSrc ||
-                            participants.length > 0) && (
+                            participants.length > 0 ||
+                            participantInstructionsHtml !== null) && (
                             <aside className="shrink-0 lg:w-64 xl:w-68 2xl:w-72">
                                 {challenge.organisation ? (
                                     <div>
@@ -260,7 +310,31 @@ export default function ChallengeShow({
                                         }
                                     />
                                 )}
+
+                                {participantInstructionsHtml !== null && (
+                                    <div className="pt-8">
+                                        <button
+                                            type="button"
+                                            onClick={() =>
+                                                setParticipantInstructionsOpen(
+                                                    true,
+                                                )
+                                            }
+                                            className="text-sm font-medium text-neutral-900 underline underline-offset-4 hover:text-neutral-600 dark:text-white dark:hover:text-neutral-300"
+                                        >
+                                            Participant instructions
+                                        </button>
+                                    </div>
+                                )}
                             </aside>
+                        )}
+
+                        {participantInstructionsHtml !== null && (
+                            <ParticipantInstructionsDialog
+                                open={participantInstructionsOpen}
+                                onOpenChange={setParticipantInstructionsOpen}
+                                instructionsHtml={participantInstructionsHtml}
+                            />
                         )}
                     </div>
                 </div>
@@ -293,10 +367,7 @@ export default function ChallengeShow({
                                     canSubmit === true
                                         ? {
                                               label: 'Submit',
-                                              href:
-                                                  ShowcaseCreateController.url() +
-                                                  '?challenge=' +
-                                                  challenge.slug,
+                                              href: submitHref,
                                           }
                                         : undefined
                                 }

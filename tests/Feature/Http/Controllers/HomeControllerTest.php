@@ -314,6 +314,24 @@ describe('activeChallenges', function () {
             );
     });
 
+    test('excludes featured invite-to-view-and-submit challenges', function () {
+        $publicFeatured = Challenge::factory()->active()->featured()->create([
+            'title' => 'Public Featured Challenge',
+        ]);
+
+        Challenge::factory()->active()->featured()->inviteToViewAndSubmit()->create([
+            'title' => 'Invite To View Featured Challenge',
+        ]);
+
+        get('/')
+            ->assertOk()
+            ->assertInertia(fn (AssertableInertia $page) => $page
+                ->component('home')
+                ->has('activeChallenges', 1)
+                ->where('activeChallenges.0.id', $publicFeatured->id)
+            );
+    });
+
     test('orders active challenges by showcases count descending', function () {
         $lessChallenged = Challenge::factory()->active()->featured()->create([
             'title' => 'Less Popular',

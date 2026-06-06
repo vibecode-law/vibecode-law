@@ -36,6 +36,8 @@ class Challenge extends Model
         'slug',
         'tagline',
         'description',
+        'involvement_instructions',
+        'participant_instructions',
         'starts_at',
         'ends_at',
         'is_active',
@@ -63,7 +65,7 @@ class Challenge extends Model
      */
     public function getCachedFields(): array
     {
-        return ['description'];
+        return ['description', 'involvement_instructions', 'participant_instructions'];
     }
 
     public function getRouteKeyName(): string
@@ -141,6 +143,11 @@ class Challenge extends Model
     public function hasStarted(): bool
     {
         return $this->starts_at === null || now()->isAfter($this->starts_at);
+    }
+
+    public function hasEnded(): bool
+    {
+        return $this->ends_at !== null && now()->isAfter($this->ends_at);
     }
 
     //

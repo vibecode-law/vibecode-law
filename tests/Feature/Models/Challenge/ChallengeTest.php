@@ -240,6 +240,26 @@ describe('hasStarted', function () {
     });
 });
 
+describe('hasEnded', function () {
+    test('returns false when ends_at is null', function () {
+        $challenge = Challenge::factory()->create(['ends_at' => null]);
+
+        expect($challenge->hasEnded())->toBeFalse();
+    });
+
+    test('returns false when ends_at is in the future', function () {
+        $challenge = Challenge::factory()->create(['ends_at' => now()->addDay()]);
+
+        expect($challenge->hasEnded())->toBeFalse();
+    });
+
+    test('returns true when ends_at is in the past', function () {
+        $challenge = Challenge::factory()->create(['ends_at' => now()->subDay()]);
+
+        expect($challenge->hasEnded())->toBeTrue();
+    });
+});
+
 describe('publiclyVisible scope', function () {
     test('includes Public challenges', function () {
         $public = Challenge::factory()->create(['visibility' => ChallengeVisibility::Public]);

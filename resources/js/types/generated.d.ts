@@ -87,6 +87,10 @@ declare namespace App.Http.Resources.Challenge {
         tagline: string;
         description?: string;
         description_html?: string;
+        involvement_instructions?: string | null;
+        involvement_instructions_html?: string | null;
+        participant_instructions?: string | null;
+        participant_instructions_html?: string | null;
         starts_at: string | null;
         ends_at: string | null;
         is_active: boolean;

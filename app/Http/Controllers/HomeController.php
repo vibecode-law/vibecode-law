@@ -61,6 +61,7 @@ class HomeController extends BaseController
         $activeChallenges = Challenge::query()
             ->where('is_active', true)
             ->where('is_featured', true)
+            ->publiclyVisible()
             ->withCount('showcases')
             ->orderByDesc('showcases_count')
             ->get();

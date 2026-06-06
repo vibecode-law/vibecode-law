@@ -26,6 +26,22 @@ class ChallengeUpdateRequest extends FormRequest
                 ),
             ]);
         }
+
+        if ((int) $this->input('visibility') === ChallengeVisibility::InviteToViewAndSubmit->value) {
+            $this->merge(['is_featured' => false]);
+        }
+
+        if ($this->requiresInviteToSubmit() === false) {
+            $this->merge(['involvement_instructions' => null]);
+        }
+    }
+
+    private function requiresInviteToSubmit(): bool
+    {
+        return in_array((int) $this->input('visibility'), [
+            ChallengeVisibility::InviteToSubmit->value,
+            ChallengeVisibility::InviteToViewAndSubmit->value,
+        ], strict: true);
     }
 
     /**
@@ -50,11 +66,15 @@ class ChallengeUpdateRequest extends FormRequest
             ? ['required', 'accepted']
             : ['nullable', 'boolean'];
 
+        $requiresInviteToSubmit = $this->requiresInviteToSubmit();
+
         return [
             'title' => ['required', 'string', 'max:80'],
             'slug' => $slugRules,
             'tagline' => ['required', 'string', 'max:255'],
             'description' => ['required', 'string'],
+            'involvement_instructions' => [$requiresInviteToSubmit === true ? 'required' : 'nullable', 'string'],
+            'participant_instructions' => ['nullable', 'string'],
             'starts_at' => ['nullable', 'date'],
             'ends_at' => ['nullable', 'date', 'after:starts_at'],
             'is_active' => $isActiveRules,
@@ -92,6 +112,7 @@ class ChallengeUpdateRequest extends FormRequest
             'is_active.accepted' => 'An active challenge cannot be deactivated.',
             'tagline.required' => 'Please provide a tagline.',
             'description.required' => 'Please provide a description.',
+            'involvement_instructions.required' => 'Please explain how entrants can get involved for invite-only challenges.',
             'ends_at.after' => 'The end date must be after the start date.',
             'organisation_id.exists' => 'The selected organisation does not exist.',
             'thumbnail.image' => 'The thumbnail must be an image.',

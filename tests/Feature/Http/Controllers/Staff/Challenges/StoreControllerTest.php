@@ -77,6 +77,24 @@ describe('store', function () {
         );
     });
 
+    test('creates challenge with participant_instructions', function () {
+        $admin = User::factory()->admin()->create();
+
+        actingAs($admin);
+
+        post(route('staff.challenges.store'), [
+            'title' => 'Participant Challenge',
+            'slug' => 'participant-challenge',
+            'tagline' => 'A challenge with instructions',
+            'description' => 'Description here.',
+            'participant_instructions' => 'Submit via the form by Friday.',
+        ])->assertRedirect();
+
+        $challenge = Challenge::query()->where('slug', 'participant-challenge')->firstOrFail();
+
+        expect($challenge->participant_instructions)->toBe('Submit via the form by Friday.');
+    });
+
     test('creates challenge with organisation', function () {
         $admin = User::factory()->admin()->create();
         $organisation = Organisation::factory()->create();
@@ -260,11 +278,65 @@ describe('store', function () {
             'tagline' => 'An invite challenge',
             'description' => 'Description here.',
             'visibility' => ChallengeVisibility::InviteToSubmit->value,
+            'involvement_instructions' => 'Request an invite code to take part.',
         ])->assertRedirect();
 
         $challenge = Challenge::query()->where('slug', 'invite-challenge')->firstOrFail();
 
-        expect($challenge->visibility)->toBe(ChallengeVisibility::InviteToSubmit);
+        expect($challenge->visibility)->toBe(ChallengeVisibility::InviteToSubmit)
+            ->and($challenge->involvement_instructions)->toBe('Request an invite code to take part.');
+    });
+
+    test('forces is_featured to false when visibility is invite to view and submit', function () {
+        $admin = User::factory()->admin()->create();
+
+        actingAs($admin);
+
+        post(route('staff.challenges.store'), [
+            'title' => 'Invite View Challenge',
+            'slug' => 'invite-view-challenge',
+            'tagline' => 'An invite to view challenge',
+            'description' => 'Description here.',
+            'visibility' => ChallengeVisibility::InviteToViewAndSubmit->value,
+            'is_featured' => true,
+            'involvement_instructions' => 'Request an invite code to take part.',
+        ])->assertRedirect();
+
+        $challenge = Challenge::query()->where('slug', 'invite-view-challenge')->firstOrFail();
+
+        expect($challenge->is_featured)->toBeFalse()
+            ->and($challenge->visibility)->toBe(ChallengeVisibility::InviteToViewAndSubmit);
+    });
+
+    test('requires involvement_instructions when visibility requires an invite to submit', function (int $visibility) {
+        $admin = User::factory()->admin()->create();
+
+        actingAs($admin);
+
+        post(route('staff.challenges.store'), [
+            'title' => 'Invite Challenge',
+            'slug' => 'invite-challenge',
+            'tagline' => 'An invite challenge',
+            'description' => 'Description here.',
+            'visibility' => $visibility,
+        ])->assertSessionHasErrors(['involvement_instructions']);
+    })->with([
+        'invite to submit' => [ChallengeVisibility::InviteToSubmit->value],
+        'invite to view and submit' => [ChallengeVisibility::InviteToViewAndSubmit->value],
+    ]);
+
+    test('does not require involvement_instructions for public challenges', function () {
+        $admin = User::factory()->admin()->create();
+
+        actingAs($admin);
+
+        post(route('staff.challenges.store'), [
+            'title' => 'Public Challenge',
+            'slug' => 'public-challenge',
+            'tagline' => 'A public challenge',
+            'description' => 'Description here.',
+            'visibility' => ChallengeVisibility::Public->value,
+        ])->assertSessionDoesntHaveErrors(['involvement_instructions']);
     });
 
     test('creates challenge with public visibility by default', function () {
