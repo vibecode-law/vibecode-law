@@ -33,19 +33,33 @@ class ChallengeShowController extends BaseController
             return $this->renderInviteOnlyDenied();
         }
 
+        if (Auth::guest() === true && $challenge->requiresInviteToSubmit() === true) {
+            Session::put('url.intended', URL::current());
+        }
+
         $challenge = $this->loadChallenge(challenge: $challenge);
         $showcases = $this->getShowcases(challenge: $challenge);
         $participants = $this->extractParticipants(showcases: $showcases);
 
+        $isEligibleToSubmit = $this->determineIsEligibleToSubmit(challenge: $challenge);
+
+        $challengeResource = ChallengeResource::from($challenge)
+            ->include('description_html', 'involvement_instructions_html', 'organisation')
+            ->exclude('description', 'involvement_instructions', 'participant_instructions');
+
+        // Participant instructions are private to those who can enter.
+        if ($isEligibleToSubmit === true) {
+            $challengeResource->include('participant_instructions_html');
+        }
+
         return Inertia::render('challenge/public/show', [
-            'challenge' => ChallengeResource::from($challenge)
-                ->include('description_html', 'organisation')
-                ->exclude('description'),
+            'challenge' => $challengeResource,
             'showcases' => ShowcaseResource::collect($showcases, DataCollection::class)
                 ->only('id', 'slug', 'title', 'tagline', 'thumbnail_url', 'thumbnail_rect_string', 'upvotes_count', 'has_upvoted', 'view_count', 'user'),
             'participants' => UserResource::collect($participants, DataCollection::class)
                 ->only('first_name', 'avatar', 'handle'),
             'canSubmit' => $this->determineCanSubmit(challenge: $challenge),
+            'isEligibleToSubmit' => $isEligibleToSubmit,
             'requiresInviteToSubmit' => $challenge->requiresInviteToSubmit(),
         ]);
     }
@@ -122,6 +136,15 @@ class ChallengeShowController extends BaseController
             return false;
         }
 
+        if ($challenge->hasEnded() === true) {
+            return false;
+        }
+
+        return $this->determineIsEligibleToSubmit(challenge: $challenge);
+    }
+
+    private function determineIsEligibleToSubmit(Challenge $challenge): bool
+    {
         if ($challenge->visibility === ChallengeVisibility::Public) {
             return true;
         }
@@ -130,10 +153,6 @@ class ChallengeShowController extends BaseController
 
         if ($user === null) {
             return false;
-        }
-
-        if ($user->is_superadmin === true) {
-            return true;
         }
 
         return $user->hasChallengeAccess($challenge, InviteCodeScope::ViewAndSubmit);

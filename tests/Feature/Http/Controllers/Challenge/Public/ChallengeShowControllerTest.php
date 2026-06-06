@@ -50,6 +50,10 @@ test('show returns correct challenge data structure', function () {
                 ->where('tagline', $challenge->tagline)
                 ->missing('description')
                 ->where('description_html', "<p><strong>description</strong></p>\n")
+                ->missing('involvement_instructions')
+                ->where('involvement_instructions_html', null)
+                ->missing('participant_instructions')
+                ->where('participant_instructions_html', null)
                 ->where('starts_at', $challenge->starts_at->toIso8601String())
                 ->where('ends_at', $challenge->ends_at->toIso8601String())
                 ->where('is_active', true)
@@ -337,6 +341,56 @@ test('show canSubmit is false when challenge has not started yet', function () {
         );
 });
 
+test('show canSubmit is false when challenge close date has passed', function () {
+    $challenge = Challenge::factory()->active()->create([
+        'starts_at' => now()->subMonth(),
+        'ends_at' => now()->subDay(),
+    ]);
+
+    get(route('inspiration.challenges.show', $challenge))
+        ->assertInertia(fn (AssertableInertia $page) => $page
+            ->where('canSubmit', false)
+        );
+});
+
+test('show isEligibleToSubmit is true for public challenge', function () {
+    $challenge = Challenge::factory()->active()->create();
+
+    get(route('inspiration.challenges.show', $challenge))
+        ->assertInertia(fn (AssertableInertia $page) => $page
+            ->where('isEligibleToSubmit', true)
+        );
+});
+
+test('show isEligibleToSubmit is true for upcoming invite-to-submit challenge with ViewAndSubmit invite', function () {
+    /** @var User */
+    $user = User::factory()->create();
+    $challenge = Challenge::factory()->upcoming()->inviteToSubmit()->create();
+    $inviteCode = ChallengeInviteCode::factory()->forChallenge($challenge)->create([
+        'scope' => InviteCodeScope::ViewAndSubmit,
+    ]);
+    $inviteCode->users()->attach($user);
+
+    actingAs($user)
+        ->get(route('inspiration.challenges.show', $challenge))
+        ->assertInertia(fn (AssertableInertia $page) => $page
+            ->where('canSubmit', false)
+            ->where('isEligibleToSubmit', true)
+        );
+});
+
+test('show isEligibleToSubmit is false for invite-to-submit challenge without invite', function () {
+    /** @var User */
+    $user = User::factory()->create();
+    $challenge = Challenge::factory()->active()->inviteToSubmit()->create();
+
+    actingAs($user)
+        ->get(route('inspiration.challenges.show', $challenge))
+        ->assertInertia(fn (AssertableInertia $page) => $page
+            ->where('isEligibleToSubmit', false)
+        );
+});
+
 test('show canSubmit is false for invite-to-submit challenge without invite', function () {
     /** @var User */
     $user = User::factory()->create();
@@ -435,7 +489,7 @@ test('show returns 200 for invite-to-view-and-submit challenge when user is admi
         ->assertOk();
 });
 
-test('show canSubmit is true for admin on invite-to-view-and-submit challenge without invite', function () {
+test('show canSubmit is false for admin on invite-to-view-and-submit challenge without invite', function () {
     /** @var User */
     $user = User::factory()->admin()->create();
     $challenge = Challenge::factory()->active()->inviteToViewAndSubmit()->create();
@@ -443,14 +497,32 @@ test('show canSubmit is true for admin on invite-to-view-and-submit challenge wi
     actingAs($user)
         ->get(route('inspiration.challenges.show', $challenge))
         ->assertInertia(fn (AssertableInertia $page) => $page
-            ->where('canSubmit', true)
+            ->where('canSubmit', false)
+            ->where('isEligibleToSubmit', false)
         );
 });
 
-test('show canSubmit is true for admin on invite-to-submit challenge without invite', function () {
+test('show canSubmit is false for admin on invite-to-submit challenge without invite', function () {
     /** @var User */
     $user = User::factory()->admin()->create();
     $challenge = Challenge::factory()->active()->inviteToSubmit()->create();
+
+    actingAs($user)
+        ->get(route('inspiration.challenges.show', $challenge))
+        ->assertInertia(fn (AssertableInertia $page) => $page
+            ->where('canSubmit', false)
+            ->where('isEligibleToSubmit', false)
+        );
+});
+
+test('show canSubmit is true for admin with ViewAndSubmit invite', function () {
+    /** @var User */
+    $user = User::factory()->admin()->create();
+    $challenge = Challenge::factory()->active()->inviteToSubmit()->create();
+    $inviteCode = ChallengeInviteCode::factory()->forChallenge($challenge)->create([
+        'scope' => InviteCodeScope::ViewAndSubmit,
+    ]);
+    $inviteCode->users()->attach($user);
 
     actingAs($user)
         ->get(route('inspiration.challenges.show', $challenge))
@@ -487,6 +559,80 @@ test('show requiresInviteToSubmit is true for invite-to-view-and-submit challeng
         ->assertInertia(fn (AssertableInertia $page) => $page
             ->where('requiresInviteToSubmit', true)
         );
+});
+
+test('show renders participant_instructions_html for guest on public challenge', function () {
+    $challenge = Challenge::factory()->active()->create([
+        'participant_instructions' => '**join**',
+    ]);
+
+    get(route('inspiration.challenges.show', $challenge))
+        ->assertInertia(fn (AssertableInertia $page) => $page
+            ->where('challenge.participant_instructions_html', "<p><strong>join</strong></p>\n")
+            ->missing('challenge.participant_instructions')
+        );
+});
+
+test('show hides participant_instructions_html from ineligible invite-to-submit viewer', function () {
+    /** @var User */
+    $user = User::factory()->create();
+    $challenge = Challenge::factory()->active()->inviteToSubmit()->create([
+        'participant_instructions' => '**secret**',
+    ]);
+
+    actingAs($user)
+        ->get(route('inspiration.challenges.show', $challenge))
+        ->assertInertia(fn (AssertableInertia $page) => $page
+            ->where('isEligibleToSubmit', false)
+            ->missing('challenge.participant_instructions_html')
+            ->missing('challenge.participant_instructions')
+        );
+});
+
+test('show renders participant_instructions_html for eligible invite-to-submit viewer', function () {
+    /** @var User */
+    $user = User::factory()->create();
+    $challenge = Challenge::factory()->active()->inviteToSubmit()->create([
+        'participant_instructions' => '**members only**',
+    ]);
+    $inviteCode = ChallengeInviteCode::factory()->forChallenge($challenge)->create([
+        'scope' => InviteCodeScope::ViewAndSubmit,
+    ]);
+    $inviteCode->users()->attach($user);
+
+    actingAs($user)
+        ->get(route('inspiration.challenges.show', $challenge))
+        ->assertInertia(fn (AssertableInertia $page) => $page
+            ->where('challenge.participant_instructions_html', "<p><strong>members only</strong></p>\n")
+        );
+});
+
+test('show renders involvement_instructions_html for invite-to-submit challenge', function () {
+    $challenge = Challenge::factory()->active()->inviteToSubmit()->create([
+        'involvement_instructions' => '**enter**',
+    ]);
+
+    get(route('inspiration.challenges.show', $challenge))
+        ->assertInertia(fn (AssertableInertia $page) => $page
+            ->where('challenge.involvement_instructions_html', "<p><strong>enter</strong></p>\n")
+            ->missing('challenge.involvement_instructions')
+        );
+});
+
+test('show sets intended url for guest on invite-to-submit challenge', function () {
+    $challenge = Challenge::factory()->active()->inviteToSubmit()->create();
+
+    get(route('inspiration.challenges.show', $challenge));
+
+    expect(session('url.intended'))->toBe(route('inspiration.challenges.show', $challenge));
+});
+
+test('show does not set intended url for guest on public challenge', function () {
+    $challenge = Challenge::factory()->active()->create();
+
+    get(route('inspiration.challenges.show', $challenge));
+
+    expect(session('url.intended'))->toBeNull();
 });
 
 test('show excludes participants from non-visible showcases', function () {

@@ -17,6 +17,7 @@ import {
 import { Separator } from '@/components/ui/separator';
 import { Switch } from '@/components/ui/switch';
 import { ThumbnailSelector } from '@/components/ui/thumbnail-selector';
+import { CHALLENGE_VISIBILITY } from '@/lib/challenge-utils';
 import { slugify } from '@/lib/slug';
 import { Pencil } from 'lucide-react';
 import { useRef, useState } from 'react';
@@ -38,6 +39,8 @@ interface ChallengeFormFieldsProps {
         slug?: string;
         tagline?: string;
         description?: string;
+        involvement_instructions?: string | null;
+        participant_instructions?: string | null;
         starts_at?: string | null;
         ends_at?: string | null;
         is_active?: boolean;
@@ -77,6 +80,22 @@ export default function ChallengeFormFields({
         String(defaultValues?.visibility ?? 1),
     );
     const slugRef = useRef<HTMLInputElement>(null);
+
+    const isInviteToView =
+        visibility === String(CHALLENGE_VISIBILITY.InviteToViewAndSubmit);
+    const requiresInvite =
+        visibility === String(CHALLENGE_VISIBILITY.InviteToSubmit) ||
+        isInviteToView;
+    const featuredEnabled =
+        featuredChecked === true && isInviteToView === false;
+
+    const handleVisibilityChange = (value: string) => {
+        setVisibility(value);
+
+        if (value === String(CHALLENGE_VISIBILITY.InviteToViewAndSubmit)) {
+            setFeaturedChecked(false);
+        }
+    };
 
     const handleTitleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
         if (autoSlug === true && slugRef.current !== null) {
@@ -325,15 +344,17 @@ export default function ChallengeFormFields({
                 </label>
                 <label className="flex cursor-pointer items-start gap-3">
                     <Switch
-                        checked={featuredChecked}
+                        checked={featuredEnabled}
                         onCheckedChange={setFeaturedChecked}
-                        disabled={processing}
+                        disabled={processing || isInviteToView}
                         className="mt-0.5"
                     />
                     <div>
                         <span className="text-sm font-medium">Featured</span>
                         <p className="text-sm text-neutral-500 dark:text-neutral-400">
-                            Highlight this challenge on the homepage.
+                            {isInviteToView
+                                ? 'Invite to view challenges cannot be featured on the homepage.'
+                                : 'Highlight this challenge on the homepage.'}
                         </p>
                     </div>
                 </label>
@@ -345,7 +366,7 @@ export default function ChallengeFormFields({
                 <input
                     type="hidden"
                     name="is_featured"
-                    value={featuredChecked ? '1' : '0'}
+                    value={featuredEnabled ? '1' : '0'}
                 />
             </div>
 
@@ -358,7 +379,7 @@ export default function ChallengeFormFields({
             >
                 <Select
                     value={visibility}
-                    onValueChange={setVisibility}
+                    onValueChange={handleVisibilityChange}
                     disabled={processing}
                 >
                     <SelectTrigger
@@ -381,6 +402,52 @@ export default function ChallengeFormFields({
                     </SelectContent>
                 </Select>
                 <input type="hidden" name="visibility" value={visibility} />
+            </FormField>
+
+            {/*
+                Kept mounted (and hidden via CSS) rather than conditionally
+                rendered: mounting the editor as the visibility Select closes
+                strands Radix's react-remove-scroll body lock and freezes page
+                scrolling. The backend nulls this for non-invite visibilities.
+            */}
+            <div className={requiresInvite === false ? 'hidden' : undefined}>
+                <FormField
+                    label="How to get involved"
+                    htmlFor="involvement_instructions"
+                    error={errors.involvement_instructions}
+                    required
+                >
+                    <p className="mb-2 text-sm text-neutral-500 dark:text-neutral-400">
+                        Shown to people who aren’t yet eligible to submit,
+                        explaining how they can take part.
+                    </p>
+                    <MarkdownEditor
+                        name="involvement_instructions"
+                        defaultValue={
+                            defaultValues?.involvement_instructions ?? undefined
+                        }
+                        height={160}
+                    />
+                </FormField>
+            </div>
+
+            <FormField
+                label="Participant instructions"
+                htmlFor="participant_instructions"
+                error={errors.participant_instructions}
+                optional
+            >
+                <p className="mb-2 text-sm text-neutral-500 dark:text-neutral-400">
+                    Private instructions shown only to entrants once they’re
+                    eligible to take part.
+                </p>
+                <MarkdownEditor
+                    name="participant_instructions"
+                    defaultValue={
+                        defaultValues?.participant_instructions ?? undefined
+                    }
+                    height={160}
+                />
             </FormField>
         </div>
     );

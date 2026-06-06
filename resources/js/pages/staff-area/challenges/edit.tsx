@@ -4,6 +4,7 @@ import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { SubmitButton } from '@/components/ui/submit-button';
 import StaffAreaLayout from '@/layouts/staff-area/layout';
+import { CHALLENGE_VISIBILITY } from '@/lib/challenge-utils';
 import { index, update } from '@/routes/staff/challenges';
 import { index as inviteCodesIndex } from '@/routes/staff/challenges/invite-codes';
 import { Form, Head, Link } from '@inertiajs/react';
@@ -71,6 +72,10 @@ export default function ChallengesEdit({
                                         slug: challenge.slug,
                                         tagline: challenge.tagline,
                                         description: challenge.description,
+                                        involvement_instructions:
+                                            challenge.involvement_instructions,
+                                        participant_instructions:
+                                            challenge.participant_instructions,
                                         starts_at: challenge.starts_at,
                                         ends_at: challenge.ends_at,
                                         is_active: challenge.is_active,
@@ -87,7 +92,8 @@ export default function ChallengesEdit({
 
                                 <div className="mt-6 flex items-center border-t pt-6 dark:border-neutral-800">
                                     {challenge.visibility !== undefined &&
-                                        challenge.visibility !== 1 && (
+                                        challenge.visibility !==
+                                            CHALLENGE_VISIBILITY.Public && (
                                             <Button
                                                 variant="outline"
                                                 type="button"

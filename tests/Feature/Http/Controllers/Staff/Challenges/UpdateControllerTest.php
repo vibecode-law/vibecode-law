@@ -286,9 +286,138 @@ describe('update', function () {
             'tagline' => $challenge->tagline,
             'description' => $challenge->description,
             'visibility' => ChallengeVisibility::InviteToViewAndSubmit->value,
+            'involvement_instructions' => 'Request an invite code to take part.',
         ])->assertRedirect();
 
         expect($challenge->refresh()->visibility)->toBe(ChallengeVisibility::InviteToViewAndSubmit);
+    });
+
+    test('forces is_featured to false when visibility is invite to view and submit', function () {
+        $admin = User::factory()->admin()->create();
+        $challenge = Challenge::factory()->featured()->create();
+
+        actingAs($admin);
+
+        patch(route('staff.challenges.update', $challenge), [
+            'title' => $challenge->title,
+            'slug' => $challenge->slug,
+            'tagline' => $challenge->tagline,
+            'description' => $challenge->description,
+            'visibility' => ChallengeVisibility::InviteToViewAndSubmit->value,
+            'is_featured' => true,
+            'involvement_instructions' => 'Request an invite code to take part.',
+        ])->assertRedirect();
+
+        $challenge->refresh();
+
+        expect($challenge->is_featured)->toBeFalse()
+            ->and($challenge->visibility)->toBe(ChallengeVisibility::InviteToViewAndSubmit);
+    });
+
+    test('requires involvement_instructions when visibility requires an invite to submit', function (int $visibility) {
+        $admin = User::factory()->admin()->create();
+        $challenge = Challenge::factory()->create();
+
+        actingAs($admin);
+
+        patch(route('staff.challenges.update', $challenge), [
+            'title' => $challenge->title,
+            'slug' => $challenge->slug,
+            'tagline' => $challenge->tagline,
+            'description' => $challenge->description,
+            'visibility' => $visibility,
+        ])->assertSessionHasErrors(['involvement_instructions']);
+    })->with([
+        'invite to submit' => [ChallengeVisibility::InviteToSubmit->value],
+        'invite to view and submit' => [ChallengeVisibility::InviteToViewAndSubmit->value],
+    ]);
+
+    test('does not require involvement_instructions for public challenges', function () {
+        $admin = User::factory()->admin()->create();
+        $challenge = Challenge::factory()->create();
+
+        actingAs($admin);
+
+        patch(route('staff.challenges.update', $challenge), [
+            'title' => $challenge->title,
+            'slug' => $challenge->slug,
+            'tagline' => $challenge->tagline,
+            'description' => $challenge->description,
+            'visibility' => ChallengeVisibility::Public->value,
+        ])->assertSessionDoesntHaveErrors(['involvement_instructions']);
+    });
+
+    test('nulls involvement_instructions when visibility does not require an invite', function () {
+        $admin = User::factory()->admin()->create();
+        $challenge = Challenge::factory()->inviteToSubmit()->create();
+
+        actingAs($admin);
+
+        patch(route('staff.challenges.update', $challenge), [
+            'title' => $challenge->title,
+            'slug' => $challenge->slug,
+            'tagline' => $challenge->tagline,
+            'description' => $challenge->description,
+            'visibility' => ChallengeVisibility::Public->value,
+            'involvement_instructions' => 'Left over from when it needed an invite.',
+        ])->assertRedirect();
+
+        expect($challenge->refresh()->involvement_instructions)->toBeNull();
+    });
+
+    test('updates participant_instructions for a public challenge', function () {
+        $admin = User::factory()->admin()->create();
+        $challenge = Challenge::factory()->create();
+
+        actingAs($admin);
+
+        patch(route('staff.challenges.update', $challenge), [
+            'title' => $challenge->title,
+            'slug' => $challenge->slug,
+            'tagline' => $challenge->tagline,
+            'description' => $challenge->description,
+            'visibility' => ChallengeVisibility::Public->value,
+            'participant_instructions' => 'Submit via the form by Friday.',
+        ])->assertRedirect();
+
+        expect($challenge->refresh()->participant_instructions)->toBe('Submit via the form by Friday.');
+    });
+
+    test('updates involvement_instructions', function () {
+        $admin = User::factory()->admin()->create();
+        $challenge = Challenge::factory()->create();
+
+        actingAs($admin);
+
+        patch(route('staff.challenges.update', $challenge), [
+            'title' => $challenge->title,
+            'slug' => $challenge->slug,
+            'tagline' => $challenge->tagline,
+            'description' => $challenge->description,
+            'visibility' => ChallengeVisibility::InviteToSubmit->value,
+            'involvement_instructions' => 'Email us for an invite code.',
+        ])->assertRedirect();
+
+        expect($challenge->refresh()->involvement_instructions)->toBe('Email us for an invite code.');
+    });
+
+    test('allows is_featured to be true for invite to submit visibility', function () {
+        $admin = User::factory()->admin()->create();
+        $challenge = Challenge::factory()->create();
+
+        actingAs($admin);
+
+        patch(route('staff.challenges.update', $challenge), [
+            'title' => $challenge->title,
+            'slug' => $challenge->slug,
+            'tagline' => $challenge->tagline,
+            'description' => $challenge->description,
+            'visibility' => ChallengeVisibility::InviteToSubmit->value,
+            'is_featured' => true,
+            'involvement_instructions' => 'Request an invite code to take part.',
+        ])->assertRedirect();
+
+        expect($challenge->refresh()->is_featured)->toBeTrue();
     });
 
     test('updates challenge dates', function () {

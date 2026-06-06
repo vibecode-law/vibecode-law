@@ -1,5 +1,11 @@
 export type ChallengeStatus = 'in_progress' | 'upcoming' | 'ended';
 
+export const CHALLENGE_VISIBILITY = {
+    Public: 1,
+    InviteToSubmit: 2,
+    InviteToViewAndSubmit: 3,
+} as const satisfies Record<string, App.Enums.ChallengeVisibility>;
+
 export function getChallengeStatus(
     startsAt: string | null,
     endsAt: string | null,

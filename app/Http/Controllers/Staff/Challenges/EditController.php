@@ -27,6 +27,8 @@ class EditController extends BaseController
                     'title',
                     'tagline',
                     'description',
+                    'involvement_instructions',
+                    'participant_instructions',
                     'starts_at',
                     'ends_at',
                     'is_active',

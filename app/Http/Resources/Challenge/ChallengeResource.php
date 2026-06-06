@@ -29,6 +29,14 @@ class ChallengeResource extends Resource
 
     public Lazy|string $description_html;
 
+    public Lazy|string|null $involvement_instructions;
+
+    public Lazy|string|null $involvement_instructions_html;
+
+    public Lazy|string|null $participant_instructions;
+
+    public Lazy|string|null $participant_instructions_html;
+
     #[WithCast(DateTimeInterfaceCast::class)]
     public ?CarbonInterface $starts_at;
 
@@ -69,6 +77,20 @@ class ChallengeResource extends Resource
                 markdown: $challenge->description,
                 cacheKey: "challenge|{$challenge->id}|description",
             )),
+            'involvement_instructions' => Lazy::create(fn () => $challenge->involvement_instructions)->defaultIncluded(),
+            'involvement_instructions_html' => Lazy::create(fn () => $challenge->involvement_instructions === null
+                ? null
+                : $markdown->render(
+                    markdown: $challenge->involvement_instructions,
+                    cacheKey: "challenge|{$challenge->id}|involvement_instructions",
+                )),
+            'participant_instructions' => Lazy::create(fn () => $challenge->participant_instructions)->defaultIncluded(),
+            'participant_instructions_html' => Lazy::create(fn () => $challenge->participant_instructions === null
+                ? null
+                : $markdown->render(
+                    markdown: $challenge->participant_instructions,
+                    cacheKey: "challenge|{$challenge->id}|participant_instructions",
+                )),
             'starts_at' => $challenge->starts_at,
             'ends_at' => $challenge->ends_at,
             'is_active' => $challenge->is_active,

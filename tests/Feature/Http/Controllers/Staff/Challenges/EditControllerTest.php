@@ -80,6 +80,8 @@ describe('data', function () {
                     ->where('title', $challenge->title)
                     ->where('tagline', $challenge->tagline)
                     ->where('description', $challenge->description)
+                    ->where('involvement_instructions', null)
+                    ->where('participant_instructions', null)
                     ->where('starts_at', $challenge->starts_at->toIso8601String())
                     ->where('ends_at', $challenge->ends_at->toIso8601String())
                     ->where('is_active', true)
