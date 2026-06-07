@@ -4,6 +4,7 @@ use App\Enums\ChallengeVisibility;
 use App\Mcp\Servers\StaffServer;
 use App\Mcp\Tools\Staff\Challenge\ListChallengesTool;
 use App\Models\Challenge\Challenge;
+use App\Models\Challenge\SubChallenge;
 use App\Models\Showcase\Showcase;
 
 it('returns a condensed index with only the expected fields per item', function (): void {
@@ -116,6 +117,47 @@ it('returns additional columns when requested', function (): void {
                 'id', 'slug', 'title', 'tagline', 'starts_at', 'ends_at', 'is_active', 'visibility',
                 'description', 'showcases_count', 'total_upvotes_count',
             ]);
+
+            return true;
+        });
+});
+
+it('returns sub_challenges when requested as a column', function (): void {
+    $challenge = Challenge::factory()->create();
+    $subChallenge = SubChallenge::factory()->forChallenge($challenge)->create([
+        'name' => 'Drafting Track',
+        'order' => 0,
+    ]);
+
+    StaffServer::tool(ListChallengesTool::class, ['columns' => ['sub_challenges']])
+        ->assertOk()
+        ->assertStructuredContent(function ($json) use ($challenge, $subChallenge): bool {
+            $json->where('items.0.id', $challenge->id)
+                ->where('items.0.sub_challenges.0.id', $subChallenge->id)
+                ->where('items.0.sub_challenges.0.name', 'Drafting Track')
+                ->where('total_count', 1)
+                ->where('next_cursor', null);
+
+            $first = $json->toArray()['items'][0];
+            expect(array_keys($first))->toEqualCanonicalizing([
+                'id', 'slug', 'title', 'tagline', 'starts_at', 'ends_at', 'is_active', 'visibility',
+                'sub_challenges',
+            ]);
+
+            return true;
+        });
+});
+
+it('omits sub_challenges when not requested', function (): void {
+    $challenge = Challenge::factory()->create();
+    SubChallenge::factory()->forChallenge($challenge)->create();
+
+    StaffServer::tool(ListChallengesTool::class)
+        ->assertOk()
+        ->assertStructuredContent(function ($json): bool {
+            $json->where('total_count', 1)->etc();
+
+            expect(array_keys($json->toArray()['items'][0]))->not->toContain('sub_challenges');
 
             return true;
         });

@@ -18,6 +18,9 @@ class ListChallengeShowcasesSchema
                 ->min(1)
                 ->required()
                 ->description('The stable challenge id.'),
+            'sub_challenge_id' => $schema->integer()
+                ->min(1)
+                ->description('Filter the attached showcases to those entered under a specific sub-challenge of this challenge.'),
             'status' => $schema->string()
                 ->enum(['Draft', 'Pending', 'Approved', 'Rejected'])
                 ->description('Filter the attached showcases by status.'),

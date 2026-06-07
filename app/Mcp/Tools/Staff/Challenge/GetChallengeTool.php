@@ -24,13 +24,14 @@ class GetChallengeTool extends Tool
         $challenge = Challenge::query()
             ->withTotalUpvotesCount()
             ->withCount('showcases')
+            ->with('subChallenges')
             ->find($validated['id']);
 
         if ($challenge === null) {
             return Response::error("Challenge with id [{$validated['id']}] was not found.");
         }
 
-        return Response::structured(ChallengeDetailResource::from($challenge)->toArray());
+        return Response::structured(ChallengeDetailResource::from($challenge)->include('sub_challenges')->toArray());
     }
 
     /**

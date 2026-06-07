@@ -42,7 +42,7 @@ enum ShowcaseColumn: string
             self::ImageUrls => 'images',
             self::PracticeAreas => 'practiceAreas',
             self::User => 'user',
-            self::Challenges => 'challenges',
+            self::Challenges => 'challenges.subChallenges',
             default => null,
         };
     }

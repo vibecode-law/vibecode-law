@@ -19,6 +19,7 @@ class ListChallengeShowcasesRequest
     {
         return [
             'challenge_id' => ['required', 'integer', 'min:1'],
+            'sub_challenge_id' => ['nullable', 'integer', 'min:1'],
             'status' => ['nullable', Rule::in(array_map(fn (ShowcaseStatus $case): string => $case->name, ShowcaseStatus::cases()))],
             'columns' => ['nullable', 'array'],
             'columns.*' => [Rule::in(ShowcaseColumn::values())],

@@ -145,7 +145,7 @@ export function InlineRichText({
                         onChange={handleChange}
                         placeholder={placeholder}
                         height={height}
-                        autoFocus
+                        autoFocus={isFocused}
                         onFocus={() => setIsFocused(true)}
                         onBlur={handleBlur}
                     />
