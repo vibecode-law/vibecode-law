@@ -18,7 +18,7 @@ class ShowcaseUpdateController extends BaseController
         $wasApproved = $showcase->isApproved();
         $isAdmin = $request->user()->is_superadmin;
 
-        $excludeFields = ['images', 'image_crops', 'image_crop_updates', 'practice_area_ids', 'thumbnail', 'remove_thumbnail', 'removed_images', 'submit', 'challenge_id'];
+        $excludeFields = ['images', 'image_crops', 'image_crop_updates', 'practice_area_ids', 'thumbnail', 'remove_thumbnail', 'removed_images', 'submit', 'challenge_id', 'sub_challenge_id'];
 
         if ($wasApproved === true) {
             $excludeFields[] = 'slug';
@@ -29,7 +29,9 @@ class ShowcaseUpdateController extends BaseController
         $showcase->practiceAreas()->sync($request->validated()['practice_area_ids']);
 
         $challengeId = $request->validated('challenge_id');
-        $showcase->challenges()->sync($challengeId !== null ? [$challengeId] : []);
+        $showcase->challenges()->sync($challengeId !== null
+            ? [$challengeId => ['sub_challenge_id' => $request->validated('sub_challenge_id')]]
+            : []);
 
         // Only revert to pending if a non-admin user edits an approved showcase
         if ($wasApproved === true && $isAdmin === false) {

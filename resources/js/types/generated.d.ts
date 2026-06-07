@@ -100,8 +100,16 @@ declare namespace App.Http.Resources.Challenge {
         thumbnail_rect_strings: { [key: string]: string } | null;
         thumbnail_crops?: { [key: string]: App.ValueObjects.ImageCrop } | null;
         organisation?: App.Http.Resources.Organisation.OrganisationResource | null;
+        sub_challenges?: Array<App.Http.Resources.Challenge.SubChallengeResource> | null;
         showcases_count?: number | null;
         total_upvotes_count?: number | null;
+    };
+    export type SubChallengeResource = {
+        id: number;
+        name: string;
+        tagline: string;
+        description: string | null;
+        order: number;
     };
 }
 declare namespace App.Http.Resources.Course {
@@ -266,6 +274,7 @@ declare namespace App.Http.Resources.Showcase {
         draft_id?: number | null;
         draft_status?: App.ValueObjects.FrontendEnum | null;
         youtube_id?: string | null;
+        sub_challenge_id?: number | null;
     };
 }
 declare namespace App.Http.Resources.User {

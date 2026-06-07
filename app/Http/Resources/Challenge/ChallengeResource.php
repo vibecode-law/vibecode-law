@@ -59,6 +59,9 @@ class ChallengeResource extends Resource
 
     public Lazy|OrganisationResource|null $organisation;
 
+    /** @var Lazy|array<int, SubChallengeResource>|null */
+    public Lazy|array|null $sub_challenges;
+
     public Lazy|int|null $showcases_count;
 
     public Lazy|int|null $total_upvotes_count;
@@ -105,6 +108,7 @@ class ChallengeResource extends Resource
                 )
                 : null),
             'organisation' => Lazy::whenLoaded('organisation', $challenge, fn () => OrganisationResource::fromModel($challenge->organisation)),
+            'sub_challenges' => Lazy::whenLoaded('subChallenges', $challenge, fn () => SubChallengeResource::collect($challenge->subChallenges)),
             'showcases_count' => Lazy::create(fn () => $challenge->showcases_count),
             'total_upvotes_count' => Lazy::create(fn () => $challenge->total_upvotes_count),
         ]);

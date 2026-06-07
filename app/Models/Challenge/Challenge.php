@@ -87,11 +87,20 @@ class Challenge extends Model
         return $this->belongsTo(User::class);
     }
 
+    /**
+     * @return BelongsToMany<Showcase, $this, ChallengeShowcase>
+     */
     public function showcases(): BelongsToMany
     {
         return $this->belongsToMany(related: Showcase::class)
             ->using(ChallengeShowcase::class)
+            ->withPivot('sub_challenge_id')
             ->withTimestamps();
+    }
+
+    public function subChallenges(): HasMany
+    {
+        return $this->hasMany(SubChallenge::class)->ordered();
     }
 
     public function inviteCodes(): HasMany
@@ -132,6 +141,11 @@ class Challenge extends Model
     public function isInviteOnly(): bool
     {
         return $this->visibility === ChallengeVisibility::InviteToViewAndSubmit;
+    }
+
+    public function hasSubChallenges(): bool
+    {
+        return $this->subChallenges()->exists();
     }
 
     public function requiresInviteToSubmit(): bool

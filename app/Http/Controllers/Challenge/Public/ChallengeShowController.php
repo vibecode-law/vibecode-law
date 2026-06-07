@@ -44,7 +44,7 @@ class ChallengeShowController extends BaseController
         $isEligibleToSubmit = $this->determineIsEligibleToSubmit(challenge: $challenge);
 
         $challengeResource = ChallengeResource::from($challenge)
-            ->include('description_html', 'involvement_instructions_html', 'organisation')
+            ->include('description_html', 'involvement_instructions_html', 'organisation', 'sub_challenges')
             ->exclude('description', 'involvement_instructions', 'participant_instructions');
 
         // Participant instructions are private to those who can enter.
@@ -55,7 +55,7 @@ class ChallengeShowController extends BaseController
         return Inertia::render('challenge/public/show', [
             'challenge' => $challengeResource,
             'showcases' => ShowcaseResource::collect($showcases, DataCollection::class)
-                ->only('id', 'slug', 'title', 'tagline', 'thumbnail_url', 'thumbnail_rect_string', 'upvotes_count', 'has_upvoted', 'view_count', 'user'),
+                ->only('id', 'slug', 'title', 'tagline', 'thumbnail_url', 'thumbnail_rect_string', 'upvotes_count', 'has_upvoted', 'view_count', 'user', 'sub_challenge_id'),
             'participants' => UserResource::collect($participants, DataCollection::class)
                 ->only('first_name', 'avatar', 'handle'),
             'canSubmit' => $this->determineCanSubmit(challenge: $challenge),
@@ -89,7 +89,7 @@ class ChallengeShowController extends BaseController
 
     private function loadChallenge(Challenge $challenge): Challenge
     {
-        $challenge->load('organisation');
+        $challenge->load('organisation', 'subChallenges');
 
         return $challenge;
     }
@@ -106,10 +106,7 @@ class ChallengeShowController extends BaseController
             'upvoters' => $userId === null ? null : fn ($query) => $query->where('user_id', $userId),
         ]);
 
-        $showcaseIds = $challenge->showcases()->pluck('showcases.id');
-
-        return Showcase::query()
-            ->whereIn('id', $showcaseIds)
+        return $challenge->showcases()
             ->publiclyVisible()
             ->with($relations)
             ->withCount('upvoters')

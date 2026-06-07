@@ -121,6 +121,7 @@ class Showcase extends Model
     {
         return $this->belongsToMany(related: Challenge::class)
             ->using(ChallengeShowcase::class)
+            ->withPivot('sub_challenge_id')
             ->withTimestamps();
     }
 

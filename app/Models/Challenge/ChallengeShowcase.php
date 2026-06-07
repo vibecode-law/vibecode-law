@@ -15,6 +15,10 @@ class ChallengeShowcase extends Pivot
 
     protected $table = 'challenge_showcase';
 
+    protected $fillable = [
+        'sub_challenge_id',
+    ];
+
     public function challenge(): BelongsTo
     {
         return $this->belongsTo(Challenge::class);
@@ -23,5 +27,10 @@ class ChallengeShowcase extends Pivot
     public function showcase(): BelongsTo
     {
         return $this->belongsTo(Showcase::class);
+    }
+
+    public function subChallenge(): BelongsTo
+    {
+        return $this->belongsTo(SubChallenge::class);
     }
 }

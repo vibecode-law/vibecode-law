@@ -4,6 +4,7 @@ use App\Actions\Showcase\SubmitShowcaseAction;
 use App\Enums\ShowcaseStatus;
 use App\Enums\SourceStatus;
 use App\Models\Challenge\Challenge;
+use App\Models\Challenge\SubChallenge;
 use App\Models\Showcase\Showcase;
 use App\Models\Showcase\ShowcaseImage;
 use App\Models\User;
@@ -13,8 +14,6 @@ use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Storage;
 
 use function Pest\Laravel\actingAs;
-use function Pest\Laravel\assertDatabaseHas;
-use function Pest\Laravel\assertDatabaseMissing;
 use function Pest\Laravel\put;
 
 describe('auth', function () {
@@ -546,19 +545,15 @@ describe('showcase updates', function () {
 
         $showcase->refresh();
 
-        assertDatabaseHas('showcases', [
-            'id' => $showcase->id,
-            'title' => 'Updated Title',
-            'tagline' => 'Updated tagline',
-            'description' => 'Updated description',
-            'key_features' => 'Updated key features',
-            'url' => 'https://updated.com',
-            'source_status' => SourceStatus::NotAvailable->value,
-            'source_url' => null,
-        ]);
-
         // Normal users cannot change slug - it remains unchanged
-        expect($showcase->slug)->toBe($originalSlug);
+        expect($showcase->title)->toBe('Updated Title')
+            ->and($showcase->tagline)->toBe('Updated tagline')
+            ->and($showcase->description)->toBe('Updated description')
+            ->and($showcase->key_features)->toBe('Updated key features')
+            ->and($showcase->url)->toBe('https://updated.com')
+            ->and($showcase->source_status)->toBe(SourceStatus::NotAvailable)
+            ->and($showcase->source_url)->toBeNull()
+            ->and($showcase->slug)->toBe($originalSlug);
     });
 
     test('updates showcase with all optional data', function () {
@@ -586,21 +581,17 @@ describe('showcase updates', function () {
 
         $showcase->refresh();
 
-        assertDatabaseHas('showcases', [
-            'id' => $showcase->id,
-            'title' => 'Updated Project',
-            'tagline' => 'Updated tagline',
-            'description' => 'Updated description',
-            'key_features' => '## Updated Features\n- New feature 1\n- New feature 2',
-            'help_needed' => 'Looking for designers to help with UI.',
-            'url' => 'https://updated.com',
-            'video_url' => 'https://youtube.com/watch?v=updated',
-            'source_status' => SourceStatus::OpenSource->value,
-            'source_url' => 'https://github.com/updated/repo',
-        ]);
-
         // Normal users cannot change slug - it remains unchanged
-        expect($showcase->slug)->toBe($originalSlug);
+        expect($showcase->title)->toBe('Updated Project')
+            ->and($showcase->tagline)->toBe('Updated tagline')
+            ->and($showcase->description)->toBe('Updated description')
+            ->and($showcase->key_features)->toBe('## Updated Features\n- New feature 1\n- New feature 2')
+            ->and($showcase->help_needed)->toBe('Looking for designers to help with UI.')
+            ->and($showcase->url)->toBe('https://updated.com')
+            ->and($showcase->video_url)->toBe('https://youtube.com/watch?v=updated')
+            ->and($showcase->source_status)->toBe(SourceStatus::OpenSource)
+            ->and($showcase->source_url)->toBe('https://github.com/updated/repo')
+            ->and($showcase->slug)->toBe($originalSlug);
     });
 
     test('clears help_needed when set to null', function () {
@@ -626,11 +617,8 @@ describe('showcase updates', function () {
 
         $showcase->refresh();
 
-        assertDatabaseHas('showcases', [
-            'id' => $showcase->id,
-            'key_features' => 'Updated key features',
-            'help_needed' => null,
-        ]);
+        expect($showcase->key_features)->toBe('Updated key features')
+            ->and($showcase->help_needed)->toBeNull();
     });
 
     test('preserves unchanged fields', function () {
@@ -642,6 +630,7 @@ describe('showcase updates', function () {
             'description' => 'Original description',
             'url' => 'https://original.com',
         ]);
+        $originalSlug = $showcase->slug;
 
         actingAs($user);
 
@@ -655,13 +644,13 @@ describe('showcase updates', function () {
             'source_status' => SourceStatus::NotAvailable->value,
         ]);
 
-        assertDatabaseHas('showcases', [
-            'id' => $showcase->id,
-            'title' => 'Updated Title',
-            'slug' => $showcase->slug, // Slug should be preserved (normal users can't change it)
-            'description' => 'Original description',
-            'url' => 'https://original.com',
-        ]);
+        $showcase->refresh();
+
+        // Slug should be preserved (normal users can't change it)
+        expect($showcase->title)->toBe('Updated Title')
+            ->and($showcase->slug)->toBe($originalSlug)
+            ->and($showcase->description)->toBe('Original description')
+            ->and($showcase->url)->toBe('https://original.com');
     });
 
     test('clears source_url when source_status changes to NotAvailable', function () {
@@ -689,14 +678,8 @@ describe('showcase updates', function () {
         ]);
 
         $showcase->refresh();
-        expect($showcase->source_status)->toBe(SourceStatus::NotAvailable);
-        expect($showcase->source_url)->toBeNull();
-
-        assertDatabaseHas('showcases', [
-            'id' => $showcase->id,
-            'source_status' => SourceStatus::NotAvailable->value,
-            'source_url' => null,
-        ]);
+        expect($showcase->source_status)->toBe(SourceStatus::NotAvailable)
+            ->and($showcase->source_url)->toBeNull();
     });
 });
 
@@ -1651,10 +1634,10 @@ describe('challenge attachment', function () {
             'challenge_id' => $challenge->id,
         ])->assertRedirect();
 
-        assertDatabaseHas('challenge_showcase', [
-            'challenge_id' => $challenge->id,
-            'showcase_id' => $showcase->id,
-        ]);
+        $showcase->load('challenges');
+
+        expect($showcase->challenges)->toHaveCount(1)
+            ->and($showcase->challenges->first()->id)->toBe($challenge->id);
     });
 
     test('removes challenge when challenge_id is not provided', function () {
@@ -1677,10 +1660,9 @@ describe('challenge attachment', function () {
             'source_status' => SourceStatus::NotAvailable->value,
         ])->assertRedirect();
 
-        assertDatabaseMissing('challenge_showcase', [
-            'challenge_id' => $challenge->id,
-            'showcase_id' => $showcase->id,
-        ]);
+        $showcase->load('challenges');
+
+        expect($showcase->challenges)->toHaveCount(0);
     });
 
     test('replaces existing challenge with a new one', function () {
@@ -1705,15 +1687,10 @@ describe('challenge attachment', function () {
             'challenge_id' => $newChallenge->id,
         ])->assertRedirect();
 
-        assertDatabaseMissing('challenge_showcase', [
-            'challenge_id' => $oldChallenge->id,
-            'showcase_id' => $showcase->id,
-        ]);
+        $showcase->load('challenges');
 
-        assertDatabaseHas('challenge_showcase', [
-            'challenge_id' => $newChallenge->id,
-            'showcase_id' => $showcase->id,
-        ]);
+        expect($showcase->challenges)->toHaveCount(1)
+            ->and($showcase->challenges->first()->id)->toBe($newChallenge->id);
     });
 
     test('rejects inactive challenge_id', function () {
@@ -1808,5 +1785,58 @@ describe('challenge attachment', function () {
             'source_status' => SourceStatus::NotAvailable->value,
             'challenge_id' => $challenge->id,
         ])->assertValid('challenge_id');
+    });
+});
+
+describe('sub-challenge attachment', function () {
+    test('syncs the sub-challenge id onto the pivot', function () {
+        $challenge = Challenge::factory()->active()->create();
+        $subChallenge = SubChallenge::factory()->forChallenge($challenge)->create();
+
+        /** @var User */
+        $user = User::factory()->create();
+        $showcase = Showcase::factory()->has(ShowcaseImage::factory(), 'images')->for($user, 'user')->create();
+
+        actingAs($user);
+
+        put(route('showcase.manage.update', $showcase), [
+            'practice_area_ids' => $showcase->practiceAreas->pluck('id')->toArray(),
+            'title' => 'Updated Title',
+            'tagline' => 'Updated tagline',
+            'description' => 'Updated description',
+            'key_features' => 'Updated key features',
+            'url' => 'https://updated.com',
+            'source_status' => SourceStatus::NotAvailable->value,
+            'challenge_id' => $challenge->id,
+            'sub_challenge_id' => $subChallenge->id,
+        ])->assertRedirect();
+
+        $showcase->load('challenges');
+
+        expect($showcase->challenges)->toHaveCount(1)
+            ->and($showcase->challenges->first()->id)->toBe($challenge->id)
+            ->and($showcase->challenges->first()->pivot->sub_challenge_id)->toBe($subChallenge->id);
+    });
+
+    test('requires a sub-challenge when the challenge has sub-challenges', function () {
+        $challenge = Challenge::factory()->active()->create();
+        SubChallenge::factory()->forChallenge($challenge)->create();
+
+        /** @var User */
+        $user = User::factory()->create();
+        $showcase = Showcase::factory()->has(ShowcaseImage::factory(), 'images')->for($user, 'user')->create();
+
+        actingAs($user);
+
+        put(route('showcase.manage.update', $showcase), [
+            'practice_area_ids' => $showcase->practiceAreas->pluck('id')->toArray(),
+            'title' => 'Updated Title',
+            'tagline' => 'Updated tagline',
+            'description' => 'Updated description',
+            'key_features' => 'Updated key features',
+            'url' => 'https://updated.com',
+            'source_status' => SourceStatus::NotAvailable->value,
+            'challenge_id' => $challenge->id,
+        ])->assertInvalid(['sub_challenge_id']);
     });
 });

@@ -3,6 +3,7 @@
 use App\Enums\ChallengeVisibility;
 use App\Models\Challenge\Challenge;
 use App\Models\Challenge\ChallengeInviteCode;
+use App\Models\Challenge\SubChallenge;
 use App\Models\User;
 use Inertia\Testing\AssertableInertia;
 
@@ -66,8 +67,9 @@ describe('challenge warning', function () {
             ->assertOk()
             ->assertInertia(fn (AssertableInertia $page) => $page
                 ->component('showcase/user/create')
-                ->where('challenge', null)
+                ->where('selectedChallengeId', null)
                 ->where('challengeWarning', "You don't have permission to submit to the {$challenge->title} challenge. An invite code with submit access is required.")
+                ->etc()
             );
     });
 
@@ -84,12 +86,13 @@ describe('challenge warning', function () {
             ->assertOk()
             ->assertInertia(fn (AssertableInertia $page) => $page
                 ->component('showcase/user/create')
-                ->where('challenge', null)
+                ->where('selectedChallengeId', null)
                 ->where('challengeWarning', "You don't have permission to submit to the {$challenge->title} challenge. An invite code with submit access is required.")
+                ->etc()
             );
     });
 
-    test('returns no warning when user has submit access', function () {
+    test('preselects challenge when user has submit access', function () {
         /** @var User */
         $user = User::factory()->create();
         $challenge = Challenge::factory()->active()->inviteToSubmit()->create();
@@ -102,12 +105,13 @@ describe('challenge warning', function () {
             ->assertOk()
             ->assertInertia(fn (AssertableInertia $page) => $page
                 ->component('showcase/user/create')
-                ->where('challenge.title', $challenge->title)
+                ->where('selectedChallengeId', $challenge->id)
                 ->where('challengeWarning', null)
+                ->etc()
             );
     });
 
-    test('returns no warning for public challenge', function () {
+    test('preselects public challenge', function () {
         /** @var User */
         $user = User::factory()->create();
         $challenge = Challenge::factory()->active()->create(['visibility' => ChallengeVisibility::Public]);
@@ -118,8 +122,9 @@ describe('challenge warning', function () {
             ->assertOk()
             ->assertInertia(fn (AssertableInertia $page) => $page
                 ->component('showcase/user/create')
-                ->where('challenge.title', $challenge->title)
+                ->where('selectedChallengeId', $challenge->id)
                 ->where('challengeWarning', null)
+                ->etc()
             );
     });
 
@@ -134,8 +139,9 @@ describe('challenge warning', function () {
             ->assertOk()
             ->assertInertia(fn (AssertableInertia $page) => $page
                 ->component('showcase/user/create')
-                ->where('challenge', null)
+                ->where('selectedChallengeId', null)
                 ->where('challengeWarning', "The {$challenge->title} challenge is not open for submissions yet.")
+                ->etc()
             );
     });
 
@@ -149,8 +155,79 @@ describe('challenge warning', function () {
             ->assertOk()
             ->assertInertia(fn (AssertableInertia $page) => $page
                 ->component('showcase/user/create')
-                ->where('challenge', null)
+                ->where('selectedChallengeId', null)
                 ->where('challengeWarning', null)
+                ->etc()
+            );
+    });
+});
+
+describe('available challenges', function () {
+    test('includes open public challenges with their sub-challenges', function () {
+        /** @var User */
+        $user = User::factory()->create();
+        $challenge = Challenge::factory()->ongoing()->create(['visibility' => ChallengeVisibility::Public]);
+        $subChallenge = SubChallenge::factory()->forChallenge($challenge)->create();
+
+        actingAs($user);
+
+        get(route('showcase.manage.create'))
+            ->assertOk()
+            ->assertInertia(fn (AssertableInertia $page) => $page
+                ->component('showcase/user/create')
+                ->has('availableChallenges', 1, fn (AssertableInertia $item) => $item
+                    ->where('id', $challenge->id)
+                    ->where('title', $challenge->title)
+                    ->where('slug', $challenge->slug)
+                    ->has('sub_challenges', 1, fn (AssertableInertia $sub) => $sub
+                        ->where('id', $subChallenge->id)
+                        ->where('name', $subChallenge->name)
+                        ->where('tagline', $subChallenge->tagline)
+                        ->where('description', $subChallenge->description)
+                        ->where('order', $subChallenge->order)
+                    )
+                )
+                ->etc()
+            );
+    });
+
+    test('excludes inactive, closed, and non-invited challenges', function () {
+        /** @var User */
+        $user = User::factory()->create();
+
+        Challenge::factory()->create(['is_active' => false, 'visibility' => ChallengeVisibility::Public]);
+        Challenge::factory()->ended()->create(['visibility' => ChallengeVisibility::Public]);
+        Challenge::factory()->active()->inviteToSubmit()->create();
+
+        actingAs($user);
+
+        get(route('showcase.manage.create'))
+            ->assertOk()
+            ->assertInertia(fn (AssertableInertia $page) => $page
+                ->component('showcase/user/create')
+                ->where('availableChallenges', [])
+                ->etc()
+            );
+    });
+
+    test('includes invite-to-submit challenges the user can submit to', function () {
+        /** @var User */
+        $user = User::factory()->create();
+        $challenge = Challenge::factory()->ongoing()->inviteToSubmit()->create();
+        $inviteCode = ChallengeInviteCode::factory()->forChallenge($challenge)->create();
+        $user->acceptedChallengeInviteCodes()->attach($inviteCode);
+
+        actingAs($user);
+
+        get(route('showcase.manage.create'))
+            ->assertOk()
+            ->assertInertia(fn (AssertableInertia $page) => $page
+                ->component('showcase/user/create')
+                ->has('availableChallenges', 1, fn (AssertableInertia $item) => $item
+                    ->where('id', $challenge->id)
+                    ->etc()
+                )
+                ->etc()
             );
     });
 });

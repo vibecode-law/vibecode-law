@@ -4,17 +4,6 @@ import { Breadcrumbs } from '@/components/navigation/breadcrumbs';
 import { ApproveShowcaseButton } from '@/components/showcase/approve-showcase-button';
 import { RejectShowcaseModal } from '@/components/showcase/reject-showcase-modal';
 import { ShowcaseStatusBadge } from '@/components/showcase/showcase-status-badge';
-import {
-    AlertDialog,
-    AlertDialogAction,
-    AlertDialogCancel,
-    AlertDialogContent,
-    AlertDialogDescription,
-    AlertDialogFooter,
-    AlertDialogHeader,
-    AlertDialogTitle,
-    AlertDialogTrigger,
-} from '@/components/ui/alert-dialog';
 import { FancySelect } from '@/components/ui/fancy-select';
 import { FancyTextInput } from '@/components/ui/fancy-text-input';
 import { ImageUploadGallery } from '@/components/ui/image-upload-gallery';
@@ -54,8 +43,8 @@ import {
 import { useState } from 'react';
 import { SaveButtonGroup } from './save-button-group';
 import {
+    type AvailableChallenge,
     type BreadcrumbItem,
-    type ChallengeContext,
     type ImageDeletionConfig,
     type ModerationUrls,
     type ShowcaseFormData,
@@ -77,7 +66,9 @@ interface ShowcaseFormProps {
     pageTitle: string;
     showSlugField: boolean;
     canSubmit: boolean;
-    challenge?: ChallengeContext;
+    availableChallenges?: AvailableChallenge[];
+    selectedChallengeId?: number | null;
+    selectedSubChallengeId?: number | null;
     challengeWarning?: string;
 }
 
@@ -94,7 +85,9 @@ export function ShowcaseForm({
     pageTitle,
     showSlugField,
     canSubmit,
-    challenge,
+    availableChallenges,
+    selectedChallengeId,
+    selectedSubChallengeId,
     challengeWarning,
 }: ShowcaseFormProps) {
     const [title, setTitle] = useState(initialData.title);
@@ -115,7 +108,39 @@ export function ShowcaseForm({
     const [selectedPracticeAreas, setSelectedPracticeAreas] = useState<
         (number | string)[]
     >(initialData.selectedPracticeAreaIds);
-    const [activeChallenge, setActiveChallenge] = useState(challenge);
+
+    const NO_CHALLENGE = 'none';
+    const hasChallengeSelector =
+        availableChallenges !== undefined && availableChallenges.length > 0;
+    const [challengeValue, setChallengeValue] = useState(
+        selectedChallengeId !== undefined && selectedChallengeId !== null
+            ? String(selectedChallengeId)
+            : NO_CHALLENGE,
+    );
+    const [subChallengeValue, setSubChallengeValue] = useState(
+        selectedSubChallengeId !== undefined && selectedSubChallengeId !== null
+            ? String(selectedSubChallengeId)
+            : '',
+    );
+
+    const selectedChallenge = (availableChallenges ?? []).find(
+        (item) => String(item.id) === challengeValue,
+    );
+    const subChallengeOptions = selectedChallenge?.sub_challenges ?? [];
+    const showSubChallengeSelector = subChallengeOptions.length > 0;
+
+    const challengeOptions = [
+        { value: NO_CHALLENGE, label: 'None' },
+        ...(availableChallenges ?? []).map((item) => ({
+            value: String(item.id),
+            label: item.title,
+        })),
+    ];
+
+    const handleChallengeChange = (value: string) => {
+        setChallengeValue(value);
+        setSubChallengeValue('');
+    };
 
     const showSourceUrl = sourceStatus === '2' || sourceStatus === '3';
 
@@ -289,85 +314,83 @@ export function ShowcaseForm({
                                                 </InfoBox>
                                             )}
 
-                                        {/* Challenge tip */}
-                                        {activeChallenge !== undefined && (
-                                            <InfoBox
-                                                variant="info"
-                                                icon={
-                                                    <Trophy className="size-5" />
-                                                }
-                                            >
-                                                <div className="flex items-center justify-between gap-2">
-                                                    <p>
-                                                        You&apos;re entering the{' '}
-                                                        <strong>
-                                                            {
-                                                                activeChallenge.title
-                                                            }
-                                                        </strong>{' '}
-                                                        challenge.
-                                                    </p>
-                                                    <AlertDialog>
-                                                        <AlertDialogTrigger
-                                                            asChild
-                                                        >
-                                                            <button
-                                                                type="button"
-                                                                className="shrink-0 rounded-md p-1 hover:bg-blue-100 dark:hover:bg-blue-800/40"
-                                                                aria-label="Remove challenge"
-                                                            >
-                                                                <X className="size-4" />
-                                                            </button>
-                                                        </AlertDialogTrigger>
-                                                        <AlertDialogContent>
-                                                            <AlertDialogHeader>
-                                                                <AlertDialogTitle>
-                                                                    Remove
-                                                                    challenge?
-                                                                </AlertDialogTitle>
-                                                                <AlertDialogDescription>
-                                                                    Your
-                                                                    showcase
-                                                                    will no
-                                                                    longer be
-                                                                    linked to
-                                                                    the{' '}
-                                                                    <strong>
-                                                                        {
-                                                                            activeChallenge.title
-                                                                        }
-                                                                    </strong>{' '}
-                                                                    challenge.
-                                                                </AlertDialogDescription>
-                                                            </AlertDialogHeader>
-                                                            <AlertDialogFooter>
-                                                                <AlertDialogCancel>
-                                                                    Keep
-                                                                </AlertDialogCancel>
-                                                                <AlertDialogAction
-                                                                    onClick={() =>
-                                                                        setActiveChallenge(
-                                                                            undefined,
-                                                                        )
-                                                                    }
-                                                                >
-                                                                    Remove
-                                                                </AlertDialogAction>
-                                                            </AlertDialogFooter>
-                                                        </AlertDialogContent>
-                                                    </AlertDialog>
+                                        {/* Challenge selection */}
+                                        {hasChallengeSelector === true && (
+                                            <div className="space-y-8">
+                                                <div>
+                                                    <FancySelect
+                                                        name="challenge_select"
+                                                        value={challengeValue}
+                                                        onValueChange={
+                                                            handleChallengeChange
+                                                        }
+                                                        options={
+                                                            challengeOptions
+                                                        }
+                                                        placeholder="None"
+                                                        label="Challenge"
+                                                        labelIcon={
+                                                            <Trophy className="size-5" />
+                                                        }
+                                                        description="Optional. Enter this showcase into an open challenge. For details, see the challenge listing on the 'Inspiration' page."
+                                                        error={
+                                                            errors.challenge_id
+                                                        }
+                                                        showOptionalLabel={
+                                                            false
+                                                        }
+                                                    />
+                                                    <input
+                                                        type="hidden"
+                                                        name="challenge_id"
+                                                        value={
+                                                            challengeValue ===
+                                                            NO_CHALLENGE
+                                                                ? ''
+                                                                : challengeValue
+                                                        }
+                                                    />
                                                 </div>
-                                                <input
-                                                    type="hidden"
-                                                    name="challenge_id"
-                                                    value={activeChallenge.id}
-                                                />
-                                                <InputError
-                                                    message={
-                                                        errors.challenge_id
-                                                    }
-                                                />
-                                            </InfoBox>
+
+                                                {showSubChallengeSelector ===
+                                                    true && (
+                                                    <div>
+                                                        <FancySelect
+                                                            name="sub_challenge_select"
+                                                            value={
+                                                                subChallengeValue
+                                                            }
+                                                            onValueChange={
+                                                                setSubChallengeValue
+                                                            }
+                                                            options={subChallengeOptions.map(
+                                                                (sub) => ({
+                                                                    value: String(
+                                                                        sub.id,
+                                                                    ),
+                                                                    label: sub.name,
+                                                                }),
+                                                            )}
+                                                            placeholder="Select a sub-challenge"
+                                                            label="Sub-challenge"
+                                                            labelIcon={
+                                                                <Trophy className="size-5" />
+                                                            }
+                                                            error={
+                                                                errors.sub_challenge_id
+                                                            }
+                                                            required
+                                                        />
+                                                        <input
+                                                            type="hidden"
+                                                            name="sub_challenge_id"
+                                                            value={
+                                                                subChallengeValue
+                                                            }
+                                                        />
+                                                    </div>
+                                                )}
+                                            </div>
                                         )}
 
                                         {/* Title Section */}
@@ -531,7 +554,7 @@ export function ShowcaseForm({
                                                 <div className="space-y-2">
                                                     <Label className="flex items-center gap-2 text-xl font-semibold text-neutral-900 dark:text-white">
                                                         <Image className="size-5" />
-                                                        Thumbnail
+                                                        Logo
                                                     </Label>
                                                     <p className="text-sm text-neutral-500 dark:text-neutral-400">
                                                         A square image used in

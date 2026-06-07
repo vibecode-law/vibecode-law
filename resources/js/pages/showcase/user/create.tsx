@@ -5,22 +5,21 @@ import ApproveController from '@/actions/App/Http/Controllers/Staff/ShowcaseMode
 import RejectController from '@/actions/App/Http/Controllers/Staff/ShowcaseModeration/RejectController';
 import UserShowcaseIndexController from '@/actions/App/Http/Controllers/User/UserShowcaseIndexController';
 import { ShowcaseForm } from '@/components/showcase/form/showcase-form';
-import { normalizeShowcase } from '@/components/showcase/form/types';
+import {
+    type AvailableChallenge,
+    normalizeShowcase,
+} from '@/components/showcase/form/types';
 import { usePermissions } from '@/hooks/use-permissions';
 import { home } from '@/routes';
 import { type FrontendEnum } from '@/types';
-
-interface ChallengeContext {
-    id: number;
-    title: string;
-    slug: string;
-}
 
 interface CreateProps {
     showcase?: App.Http.Resources.Showcase.ShowcaseResource;
     practiceAreas: App.Http.Resources.PracticeAreaResource[];
     sourceStatuses: FrontendEnum<number>[];
-    challenge?: ChallengeContext | null;
+    availableChallenges?: AvailableChallenge[];
+    selectedChallengeId?: number | null;
+    selectedSubChallengeId?: number | null;
     challengeWarning?: string | null;
 }
 
@@ -33,7 +32,9 @@ function CreateWrapper({
     showcase,
     practiceAreas,
     sourceStatuses,
-    challenge,
+    availableChallenges,
+    selectedChallengeId,
+    selectedSubChallengeId,
     challengeWarning,
 }: CreateProps) {
     const { hasPermission } = usePermissions();
@@ -112,7 +113,9 @@ function CreateWrapper({
             pageTitle={pageTitle}
             showSlugField={canEditSlug}
             canSubmit={canSubmit}
-            challenge={challenge ?? undefined}
+            availableChallenges={availableChallenges}
+            selectedChallengeId={selectedChallengeId}
+            selectedSubChallengeId={selectedSubChallengeId}
             challengeWarning={challengeWarning ?? undefined}
         />
     );
