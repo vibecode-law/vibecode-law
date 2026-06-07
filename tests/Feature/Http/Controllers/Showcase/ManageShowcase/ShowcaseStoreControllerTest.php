@@ -7,6 +7,7 @@ use App\Enums\SourceStatus;
 use App\Jobs\MarketingEmail\AddShowcaseTagToSubscriberJob;
 use App\Models\Challenge\Challenge;
 use App\Models\Challenge\ChallengeInviteCode;
+use App\Models\Challenge\SubChallenge;
 use App\Models\PracticeArea;
 use App\Models\Showcase\Showcase;
 use App\Models\User;
@@ -15,7 +16,6 @@ use Illuminate\Support\Facades\Queue;
 use Illuminate\Support\Facades\Storage;
 
 use function Pest\Laravel\actingAs;
-use function Pest\Laravel\assertDatabaseHas;
 use function Pest\Laravel\post;
 
 beforeEach(function () {
@@ -380,23 +380,17 @@ describe('showcase creation', function () {
 
         $response->assertRedirect();
 
-        $showcase = Showcase::where('title', 'My Awesome Project')->first();
+        $showcase = Showcase::where('title', 'My Awesome Project')->firstOrFail();
+        $showcase->load('practiceAreas');
 
-        assertDatabaseHas('showcases', [
-            'user_id' => $user->id,
-            'title' => 'My Awesome Project',
-            'tagline' => 'A great project tagline',
-            'description' => 'This is a great project description',
-            'key_features' => 'Some key features',
-            'url' => 'https://example.com',
-        ]);
-
-        expect($showcase->slug)->toMatch('/^my-awesome-project-\d{6}$/');
-
-        assertDatabaseHas('practice_area_showcase', [
-            'showcase_id' => $showcase->id,
-            'practice_area_id' => $practiceArea->id,
-        ]);
+        expect($showcase->user_id)->toBe($user->id)
+            ->and($showcase->title)->toBe('My Awesome Project')
+            ->and($showcase->tagline)->toBe('A great project tagline')
+            ->and($showcase->description)->toBe('This is a great project description')
+            ->and($showcase->key_features)->toBe('Some key features')
+            ->and($showcase->url)->toBe('https://example.com')
+            ->and($showcase->slug)->toMatch('/^my-awesome-project-\d{6}$/')
+            ->and($showcase->practiceAreas->pluck('id')->all())->toBe([$practiceArea->id]);
     });
 
     test('creates showcase with all optional data', function () {
@@ -424,19 +418,16 @@ describe('showcase creation', function () {
 
         $response->assertRedirect();
 
-        $showcase = Showcase::where('title', 'My Awesome Project')->first();
+        $showcase = Showcase::where('title', 'My Awesome Project')->firstOrFail();
 
-        assertDatabaseHas('showcases', [
-            'user_id' => $user->id,
-            'title' => 'My Awesome Project',
-            'tagline' => 'A great project tagline',
-            'description' => 'This is a great project description',
-            'key_features' => '## Key Features\n- Feature 1\n- Feature 2',
-            'help_needed' => 'Looking for contributors to help with documentation.',
-            'url' => 'https://example.com',
-        ]);
-
-        expect($showcase->slug)->toMatch('/^my-awesome-project-\d{6}$/');
+        expect($showcase->user_id)->toBe($user->id)
+            ->and($showcase->title)->toBe('My Awesome Project')
+            ->and($showcase->tagline)->toBe('A great project tagline')
+            ->and($showcase->description)->toBe('This is a great project description')
+            ->and($showcase->key_features)->toBe('## Key Features\n- Feature 1\n- Feature 2')
+            ->and($showcase->help_needed)->toBe('Looking for contributors to help with documentation.')
+            ->and($showcase->url)->toBe('https://example.com')
+            ->and($showcase->slug)->toMatch('/^my-awesome-project-\d{6}$/');
     });
 
     test('creates showcase with help_needed as null', function () {
@@ -464,13 +455,10 @@ describe('showcase creation', function () {
 
         $response->assertRedirect();
 
-        $showcase = Showcase::where('title', 'My Awesome Project')->first();
+        $showcase = Showcase::where('title', 'My Awesome Project')->firstOrFail();
 
-        assertDatabaseHas('showcases', [
-            'id' => $showcase->id,
-            'key_features' => 'Some key features',
-            'help_needed' => null,
-        ]);
+        expect($showcase->key_features)->toBe('Some key features')
+            ->and($showcase->help_needed)->toBeNull();
     });
 
     test('auto-generates slug from title and truncates long titles', function () {
@@ -610,12 +598,11 @@ describe('showcase creation', function () {
             'thumbnail_crop' => ['x' => 0, 'y' => 0, 'width' => 500, 'height' => 500],
         ]);
 
-        assertDatabaseHas('showcases', [
-            'title' => 'My Awesome Project',
-            'video_url' => 'https://youtube.com/watch?v=example',
-            'source_status' => SourceStatus::OpenSource->value,
-            'source_url' => 'https://github.com/user/repo',
-        ]);
+        $showcase = Showcase::where('title', 'My Awesome Project')->firstOrFail();
+
+        expect($showcase->video_url)->toBe('https://youtube.com/watch?v=example')
+            ->and($showcase->source_status)->toBe(SourceStatus::OpenSource)
+            ->and($showcase->source_url)->toBe('https://github.com/user/repo');
     });
 
     test('creates showcase with source_status NotAvailable defaults', function () {
@@ -640,11 +627,10 @@ describe('showcase creation', function () {
             'thumbnail_crop' => ['x' => 0, 'y' => 0, 'width' => 500, 'height' => 500],
         ]);
 
-        assertDatabaseHas('showcases', [
-            'title' => 'My Awesome Project',
-            'source_status' => SourceStatus::NotAvailable->value,
-            'source_url' => null,
-        ]);
+        $showcase = Showcase::where('title', 'My Awesome Project')->firstOrFail();
+
+        expect($showcase->source_status)->toBe(SourceStatus::NotAvailable)
+            ->and($showcase->source_url)->toBeNull();
     });
 
     test('source_url is cleared when source_status is NotAvailable', function () {
@@ -1325,12 +1311,11 @@ describe('challenge attachment', function () {
             'challenge_id' => $challenge->id,
         ]);
 
-        $showcase = Showcase::where('title', 'My Challenge Project')->first();
+        $showcase = Showcase::where('title', 'My Challenge Project')->firstOrFail();
+        $showcase->load('challenges');
 
-        assertDatabaseHas('challenge_showcase', [
-            'challenge_id' => $challenge->id,
-            'showcase_id' => $showcase->id,
-        ]);
+        expect($showcase->challenges)->toHaveCount(1)
+            ->and($showcase->challenges->first()->id)->toBe($challenge->id);
     });
 
     test('does not create pivot row when challenge_id is not provided', function () {
@@ -1600,5 +1585,97 @@ describe('challenge attachment', function () {
             'thumbnail_crop' => ['x' => 0, 'y' => 0, 'width' => 500, 'height' => 500],
             'challenge_id' => $challenge->id,
         ])->assertValid('challenge_id');
+    });
+});
+
+describe('sub-challenge attachment', function () {
+    $basePayload = function (PracticeArea $practiceArea): array {
+        return [
+            'practice_area_ids' => [$practiceArea->id],
+            'title' => 'My Sub-challenge Project',
+            'tagline' => 'A great project tagline',
+            'description' => 'This is a great project description',
+            'key_features' => 'Some key features',
+            'url' => 'https://example.com',
+            'source_status' => SourceStatus::NotAvailable->value,
+            'images' => [UploadedFile::fake()->image('test.jpg', 1280, 720)],
+            'image_crops' => [['landscape' => ['x' => 0, 'y' => 0, 'width' => 1280, 'height' => 720]]],
+            'thumbnail' => UploadedFile::fake()->image('thumbnail.jpg', 500, 500),
+            'thumbnail_crop' => ['x' => 0, 'y' => 0, 'width' => 500, 'height' => 500],
+        ];
+    };
+
+    test('stores the sub-challenge id on the pivot', function () use ($basePayload) {
+        $practiceArea = PracticeArea::factory()->create();
+        $challenge = Challenge::factory()->active()->create();
+        $subChallenge = SubChallenge::factory()->forChallenge($challenge)->create();
+
+        /** @var User */
+        $user = User::factory()->create();
+        actingAs($user);
+
+        post(route('showcase.manage.store'), [
+            ...$basePayload($practiceArea),
+            'challenge_id' => $challenge->id,
+            'sub_challenge_id' => $subChallenge->id,
+        ])->assertRedirect();
+
+        $showcase = Showcase::where('title', 'My Sub-challenge Project')->firstOrFail();
+        $showcase->load('challenges');
+
+        expect($showcase->challenges)->toHaveCount(1)
+            ->and($showcase->challenges->first()->id)->toBe($challenge->id)
+            ->and($showcase->challenges->first()->pivot->sub_challenge_id)->toBe($subChallenge->id);
+    });
+
+    test('requires a sub-challenge when the challenge has sub-challenges', function () use ($basePayload) {
+        $practiceArea = PracticeArea::factory()->create();
+        $challenge = Challenge::factory()->active()->create();
+        SubChallenge::factory()->forChallenge($challenge)->create();
+
+        /** @var User */
+        $user = User::factory()->create();
+        actingAs($user);
+
+        post(route('showcase.manage.store'), [
+            ...$basePayload($practiceArea),
+            'challenge_id' => $challenge->id,
+        ])->assertInvalid(['sub_challenge_id' => 'Please select a sub-challenge.']);
+    });
+
+    test('rejects a sub-challenge belonging to another challenge', function () use ($basePayload) {
+        $practiceArea = PracticeArea::factory()->create();
+        $challenge = Challenge::factory()->active()->create();
+        SubChallenge::factory()->forChallenge($challenge)->create();
+
+        $otherChallenge = Challenge::factory()->active()->create();
+        $otherSubChallenge = SubChallenge::factory()->forChallenge($otherChallenge)->create();
+
+        /** @var User */
+        $user = User::factory()->create();
+        actingAs($user);
+
+        post(route('showcase.manage.store'), [
+            ...$basePayload($practiceArea),
+            'challenge_id' => $challenge->id,
+            'sub_challenge_id' => $otherSubChallenge->id,
+        ])->assertInvalid(['sub_challenge_id' => 'The selected sub-challenge is invalid.']);
+    });
+
+    test('rejects a sub-challenge when the challenge has none', function () use ($basePayload) {
+        $practiceArea = PracticeArea::factory()->create();
+        $challenge = Challenge::factory()->active()->create();
+        $otherChallenge = Challenge::factory()->active()->create();
+        $orphanSubChallenge = SubChallenge::factory()->forChallenge($otherChallenge)->create();
+
+        /** @var User */
+        $user = User::factory()->create();
+        actingAs($user);
+
+        post(route('showcase.manage.store'), [
+            ...$basePayload($practiceArea),
+            'challenge_id' => $challenge->id,
+            'sub_challenge_id' => $orphanSubChallenge->id,
+        ])->assertInvalid(['sub_challenge_id' => 'This challenge does not have sub-challenges.']);
     });
 });

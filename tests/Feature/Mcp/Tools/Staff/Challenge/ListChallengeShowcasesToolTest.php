@@ -3,6 +3,7 @@
 use App\Mcp\Servers\StaffServer;
 use App\Mcp\Tools\Staff\Challenge\ListChallengeShowcasesTool;
 use App\Models\Challenge\Challenge;
+use App\Models\Challenge\SubChallenge;
 use App\Models\PracticeArea;
 use App\Models\Showcase\Showcase;
 use App\Models\User;
@@ -26,12 +27,13 @@ it('returns the showcases attached to a challenge in the condensed summary form'
                 ->where('items.0.status', 'Approved')
                 ->where('items.0.submitted_date', $showcase->submitted_date?->toIso8601String())
                 ->where('items.0.user_id', $showcase->user_id)
+                ->where('items.0.sub_challenge', null)
                 ->where('total_count', 1)
                 ->where('next_cursor', null);
 
             $first = $json->toArray()['items'][0];
             expect(array_keys($first))->toEqualCanonicalizing([
-                'id', 'slug', 'title', 'tagline', 'status', 'submitted_date', 'user_id',
+                'id', 'slug', 'title', 'tagline', 'status', 'submitted_date', 'user_id', 'sub_challenge',
             ]);
 
             return true;
@@ -93,12 +95,89 @@ it('returns additional columns when requested', function (): void {
 
             $first = $json->toArray()['items'][0];
             expect(array_keys($first))->toEqualCanonicalizing([
-                'id', 'slug', 'title', 'tagline', 'status', 'submitted_date', 'user_id',
+                'id', 'slug', 'title', 'tagline', 'status', 'submitted_date', 'user_id', 'sub_challenge',
                 'description', 'url', 'upvote_count', 'practice_areas',
             ]);
 
             return true;
         });
+});
+
+it('filters attached showcases by sub_challenge_id', function (): void {
+    $challenge = Challenge::factory()->create();
+    $subChallenge = SubChallenge::factory()->forChallenge($challenge)->create();
+    $otherSubChallenge = SubChallenge::factory()->forChallenge($challenge)->create();
+
+    $entered = Showcase::factory()->approved()->create();
+    $otherEntered = Showcase::factory()->approved()->create();
+    $unsorted = Showcase::factory()->approved()->create();
+
+    $challenge->showcases()->attach($entered, ['sub_challenge_id' => $subChallenge->id]);
+    $challenge->showcases()->attach($otherEntered, ['sub_challenge_id' => $otherSubChallenge->id]);
+    $challenge->showcases()->attach($unsorted);
+
+    StaffServer::tool(ListChallengeShowcasesTool::class, [
+        'challenge_id' => $challenge->id,
+        'sub_challenge_id' => $subChallenge->id,
+    ])
+        ->assertOk()
+        ->assertStructuredContent(function ($json) use ($entered, $subChallenge): bool {
+            $json->where('total_count', 1)
+                ->where('items.0.id', $entered->id)
+                ->where('items.0.sub_challenge', [
+                    'id' => $subChallenge->id,
+                    'name' => $subChallenge->name,
+                ])
+                ->etc();
+
+            return true;
+        });
+});
+
+it('returns each entry under the sub-challenge it was attached to', function (): void {
+    $challenge = Challenge::factory()->create();
+    $subChallenge = SubChallenge::factory()->forChallenge($challenge)->create(['name' => 'Drafting']);
+    $otherSubChallenge = SubChallenge::factory()->forChallenge($challenge)->create(['name' => 'Research']);
+
+    $entered = Showcase::factory()->approved()->create();
+    $otherEntered = Showcase::factory()->approved()->create();
+    $unsorted = Showcase::factory()->approved()->create();
+
+    $challenge->showcases()->attach($entered, ['sub_challenge_id' => $subChallenge->id]);
+    $challenge->showcases()->attach($otherEntered, ['sub_challenge_id' => $otherSubChallenge->id]);
+    $challenge->showcases()->attach($unsorted);
+
+    StaffServer::tool(ListChallengeShowcasesTool::class, ['challenge_id' => $challenge->id])
+        ->assertOk()
+        ->assertStructuredContent(function ($json) use ($entered, $otherEntered, $unsorted, $subChallenge, $otherSubChallenge): bool {
+            $subChallengesByShowcaseId = collect($json->toArray()['items'])
+                ->pluck('sub_challenge', 'id');
+
+            expect($subChallengesByShowcaseId->get($entered->id))->toBe([
+                'id' => $subChallenge->id,
+                'name' => 'Drafting',
+            ]);
+            expect($subChallengesByShowcaseId->get($otherEntered->id))->toBe([
+                'id' => $otherSubChallenge->id,
+                'name' => 'Research',
+            ]);
+            expect($subChallengesByShowcaseId->get($unsorted->id))->toBeNull();
+
+            $json->where('total_count', 3)->etc();
+
+            return true;
+        });
+});
+
+it('returns an error when the sub-challenge does not belong to the challenge', function (): void {
+    $challenge = Challenge::factory()->create();
+    $foreignSubChallenge = SubChallenge::factory()->create();
+
+    StaffServer::tool(ListChallengeShowcasesTool::class, [
+        'challenge_id' => $challenge->id,
+        'sub_challenge_id' => $foreignSubChallenge->id,
+    ])
+        ->assertHasErrors(["Sub-challenge with id [{$foreignSubChallenge->id}] does not belong to challenge [{$challenge->id}]."]);
 });
 
 it('rejects unknown columns', function (): void {

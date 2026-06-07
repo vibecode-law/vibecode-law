@@ -3,6 +3,7 @@
 use App\Enums\InviteCodeScope;
 use App\Models\Challenge\Challenge;
 use App\Models\Challenge\ChallengeInviteCode;
+use App\Models\Challenge\SubChallenge;
 use App\Models\Organisation\Organisation;
 use App\Models\Showcase\Showcase;
 use App\Models\User;
@@ -67,6 +68,7 @@ test('show returns correct challenge data structure', function () {
                     ->where('thumbnail_url', null)
                     ->where('thumbnail_rect_strings', null)
                 )
+                ->where('sub_challenges', [])
             )
         );
 });
@@ -141,6 +143,7 @@ test('show returns correct showcase data structure', function () {
                 ->missing('has_upvoted')
                 ->has('view_count')
                 ->has('user')
+                ->where('sub_challenge_id', null)
             )
         );
 });
@@ -197,6 +200,7 @@ test('show excludes has_upvoted for guests', function () {
                 ->has('upvotes_count')
                 ->has('view_count')
                 ->has('user')
+                ->where('sub_challenge_id', null)
             )
         );
 });
@@ -646,5 +650,38 @@ test('show excludes participants from non-visible showcases', function () {
     get(route('inspiration.challenges.show', $challenge))
         ->assertInertia(fn (AssertableInertia $page) => $page
             ->has('participants', 1)
+        );
+});
+
+test('show returns sub-challenges ordered on the challenge', function () {
+    $challenge = Challenge::factory()->active()->create();
+    $second = SubChallenge::factory()->forChallenge($challenge)->create(['order' => 2]);
+    $first = SubChallenge::factory()->forChallenge($challenge)->create(['order' => 1]);
+
+    get(route('inspiration.challenges.show', $challenge))
+        ->assertInertia(fn (AssertableInertia $page) => $page
+            ->has('challenge.sub_challenges', 2)
+            ->has('challenge.sub_challenges.0', fn (AssertableInertia $sub) => $sub
+                ->where('id', $first->id)
+                ->where('name', $first->name)
+                ->where('tagline', $first->tagline)
+                ->where('description', $first->description)
+                ->where('order', $first->order)
+            )
+            ->where('challenge.sub_challenges.1.id', $second->id)
+        );
+});
+
+test('show exposes each showcase sub-challenge id from the pivot', function () {
+    $challenge = Challenge::factory()->active()->create();
+    $subChallenge = SubChallenge::factory()->forChallenge($challenge)->create();
+
+    $showcase = Showcase::factory()->approved()->create();
+    $challenge->showcases()->attach($showcase, ['sub_challenge_id' => $subChallenge->id]);
+
+    get(route('inspiration.challenges.show', $challenge))
+        ->assertInertia(fn (AssertableInertia $page) => $page
+            ->where('showcases.0.id', $showcase->id)
+            ->where('showcases.0.sub_challenge_id', $subChallenge->id)
         );
 });

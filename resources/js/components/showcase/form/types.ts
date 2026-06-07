@@ -1,5 +1,3 @@
-import { type FrontendEnum } from '@/types';
-
 /**
  * Normalized image interface that handles both showcase and draft images
  */
@@ -81,32 +79,13 @@ export interface ShowcaseFormData {
 }
 
 /**
- * Minimal challenge context for associating a showcase with a challenge
+ * A challenge the user may enter, with its sub-challenges, used to populate the
+ * submission selects.
  */
-export interface ChallengeContext {
-    id: number;
-    title: string;
-    slug: string;
-}
-
-/**
- * Props for the ShowcaseForm component
- */
-export interface ShowcaseFormProps {
-    mode: ShowcaseFormMode;
-    formAction: { action: string; method: string };
-    initialData: ShowcaseFormData;
-    practiceAreas: App.Http.Resources.PracticeAreaResource[];
-    sourceStatuses: FrontendEnum<number>[];
-    imageDeletionConfig: ImageDeletionConfig;
-    moderationUrls?: ModerationUrls;
-    previewUrl?: string;
-    breadcrumbs: BreadcrumbItem[];
-    pageTitle: string;
-    showSlugField: boolean;
-    canSubmit: boolean;
-    challenge?: ChallengeContext;
-}
+export type AvailableChallenge = Pick<
+    App.Http.Resources.Challenge.ChallengeResource,
+    'id' | 'title' | 'slug' | 'sub_challenges'
+>;
 
 /**
  * Normalize a showcase resource to form data

@@ -36,4 +36,9 @@ class ChallengePolicy
     {
         return $user->can('challenge.update');
     }
+
+    public function manageSubChallenges(User $user, Challenge $challenge): bool
+    {
+        return $user->can('challenge.update');
+    }
 }

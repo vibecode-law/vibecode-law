@@ -40,6 +40,10 @@ class ShowcaseWriteRequest extends FormRequest
             $this->merge(['source_url' => null]);
         }
 
+        if ($this->input('challenge_id') === null) {
+            $this->merge(['sub_challenge_id' => null]);
+        }
+
         $this->sanitizeCropData();
         $this->prepareSlug();
     }
@@ -120,6 +124,10 @@ class ShowcaseWriteRequest extends FormRequest
 
         $practiceAreaIds = PracticeArea::pluck('id');
 
+        $challengeId = $this->input('challenge_id');
+        $selectedChallenge = $challengeId !== null ? Challenge::find($challengeId) : null;
+        $challengeHasSubChallenges = $selectedChallenge !== null && $selectedChallenge->hasSubChallenges();
+
         return [
             'practice_area_ids' => ['required', 'array', 'min:1'],
             'practice_area_ids.*' => [
@@ -180,6 +188,14 @@ class ShowcaseWriteRequest extends FormRequest
             'removed_images.*' => ['integer', Rule::exists('showcase_images', 'id')->where('showcase_id', $showcase?->id)],
             'submit' => ['nullable', 'boolean'],
             'challenge_id' => ['nullable', 'integer', Rule::exists('challenges', 'id')->where('is_active', true)],
+            'sub_challenge_id' => [
+                'bail',
+                'nullable',
+                'integer',
+                Rule::requiredIf($challengeHasSubChallenges),
+                Rule::prohibitedIf($selectedChallenge !== null && $challengeHasSubChallenges === false),
+                Rule::exists('sub_challenges', 'id')->where('challenge_id', $challengeId),
+            ],
         ];
     }
 
@@ -303,6 +319,9 @@ class ShowcaseWriteRequest extends FormRequest
             'source_status.enum' => 'Please select a valid source availability option.',
             'source_url.required' => 'Please provide a source code URL.',
             'source_url.url' => 'Please provide a valid source code URL.',
+            'sub_challenge_id.required' => 'Please select a sub-challenge.',
+            'sub_challenge_id.prohibited' => 'This challenge does not have sub-challenges.',
+            'sub_challenge_id.exists' => 'The selected sub-challenge is invalid.',
             'thumbnail.required' => 'Please upload a project thumbnail.',
             'thumbnail.image' => 'The thumbnail must be an image.',
             'thumbnail.dimensions' => 'The thumbnail must be at least 100x100 pixels.',

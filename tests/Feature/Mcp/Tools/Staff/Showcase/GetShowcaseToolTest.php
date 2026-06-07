@@ -3,6 +3,7 @@
 use App\Mcp\Servers\StaffServer;
 use App\Mcp\Tools\Staff\Showcase\GetShowcaseTool;
 use App\Models\Challenge\Challenge;
+use App\Models\Challenge\SubChallenge;
 use App\Models\PracticeArea;
 use App\Models\Showcase\Showcase;
 
@@ -46,9 +47,32 @@ it('returns the full details for a showcase by id', function (): void {
                 ->where('practice_areas.0.name', 'IP')
                 ->where('challenges.0.id', $challenge->id)
                 ->where('challenges.0.title', 'Summer Build')
+                ->where('challenges.0.sub_challenge', null)
                 ->where('youtube_id', null)
                 ->where('created_at', $showcase->created_at?->toIso8601String())
                 ->where('updated_at', $showcase->updated_at?->toIso8601String());
+
+            return true;
+        });
+});
+
+it('includes the sub-challenge as a child of the challenge the showcase is entered under', function (): void {
+    $challenge = Challenge::factory()->create(['title' => 'Summer Build']);
+    $subChallenge = SubChallenge::factory()->forChallenge($challenge)->create(['name' => 'Drafting Track']);
+
+    $showcase = Showcase::factory()->approved()->create();
+    $showcase->challenges()->sync([$challenge->id => ['sub_challenge_id' => $subChallenge->id]]);
+
+    StaffServer::tool(GetShowcaseTool::class, ['id' => $showcase->id])
+        ->assertOk()
+        ->assertStructuredContent(function ($json) use ($challenge, $subChallenge): bool {
+            $json->where('challenges.0.id', $challenge->id)
+                ->where('challenges.0.title', 'Summer Build')
+                ->where('challenges.0.sub_challenge', [
+                    'id' => $subChallenge->id,
+                    'name' => 'Drafting Track',
+                ])
+                ->etc();
 
             return true;
         });

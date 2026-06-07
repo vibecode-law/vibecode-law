@@ -23,7 +23,7 @@ class GetShowcaseTool extends Tool
         $validated = $request->validate((new GetShowcaseRequest)->rules());
 
         $showcase = Showcase::query()
-            ->with(['practiceAreas', 'images', 'user', 'challenges'])
+            ->with(['practiceAreas', 'images', 'user', 'challenges.subChallenges'])
             ->withCount(['upvoters'])
             ->find($validated['id']);
 

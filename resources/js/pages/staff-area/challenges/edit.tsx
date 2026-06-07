@@ -7,8 +7,9 @@ import StaffAreaLayout from '@/layouts/staff-area/layout';
 import { CHALLENGE_VISIBILITY } from '@/lib/challenge-utils';
 import { index, update } from '@/routes/staff/challenges';
 import { index as inviteCodesIndex } from '@/routes/staff/challenges/invite-codes';
+import { index as subChallengesIndex } from '@/routes/staff/challenges/sub-challenges';
 import { Form, Head, Link } from '@inertiajs/react';
-import { ArrowLeft, KeyRound } from 'lucide-react';
+import { ArrowLeft, KeyRound, ListChecks } from 'lucide-react';
 
 interface ChallengesEditProps {
     challenge: App.Http.Resources.Challenge.ChallengeResource;
@@ -91,33 +92,54 @@ export default function ChallengesEdit({
                                 />
 
                                 <div className="mt-6 flex items-center border-t pt-6 dark:border-neutral-800">
-                                    {challenge.visibility !== undefined &&
-                                        challenge.visibility !==
-                                            CHALLENGE_VISIBILITY.Public && (
-                                            <Button
-                                                variant="outline"
-                                                type="button"
-                                                asChild
+                                    <div className="flex items-center gap-3">
+                                        <Button
+                                            variant="outline"
+                                            type="button"
+                                            asChild
+                                        >
+                                            <Link
+                                                href={subChallengesIndex.url({
+                                                    challenge: challenge.slug,
+                                                })}
                                             >
-                                                <Link
-                                                    href={inviteCodesIndex.url({
-                                                        challenge:
-                                                            challenge.slug,
-                                                    })}
+                                                <ListChecks className="mr-1.5 size-4" />
+                                                Manage Sub-challenges
+                                            </Link>
+                                        </Button>
+                                        {challenge.visibility !== undefined &&
+                                            challenge.visibility !==
+                                                CHALLENGE_VISIBILITY.Public && (
+                                                <Button
+                                                    variant="outline"
+                                                    type="button"
+                                                    asChild
                                                 >
-                                                    <KeyRound className="mr-1.5 size-4" />
-                                                    Manage Invite Codes
-                                                    {inviteCodesCount > 0 && (
-                                                        <Badge
-                                                            variant="secondary"
-                                                            className="ml-1.5"
-                                                        >
-                                                            {inviteCodesCount}
-                                                        </Badge>
-                                                    )}
-                                                </Link>
-                                            </Button>
-                                        )}
+                                                    <Link
+                                                        href={inviteCodesIndex.url(
+                                                            {
+                                                                challenge:
+                                                                    challenge.slug,
+                                                            },
+                                                        )}
+                                                    >
+                                                        <KeyRound className="mr-1.5 size-4" />
+                                                        Manage Invite Codes
+                                                        {inviteCodesCount >
+                                                            0 && (
+                                                            <Badge
+                                                                variant="secondary"
+                                                                className="ml-1.5"
+                                                            >
+                                                                {
+                                                                    inviteCodesCount
+                                                                }
+                                                            </Badge>
+                                                        )}
+                                                    </Link>
+                                                </Button>
+                                            )}
+                                    </div>
                                     <div className="ml-auto flex items-center gap-3">
                                         <Button
                                             variant="outline"

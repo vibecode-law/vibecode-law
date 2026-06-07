@@ -34,13 +34,15 @@ class ListChallengesTool extends Tool
     {
         $validated = $this->validated($request);
 
-        $query = $this->buildQuery($validated);
+        $columns = $this->resolveColumns($validated);
+
+        $query = $this->buildQuery($validated, $columns);
 
         $totalCount = (clone $query)->toBase()->getCountForPagination();
 
         $paginator = $this->paginate($query, $validated);
 
-        return Response::structured($this->formatResponse($paginator, $totalCount, $this->resolveColumns($validated)));
+        return Response::structured($this->formatResponse($paginator, $totalCount, $columns));
     }
 
     /**
@@ -75,13 +77,20 @@ class ListChallengesTool extends Tool
 
     /**
      * @param  array<string, mixed>  $validated
+     * @param  array<int, ChallengeColumn>  $columns
      * @return Builder<Challenge>
      */
-    private function buildQuery(array $validated): Builder
+    private function buildQuery(array $validated, array $columns): Builder
     {
+        $relationsToLoad = array_values(array_filter(array_map(
+            fn (ChallengeColumn $column): ?string => $column->relationToLoad(),
+            $columns,
+        )));
+
         return Challenge::query()
             ->withTotalUpvotesCount()
             ->withCount('showcases')
+            ->with($relationsToLoad)
             ->when(
                 isset($validated['visibility']),
                 fn (Builder $builder) => $builder->where('visibility', $this->resolveVisibility($validated['visibility'])),
@@ -138,7 +147,7 @@ class ListChallengesTool extends Tool
         $fields = [...self::SUMMARY_FIELDS, ...$requested];
 
         $items = array_map(
-            fn (Challenge $challenge): array => ChallengeDetailResource::from($challenge)->only(...$fields)->toArray(),
+            fn (Challenge $challenge): array => ChallengeDetailResource::from($challenge)->only(...$fields)->include(...$requested)->toArray(),
             $paginator->items(),
         );
 

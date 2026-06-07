@@ -3,6 +3,7 @@ import ShowcaseCreateController from '@/actions/App/Http/Controllers/Showcase/Ma
 import { GetInvolvedDialog } from '@/components/challenges/get-involved-dialog';
 import { ParticipantInstructionsDialog } from '@/components/challenges/participant-instructions-dialog';
 import { Participants } from '@/components/challenges/participants';
+import { TabNav } from '@/components/navigation/tab-nav';
 import { RichTextContent } from '@/components/showcase/rich-text-content';
 import { ProjectItem } from '@/components/showcase/showcase-item';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
@@ -47,6 +48,22 @@ export default function ChallengeShow({
     const [getInvolvedOpen, setGetInvolvedOpen] = useState(false);
     const [participantInstructionsOpen, setParticipantInstructionsOpen] =
         useState(false);
+
+    const subChallenges = challenge.sub_challenges ?? [];
+    const hasSubChallenges = subChallenges.length > 0;
+    const ALL_TAB = 'all';
+    const [activeTab, setActiveTab] = useState(ALL_TAB);
+
+    const activeSubChallenge =
+        subChallenges.find((sub) => String(sub.id) === activeTab) ?? null;
+
+    const filteredShowcases =
+        activeSubChallenge === null
+            ? showcases
+            : showcases.filter(
+                  (showcase) =>
+                      showcase.sub_challenge_id === activeSubChallenge.id,
+              );
 
     // The backend only sends this to viewers who are eligible to enter
     // (everyone, including guests, for public challenges).
@@ -348,9 +365,38 @@ export default function ChallengeShow({
                             Leaderboard
                         </h2>
 
-                        {showcases.length > 0 ? (
+                        {hasSubChallenges === true && (
+                            <div className="mt-4">
+                                <TabNav
+                                    ariaLabel="Filter by sub-challenge"
+                                    items={[
+                                        {
+                                            title: 'All',
+                                            onClick: () =>
+                                                setActiveTab(ALL_TAB),
+                                            isActive: activeTab === ALL_TAB,
+                                        },
+                                        ...subChallenges.map((sub) => ({
+                                            title: sub.name,
+                                            onClick: () =>
+                                                setActiveTab(String(sub.id)),
+                                            isActive:
+                                                activeTab === String(sub.id),
+                                        })),
+                                    ]}
+                                />
+
+                                {activeSubChallenge !== null && (
+                                    <p className="mt-3 text-sm text-neutral-600 dark:text-neutral-400">
+                                        {activeSubChallenge.tagline}
+                                    </p>
+                                )}
+                            </div>
+                        )}
+
+                        {filteredShowcases.length > 0 ? (
                             <div className="mt-4 divide-y divide-neutral-100 dark:divide-neutral-800">
-                                {showcases.map((showcase, index) => (
+                                {filteredShowcases.map((showcase, index) => (
                                     <ProjectItem
                                         key={showcase.id}
                                         showcase={showcase}

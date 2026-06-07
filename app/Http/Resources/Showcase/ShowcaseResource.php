@@ -99,6 +99,8 @@ class ShowcaseResource extends Resource
 
     public Lazy|string|null $youtube_id;
 
+    public Lazy|int|null $sub_challenge_id;
+
     public static function fromModel(Showcase $showcase): self
     {
         $currentUser = Auth::user();
@@ -192,6 +194,10 @@ class ShowcaseResource extends Resource
                 value: fn () => $showcase->draft->status->forFrontend(),
             ),
             'youtube_id' => Lazy::create(fn () => $showcase->youtube_id),
+            'sub_challenge_id' => Lazy::when(
+                condition: fn () => $showcase->relationLoaded('pivot'),
+                value: fn () => $showcase->pivot->sub_challenge_id,
+            ),
         ]);
     }
 }

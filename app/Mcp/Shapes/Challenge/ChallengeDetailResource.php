@@ -3,6 +3,9 @@
 namespace App\Mcp\Shapes\Challenge;
 
 use App\Models\Challenge\Challenge;
+use App\Models\Challenge\SubChallenge;
+use Spatie\LaravelData\DataCollection;
+use Spatie\LaravelData\Lazy;
 use Spatie\LaravelData\Resource;
 
 class ChallengeDetailResource extends Resource
@@ -37,6 +40,9 @@ class ChallengeDetailResource extends Resource
 
     public int $total_upvotes_count;
 
+    /** @var Lazy|DataCollection<int, SubChallengeResource> */
+    public Lazy|DataCollection $sub_challenges;
+
     public string $created_at;
 
     public string $updated_at;
@@ -59,6 +65,10 @@ class ChallengeDetailResource extends Resource
             'thumbnail_url' => $challenge->thumbnail_url,
             'showcases_count' => (int) ($challenge->showcases_count ?? $challenge->showcases()->count()),
             'total_upvotes_count' => (int) ($challenge->total_upvotes_count ?? 0),
+            'sub_challenges' => Lazy::create(fn (): DataCollection => SubChallengeResource::collect(
+                $challenge->subChallenges->map(fn (SubChallenge $subChallenge): SubChallengeResource => SubChallengeResource::from($subChallenge)),
+                DataCollection::class,
+            )),
             'created_at' => $challenge->created_at?->toIso8601String() ?? '',
             'updated_at' => $challenge->updated_at?->toIso8601String() ?? '',
         ]);

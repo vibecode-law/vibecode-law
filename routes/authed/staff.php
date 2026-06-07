@@ -8,6 +8,11 @@ use App\Http\Controllers\Staff\Challenges\InviteCodes\IndexController as InviteC
 use App\Http\Controllers\Staff\Challenges\InviteCodes\StoreController as InviteCodeStoreController;
 use App\Http\Controllers\Staff\Challenges\InviteCodes\ToggleActiveController as InviteCodeToggleActiveController;
 use App\Http\Controllers\Staff\Challenges\StoreController as ChallengeStoreController;
+use App\Http\Controllers\Staff\Challenges\SubChallenges\DestroyController as SubChallengeDestroyController;
+use App\Http\Controllers\Staff\Challenges\SubChallenges\IndexController as SubChallengeIndexController;
+use App\Http\Controllers\Staff\Challenges\SubChallenges\ReorderController as SubChallengeReorderController;
+use App\Http\Controllers\Staff\Challenges\SubChallenges\StoreController as SubChallengeStoreController;
+use App\Http\Controllers\Staff\Challenges\SubChallenges\UpdateController as SubChallengeUpdateController;
 use App\Http\Controllers\Staff\Challenges\UpdateController as ChallengeUpdateController;
 use App\Http\Controllers\Staff\Courses\CreateController as CourseCreateController;
 use App\Http\Controllers\Staff\Courses\EditController as CourseEditController;
@@ -156,6 +161,14 @@ Route::middleware(['can:access-staff'])->prefix('staff')->name('staff.')->group(
             Route::post('/', InviteCodeStoreController::class)->name('store');
             Route::post('/{inviteCode}/toggle', InviteCodeToggleActiveController::class)->name('toggle');
             Route::post('/{inviteCode}/import', InviteCodeImportStoreController::class)->name('import');
+        });
+
+        Route::prefix('{challenge}/sub-challenges')->name('sub-challenges.')->scopeBindings()->group(function () {
+            Route::get('/', SubChallengeIndexController::class)->name('index');
+            Route::post('/', SubChallengeStoreController::class)->name('store');
+            Route::post('/reorder', SubChallengeReorderController::class)->name('reorder');
+            Route::patch('/{subChallenge}', SubChallengeUpdateController::class)->name('update');
+            Route::delete('/{subChallenge}', SubChallengeDestroyController::class)->name('destroy');
         });
     });
 
