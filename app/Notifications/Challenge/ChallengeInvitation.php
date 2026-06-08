@@ -30,6 +30,7 @@ class ChallengeInvitation extends BaseNotification
     {
         $challengeTitle = $this->inviteCode->challenge->title;
         $canSubmit = $this->inviteCode->scope === InviteCodeScope::ViewAndSubmit;
+        $challengeUrl = URL::route('inspiration.challenges.show', ['challenge' => $this->inviteCode->challenge]);
 
         $message = (new MailMessage)
             ->subject("You've been invited to {$challengeTitle}")
@@ -57,13 +58,14 @@ class ChallengeInvitation extends BaseNotification
                     ? 'A '.config('app.name').' account has been created for you, which you\'ll need to submit your entry. To get started, please set your password by clicking the button below.'
                     : 'A '.config('app.name').' account has been created for you so you can view the challenge. To get started, please set your password by clicking the button below.')
                 ->action('Set Your Password', $resetUrl)
-                ->line('This password reset link will expire in '.config('auth.passwords.users.expire').' minutes. If it expires, use the "Forgot password?" feature on the login page.');
+                ->line('This password reset link will expire in '.config('auth.passwords.users.expire').' minutes. If it expires, use the "Forgot password?" feature on the login page.')
+                ->line("Once you're set up, you can [view the challenge here]({$challengeUrl}).");
         } else {
             $message
                 ->line($canSubmit === true
                     ? 'You can access the challenge and submit your entry using your existing account.'
                     : 'You can view the challenge using your existing account.')
-                ->action('View Challenge', URL::route('challenges.invite.accept', ['code' => $this->inviteCode->code]));
+                ->action('View Challenge', $challengeUrl);
         }
 
         return $message

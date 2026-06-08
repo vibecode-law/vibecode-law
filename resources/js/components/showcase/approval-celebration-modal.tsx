@@ -10,18 +10,11 @@ import {
     DialogPortal,
     DialogTitle,
 } from '@/components/ui/dialog';
-import { useReducedMotion } from '@/hooks/use-reduced-motion';
+import { Fireworks } from '@/components/ui/fireworks';
 import { CONFETTI_COLORS } from '@/lib/utils';
 import { router } from '@inertiajs/react';
 import { PartyPopper, X } from 'lucide-react';
-import { useEffect, useState } from 'react';
-
-interface Firework {
-    id: number;
-    x: number;
-    y: number;
-    color: string;
-}
+import { useState } from 'react';
 
 interface ApprovalCelebrationModalProps {
     isOpen: boolean;
@@ -37,51 +30,6 @@ export function ApprovalCelebrationModal({
     linkedInShareUrl,
 }: ApprovalCelebrationModalProps) {
     const [isDismissing, setIsDismissing] = useState(false);
-    const [fireworks, setFireworks] = useState<Firework[]>([]);
-    const [wasOpen, setWasOpen] = useState(isOpen);
-    const prefersReducedMotion = useReducedMotion();
-
-    // Reset fireworks when modal closes (during render, not in effect)
-    if (wasOpen !== isOpen) {
-        setWasOpen(isOpen);
-        if (isOpen === false) {
-            setFireworks([]);
-        }
-    }
-
-    useEffect(() => {
-        if (isOpen === false || prefersReducedMotion === true) {
-            return;
-        }
-
-        const createFirework = () => {
-            const newFirework: Firework = {
-                id: Date.now() + Math.random(),
-                x: 10 + Math.random() * 80,
-                y: 10 + Math.random() * 60,
-                color: CONFETTI_COLORS[
-                    Math.floor(Math.random() * CONFETTI_COLORS.length)
-                ],
-            };
-            setFireworks((prev) => [...prev, newFirework]);
-
-            setTimeout(() => {
-                setFireworks((prev) =>
-                    prev.filter((f) => f.id !== newFirework.id),
-                );
-            }, 1000);
-        };
-
-        // Initial burst of fireworks
-        for (let i = 0; i < 3; i++) {
-            setTimeout(createFirework, i * 200);
-        }
-
-        // Continue with periodic fireworks
-        const interval = setInterval(createFirework, 800);
-
-        return () => clearInterval(interval);
-    }, [isOpen, prefersReducedMotion]);
 
     const handleDismiss = () => {
         setIsDismissing(true);
@@ -119,33 +67,9 @@ export function ApprovalCelebrationModal({
                 }
             }}
         >
-            {/* Fireworks - rendered in separate portal over the overlay */}
+            {/* Fireworks - rendered in a separate portal over the overlay */}
             <DialogPortal>
-                <div className="pointer-events-none fixed inset-0 z-60 overflow-hidden">
-                    {fireworks.map((firework) => (
-                        <div
-                            key={firework.id}
-                            className="absolute"
-                            style={{
-                                left: `${firework.x}%`,
-                                top: `${firework.y}%`,
-                            }}
-                        >
-                            {[...Array(12)].map((_, i) => (
-                                <span
-                                    key={i}
-                                    className="firework-particle absolute size-2 rounded-full"
-                                    style={
-                                        {
-                                            backgroundColor: firework.color,
-                                            '--angle': `${i * 30}deg`,
-                                        } as React.CSSProperties
-                                    }
-                                />
-                            ))}
-                        </div>
-                    ))}
-                </div>
+                <Fireworks active={isOpen} className="fixed inset-0 z-60" />
             </DialogPortal>
 
             <DialogContent className="z-70 overflow-hidden sm:max-w-md">
@@ -216,28 +140,8 @@ export function ApprovalCelebrationModal({
                         animation: confetti-fall 1.5s ease-out infinite;
                     }
 
-                    @keyframes firework-burst {
-                        0% {
-                            transform: translate(0, 0) scale(1);
-                            opacity: 1;
-                        }
-                        100% {
-                            transform: translate(
-                                calc(cos(var(--angle)) * 80px),
-                                calc(sin(var(--angle)) * 80px)
-                            ) scale(0);
-                            opacity: 0;
-                        }
-                    }
-
-                    .firework-particle {
-                        animation: firework-burst 1s ease-out forwards;
-                        box-shadow: 0 0 6px 2px currentColor;
-                    }
-
                     @media (prefers-reduced-motion: reduce) {
-                        .confetti-fall-particle,
-                        .firework-particle {
+                        .confetti-fall-particle {
                             animation: none;
                             display: none;
                         }

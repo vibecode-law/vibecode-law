@@ -31,10 +31,13 @@ test('new user mail includes a set password action and the custom message', func
         customMessage: 'A personal note',
     ))->toMail($user);
 
+    $challengeUrl = route('inspiration.challenges.show', ['challenge' => $inviteCode->challenge]);
+
     expect($mail->subject)->toBe("You've been invited to {$inviteCode->challenge->title}")
         ->and($mail->greeting)->toBe('Hello Newbie!')
         ->and($mail->actionText)->toBe('Set Your Password')
         ->and($mail->actionUrl)->toContain('tok-123')
+        ->and(invitationLines($mail))->toContain("[view the challenge here]({$challengeUrl})")
         ->and($mail->introLines)->toContain('A personal note')
         ->and(invitationLines($mail))
         ->toContain('A '.config('app.name').' account has been created for you, which you\'ll need to submit your entry. To get started, please set your password by clicking the button below.')
@@ -56,7 +59,8 @@ test('existing user mail uses the view challenge action and same custom message'
     expect($mail->subject)->toBe("You've been invited to {$inviteCode->challenge->title}")
         ->and($mail->greeting)->toBe('Hello Olive!')
         ->and($mail->actionText)->toBe('View Challenge')
-        ->and($mail->actionUrl)->toContain($inviteCode->code)
+        ->and($mail->actionUrl)->toContain($inviteCode->challenge->slug)
+        ->and($mail->actionUrl)->not->toContain($inviteCode->code)
         ->and($mail->introLines)->toContain('A personal note')
         ->and(invitationLines($mail))->toContain('old@example.com')
         ->and(invitationLines($mail))->not->toContain('account has been created for you');
@@ -74,7 +78,8 @@ test('a new user without a password token falls back to the view challenge actio
     ))->toMail($user);
 
     expect($mail->actionText)->toBe('View Challenge')
-        ->and($mail->actionUrl)->toContain($inviteCode->code)
+        ->and($mail->actionUrl)->toContain($inviteCode->challenge->slug)
+        ->and($mail->actionUrl)->not->toContain($inviteCode->code)
         ->and(invitationLines($mail))->not->toContain('account has been created for you');
 });
 

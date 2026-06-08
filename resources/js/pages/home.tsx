@@ -5,12 +5,16 @@ import ShowcaseCreateController from '@/actions/App/Http/Controllers/Showcase/Ma
 import { BrowseAllCta } from '@/components/home/browse-all-cta';
 import { SidebarActiveChallenges } from '@/components/home/sidebar-active-challenges';
 import { SidebarRecentShowcases } from '@/components/home/sidebar-recent-showcases';
+import { VibeathonTakeoverModal } from '@/components/home/vibeathon-takeover-modal';
 import { ProjectMonthSection } from '@/components/showcase/showcase-month-section';
 import { Button } from '@/components/ui/button';
 import PublicLayout from '@/layouts/public-layout';
 import { type SharedData } from '@/types';
 import { Head, Link, usePage } from '@inertiajs/react';
 import { Medal, PlayCircle } from 'lucide-react';
+import { useState } from 'react';
+
+const TAKEOVER_DISMISSED_KEY = 'vibeathon-takeover-dismissed';
 
 interface HomeProps {
     showcasesByMonth?: Record<
@@ -31,8 +35,27 @@ export default function Home({
 
     const months = showcasesByMonth ? Object.keys(showcasesByMonth) : [];
 
+    // Show on every visit unless the user has permanently dismissed it.
+    const [showTakeover, setShowTakeover] = useState(() => {
+        if (typeof window === 'undefined') {
+            return false;
+        }
+
+        return localStorage.getItem(TAKEOVER_DISMISSED_KEY) !== 'true';
+    });
+
+    const dismissTakeoverPermanently = () => {
+        localStorage.setItem(TAKEOVER_DISMISSED_KEY, 'true');
+        setShowTakeover(false);
+    };
+
     return (
         <PublicLayout>
+            <VibeathonTakeoverModal
+                open={showTakeover}
+                onClose={() => setShowTakeover(false)}
+                onDontShowAgain={dismissTakeoverPermanently}
+            />
             <Head title="Home">
                 <meta
                     head-key="description"

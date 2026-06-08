@@ -309,7 +309,14 @@ export default function ChallengeIndex({
                 {featuredChallenges.length > 0 && (
                     <section className="bg-white pb-8 dark:bg-neutral-950">
                         <div className="mx-auto max-w-6xl px-4">
-                            <div className="grid gap-4 sm:grid-cols-2">
+                            <div
+                                className={cn(
+                                    'grid gap-4',
+                                    featuredChallenges.length === 1
+                                        ? 'mx-auto max-w-2xl'
+                                        : 'sm:grid-cols-2',
+                                )}
+                            >
                                 {featuredChallenges.map((challenge) => (
                                     <FeaturedChallengeCard
                                         key={challenge.id}

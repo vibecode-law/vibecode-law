@@ -260,6 +260,20 @@ export default function ChallengeShow({
                                     )}
                             </div>
 
+                            {participantInstructionsHtml !== null && (
+                                <div className="mt-4">
+                                    <button
+                                        type="button"
+                                        onClick={() =>
+                                            setParticipantInstructionsOpen(true)
+                                        }
+                                        className="text-sm font-medium text-neutral-900 underline underline-offset-4 hover:text-neutral-600 dark:text-white dark:hover:text-neutral-300"
+                                    >
+                                        Participant instructions
+                                    </button>
+                                </div>
+                            )}
+
                             {requiresInviteToSubmit === true && (
                                 <GetInvolvedDialog
                                     open={getInvolvedOpen}
@@ -275,8 +289,7 @@ export default function ChallengeShow({
 
                         {(challenge.organisation ||
                             thumbnailSrc ||
-                            participants.length > 0 ||
-                            participantInstructionsHtml !== null) && (
+                            participants.length > 0) && (
                             <aside className="shrink-0 lg:w-64 xl:w-68 2xl:w-72">
                                 {challenge.organisation ? (
                                     <div>
@@ -326,22 +339,6 @@ export default function ChallengeShow({
                                             transformImages === true
                                         }
                                     />
-                                )}
-
-                                {participantInstructionsHtml !== null && (
-                                    <div className="pt-8">
-                                        <button
-                                            type="button"
-                                            onClick={() =>
-                                                setParticipantInstructionsOpen(
-                                                    true,
-                                                )
-                                            }
-                                            className="text-sm font-medium text-neutral-900 underline underline-offset-4 hover:text-neutral-600 dark:text-white dark:hover:text-neutral-300"
-                                        >
-                                            Participant instructions
-                                        </button>
-                                    </div>
                                 )}
                             </aside>
                         )}
