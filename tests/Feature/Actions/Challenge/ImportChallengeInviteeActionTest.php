@@ -3,11 +3,13 @@
 use App\Actions\Challenge\AcceptChallengeInviteCodeAction;
 use App\Actions\Challenge\ImportChallengeInviteeAction;
 use App\Exceptions\SkippedImportRowException;
+use App\Jobs\MarketingEmail\CreateExternalSubscriberJob;
 use App\Models\Challenge\Challenge;
 use App\Models\Challenge\ChallengeInviteCode;
 use App\Models\User;
 use App\Notifications\Challenge\ChallengeInvitation;
 use Illuminate\Support\Facades\Notification;
+use Illuminate\Support\Facades\Queue;
 
 function importInvitee(ChallengeInviteCode $inviteCode, array $row, ?string $message = null): void
 {
@@ -48,6 +50,28 @@ test('creates a new user, attaches them and sends an invitation with a password 
         ChallengeInvitation::class,
         fn (ChallengeInvitation $n) => $n->isNewUser === true && $n->passwordToken !== null
     );
+});
+
+test('bakes the challenge invite tag into the new subscriber on import', function () {
+    Notification::fake();
+    Queue::fake();
+
+    $challenge = Challenge::factory()->create(['slug' => 'my-challenge']);
+    $inviteCode = ChallengeInviteCode::factory()->forChallenge($challenge)->create([
+        'label' => 'Early Access',
+        'code' => 'EARLY2026',
+    ]);
+
+    importInvitee($inviteCode, [
+        'email' => 'jane@example.com',
+        'first_name' => 'Jane',
+        'last_name' => 'Doe',
+    ]);
+
+    Queue::assertPushed(CreateExternalSubscriberJob::class, function (CreateExternalSubscriberJob $job) {
+        return $job->user->email === 'jane@example.com'
+            && in_array('challengeInvite:my-challenge:early-access:EARLY2026', $job->tags, true);
+    });
 });
 
 test('reuses an existing user without a password token and applies the custom message', function () {

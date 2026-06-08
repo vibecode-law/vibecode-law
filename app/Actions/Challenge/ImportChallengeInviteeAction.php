@@ -79,7 +79,10 @@ class ImportChallengeInviteeAction
      */
     private function inviteNewUser(ChallengeInviteCode $inviteCode, array $data, ?string $customMessage): void
     {
-        $user = $this->createUser($data);
+        $user = $this->createUser(
+            data: $data,
+            additionalTags: [$this->acceptInviteCode->tagFor($inviteCode)],
+        );
 
         $this->acceptInviteCode->accept(inviteCode: $inviteCode, user: $user);
 
@@ -96,8 +99,9 @@ class ImportChallengeInviteeAction
 
     /**
      * @param  array<string, string|null>  $data
+     * @param  array<int, string>  $additionalTags
      */
-    private function createUser(array $data): User
+    private function createUser(array $data, array $additionalTags = []): User
     {
         return $this->profileService->create(
             data: [
@@ -114,6 +118,7 @@ class ImportChallengeInviteeAction
                 'bio' => $data['bio'],
             ],
             emailVerified: true,
+            additionalTags: $additionalTags,
         );
     }
 

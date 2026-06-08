@@ -339,6 +339,28 @@ describe('job dispatching', function () {
             });
         });
 
+        it('includes additional tags alongside default tags when creating a subscriber', function () {
+            Queue::fake();
+
+            $service = new ProfileService;
+
+            $service->create(
+                data: [
+                    'first_name' => 'Tagged',
+                    'last_name' => 'Test',
+                    'handle' => 'tagged-test',
+                    'email' => 'tagged@example.com',
+                ],
+                emailVerified: true,
+                additionalTags: ['challengeInvite:my-challenge:early-access:EARLY2026'],
+            );
+
+            Queue::assertPushed(CreateExternalSubscriberJob::class, function (CreateExternalSubscriberJob $job) {
+                return in_array('challengeInvite:my-challenge:early-access:EARLY2026', $job->tags, true)
+                    && in_array(Config::get('marketing.is_user_tag_uuid'), $job->tags, true);
+            });
+        });
+
         it('does not dispatch CreateExternalSubscriberJob when user opts out at creation', function () {
             Queue::fake();
 

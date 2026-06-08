@@ -72,7 +72,7 @@ class AcceptChallengeInviteCodeAction
         );
     }
 
-    private function tagFor(ChallengeInviteCode $inviteCode): string
+    public function tagFor(ChallengeInviteCode $inviteCode): string
     {
         return "challengeInvite:{$inviteCode->challenge->slug}:".Str::slug($inviteCode->label).":{$inviteCode->code}";
     }

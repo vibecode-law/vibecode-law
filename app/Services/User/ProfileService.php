@@ -30,8 +30,9 @@ class ProfileService
 
     /**
      * @param  array<string, mixed>  $data
+     * @param  array<int, string>  $additionalTags
      */
-    public function create(array $data, bool $emailVerified = false): User
+    public function create(array $data, bool $emailVerified = false, array $additionalTags = []): User
     {
         $user = new User;
 
@@ -43,7 +44,7 @@ class ProfileService
 
         $user->save();
 
-        $this->onEmailSet(user: $user);
+        $this->onEmailSet(user: $user, additionalTags: $additionalTags);
 
         return $user;
     }
@@ -103,7 +104,10 @@ class ProfileService
         );
     }
 
-    protected function onEmailSet(User $user): void
+    /**
+     * @param  array<int, string>  $additionalTags
+     */
+    protected function onEmailSet(User $user, array $additionalTags = []): void
     {
         if ($user->hasVerifiedEmail() === false) {
             return;
@@ -115,7 +119,7 @@ class ProfileService
 
         CreateExternalSubscriberJob::dispatch(
             user: $user,
-            tags: $this->getTagsForNewSubscriber(user: $user),
+            tags: [...$this->getTagsForNewSubscriber(user: $user), ...$additionalTags],
             skipConfirmation: true,
         );
     }
