@@ -78,6 +78,13 @@ class ChallengeFactory extends Factory
         ]);
     }
 
+    public function liveView(): static
+    {
+        return $this->active()->state(fn () => [
+            'live_view_enabled' => true,
+        ]);
+    }
+
     public function withDates(): static
     {
         return $this->state(fn () => [

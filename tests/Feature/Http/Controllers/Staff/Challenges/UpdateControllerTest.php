@@ -92,6 +92,59 @@ describe('update', function () {
             ->and($challenge->is_featured)->toBeTrue();
     });
 
+    test('updates live view fields', function () {
+        $admin = User::factory()->admin()->create();
+        $challenge = Challenge::factory()->create();
+
+        actingAs($admin);
+
+        patch(route('staff.challenges.update', $challenge), [
+            'title' => $challenge->title,
+            'slug' => $challenge->slug,
+            'tagline' => $challenge->tagline,
+            'description' => $challenge->description,
+            'live_view_enabled' => '1',
+            'live_view_access_token' => 'secret-key',
+            'live_view_heading' => 'LIVE LEADERBOARD',
+            'live_view_subheading' => 'Vote now',
+        ])->assertRedirect();
+
+        $challenge->refresh();
+
+        expect($challenge->live_view_enabled)->toBeTrue()
+            ->and($challenge->live_view_access_token)->toBe('secret-key')
+            ->and($challenge->live_view_heading)->toBe('LIVE LEADERBOARD')
+            ->and($challenge->live_view_subheading)->toBe('Vote now');
+    });
+
+    test('clears blank live view fields to null', function () {
+        $admin = User::factory()->admin()->create();
+        $challenge = Challenge::factory()->create([
+            'live_view_access_token' => 'old-key',
+            'live_view_heading' => 'Old heading',
+        ]);
+
+        actingAs($admin);
+
+        patch(route('staff.challenges.update', $challenge), [
+            'title' => $challenge->title,
+            'slug' => $challenge->slug,
+            'tagline' => $challenge->tagline,
+            'description' => $challenge->description,
+            'live_view_enabled' => '0',
+            'live_view_access_token' => '',
+            'live_view_heading' => '',
+            'live_view_subheading' => '',
+        ])->assertRedirect();
+
+        $challenge->refresh();
+
+        expect($challenge->live_view_enabled)->toBeFalse()
+            ->and($challenge->live_view_access_token)->toBeNull()
+            ->and($challenge->live_view_heading)->toBeNull()
+            ->and($challenge->live_view_subheading)->toBeNull();
+    });
+
     test('updates challenge organisation', function () {
         $admin = User::factory()->admin()->create();
         $challenge = Challenge::factory()->create();
