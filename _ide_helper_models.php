@@ -32,9 +32,15 @@ namespace App\Models\Challenge{
  * @property \App\Enums\ChallengeVisibility $visibility
  * @property string|null $involvement_instructions
  * @property string|null $participant_instructions
+ * @property bool $live_view_enabled
+ * @property string|null $live_view_access_token
+ * @property string|null $live_view_heading
+ * @property string|null $live_view_subheading
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\Challenge\ChallengeInviteCode> $inviteCodes
  * @property-read int|null $invite_codes_count
  * @property-read \App\Models\Organisation\Organisation|null $organisation
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\Challenge\ChallengePartnerLogo> $partnerLogos
+ * @property-read int|null $partner_logos_count
  * @property-read \App\Models\Challenge\ChallengeShowcase|null $pivot
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\Showcase\Showcase> $showcases
  * @property-read int|null $showcases_count
@@ -55,6 +61,10 @@ namespace App\Models\Challenge{
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Challenge whereInvolvementInstructions($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Challenge whereIsActive($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Challenge whereIsFeatured($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Challenge whereLiveViewAccessToken($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Challenge whereLiveViewEnabled($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Challenge whereLiveViewHeading($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Challenge whereLiveViewSubheading($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Challenge whereOrganisationId($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Challenge whereParticipantInstructions($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Challenge whereSlug($value)
@@ -165,6 +175,39 @@ namespace App\Models\Challenge{
  */
 	#[\AllowDynamicProperties]
 	class IdeHelperChallengeInviteCodeUser {}
+}
+
+namespace App\Models\Challenge{
+/**
+ * @property int $id
+ * @property int $challenge_id
+ * @property string $path
+ * @property string $filename
+ * @property string|null $href
+ * @property int $order
+ * @property bool $invert_in_dark
+ * @property \Illuminate\Support\Carbon|null $created_at
+ * @property \Illuminate\Support\Carbon|null $updated_at
+ * @property-read \App\Models\Challenge\Challenge $challenge
+ * @property-read string $url
+ * @method static \Database\Factories\Challenge\ChallengePartnerLogoFactory factory($count = null, $state = [])
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|ChallengePartnerLogo newModelQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|ChallengePartnerLogo newQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|ChallengePartnerLogo ordered()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|ChallengePartnerLogo query()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|ChallengePartnerLogo whereChallengeId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|ChallengePartnerLogo whereCreatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|ChallengePartnerLogo whereFilename($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|ChallengePartnerLogo whereHref($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|ChallengePartnerLogo whereId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|ChallengePartnerLogo whereInvertInDark($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|ChallengePartnerLogo whereOrder($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|ChallengePartnerLogo wherePath($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|ChallengePartnerLogo whereUpdatedAt($value)
+ * @mixin \Eloquent
+ */
+	#[\AllowDynamicProperties]
+	class IdeHelperChallengePartnerLogo {}
 }
 
 namespace App\Models\Challenge{

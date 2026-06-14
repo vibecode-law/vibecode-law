@@ -80,6 +80,14 @@ declare namespace App.Http.Resources.Challenge {
         created_at: string;
         users_count?: number | null;
     };
+    export type ChallengePartnerLogoResource = {
+        id: number;
+        url: string;
+        filename: string;
+        href: string | null;
+        order: number;
+        invert_in_dark: boolean;
+    };
     export type ChallengeResource = {
         id: number;
         slug: string;
@@ -95,12 +103,17 @@ declare namespace App.Http.Resources.Challenge {
         ends_at: string | null;
         is_active: boolean;
         is_featured: boolean;
+        live_view_enabled?: boolean;
+        live_view_access_token?: string | null;
+        live_view_heading?: string | null;
+        live_view_subheading?: string | null;
         visibility?: App.Enums.ChallengeVisibility;
         thumbnail_url: string | null;
         thumbnail_rect_strings: { [key: string]: string } | null;
         thumbnail_crops?: { [key: string]: App.ValueObjects.ImageCrop } | null;
         organisation?: App.Http.Resources.Organisation.OrganisationResource | null;
         sub_challenges?: Array<App.Http.Resources.Challenge.SubChallengeResource> | null;
+        partner_logos?: Array<App.Http.Resources.Challenge.ChallengePartnerLogoResource> | null;
         showcases_count?: number | null;
         total_upvotes_count?: number | null;
     };

@@ -47,6 +47,14 @@ class ChallengeResource extends Resource
 
     public bool $is_featured;
 
+    public Lazy|bool $live_view_enabled;
+
+    public Lazy|string|null $live_view_access_token;
+
+    public Lazy|string|null $live_view_heading;
+
+    public Lazy|string|null $live_view_subheading;
+
     public Lazy|ChallengeVisibility $visibility;
 
     public ?string $thumbnail_url;
@@ -61,6 +69,9 @@ class ChallengeResource extends Resource
 
     /** @var Lazy|array<int, SubChallengeResource>|null */
     public Lazy|array|null $sub_challenges;
+
+    /** @var Lazy|array<int, ChallengePartnerLogoResource>|null */
+    public Lazy|array|null $partner_logos;
 
     public Lazy|int|null $showcases_count;
 
@@ -98,6 +109,10 @@ class ChallengeResource extends Resource
             'ends_at' => $challenge->ends_at,
             'is_active' => $challenge->is_active,
             'is_featured' => $challenge->is_featured,
+            'live_view_enabled' => Lazy::create(fn () => $challenge->live_view_enabled),
+            'live_view_access_token' => Lazy::create(fn () => $challenge->live_view_access_token),
+            'live_view_heading' => Lazy::create(fn () => $challenge->live_view_heading),
+            'live_view_subheading' => Lazy::create(fn () => $challenge->live_view_subheading),
             'visibility' => Lazy::create(fn () => $challenge->visibility),
             'thumbnail_url' => $challenge->thumbnail_url,
             'thumbnail_rect_strings' => $challenge->thumbnail_rect_strings,
@@ -109,6 +124,7 @@ class ChallengeResource extends Resource
                 : null),
             'organisation' => Lazy::whenLoaded('organisation', $challenge, fn () => OrganisationResource::fromModel($challenge->organisation)),
             'sub_challenges' => Lazy::whenLoaded('subChallenges', $challenge, fn () => SubChallengeResource::collect($challenge->subChallenges)),
+            'partner_logos' => Lazy::whenLoaded('partnerLogos', $challenge, fn () => ChallengePartnerLogoResource::collect($challenge->partnerLogos)),
             'showcases_count' => Lazy::create(fn () => $challenge->showcases_count),
             'total_upvotes_count' => Lazy::create(fn () => $challenge->total_upvotes_count),
         ]);

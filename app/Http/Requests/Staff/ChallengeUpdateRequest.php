@@ -34,6 +34,12 @@ class ChallengeUpdateRequest extends FormRequest
         if ($this->requiresInviteToSubmit() === false) {
             $this->merge(['involvement_instructions' => null]);
         }
+
+        foreach (['live_view_access_token', 'live_view_heading', 'live_view_subheading'] as $field) {
+            if ($this->input($field) === '') {
+                $this->merge([$field => null]);
+            }
+        }
     }
 
     private function requiresInviteToSubmit(): bool
@@ -79,6 +85,10 @@ class ChallengeUpdateRequest extends FormRequest
             'ends_at' => ['nullable', 'date', 'after:starts_at'],
             'is_active' => $isActiveRules,
             'is_featured' => ['nullable', 'boolean'],
+            'live_view_enabled' => ['nullable', 'boolean'],
+            'live_view_access_token' => ['nullable', 'string', 'max:64'],
+            'live_view_heading' => ['nullable', 'string', 'max:120'],
+            'live_view_subheading' => ['nullable', 'string', 'max:160'],
             'visibility' => ['nullable', Rule::enum(ChallengeVisibility::class)],
             'organisation_id' => ['nullable', Rule::exists('organisations', 'id')],
             'thumbnail' => [Rule::prohibitedIf($this->filled('organisation_id')), 'nullable', 'image', 'mimes:png,jpg,jpeg,gif,webp', 'max:2048'],

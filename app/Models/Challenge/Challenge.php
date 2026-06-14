@@ -42,6 +42,10 @@ class Challenge extends Model
         'ends_at',
         'is_active',
         'is_featured',
+        'live_view_enabled',
+        'live_view_access_token',
+        'live_view_heading',
+        'live_view_subheading',
         'visibility',
         'organisation_id',
         'thumbnail_extension',
@@ -55,6 +59,7 @@ class Challenge extends Model
             'ends_at' => 'datetime',
             'is_active' => 'boolean',
             'is_featured' => 'boolean',
+            'live_view_enabled' => 'boolean',
             'visibility' => ChallengeVisibility::class,
             'thumbnail_crops' => 'array',
         ];
@@ -101,6 +106,11 @@ class Challenge extends Model
     public function subChallenges(): HasMany
     {
         return $this->hasMany(SubChallenge::class)->ordered();
+    }
+
+    public function partnerLogos(): HasMany
+    {
+        return $this->hasMany(ChallengePartnerLogo::class)->ordered();
     }
 
     public function inviteCodes(): HasMany

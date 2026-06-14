@@ -20,7 +20,7 @@ class EditController extends BaseController
 
         return Inertia::render('staff-area/challenges/edit', [
             'challenge' => ChallengeResource::fromModel($challenge)
-                ->include('organisation', 'organisation.about', 'organisation.thumbnail_crops', 'thumbnail_crops', 'visibility')
+                ->include('organisation', 'organisation.about', 'organisation.thumbnail_crops', 'thumbnail_crops', 'visibility', 'live_view_enabled', 'live_view_access_token', 'live_view_heading', 'live_view_subheading')
                 ->only(
                     'id',
                     'slug',
@@ -33,6 +33,10 @@ class EditController extends BaseController
                     'ends_at',
                     'is_active',
                     'is_featured',
+                    'live_view_enabled',
+                    'live_view_access_token',
+                    'live_view_heading',
+                    'live_view_subheading',
                     'visibility',
                     'thumbnail_url',
                     'thumbnail_rect_strings',

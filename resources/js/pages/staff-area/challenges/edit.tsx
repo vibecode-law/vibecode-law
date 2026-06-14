@@ -7,9 +7,10 @@ import StaffAreaLayout from '@/layouts/staff-area/layout';
 import { CHALLENGE_VISIBILITY } from '@/lib/challenge-utils';
 import { index, update } from '@/routes/staff/challenges';
 import { index as inviteCodesIndex } from '@/routes/staff/challenges/invite-codes';
+import { index as partnerLogosIndex } from '@/routes/staff/challenges/partner-logos';
 import { index as subChallengesIndex } from '@/routes/staff/challenges/sub-challenges';
 import { Form, Head, Link } from '@inertiajs/react';
-import { ArrowLeft, KeyRound, ListChecks } from 'lucide-react';
+import { ArrowLeft, ImagePlus, KeyRound, ListChecks } from 'lucide-react';
 
 interface ChallengesEditProps {
     challenge: App.Http.Resources.Challenge.ChallengeResource;
@@ -36,12 +37,12 @@ export default function ChallengesEdit({
                     </Button>
                 </div>
 
-                <div className="flex items-center justify-between">
+                <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
                     <HeadingSmall
                         title={`Edit ${challenge.title}`}
                         description="Update challenge details and settings"
                     />
-                    <div className="flex items-center gap-2">
+                    <div className="flex flex-wrap items-center gap-2">
                         {challenge.is_active === true && (
                             <Badge className="bg-green-500 text-white hover:bg-green-500">
                                 Active
@@ -81,6 +82,14 @@ export default function ChallengesEdit({
                                         ends_at: challenge.ends_at,
                                         is_active: challenge.is_active,
                                         is_featured: challenge.is_featured,
+                                        live_view_enabled:
+                                            challenge.live_view_enabled,
+                                        live_view_access_token:
+                                            challenge.live_view_access_token,
+                                        live_view_heading:
+                                            challenge.live_view_heading,
+                                        live_view_subheading:
+                                            challenge.live_view_subheading,
                                         visibility: challenge.visibility,
                                         organisation:
                                             challenge.organisation ?? null,
@@ -91,8 +100,8 @@ export default function ChallengesEdit({
                                     }}
                                 />
 
-                                <div className="mt-6 flex items-center border-t pt-6 dark:border-neutral-800">
-                                    <div className="flex items-center gap-3">
+                                <div className="mt-6 flex flex-col gap-4 border-t pt-6 sm:flex-row sm:items-center dark:border-neutral-800">
+                                    <div className="flex flex-wrap items-center gap-3">
                                         <Button
                                             variant="outline"
                                             type="button"
@@ -105,6 +114,20 @@ export default function ChallengesEdit({
                                             >
                                                 <ListChecks className="mr-1.5 size-4" />
                                                 Manage Sub-challenges
+                                            </Link>
+                                        </Button>
+                                        <Button
+                                            variant="outline"
+                                            type="button"
+                                            asChild
+                                        >
+                                            <Link
+                                                href={partnerLogosIndex.url({
+                                                    challenge: challenge.slug,
+                                                })}
+                                            >
+                                                <ImagePlus className="mr-1.5 size-4" />
+                                                Manage Partner Logos
                                             </Link>
                                         </Button>
                                         {challenge.visibility !== undefined &&
@@ -140,7 +163,7 @@ export default function ChallengesEdit({
                                                 </Button>
                                             )}
                                     </div>
-                                    <div className="ml-auto flex items-center gap-3">
+                                    <div className="flex flex-wrap items-center gap-3 sm:ml-auto">
                                         <Button
                                             variant="outline"
                                             type="button"

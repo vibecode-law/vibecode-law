@@ -45,6 +45,10 @@ interface ChallengeFormFieldsProps {
         ends_at?: string | null;
         is_active?: boolean;
         is_featured?: boolean;
+        live_view_enabled?: boolean;
+        live_view_access_token?: string | null;
+        live_view_heading?: string | null;
+        live_view_subheading?: string | null;
         visibility?: number;
         organisation?: Organisation | null;
         thumbnail_url?: string | null;
@@ -75,6 +79,9 @@ export default function ChallengeFormFields({
     );
     const [featuredChecked, setFeaturedChecked] = useState(
         defaultValues?.is_featured ?? false,
+    );
+    const [liveViewEnabled, setLiveViewEnabled] = useState(
+        defaultValues?.live_view_enabled ?? false,
     );
     const [visibility, setVisibility] = useState(
         String(defaultValues?.visibility ?? 1),
@@ -368,6 +375,100 @@ export default function ChallengeFormFields({
                     name="is_featured"
                     value={featuredEnabled ? '1' : '0'}
                 />
+            </div>
+
+            <Separator />
+
+            <div className="space-y-4">
+                <label className="flex cursor-pointer items-start gap-3">
+                    <Switch
+                        checked={liveViewEnabled}
+                        onCheckedChange={setLiveViewEnabled}
+                        disabled={processing}
+                        className="mt-0.5"
+                    />
+                    <div>
+                        <span className="text-sm font-medium">
+                            Live leaderboard view
+                        </span>
+                        <p className="text-sm text-neutral-500 dark:text-neutral-400">
+                            Enable a full-screen, auto-updating leaderboard for
+                            big screens at in-person events.
+                        </p>
+                    </div>
+                </label>
+                <input
+                    type="hidden"
+                    name="live_view_enabled"
+                    value={liveViewEnabled ? '1' : '0'}
+                />
+
+                {liveViewEnabled === true && (
+                    <div className="space-y-4 border-l-2 border-neutral-200 pl-4 dark:border-neutral-800">
+                        <FormField
+                            label="Screen heading"
+                            htmlFor="live_view_heading"
+                            error={errors.live_view_heading}
+                            optional
+                        >
+                            <Input
+                                id="live_view_heading"
+                                name="live_view_heading"
+                                defaultValue={
+                                    defaultValues?.live_view_heading ?? ''
+                                }
+                                disabled={processing}
+                                maxLength={120}
+                                placeholder={defaultValues?.title}
+                            />
+                            <p className="mt-1 text-sm text-neutral-500 dark:text-neutral-400">
+                                Shown big on the screen. Defaults to the
+                                challenge title.
+                            </p>
+                        </FormField>
+                        <FormField
+                            label="Screen subheading"
+                            htmlFor="live_view_subheading"
+                            error={errors.live_view_subheading}
+                            optional
+                        >
+                            <Input
+                                id="live_view_subheading"
+                                name="live_view_subheading"
+                                defaultValue={
+                                    defaultValues?.live_view_subheading ?? ''
+                                }
+                                disabled={processing}
+                                maxLength={160}
+                                placeholder={defaultValues?.tagline}
+                            />
+                            <p className="mt-1 text-sm text-neutral-500 dark:text-neutral-400">
+                                Defaults to the challenge tagline.
+                            </p>
+                        </FormField>
+                        <FormField
+                            label="Secret access key"
+                            htmlFor="live_view_access_token"
+                            error={errors.live_view_access_token}
+                            optional
+                        >
+                            <Input
+                                id="live_view_access_token"
+                                name="live_view_access_token"
+                                defaultValue={
+                                    defaultValues?.live_view_access_token ?? ''
+                                }
+                                disabled={processing}
+                                maxLength={64}
+                                placeholder="Leave blank for an open URL"
+                            />
+                            <p className="mt-1 text-sm text-neutral-500 dark:text-neutral-400">
+                                If set, the live URL must include{' '}
+                                <code>?key=…</code> to be viewable.
+                            </p>
+                        </FormField>
+                    </div>
+                )}
             </div>
 
             <Separator />

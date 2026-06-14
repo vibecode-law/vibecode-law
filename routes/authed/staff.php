@@ -7,6 +7,11 @@ use App\Http\Controllers\Staff\Challenges\InviteCodes\ImportStoreController as I
 use App\Http\Controllers\Staff\Challenges\InviteCodes\IndexController as InviteCodeIndexController;
 use App\Http\Controllers\Staff\Challenges\InviteCodes\StoreController as InviteCodeStoreController;
 use App\Http\Controllers\Staff\Challenges\InviteCodes\ToggleActiveController as InviteCodeToggleActiveController;
+use App\Http\Controllers\Staff\Challenges\PartnerLogos\DestroyController as PartnerLogoDestroyController;
+use App\Http\Controllers\Staff\Challenges\PartnerLogos\IndexController as PartnerLogoIndexController;
+use App\Http\Controllers\Staff\Challenges\PartnerLogos\ReorderController as PartnerLogoReorderController;
+use App\Http\Controllers\Staff\Challenges\PartnerLogos\StoreController as PartnerLogoStoreController;
+use App\Http\Controllers\Staff\Challenges\PartnerLogos\UpdateController as PartnerLogoUpdateController;
 use App\Http\Controllers\Staff\Challenges\StoreController as ChallengeStoreController;
 use App\Http\Controllers\Staff\Challenges\SubChallenges\DestroyController as SubChallengeDestroyController;
 use App\Http\Controllers\Staff\Challenges\SubChallenges\IndexController as SubChallengeIndexController;
@@ -169,6 +174,14 @@ Route::middleware(['can:access-staff'])->prefix('staff')->name('staff.')->group(
             Route::post('/reorder', SubChallengeReorderController::class)->name('reorder');
             Route::patch('/{subChallenge}', SubChallengeUpdateController::class)->name('update');
             Route::delete('/{subChallenge}', SubChallengeDestroyController::class)->name('destroy');
+        });
+
+        Route::prefix('{challenge}/partner-logos')->name('partner-logos.')->scopeBindings()->group(function () {
+            Route::get('/', PartnerLogoIndexController::class)->name('index');
+            Route::post('/', PartnerLogoStoreController::class)->name('store');
+            Route::post('/reorder', PartnerLogoReorderController::class)->name('reorder');
+            Route::patch('/{partnerLogo}', PartnerLogoUpdateController::class)->name('update');
+            Route::delete('/{partnerLogo}', PartnerLogoDestroyController::class)->name('destroy');
         });
     });
 

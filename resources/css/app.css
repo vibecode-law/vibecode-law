@@ -321,3 +321,43 @@
         }
     }
 }
+
+/*
+ * Shimmering holographic gradient, used on the live leaderboard empty state.
+ * Apply to text (clipped to the glyphs) or to a surface via .holographic-surface.
+ */
+@keyframes holographic-shimmer {
+    to {
+        background-position: 200% center;
+    }
+}
+
+.holographic-text,
+.holographic-surface {
+    background-image: linear-gradient(
+        110deg,
+        #10b981,
+        #34d399,
+        #22d3ee,
+        #818cf8,
+        #c084fc,
+        #f472b6,
+        #fbbf24,
+        #10b981
+    );
+    background-size: 200% auto;
+    animation: holographic-shimmer 4s linear infinite;
+}
+
+.holographic-text {
+    background-clip: text;
+    -webkit-background-clip: text;
+    color: transparent;
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .holographic-text,
+    .holographic-surface {
+        animation: none;
+    }
+}

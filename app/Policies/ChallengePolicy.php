@@ -41,4 +41,9 @@ class ChallengePolicy
     {
         return $user->can('challenge.update');
     }
+
+    public function managePartnerLogos(User $user, Challenge $challenge): bool
+    {
+        return $user->can('challenge.update');
+    }
 }
