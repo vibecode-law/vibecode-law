@@ -76,4 +76,21 @@ class AcceptChallengeInviteCodeAction
     {
         return "challengeInvite:{$inviteCode->challenge->slug}:".Str::slug($inviteCode->label).":{$inviteCode->code}";
     }
+
+    /**
+     * Marketing tags for every challenge invite code the user has already accepted.
+     *
+     * @return array<int, string>
+     */
+    public function tagsForAcceptedInviteCodes(User $user): array
+    {
+        /** @var Collection<int, ChallengeInviteCode> $acceptedInviteCodes */
+        $acceptedInviteCodes = $user->acceptedChallengeInviteCodes()
+            ->with('challenge')
+            ->get();
+
+        return $acceptedInviteCodes
+            ->map(fn (ChallengeInviteCode $inviteCode): string => $this->tagFor(inviteCode: $inviteCode))
+            ->all();
+    }
 }

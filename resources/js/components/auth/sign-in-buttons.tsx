@@ -53,6 +53,10 @@ export function SignInButtons({
                         <DialogTitle>Sign in with email</DialogTitle>
                         <DialogDescription>{description}</DialogDescription>
                     </DialogHeader>
+                    <p className="text-center text-sm text-muted-foreground">
+                        Don&apos;t have an account?{' '}
+                        <TextLink href={register.url()}>Sign up</TextLink>
+                    </p>
                     <Form
                         {...store.form()}
                         resetOnSuccess={['password']}
@@ -94,12 +98,6 @@ export function SignInButtons({
                                 >
                                     Sign in
                                 </SubmitButton>
-                                <p className="text-center text-sm text-muted-foreground">
-                                    Don&apos;t have an account?{' '}
-                                    <TextLink href={register.url()}>
-                                        Sign up
-                                    </TextLink>
-                                </p>
                             </>
                         )}
                     </Form>

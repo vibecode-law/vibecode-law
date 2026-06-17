@@ -19,7 +19,7 @@ export default function InviteOnlyPage() {
             <section className="grid bg-white lg:min-h-[70vh] lg:place-items-center dark:bg-neutral-950">
                 <div className="mx-auto w-full max-w-3xl px-4 py-16 lg:py-8">
                     <div className="overflow-hidden rounded-xl bg-neutral-900">
-                        <div className="flex aspect-video w-full flex-col items-center justify-center gap-5 px-6 text-white">
+                        <div className="flex w-full flex-col items-center justify-center gap-5 px-8 py-8 text-white sm:aspect-video sm:px-6 sm:py-0">
                             <div className="flex items-center gap-3">
                                 <div className="rounded-full bg-neutral-800 p-3">
                                     <Shield className="size-5 text-neutral-500" />
