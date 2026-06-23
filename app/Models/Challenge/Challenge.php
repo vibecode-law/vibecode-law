@@ -40,6 +40,7 @@ class Challenge extends Model
         'participant_instructions',
         'starts_at',
         'ends_at',
+        'timezone',
         'is_active',
         'is_featured',
         'live_view_enabled',

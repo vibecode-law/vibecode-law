@@ -84,6 +84,7 @@ describe('data', function () {
                     ->where('participant_instructions', null)
                     ->where('starts_at', $challenge->starts_at->toIso8601String())
                     ->where('ends_at', $challenge->ends_at->toIso8601String())
+                    ->where('timezone', $challenge->timezone)
                     ->where('is_active', true)
                     ->where('is_featured', true)
                     ->where('live_view_enabled', false)

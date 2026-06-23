@@ -15,6 +15,7 @@ describe('auth', function () {
         $challenge = Challenge::factory()->create();
 
         patch(route('staff.challenges.update', $challenge), [
+            'timezone' => 'Europe/London',
             'title' => 'Updated',
             'slug' => $challenge->slug,
             'tagline' => 'Updated tagline',
@@ -30,6 +31,7 @@ describe('auth', function () {
         actingAs($user);
 
         patch(route('staff.challenges.update', $challenge), [
+            'timezone' => 'Europe/London',
             'title' => 'Updated',
             'slug' => $challenge->slug,
             'tagline' => 'Updated tagline',
@@ -44,6 +46,7 @@ describe('auth', function () {
         actingAs($user);
 
         patch(route('staff.challenges.update', $challenge), [
+            'timezone' => 'Europe/London',
             'title' => 'Updated',
             'slug' => $challenge->slug,
             'tagline' => 'Updated tagline',
@@ -58,6 +61,7 @@ describe('auth', function () {
         actingAs($user);
 
         patch(route('staff.challenges.update', $challenge), [
+            'timezone' => 'Europe/London',
             'title' => 'Updated',
             'slug' => $challenge->slug,
             'tagline' => 'Updated tagline',
@@ -74,6 +78,7 @@ describe('update', function () {
         actingAs($admin);
 
         patch(route('staff.challenges.update', $challenge), [
+            'timezone' => 'Europe/London',
             'title' => 'Updated Challenge',
             'slug' => 'updated-challenge',
             'tagline' => 'Updated tagline',
@@ -92,6 +97,52 @@ describe('update', function () {
             ->and($challenge->is_featured)->toBeTrue();
     });
 
+    test('pins start to the first second and end to the last second of the minute', function () {
+        $admin = User::factory()->admin()->create();
+        $challenge = Challenge::factory()->create();
+
+        actingAs($admin);
+
+        patch(route('staff.challenges.update', $challenge), [
+            'timezone' => 'UTC',
+            'title' => 'Updated Challenge',
+            'slug' => 'updated-challenge',
+            'tagline' => 'Updated tagline',
+            'description' => 'Updated description content.',
+            'starts_at' => '2026-03-01T09:30',
+            'ends_at' => '2026-04-01T17:45',
+        ])->assertRedirect();
+
+        $challenge->refresh();
+
+        expect($challenge->starts_at->format('Y-m-d H:i:s'))->toBe('2026-03-01 09:30:00')
+            ->and($challenge->ends_at->format('Y-m-d H:i:s'))->toBe('2026-04-01 17:45:59');
+    });
+
+    test('converts entered times from the challenge timezone to UTC', function () {
+        $admin = User::factory()->admin()->create();
+        $challenge = Challenge::factory()->create();
+
+        actingAs($admin);
+
+        // 1 July is BST (UTC+1), so 09:00 London is 08:00 UTC.
+        patch(route('staff.challenges.update', $challenge), [
+            'timezone' => 'Europe/London',
+            'title' => 'Updated Challenge',
+            'slug' => 'updated-challenge',
+            'tagline' => 'Updated tagline',
+            'description' => 'Updated description content.',
+            'starts_at' => '2026-07-01T09:00',
+            'ends_at' => '2026-07-31T17:00',
+        ])->assertRedirect();
+
+        $challenge->refresh();
+
+        expect($challenge->timezone)->toBe('Europe/London')
+            ->and($challenge->starts_at->format('Y-m-d H:i:s'))->toBe('2026-07-01 08:00:00')
+            ->and($challenge->ends_at->format('Y-m-d H:i:s'))->toBe('2026-07-31 16:00:59');
+    });
+
     test('updates live view fields', function () {
         $admin = User::factory()->admin()->create();
         $challenge = Challenge::factory()->create();
@@ -99,6 +150,7 @@ describe('update', function () {
         actingAs($admin);
 
         patch(route('staff.challenges.update', $challenge), [
+            'timezone' => 'Europe/London',
             'title' => $challenge->title,
             'slug' => $challenge->slug,
             'tagline' => $challenge->tagline,
@@ -127,6 +179,7 @@ describe('update', function () {
         actingAs($admin);
 
         patch(route('staff.challenges.update', $challenge), [
+            'timezone' => 'Europe/London',
             'title' => $challenge->title,
             'slug' => $challenge->slug,
             'tagline' => $challenge->tagline,
@@ -153,6 +206,7 @@ describe('update', function () {
         actingAs($admin);
 
         patch(route('staff.challenges.update', $challenge), [
+            'timezone' => 'Europe/London',
             'title' => $challenge->title,
             'slug' => $challenge->slug,
             'tagline' => $challenge->tagline,
@@ -176,6 +230,7 @@ describe('update', function () {
         $thumbnail = UploadedFile::fake()->image(name: 'thumbnail.jpg', width: 400, height: 300);
 
         patch(route('staff.challenges.update', $challenge), [
+            'timezone' => 'Europe/London',
             'title' => $challenge->title,
             'slug' => $challenge->slug,
             'tagline' => $challenge->tagline,
@@ -200,6 +255,7 @@ describe('update', function () {
         $thumbnail = UploadedFile::fake()->image(name: 'thumbnail.jpg', width: 800, height: 600);
 
         patch(route('staff.challenges.update', $challenge), [
+            'timezone' => 'Europe/London',
             'title' => $challenge->title,
             'slug' => $challenge->slug,
             'tagline' => $challenge->tagline,
@@ -228,6 +284,7 @@ describe('update', function () {
         actingAs($admin);
 
         patch(route('staff.challenges.update', $challenge), [
+            'timezone' => 'Europe/London',
             'title' => $challenge->title,
             'slug' => $challenge->slug,
             'tagline' => $challenge->tagline,
@@ -261,6 +318,7 @@ describe('update', function () {
         actingAs($admin);
 
         patch(route('staff.challenges.update', $challenge), [
+            'timezone' => 'Europe/London',
             'title' => $challenge->title,
             'slug' => $challenge->slug,
             'tagline' => $challenge->tagline,
@@ -295,6 +353,7 @@ describe('update', function () {
         actingAs($admin);
 
         patch(route('staff.challenges.update', $challenge), [
+            'timezone' => 'Europe/London',
             'title' => $challenge->title,
             'slug' => $challenge->slug,
             'tagline' => $challenge->tagline,
@@ -316,6 +375,7 @@ describe('update', function () {
         actingAs($admin);
 
         patch(route('staff.challenges.update', $challenge), [
+            'timezone' => 'Europe/London',
             'title' => 'Updated',
             'slug' => $challenge->slug,
             'tagline' => 'Updated tagline',
@@ -334,6 +394,7 @@ describe('update', function () {
         actingAs($admin);
 
         patch(route('staff.challenges.update', $challenge), [
+            'timezone' => 'Europe/London',
             'title' => $challenge->title,
             'slug' => $challenge->slug,
             'tagline' => $challenge->tagline,
@@ -352,6 +413,7 @@ describe('update', function () {
         actingAs($admin);
 
         patch(route('staff.challenges.update', $challenge), [
+            'timezone' => 'Europe/London',
             'title' => $challenge->title,
             'slug' => $challenge->slug,
             'tagline' => $challenge->tagline,
@@ -374,6 +436,7 @@ describe('update', function () {
         actingAs($admin);
 
         patch(route('staff.challenges.update', $challenge), [
+            'timezone' => 'Europe/London',
             'title' => $challenge->title,
             'slug' => $challenge->slug,
             'tagline' => $challenge->tagline,
@@ -392,6 +455,7 @@ describe('update', function () {
         actingAs($admin);
 
         patch(route('staff.challenges.update', $challenge), [
+            'timezone' => 'Europe/London',
             'title' => $challenge->title,
             'slug' => $challenge->slug,
             'tagline' => $challenge->tagline,
@@ -407,6 +471,7 @@ describe('update', function () {
         actingAs($admin);
 
         patch(route('staff.challenges.update', $challenge), [
+            'timezone' => 'Europe/London',
             'title' => $challenge->title,
             'slug' => $challenge->slug,
             'tagline' => $challenge->tagline,
@@ -425,6 +490,7 @@ describe('update', function () {
         actingAs($admin);
 
         patch(route('staff.challenges.update', $challenge), [
+            'timezone' => 'Europe/London',
             'title' => $challenge->title,
             'slug' => $challenge->slug,
             'tagline' => $challenge->tagline,
@@ -443,6 +509,7 @@ describe('update', function () {
         actingAs($admin);
 
         patch(route('staff.challenges.update', $challenge), [
+            'timezone' => 'Europe/London',
             'title' => $challenge->title,
             'slug' => $challenge->slug,
             'tagline' => $challenge->tagline,
@@ -461,6 +528,7 @@ describe('update', function () {
         actingAs($admin);
 
         patch(route('staff.challenges.update', $challenge), [
+            'timezone' => 'Europe/London',
             'title' => $challenge->title,
             'slug' => $challenge->slug,
             'tagline' => $challenge->tagline,
@@ -480,6 +548,7 @@ describe('update', function () {
         actingAs($admin);
 
         patch(route('staff.challenges.update', $challenge), [
+            'timezone' => 'UTC',
             'title' => $challenge->title,
             'slug' => $challenge->slug,
             'tagline' => $challenge->tagline,
@@ -503,6 +572,7 @@ describe('active challenge constraints', function () {
         actingAs($admin);
 
         patch(route('staff.challenges.update', $challenge), [
+            'timezone' => 'Europe/London',
             'title' => 'Updated Title',
             'slug' => 'new-slug',
             'tagline' => $challenge->tagline,
@@ -521,6 +591,7 @@ describe('active challenge constraints', function () {
         actingAs($admin);
 
         patch(route('staff.challenges.update', $challenge), [
+            'timezone' => 'Europe/London',
             'title' => $challenge->title,
             'slug' => $challenge->slug,
             'tagline' => $challenge->tagline,
@@ -537,6 +608,7 @@ describe('active challenge constraints', function () {
         actingAs($admin);
 
         patch(route('staff.challenges.update', $challenge), [
+            'timezone' => 'Europe/London',
             'title' => $challenge->title,
             'slug' => 'new-slug',
             'tagline' => $challenge->tagline,
@@ -553,6 +625,7 @@ describe('active challenge constraints', function () {
         actingAs($admin);
 
         patch(route('staff.challenges.update', $challenge), [
+            'timezone' => 'Europe/London',
             'title' => $challenge->title,
             'slug' => $challenge->slug,
             'tagline' => $challenge->tagline,
@@ -615,6 +688,7 @@ describe('validation', function () {
         actingAs($admin);
 
         patch(route('staff.challenges.update', $challenge), [
+            'timezone' => 'Europe/London',
             'title' => 'Test',
             'slug' => 'taken-slug',
             'tagline' => 'Tagline',
@@ -629,6 +703,7 @@ describe('validation', function () {
         actingAs($admin);
 
         patch(route('staff.challenges.update', $challenge), [
+            'timezone' => 'Europe/London',
             'title' => 'Updated Title',
             'slug' => 'my-slug',
             'tagline' => 'Updated tagline',
@@ -645,6 +720,7 @@ describe('validation', function () {
         $file = UploadedFile::fake()->create(name: 'document.pdf', mimeType: 'application/pdf');
 
         patch(route('staff.challenges.update', $challenge), [
+            'timezone' => 'Europe/London',
             'title' => 'Test',
             'slug' => $challenge->slug,
             'tagline' => 'Tagline',
@@ -663,6 +739,7 @@ describe('validation', function () {
         $thumbnail = UploadedFile::fake()->image(name: 'thumbnail.jpg', width: 400, height: 300);
 
         patch(route('staff.challenges.update', $challenge), [
+            'timezone' => 'Europe/London',
             'title' => 'Test',
             'slug' => $challenge->slug,
             'tagline' => 'Tagline',
@@ -679,6 +756,7 @@ describe('validation', function () {
         actingAs($admin);
 
         patch(route('staff.challenges.update', $challenge), [
+            'timezone' => 'Europe/London',
             'title' => 'Test',
             'slug' => $challenge->slug,
             'tagline' => 'Tagline',
@@ -704,6 +782,7 @@ describe('validation', function () {
         actingAs($admin);
 
         patch(route('staff.challenges.update', $challenge), [
+            'timezone' => 'Europe/London',
             'title' => $challenge->title,
             'slug' => $challenge->slug,
             'tagline' => $challenge->tagline,

@@ -43,6 +43,8 @@ class ChallengeResource extends Resource
     #[WithCast(DateTimeInterfaceCast::class)]
     public ?CarbonInterface $ends_at;
 
+    public ?string $timezone;
+
     public bool $is_active;
 
     public bool $is_featured;
@@ -107,6 +109,7 @@ class ChallengeResource extends Resource
                 )),
             'starts_at' => $challenge->starts_at,
             'ends_at' => $challenge->ends_at,
+            'timezone' => $challenge->timezone,
             'is_active' => $challenge->is_active,
             'is_featured' => $challenge->is_featured,
             'live_view_enabled' => Lazy::create(fn () => $challenge->live_view_enabled),

@@ -6,6 +6,7 @@ use App\Http\Resources\Challenge\ChallengeResource;
 use App\Http\Resources\Showcase\ShowcaseResource;
 use App\Models\Challenge\Challenge;
 use App\Models\Showcase\Showcase;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Inertia\Inertia;
@@ -62,7 +63,10 @@ class HomeController extends BaseController
             ->where('is_active', true)
             ->where('is_featured', true)
             ->publiclyVisible()
-            ->withCount('showcases')
+            ->withCount(['showcases as showcases_count' => function (Builder $query): void {
+                /** @var Builder<Showcase> $query */
+                $query->publiclyVisible();
+            }])
             ->orderByDesc('showcases_count')
             ->get();
 

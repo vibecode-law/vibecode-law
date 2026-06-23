@@ -5,6 +5,8 @@ namespace App\Http\Controllers\Challenge\Public;
 use App\Http\Controllers\BaseController;
 use App\Http\Resources\Challenge\ChallengeResource;
 use App\Models\Challenge\Challenge;
+use App\Models\Showcase\Showcase;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection;
 use Inertia\Inertia;
 use Inertia\Response;
@@ -31,7 +33,10 @@ class ChallengeIndexController extends BaseController
             ->where('is_active', true)
             ->publiclyVisible()
             ->with('organisation')
-            ->withCount('showcases')
+            ->withCount(['showcases as showcases_count' => function (Builder $query): void {
+                /** @var Builder<Showcase> $query */
+                $query->publiclyVisible();
+            }])
             ->withTotalUpvotesCount()
             ->orderBy('total_upvotes_count', 'desc')
             ->get();

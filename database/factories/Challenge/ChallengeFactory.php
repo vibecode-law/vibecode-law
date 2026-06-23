@@ -40,6 +40,7 @@ class ChallengeFactory extends Factory
             'participant_instructions' => null,
             'starts_at' => null,
             'ends_at' => null,
+            'timezone' => null,
             'is_active' => false,
             'is_featured' => false,
             'organisation_id' => null,
@@ -90,6 +91,7 @@ class ChallengeFactory extends Factory
         return $this->state(fn () => [
             'starts_at' => fake()->dateTimeBetween('-1 month', 'now'),
             'ends_at' => fake()->dateTimeBetween('+1 month', '+3 months'),
+            'timezone' => 'UTC',
         ]);
     }
 
@@ -98,6 +100,7 @@ class ChallengeFactory extends Factory
         return $this->active()->state(fn () => [
             'starts_at' => fake()->dateTimeBetween('-1 month', '-1 day'),
             'ends_at' => fake()->dateTimeBetween('+1 day', '+1 month'),
+            'timezone' => 'UTC',
         ]);
     }
 
@@ -106,6 +109,7 @@ class ChallengeFactory extends Factory
         return $this->active()->state(fn () => [
             'starts_at' => fake()->dateTimeBetween('+1 day', '+1 month'),
             'ends_at' => fake()->dateTimeBetween('+2 months', '+3 months'),
+            'timezone' => 'UTC',
         ]);
     }
 
@@ -115,6 +119,7 @@ class ChallengeFactory extends Factory
             'is_active' => false,
             'starts_at' => fake()->dateTimeBetween('-2 months', '-1 month'),
             'ends_at' => fake()->dateTimeBetween('-1 week', '-1 day'),
+            'timezone' => 'UTC',
         ]);
     }
 

@@ -101,6 +101,7 @@ declare namespace App.Http.Resources.Challenge {
         participant_instructions_html?: string | null;
         starts_at: string | null;
         ends_at: string | null;
+        timezone: string | null;
         is_active: boolean;
         is_featured: boolean;
         live_view_enabled?: boolean;

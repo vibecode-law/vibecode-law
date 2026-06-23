@@ -36,6 +36,7 @@ namespace App\Models\Challenge{
  * @property string|null $live_view_access_token
  * @property string|null $live_view_heading
  * @property string|null $live_view_subheading
+ * @property string|null $timezone
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\Challenge\ChallengeInviteCode> $inviteCodes
  * @property-read int|null $invite_codes_count
  * @property-read \App\Models\Organisation\Organisation|null $organisation
@@ -72,6 +73,7 @@ namespace App\Models\Challenge{
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Challenge whereTagline($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Challenge whereThumbnailCrops($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Challenge whereThumbnailExtension($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Challenge whereTimezone($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Challenge whereTitle($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Challenge whereUpdatedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Challenge whereUserId($value)

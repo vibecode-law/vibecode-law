@@ -1475,6 +1475,34 @@ describe('challenge attachment', function () {
         ])->assertValid('challenge_id');
     });
 
+    test('accepts challenge_id when it closes later today', function () {
+        $practiceArea = PracticeArea::factory()->create();
+        $challenge = Challenge::factory()->active()->create([
+            'starts_at' => now()->subMonth(),
+            'ends_at' => now()->endOfDay(),
+        ]);
+
+        /** @var User */
+        $user = User::factory()->create();
+
+        actingAs($user);
+
+        post(route('showcase.manage.store'), [
+            'practice_area_ids' => [$practiceArea->id],
+            'title' => 'My Challenge Project',
+            'tagline' => 'A great project tagline',
+            'description' => 'This is a great project description',
+            'key_features' => 'Some key features',
+            'url' => 'https://example.com',
+            'source_status' => SourceStatus::NotAvailable->value,
+            'images' => [UploadedFile::fake()->image('test.jpg', 1280, 720)],
+            'image_crops' => [['landscape' => ['x' => 0, 'y' => 0, 'width' => 1280, 'height' => 720]]],
+            'thumbnail' => UploadedFile::fake()->image('thumbnail.jpg', 500, 500),
+            'thumbnail_crop' => ['x' => 0, 'y' => 0, 'width' => 500, 'height' => 500],
+            'challenge_id' => $challenge->id,
+        ])->assertValid('challenge_id');
+    });
+
     test('accepts challenge_id when dates are null', function () {
         $practiceArea = PracticeArea::factory()->create();
         $challenge = Challenge::factory()->active()->create([

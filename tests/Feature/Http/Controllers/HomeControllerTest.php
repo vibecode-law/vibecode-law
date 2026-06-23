@@ -332,6 +332,24 @@ describe('activeChallenges', function () {
             );
     });
 
+    test('showcases_count only counts approved showcases', function () {
+        $challenge = Challenge::factory()->active()->featured()->create();
+
+        $challenge->showcases()->attach(
+            Showcase::factory()->approved()->count(2)->create(['submitted_date' => now()])->pluck('id')
+        );
+        $challenge->showcases()->attach(Showcase::factory()->draft()->count(3)->create()->pluck('id'));
+        $challenge->showcases()->attach(Showcase::factory()->pending()->create()->getKey());
+        $challenge->showcases()->attach(Showcase::factory()->rejected()->create()->getKey());
+
+        get('/')
+            ->assertOk()
+            ->assertInertia(fn (AssertableInertia $page) => $page
+                ->component('home')
+                ->where('activeChallenges.0.showcases_count', 2)
+            );
+    });
+
     test('orders active challenges by showcases count descending', function () {
         $lessChallenged = Challenge::factory()->active()->featured()->create([
             'title' => 'Less Popular',

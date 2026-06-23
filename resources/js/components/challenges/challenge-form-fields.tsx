@@ -1,4 +1,6 @@
+import { DateTimePicker } from '@/components/challenges/date-time-picker';
 import { OrganisationSearchSelect } from '@/components/challenges/organisation-search-select';
+import { TimezoneSearchSelect } from '@/components/challenges/timezone-search-select';
 import { CreateOrganisationModal } from '@/components/organisation/create-organisation-modal';
 import { EditOrganisationModal } from '@/components/organisation/edit-organisation-modal';
 import { Button } from '@/components/ui/button';
@@ -22,6 +24,37 @@ import { slugify } from '@/lib/slug';
 import { Pencil } from 'lucide-react';
 import { useRef, useState } from 'react';
 
+function formatForDateTimeInput(
+    value: string | null | undefined,
+    timeZone: string,
+): string {
+    if (value === null || value === undefined || value === '') {
+        return '';
+    }
+
+    // The value is a UTC instant; render it as the wall-clock time in the
+    // challenge's timezone for the `YYYY-MM-DDTHH:mm` datetime-local input.
+    const parts = new Intl.DateTimeFormat('en-GB', {
+        timeZone,
+        year: 'numeric',
+        month: '2-digit',
+        day: '2-digit',
+        hour: '2-digit',
+        minute: '2-digit',
+        hour12: false,
+    }).formatToParts(new Date(value));
+
+    const lookup = (type: Intl.DateTimeFormatPartTypes) =>
+        parts.find((part) => part.type === type)?.value ?? '';
+
+    let hour = lookup('hour');
+    if (hour === '24') {
+        hour = '00';
+    }
+
+    return `${lookup('year')}-${lookup('month')}-${lookup('day')}T${hour}:${lookup('minute')}`;
+}
+
 interface Organisation {
     id: number;
     name: string;
@@ -43,6 +76,7 @@ interface ChallengeFormFieldsProps {
         participant_instructions?: string | null;
         starts_at?: string | null;
         ends_at?: string | null;
+        timezone?: string | null;
         is_active?: boolean;
         is_featured?: boolean;
         live_view_enabled?: boolean;
@@ -85,6 +119,19 @@ export default function ChallengeFormFields({
     );
     const [visibility, setVisibility] = useState(
         String(defaultValues?.visibility ?? 1),
+    );
+    const [timezone, setTimezone] = useState(defaultValues?.timezone ?? '');
+    const [startsAt, setStartsAt] = useState(() =>
+        formatForDateTimeInput(
+            defaultValues?.starts_at,
+            defaultValues?.timezone ?? 'UTC',
+        ),
+    );
+    const [endsAt, setEndsAt] = useState(() =>
+        formatForDateTimeInput(
+            defaultValues?.ends_at,
+            defaultValues?.timezone ?? 'UTC',
+        ),
     );
     const slugRef = useRef<HTMLInputElement>(null);
 
@@ -194,53 +241,57 @@ export default function ChallengeFormFields({
 
             <div className="grid items-start gap-4 sm:grid-cols-2">
                 <FormField
-                    label="Start date"
+                    label="Start date & time"
                     htmlFor="starts_at"
                     error={errors.starts_at}
                     optional
                 >
-                    <Input
-                        id="starts_at"
+                    <DateTimePicker
                         name="starts_at"
-                        type="date"
-                        defaultValue={
-                            defaultValues?.starts_at
-                                ? new Date(defaultValues.starts_at)
-                                      .toISOString()
-                                      .split('T')[0]
-                                : ''
-                        }
+                        value={startsAt}
+                        onChange={setStartsAt}
                         disabled={processing}
-                        aria-invalid={
-                            errors.starts_at !== undefined ? true : undefined
-                        }
+                        error={errors.starts_at !== undefined}
+                        defaultTime="start"
                     />
                 </FormField>
 
                 <FormField
-                    label="End date"
+                    label="End date & time"
                     htmlFor="ends_at"
                     error={errors.ends_at}
                     optional
                 >
-                    <Input
-                        id="ends_at"
+                    <DateTimePicker
                         name="ends_at"
-                        type="date"
-                        defaultValue={
-                            defaultValues?.ends_at
-                                ? new Date(defaultValues.ends_at)
-                                      .toISOString()
-                                      .split('T')[0]
-                                : ''
-                        }
+                        value={endsAt}
+                        onChange={setEndsAt}
                         disabled={processing}
-                        aria-invalid={
-                            errors.ends_at !== undefined ? true : undefined
-                        }
+                        error={errors.ends_at !== undefined}
+                        defaultTime="end"
                     />
                 </FormField>
             </div>
+
+            {(startsAt !== '' || endsAt !== '') && (
+                <FormField
+                    label="Timezone"
+                    htmlFor="timezone"
+                    error={errors.timezone}
+                >
+                    <TimezoneSearchSelect
+                        name="timezone"
+                        value={timezone}
+                        onValueChange={setTimezone}
+                        disabled={processing}
+                        error={errors.timezone}
+                    />
+                    <p className="mt-1 text-sm text-neutral-500 dark:text-neutral-400">
+                        The start and end times above are in this timezone.
+                        Daylight saving is handled automatically.
+                    </p>
+                </FormField>
+            )}
 
             <Separator />
 

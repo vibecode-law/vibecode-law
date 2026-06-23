@@ -13,6 +13,7 @@ use function Pest\Laravel\post;
 describe('auth', function () {
     test('requires authentication', function () {
         post(route('staff.challenges.store'), [
+            'timezone' => 'Europe/London',
             'title' => 'Test Challenge',
             'slug' => 'test-challenge',
             'tagline' => 'A test tagline',
@@ -27,6 +28,7 @@ describe('auth', function () {
         actingAs($user);
 
         post(route('staff.challenges.store'), [
+            'timezone' => 'Europe/London',
             'title' => 'Test Challenge',
             'slug' => 'test-challenge',
             'tagline' => 'A test tagline',
@@ -40,6 +42,7 @@ describe('auth', function () {
         actingAs($user);
 
         post(route('staff.challenges.store'), [
+            'timezone' => 'Europe/London',
             'title' => 'Test Challenge',
             'slug' => 'test-challenge',
             'tagline' => 'A test tagline',
@@ -53,6 +56,7 @@ describe('auth', function () {
         actingAs($user);
 
         post(route('staff.challenges.store'), [
+            'timezone' => 'Europe/London',
             'title' => 'Test Challenge',
             'slug' => 'test-challenge',
             'tagline' => 'A test tagline',
@@ -68,6 +72,7 @@ describe('store', function () {
         actingAs($admin);
 
         post(route('staff.challenges.store'), [
+            'timezone' => 'Europe/London',
             'title' => 'AI Legal Challenge',
             'slug' => 'ai-legal-challenge',
             'tagline' => 'Build the future of legal AI',
@@ -83,6 +88,7 @@ describe('store', function () {
         actingAs($admin);
 
         post(route('staff.challenges.store'), [
+            'timezone' => 'Europe/London',
             'title' => 'Participant Challenge',
             'slug' => 'participant-challenge',
             'tagline' => 'A challenge with instructions',
@@ -102,6 +108,7 @@ describe('store', function () {
         actingAs($admin);
 
         post(route('staff.challenges.store'), [
+            'timezone' => 'Europe/London',
             'title' => 'Org Challenge',
             'slug' => 'org-challenge',
             'tagline' => 'An org challenge',
@@ -120,12 +127,13 @@ describe('store', function () {
         actingAs($admin);
 
         post(route('staff.challenges.store'), [
+            'timezone' => 'UTC',
             'title' => 'Dated Challenge',
             'slug' => 'dated-challenge',
             'tagline' => 'A dated challenge',
             'description' => 'Description here.',
-            'starts_at' => '2026-03-01',
-            'ends_at' => '2026-04-01',
+            'starts_at' => '2026-03-01T00:00',
+            'ends_at' => '2026-04-01T23:59',
         ])->assertRedirect();
 
         $challenge = Challenge::query()->where('slug', 'dated-challenge')->firstOrFail();
@@ -134,12 +142,97 @@ describe('store', function () {
             ->and($challenge->ends_at->format('Y-m-d'))->toBe('2026-04-01');
     });
 
+    test('pins start to the first second and end to the last second of the minute', function () {
+        $admin = User::factory()->admin()->create();
+
+        actingAs($admin);
+
+        post(route('staff.challenges.store'), [
+            'timezone' => 'UTC',
+            'title' => 'Timed Challenge',
+            'slug' => 'timed-challenge',
+            'tagline' => 'A timed challenge',
+            'description' => 'Description here.',
+            'starts_at' => '2026-03-01T09:30',
+            'ends_at' => '2026-04-01T17:45',
+        ])->assertRedirect();
+
+        $challenge = Challenge::query()->where('slug', 'timed-challenge')->firstOrFail();
+
+        expect($challenge->starts_at->format('Y-m-d H:i:s'))->toBe('2026-03-01 09:30:00')
+            ->and($challenge->ends_at->format('Y-m-d H:i:s'))->toBe('2026-04-01 17:45:59');
+    });
+
+    test('converts entered times from the challenge timezone to UTC', function () {
+        $admin = User::factory()->admin()->create();
+
+        actingAs($admin);
+
+        // 1 July is BST (UTC+1), so 09:00 London is 08:00 UTC.
+        post(route('staff.challenges.store'), [
+            'timezone' => 'Europe/London',
+            'title' => 'Zoned Challenge',
+            'slug' => 'zoned-challenge',
+            'tagline' => 'A zoned challenge',
+            'description' => 'Description here.',
+            'starts_at' => '2026-07-01T09:00',
+            'ends_at' => '2026-07-31T17:00',
+        ])->assertRedirect();
+
+        $challenge = Challenge::query()->where('slug', 'zoned-challenge')->firstOrFail();
+
+        expect($challenge->timezone)->toBe('Europe/London')
+            ->and($challenge->starts_at->format('Y-m-d H:i:s'))->toBe('2026-07-01 08:00:00')
+            ->and($challenge->ends_at->format('Y-m-d H:i:s'))->toBe('2026-07-31 16:00:59');
+    });
+
+    test('stores a null timezone when blank and no dates are set', function () {
+        $admin = User::factory()->admin()->create();
+
+        actingAs($admin);
+
+        post(route('staff.challenges.store'), [
+            'timezone' => '',
+            'title' => 'Undated Challenge',
+            'slug' => 'undated-challenge',
+            'tagline' => 'An undated challenge',
+            'description' => 'Description here.',
+        ])->assertValid('timezone')->assertRedirect();
+
+        $challenge = Challenge::query()->where('slug', 'undated-challenge')->firstOrFail();
+
+        expect($challenge->starts_at)->toBeNull()
+            ->and($challenge->ends_at)->toBeNull()
+            ->and($challenge->timezone)->toBeNull();
+    });
+
+    test('nulls a submitted timezone when no dates are set', function () {
+        $admin = User::factory()->admin()->create();
+
+        actingAs($admin);
+
+        post(route('staff.challenges.store'), [
+            'timezone' => 'Europe/London',
+            'title' => 'Undated Challenge',
+            'slug' => 'undated-challenge',
+            'tagline' => 'An undated challenge',
+            'description' => 'Description here.',
+        ])->assertRedirect();
+
+        $challenge = Challenge::query()->where('slug', 'undated-challenge')->firstOrFail();
+
+        expect($challenge->starts_at)->toBeNull()
+            ->and($challenge->ends_at)->toBeNull()
+            ->and($challenge->timezone)->toBeNull();
+    });
+
     test('creates challenge with active and featured flags', function () {
         $admin = User::factory()->admin()->create();
 
         actingAs($admin);
 
         post(route('staff.challenges.store'), [
+            'timezone' => 'Europe/London',
             'title' => 'Featured Challenge',
             'slug' => 'featured-challenge',
             'tagline' => 'A featured challenge',
@@ -164,6 +257,7 @@ describe('store', function () {
         $thumbnail = UploadedFile::fake()->image(name: 'thumbnail.jpg', width: 400, height: 300);
 
         post(route('staff.challenges.store'), [
+            'timezone' => 'Europe/London',
             'title' => 'Thumb Challenge',
             'slug' => 'thumb-challenge',
             'tagline' => 'A thumbnail challenge',
@@ -187,6 +281,7 @@ describe('store', function () {
         $thumbnail = UploadedFile::fake()->image(name: 'thumbnail.jpg', width: 800, height: 600);
 
         post(route('staff.challenges.store'), [
+            'timezone' => 'Europe/London',
             'title' => 'Crop Challenge',
             'slug' => 'crop-challenge',
             'tagline' => 'A crop challenge',
@@ -214,6 +309,7 @@ describe('store', function () {
         actingAs($admin);
 
         post(route('staff.challenges.store'), [
+            'timezone' => 'Europe/London',
             'title' => 'Strip Challenge',
             'slug' => 'strip-challenge',
             'tagline' => 'With extras',
@@ -240,6 +336,7 @@ describe('store', function () {
         actingAs($admin);
 
         post(route('staff.challenges.store'), [
+            'timezone' => 'Europe/London',
             'title' => 'Flash Challenge',
             'slug' => 'flash-challenge',
             'tagline' => 'A flash challenge',
@@ -256,6 +353,7 @@ describe('store', function () {
         actingAs($admin);
 
         post(route('staff.challenges.store'), [
+            'timezone' => 'Europe/London',
             'title' => 'No Org Challenge',
             'slug' => 'no-org-challenge',
             'tagline' => 'No org',
@@ -273,6 +371,7 @@ describe('store', function () {
         actingAs($admin);
 
         post(route('staff.challenges.store'), [
+            'timezone' => 'Europe/London',
             'title' => 'Invite Challenge',
             'slug' => 'invite-challenge',
             'tagline' => 'An invite challenge',
@@ -293,6 +392,7 @@ describe('store', function () {
         actingAs($admin);
 
         post(route('staff.challenges.store'), [
+            'timezone' => 'Europe/London',
             'title' => 'Invite View Challenge',
             'slug' => 'invite-view-challenge',
             'tagline' => 'An invite to view challenge',
@@ -314,6 +414,7 @@ describe('store', function () {
         actingAs($admin);
 
         post(route('staff.challenges.store'), [
+            'timezone' => 'Europe/London',
             'title' => 'Invite Challenge',
             'slug' => 'invite-challenge',
             'tagline' => 'An invite challenge',
@@ -331,6 +432,7 @@ describe('store', function () {
         actingAs($admin);
 
         post(route('staff.challenges.store'), [
+            'timezone' => 'Europe/London',
             'title' => 'Public Challenge',
             'slug' => 'public-challenge',
             'tagline' => 'A public challenge',
@@ -345,6 +447,7 @@ describe('store', function () {
         actingAs($admin);
 
         post(route('staff.challenges.store'), [
+            'timezone' => 'Europe/London',
             'title' => 'Default Vis Challenge',
             'slug' => 'default-vis-challenge',
             'tagline' => 'Default visibility',
@@ -362,6 +465,7 @@ describe('store', function () {
         actingAs($admin);
 
         post(route('staff.challenges.store'), [
+            'timezone' => 'Europe/London',
             'title' => 'Inactive Challenge',
             'slug' => 'inactive-challenge',
             'tagline' => 'Inactive',
@@ -416,6 +520,14 @@ describe('validation', function () {
             ['title' => 'Test', 'slug' => 'test', 'tagline' => 'Tagline', 'description' => 'Desc', 'organisation_id' => 99999],
             ['organisation_id'],
         ],
+        'missing timezone when a date is set' => [
+            ['title' => 'Test', 'slug' => 'test', 'tagline' => 'Tagline', 'description' => 'Desc', 'starts_at' => '2026-03-01T00:00', 'timezone' => ''],
+            ['timezone'],
+        ],
+        'invalid timezone when a date is set' => [
+            ['title' => 'Test', 'slug' => 'test', 'tagline' => 'Tagline', 'description' => 'Desc', 'starts_at' => '2026-03-01T00:00', 'timezone' => 'Not/AZone'],
+            ['timezone'],
+        ],
     ]);
 
     test('prohibits thumbnail when organisation is selected', function () {
@@ -427,6 +539,7 @@ describe('validation', function () {
         $thumbnail = UploadedFile::fake()->image(name: 'thumbnail.jpg', width: 400, height: 300);
 
         post(route('staff.challenges.store'), [
+            'timezone' => 'Europe/London',
             'title' => 'Test',
             'slug' => 'test',
             'tagline' => 'Tagline',
@@ -443,6 +556,7 @@ describe('validation', function () {
         actingAs($admin);
 
         post(route('staff.challenges.store'), [
+            'timezone' => 'Europe/London',
             'title' => 'Test',
             'slug' => 'existing-slug',
             'tagline' => 'Tagline',
@@ -458,6 +572,7 @@ describe('validation', function () {
         $file = UploadedFile::fake()->create(name: 'document.pdf', mimeType: 'application/pdf');
 
         post(route('staff.challenges.store'), [
+            'timezone' => 'Europe/London',
             'title' => 'Test',
             'slug' => 'test',
             'tagline' => 'Tagline',
@@ -474,6 +589,7 @@ describe('validation', function () {
         $file = UploadedFile::fake()->image(name: 'large.jpg')->size(kilobytes: 3000);
 
         post(route('staff.challenges.store'), [
+            'timezone' => 'Europe/London',
             'title' => 'Test',
             'slug' => 'test',
             'tagline' => 'Tagline',
@@ -488,6 +604,7 @@ describe('validation', function () {
         actingAs($admin);
 
         post(route('staff.challenges.store'), [
+            'timezone' => 'Europe/London',
             'title' => 'Test',
             'slug' => 'test',
             'tagline' => 'Tagline',
@@ -512,6 +629,7 @@ describe('validation', function () {
         actingAs($admin);
 
         post(route('staff.challenges.store'), [
+            'timezone' => 'Europe/London',
             'title' => 'Ratio Test',
             'slug' => 'ratio-test',
             'tagline' => 'Tagline',
