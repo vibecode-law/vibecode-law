@@ -35,7 +35,7 @@ export function ImportSummary({ summary }: { summary: ImportResource }) {
                 </span>
                 <Badge className={status.className}>{status.label}</Badge>
                 {summary.status === IMPORT_STATUS.Completed && (
-                    <span className="text-neutral-500 dark:text-neutral-400">
+                    <span className="text-neutral-500 dark:text-neutral-300">
                         {summary.imported_count} imported,{' '}
                         {summary.skipped_count} skipped of {summary.total_rows}{' '}
                         rows
@@ -44,7 +44,7 @@ export function ImportSummary({ summary }: { summary: ImportResource }) {
             </div>
 
             {skippedRows.length > 0 && (
-                <ul className="mt-2 space-y-1 text-neutral-500 dark:text-neutral-400">
+                <ul className="mt-2 space-y-1 text-neutral-500 dark:text-neutral-300">
                     {skippedRows.map((skipped, index) => (
                         <li key={index}>
                             Row {skipped.row}

@@ -193,7 +193,7 @@ export default function ChallengeLive({
                                 {heading}
                             </span>
                         </h1>
-                        <p className="mt-3 text-lg text-neutral-600 lg:text-2xl dark:text-neutral-400">
+                        <p className="mt-3 text-lg text-neutral-600 lg:text-2xl dark:text-neutral-300">
                             {subheading}
                         </p>
                     </div>
@@ -207,7 +207,7 @@ export default function ChallengeLive({
                                 size={140}
                             />
                         </div>
-                        <p className="text-sm font-medium text-neutral-500 dark:text-neutral-400">
+                        <p className="text-sm font-medium text-neutral-500 dark:text-neutral-300">
                             Scan to vote
                         </p>
                     </div>

@@ -55,7 +55,7 @@ export default function WallOfLove({
                     <h1 className="text-4xl font-bold tracking-tight text-neutral-900 sm:text-5xl dark:text-white">
                         Wall of Love
                     </h1>
-                    <p className="mx-auto mt-6 max-w-3xl text-lg text-neutral-600 dark:text-neutral-400">
+                    <p className="mx-auto mt-6 max-w-3xl text-lg text-neutral-600 dark:text-neutral-300">
                         What the community and press are saying about
                         vibecode.law
                     </p>
@@ -70,7 +70,7 @@ export default function WallOfLove({
                             <h2 className="text-3xl font-bold text-neutral-900 dark:text-white">
                                 Community Testimonials
                             </h2>
-                            <p className="mt-3 text-neutral-600 dark:text-neutral-400">
+                            <p className="mt-3 text-neutral-600 dark:text-neutral-300">
                                 Hear from our community members
                             </p>
                         </div>
@@ -105,7 +105,7 @@ export default function WallOfLove({
                                             )}
                                             {(testimonial.display_job_title ||
                                                 testimonial.display_organisation) && (
-                                                <p className="text-sm text-neutral-600 dark:text-neutral-400">
+                                                <p className="text-sm text-neutral-600 dark:text-neutral-300">
                                                     {
                                                         testimonial.display_job_title
                                                     }
@@ -134,7 +134,7 @@ export default function WallOfLove({
                             <h2 className="text-3xl font-bold text-neutral-900 dark:text-white">
                                 Press Coverage
                             </h2>
-                            <p className="mt-3 text-neutral-600 dark:text-neutral-400">
+                            <p className="mt-3 text-neutral-600 dark:text-neutral-300">
                                 Featured in leading publications
                             </p>
                         </div>
@@ -179,12 +179,12 @@ export default function WallOfLove({
                                     </h3>
 
                                     {article.excerpt && (
-                                        <p className="text-sm text-neutral-600 dark:text-neutral-400">
+                                        <p className="text-sm text-neutral-600 dark:text-neutral-300">
                                             {article.excerpt}
                                         </p>
                                     )}
 
-                                    <p className="mt-2 text-xs text-neutral-500 dark:text-neutral-400">
+                                    <p className="mt-2 text-xs text-neutral-500 dark:text-neutral-300">
                                         {new Date(
                                             article.publication_date +
                                                 'T00:00:00',
@@ -207,7 +207,7 @@ export default function WallOfLove({
                     <h2 className="text-2xl font-bold text-neutral-900 dark:text-white">
                         Want to feature vibecode.law?
                     </h2>
-                    <p className="mt-3 text-neutral-600 dark:text-neutral-400">
+                    <p className="mt-3 text-neutral-600 dark:text-neutral-300">
                         We'd love to hear from media outlets and journalists
                         interested in covering our platform.
                     </p>

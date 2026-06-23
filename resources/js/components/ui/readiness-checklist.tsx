@@ -40,7 +40,7 @@ export function ReadinessChecklist({
                               ? 'text-red-600 dark:text-red-400'
                               : variant === 'optional'
                                 ? 'text-amber-600 dark:text-amber-400'
-                                : 'text-neutral-500 dark:text-neutral-400',
+                                : 'text-neutral-500 dark:text-neutral-300',
                     )}
                 >
                     {completedCount} of {items.length} complete
@@ -61,7 +61,7 @@ export function ReadinessChecklist({
                             className={cn(
                                 item.completed === true
                                     ? 'text-neutral-700 dark:text-neutral-300'
-                                    : 'text-neutral-500 dark:text-neutral-400',
+                                    : 'text-neutral-500 dark:text-neutral-300',
                             )}
                         >
                             {item.label}
@@ -87,6 +87,6 @@ function IncompleteIcon({ variant }: { variant: 'required' | 'optional' | 'info'
     }
 
     return (
-        <Info className="size-4 shrink-0 text-neutral-400 dark:text-neutral-500" />
+        <Info className="size-4 shrink-0 text-neutral-400 dark:text-neutral-400" />
     );
 }

@@ -76,12 +76,12 @@ export default function CourseIndex({
                     <h1 className="text-4xl font-bold tracking-tight text-neutral-900 sm:text-5xl dark:text-white">
                         VibeAcademy
                     </h1>
-                    <p className="mx-auto mt-6 max-w-3xl text-lg text-neutral-600 dark:text-neutral-400">
+                    <p className="mx-auto mt-6 max-w-3xl text-lg text-neutral-600 dark:text-neutral-300">
                         Master the art of building with AI coding assistants.
                         Start with the foundations and progress to master skills
                         through structured, hands-on courses.
                     </p>
-                    <p className="mt-8 flex flex-col items-center justify-center gap-2 text-sm text-neutral-600 md:flex-row md:text-base dark:text-neutral-400">
+                    <p className="mt-8 flex flex-col items-center justify-center gap-2 text-sm text-neutral-600 md:flex-row md:text-base dark:text-neutral-300">
                         <span className="flex items-center justify-start gap-2">
                             <Users className="size-5" />
                             Join {totalEnrolledUsers.toLocaleString()} others
@@ -149,7 +149,7 @@ export default function CourseIndex({
                         ) : (
                             <div className="rounded-lg border border-neutral-200 bg-neutral-50 p-8 text-center dark:border-neutral-800 dark:bg-neutral-900">
                                 <Lightbulb className="mx-auto size-12 text-neutral-400" />
-                                <p className="mt-4 text-sm text-neutral-600 dark:text-neutral-400">
+                                <p className="mt-4 text-sm text-neutral-600 dark:text-neutral-300">
                                     Guides coming soon
                                 </p>
                             </div>

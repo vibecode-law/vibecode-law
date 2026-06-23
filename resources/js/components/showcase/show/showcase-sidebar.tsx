@@ -106,7 +106,7 @@ function RankDisplay({
             <div className="text-xl font-bold text-neutral-900 lg:text-3xl dark:text-white">
                 #{rank}
             </div>
-            <div className="text-xs text-neutral-500 dark:text-neutral-400">
+            <div className="text-xs text-neutral-500 dark:text-neutral-300">
                 {label}
             </div>
         </div>

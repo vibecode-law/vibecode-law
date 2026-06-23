@@ -322,7 +322,7 @@ export function EditTestimonialModal({
                                         error={errors.avatar}
                                         onCropDataChange={setAvatarCropData}
                                     />
-                                    <p className="mt-1 text-xs text-neutral-500 dark:text-neutral-400">
+                                    <p className="mt-1 text-xs text-neutral-500 dark:text-neutral-300">
                                         Square image (1:1 ratio). Max 2MB.
                                     </p>
                                 </>
@@ -337,7 +337,7 @@ export function EditTestimonialModal({
                                             />
                                         </div>
                                     )}
-                                    <p className="text-sm text-neutral-500 dark:text-neutral-400">
+                                    <p className="text-sm text-neutral-500 dark:text-neutral-300">
                                         Avatar is from the linked user profile
                                     </p>
                                 </>

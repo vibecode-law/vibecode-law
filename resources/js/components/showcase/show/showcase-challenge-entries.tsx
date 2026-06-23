@@ -29,7 +29,7 @@ export function ShowcaseChallengeEntries({
 
     return (
         <div className={cn('w-full', className)}>
-            <h3 className="mb-3 text-xs font-medium tracking-wide text-neutral-500 uppercase dark:text-neutral-400">
+            <h3 className="mb-3 text-xs font-medium tracking-wide text-neutral-500 uppercase dark:text-neutral-300">
                 Participating In
             </h3>
             <div className="space-y-2">
@@ -49,7 +49,7 @@ export function ShowcaseChallengeEntries({
                             <div className="truncate text-sm font-medium text-neutral-900 dark:text-white">
                                 {entry.challenge.title}
                             </div>
-                            <div className="mt-0.5 flex items-center gap-1 text-xs text-neutral-500 dark:text-neutral-400">
+                            <div className="mt-0.5 flex items-center gap-1 text-xs text-neutral-500 dark:text-neutral-300">
                                 <Trophy className="hidden size-3 lg:block" />
                                 <span>Challenge</span>
                             </div>
@@ -58,7 +58,7 @@ export function ShowcaseChallengeEntries({
                             <div className="text-xl font-bold text-neutral-900 dark:text-white">
                                 #{entry.rank}
                             </div>
-                            <div className="hidden text-xs text-neutral-500 lg:block dark:text-neutral-400">
+                            <div className="hidden text-xs text-neutral-500 lg:block dark:text-neutral-300">
                                 Rank
                             </div>
                         </div>

@@ -108,16 +108,16 @@
     --popover-foreground: oklch(0.985 0 0);
     --primary: oklch(0.985 0 0);
     --primary-foreground: oklch(0.205 0 0);
-    --secondary: oklch(0.269 0 0);
+    --secondary: oklch(0.29 0 0);
     --secondary-foreground: oklch(0.985 0 0);
-    --muted: oklch(0.269 0 0);
-    --muted-foreground: oklch(0.708 0 0);
-    --accent: oklch(0.269 0 0);
+    --muted: oklch(0.29 0 0);
+    --muted-foreground: oklch(0.78 0 0);
+    --accent: oklch(0.29 0 0);
     --accent-foreground: oklch(0.985 0 0);
     --destructive: oklch(0.396 0.141 25.723);
     --destructive-foreground: oklch(0.637 0.237 25.331);
-    --border: oklch(0.269 0 0);
-    --input: oklch(0.269 0 0);
+    --border: oklch(0.3 0 0);
+    --input: oklch(0.3 0 0);
     --ring: oklch(0.439 0 0);
     --chart-1: oklch(0.488 0.243 264.376);
     --chart-2: oklch(0.696 0.17 162.48);
@@ -128,9 +128,9 @@
     --sidebar-foreground: oklch(0.985 0 0);
     --sidebar-primary: oklch(0.985 0 0);
     --sidebar-primary-foreground: oklch(0.985 0 0);
-    --sidebar-accent: oklch(0.269 0 0);
+    --sidebar-accent: oklch(0.29 0 0);
     --sidebar-accent-foreground: oklch(0.985 0 0);
-    --sidebar-border: oklch(0.269 0 0);
+    --sidebar-border: oklch(0.3 0 0);
     --sidebar-ring: oklch(0.439 0 0);
 }
 
@@ -146,7 +146,7 @@
 
 @layer components {
     .rich-text-content {
-        @apply space-y-3 text-neutral-600 dark:text-neutral-400;
+        @apply space-y-3 text-neutral-600 dark:text-neutral-300;
 
         & strong {
             @apply font-semibold;
@@ -189,7 +189,7 @@
         }
 
         & blockquote {
-            @apply my-4 border-l-4 border-neutral-300 pl-4 text-neutral-500 italic dark:border-neutral-700 dark:text-neutral-500;
+            @apply my-4 border-l-4 border-neutral-300 pl-4 text-neutral-500 italic dark:border-neutral-700 dark:text-neutral-400;
         }
 
         & code {
@@ -281,7 +281,7 @@
         }
 
         & blockquote {
-            @apply my-6 border-l-4 border-neutral-300 pl-4 text-neutral-600 italic dark:border-neutral-700 dark:text-neutral-400;
+            @apply my-6 border-l-4 border-neutral-300 pl-4 text-neutral-600 italic dark:border-neutral-700 dark:text-neutral-300;
         }
 
         & hr {

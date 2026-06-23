@@ -45,25 +45,25 @@ export function PublicHeader() {
                     <div className="hidden items-center gap-6 lg:flex">
                         <Link
                             href={ChallengeIndexController.url()}
-                            className="text-sm font-medium text-neutral-600 hover:text-neutral-900 dark:text-neutral-400 dark:hover:text-white"
+                            className="text-sm font-medium text-neutral-600 hover:text-neutral-900 dark:text-neutral-300 dark:hover:text-white"
                         >
                             Inspiration
                         </Link>
                         <Link
                             href={LearnIndexController.url()}
-                            className="text-sm font-medium text-neutral-600 hover:text-neutral-900 dark:text-neutral-400 dark:hover:text-white"
+                            className="text-sm font-medium text-neutral-600 hover:text-neutral-900 dark:text-neutral-300 dark:hover:text-white"
                         >
                             Learn
                         </Link>
                         <Link
                             href={WallOfLoveController.url()}
-                            className="text-sm font-medium text-neutral-600 hover:text-neutral-900 dark:text-neutral-400 dark:hover:text-white"
+                            className="text-sm font-medium text-neutral-600 hover:text-neutral-900 dark:text-neutral-300 dark:hover:text-white"
                         >
                             Wall of Love
                         </Link>
                         <Link
                             href={AboutIndexController.url()}
-                            className="text-sm font-medium text-neutral-600 hover:text-neutral-900 dark:text-neutral-400 dark:hover:text-white"
+                            className="text-sm font-medium text-neutral-600 hover:text-neutral-900 dark:text-neutral-300 dark:hover:text-white"
                         >
                             About
                         </Link>
@@ -130,11 +130,11 @@ export function PublicHeader() {
                                                 <h3 className="text-xl font-bold text-neutral-900 group-hover:text-primary dark:text-white">
                                                     Showcases
                                                 </h3>
-                                                <p className="mt-1 text-sm text-neutral-600 dark:text-neutral-400">
+                                                <p className="mt-1 text-sm text-neutral-600 dark:text-neutral-300">
                                                     Explore others' projects
                                                 </p>
                                             </div>
-                                            <ArrowRight className="size-5 text-neutral-400 transition-transform group-hover:translate-x-1 group-hover:text-primary dark:text-neutral-500" />
+                                            <ArrowRight className="size-5 text-neutral-400 transition-transform group-hover:translate-x-1 group-hover:text-primary dark:text-neutral-400" />
                                         </Link>
                                     </SheetClose>
 
@@ -149,12 +149,12 @@ export function PublicHeader() {
                                                 <h3 className="text-xl font-bold text-neutral-900 group-hover:text-primary dark:text-white">
                                                     Inspiration
                                                 </h3>
-                                                <p className="mt-1 text-sm text-neutral-600 dark:text-neutral-400">
+                                                <p className="mt-1 text-sm text-neutral-600 dark:text-neutral-300">
                                                     Need an idea? This is for
                                                     you.
                                                 </p>
                                             </div>
-                                            <ArrowRight className="size-5 text-neutral-400 transition-transform group-hover:translate-x-1 group-hover:text-primary dark:text-neutral-500" />
+                                            <ArrowRight className="size-5 text-neutral-400 transition-transform group-hover:translate-x-1 group-hover:text-primary dark:text-neutral-400" />
                                         </Link>
                                     </SheetClose>
 
@@ -169,12 +169,12 @@ export function PublicHeader() {
                                                 <h3 className="text-xl font-bold text-neutral-900 group-hover:text-primary dark:text-white">
                                                     Learn
                                                 </h3>
-                                                <p className="mt-1 text-sm text-neutral-600 dark:text-neutral-400">
+                                                <p className="mt-1 text-sm text-neutral-600 dark:text-neutral-300">
                                                     Courses and guides for
                                                     vibecoding.
                                                 </p>
                                             </div>
-                                            <ArrowRight className="size-5 text-neutral-400 transition-transform group-hover:translate-x-1 group-hover:text-primary dark:text-neutral-500" />
+                                            <ArrowRight className="size-5 text-neutral-400 transition-transform group-hover:translate-x-1 group-hover:text-primary dark:text-neutral-400" />
                                         </Link>
                                     </SheetClose>
 
@@ -189,12 +189,12 @@ export function PublicHeader() {
                                                 <h3 className="text-xl font-bold text-neutral-900 group-hover:text-primary dark:text-white">
                                                     Wall of Love
                                                 </h3>
-                                                <p className="mt-1 text-sm text-neutral-600 dark:text-neutral-400">
+                                                <p className="mt-1 text-sm text-neutral-600 dark:text-neutral-300">
                                                     Community testimonials and
                                                     press
                                                 </p>
                                             </div>
-                                            <ArrowRight className="size-5 text-neutral-400 transition-transform group-hover:translate-x-1 group-hover:text-primary dark:text-neutral-500" />
+                                            <ArrowRight className="size-5 text-neutral-400 transition-transform group-hover:translate-x-1 group-hover:text-primary dark:text-neutral-400" />
                                         </Link>
                                     </SheetClose>
 
@@ -209,12 +209,12 @@ export function PublicHeader() {
                                                 <h3 className="text-xl font-bold text-neutral-900 group-hover:text-primary dark:text-white">
                                                     About
                                                 </h3>
-                                                <p className="mt-1 text-sm text-neutral-600 dark:text-neutral-400">
+                                                <p className="mt-1 text-sm text-neutral-600 dark:text-neutral-300">
                                                     Find out more about us and
                                                     our community
                                                 </p>
                                             </div>
-                                            <ArrowRight className="size-5 text-neutral-400 transition-transform group-hover:translate-x-1 group-hover:text-primary dark:text-neutral-500" />
+                                            <ArrowRight className="size-5 text-neutral-400 transition-transform group-hover:translate-x-1 group-hover:text-primary dark:text-neutral-400" />
                                         </Link>
                                     </SheetClose>
                                 </div>

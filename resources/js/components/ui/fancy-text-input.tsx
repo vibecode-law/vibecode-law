@@ -54,7 +54,7 @@ export const FancyTextInput = forwardRef<HTMLInputElement, FancyTextInputProps>(
                     </label>
                 )}
                 {description !== undefined && (
-                    <p className="text-sm text-neutral-500 dark:text-neutral-400">
+                    <p className="text-sm text-neutral-500 dark:text-neutral-300">
                         {description}
                     </p>
                 )}
@@ -70,7 +70,7 @@ export const FancyTextInput = forwardRef<HTMLInputElement, FancyTextInputProps>(
                             type="button"
                             onClick={() => setIsFocused(true)}
                             onFocus={() => setIsFocused(true)}
-                            className="w-full rounded-lg border border-dashed border-neutral-300 bg-neutral-50 p-4 text-left text-neutral-400 transition-colors hover:border-amber-400 hover:bg-amber-50 dark:border-neutral-700 dark:bg-neutral-900 dark:text-neutral-500 dark:hover:border-amber-500 dark:hover:bg-amber-950/20"
+                            className="w-full rounded-lg border border-dashed border-neutral-300 bg-neutral-50 p-4 text-left text-neutral-400 transition-colors hover:border-amber-400 hover:bg-amber-50 dark:border-neutral-700 dark:bg-neutral-900 dark:text-neutral-400 dark:hover:border-amber-500 dark:hover:bg-amber-950/20"
                         >
                             {placeholder ?? 'Click to add content...'}
                         </button>

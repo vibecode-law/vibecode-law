@@ -124,7 +124,7 @@ export default function LessonsIndex({ course, lessons }: LessonsIndexProps) {
                                                         </Badge>
                                                     )}
                                                 </div>
-                                                <p className="text-sm text-neutral-500 dark:text-neutral-400">
+                                                <p className="text-sm text-neutral-500 dark:text-neutral-300">
                                                     {lesson.tagline}
                                                 </p>
                                             </div>

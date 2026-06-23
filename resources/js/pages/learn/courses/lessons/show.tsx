@@ -149,7 +149,7 @@ export default function LessonShow({
                                     {lesson.title}
                                 </h1>
                                 {lesson.tagline && (
-                                    <p className="mt-2 text-lg text-neutral-600 dark:text-neutral-400">
+                                    <p className="mt-2 text-lg text-neutral-600 dark:text-neutral-300">
                                         {lesson.tagline}
                                     </p>
                                 )}
@@ -204,7 +204,7 @@ export default function LessonShow({
                                     <h2 className="mb-4 text-xl font-semibold text-neutral-900 dark:text-white">
                                         Lesson
                                     </h2>
-                                    <p className="text-sm text-neutral-500 dark:text-neutral-400">
+                                    <p className="text-sm text-neutral-500 dark:text-neutral-300">
                                         Log in to access the full lesson
                                         content.
                                     </p>

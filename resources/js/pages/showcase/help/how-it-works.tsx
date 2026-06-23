@@ -138,7 +138,7 @@ export default function HowItWorks() {
                         How it works
                     </h1>
 
-                    <p className="mt-4 text-lg text-neutral-500 dark:text-neutral-400">
+                    <p className="mt-4 text-lg text-neutral-500 dark:text-neutral-300">
                         Posting your first showcase is easy
                     </p>
                 </div>
@@ -166,13 +166,13 @@ export default function HowItWorks() {
                                 <h3 className="mb-2 text-lg font-semibold text-neutral-900 dark:text-white">
                                     {step.number}. {step.title}
                                 </h3>
-                                <p className="text-sm text-neutral-500 dark:text-neutral-400">
+                                <p className="text-sm text-neutral-500 dark:text-neutral-300">
                                     {step.description}
                                 </p>
                             </div>
                         ))}
                     </div>
-                    <p className="mt-4 flex flex-col items-center justify-center gap-2 text-sm text-neutral-600 md:flex-row md:text-base dark:text-neutral-400">
+                    <p className="mt-4 flex flex-col items-center justify-center gap-2 text-sm text-neutral-600 md:flex-row md:text-base dark:text-neutral-300">
                         <span className="flex items-center justify-start gap-2">
                             <PlayCircle className="size-5" />
                             Don&apos;t have a project yet?{' '}
@@ -217,7 +217,7 @@ export default function HowItWorks() {
                                     {faq.question}
                                 </h3>
                                 <p
-                                    className="mt-1 text-neutral-600 dark:text-neutral-400 [&_a]:font-medium [&_a]:text-neutral-900 [&_a]:underline [&_a]:underline-offset-4 hover:[&_a]:text-neutral-700 dark:[&_a]:text-white dark:hover:[&_a]:text-neutral-300"
+                                    className="mt-1 text-neutral-600 dark:text-neutral-300 [&_a]:font-medium [&_a]:text-neutral-900 [&_a]:underline [&_a]:underline-offset-4 hover:[&_a]:text-neutral-700 dark:[&_a]:text-white dark:hover:[&_a]:text-neutral-300"
                                     dangerouslySetInnerHTML={{
                                         __html: faq.answer,
                                     }}

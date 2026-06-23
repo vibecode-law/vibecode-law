@@ -100,7 +100,7 @@ export function PillSelect({
             )}
 
             {options.length === 0 && (
-                <p className="text-sm text-neutral-400 dark:text-neutral-500">
+                <p className="text-sm text-neutral-400 dark:text-neutral-400">
                     {placeholder ?? 'No options available'}
                 </p>
             )}

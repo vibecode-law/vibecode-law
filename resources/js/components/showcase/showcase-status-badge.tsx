@@ -25,7 +25,7 @@ const getStatusConfig = (status: string) => {
             };
         default:
             return {
-                styles: 'bg-neutral-100 text-neutral-600 border-neutral-200 dark:bg-neutral-800 dark:text-neutral-400 dark:border-neutral-700',
+                styles: 'bg-neutral-100 text-neutral-600 border-neutral-200 dark:bg-neutral-800 dark:text-neutral-300 dark:border-neutral-700',
                 icon: FileEdit,
             };
     }

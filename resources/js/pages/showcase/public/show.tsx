@@ -281,7 +281,7 @@ export default function PublicShow({
                         <div className="flex-1">
                             {/* Date */}
                             {showcase.submitted_date !== null && (
-                                <div className="mb-4 flex items-center gap-2 text-sm text-neutral-500 dark:text-neutral-400">
+                                <div className="mb-4 flex items-center gap-2 text-sm text-neutral-500 dark:text-neutral-300">
                                     <Calendar className="size-4" />
                                     {formatDate(showcase.submitted_date)}
                                 </div>
@@ -313,7 +313,7 @@ export default function PublicShow({
                             </div>
 
                             {/* Tagline */}
-                            <p className="mb-4 text-lg text-neutral-600 dark:text-neutral-400">
+                            <p className="mb-4 text-lg text-neutral-600 dark:text-neutral-300">
                                 {showcase.tagline}
                             </p>
 

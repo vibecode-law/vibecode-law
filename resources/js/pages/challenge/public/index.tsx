@@ -69,7 +69,7 @@ function FeaturedChallengeCard({ challenge }: FeaturedChallengeCardProps) {
                     />
                 ) : (
                     <div className="flex h-full w-full items-center justify-center bg-linear-to-br from-neutral-100 to-neutral-200 dark:from-neutral-800 dark:to-neutral-900">
-                        <span className="text-4xl font-bold text-neutral-400 dark:text-neutral-600">
+                        <span className="text-4xl font-bold text-neutral-400 dark:text-neutral-400">
                             {challenge.title.charAt(0)}
                         </span>
                     </div>
@@ -81,7 +81,7 @@ function FeaturedChallengeCard({ challenge }: FeaturedChallengeCardProps) {
             {/* Content */}
             <div className="flex flex-1 flex-col p-6">
                 {/* Stats and status above title */}
-                <div className="mb-2 flex items-center justify-between text-sm text-neutral-500 dark:text-neutral-400">
+                <div className="mb-2 flex items-center justify-between text-sm text-neutral-500 dark:text-neutral-300">
                     <div className="flex items-center gap-3">
                         <div className="flex items-center gap-1">
                             <Users className="size-3.5" />
@@ -111,7 +111,7 @@ function FeaturedChallengeCard({ challenge }: FeaturedChallengeCardProps) {
                             status === 'upcoming' &&
                                 'bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-200',
                             status === 'ended' &&
-                                'bg-neutral-100 text-neutral-600 dark:bg-neutral-800 dark:text-neutral-400',
+                                'bg-neutral-100 text-neutral-600 dark:bg-neutral-800 dark:text-neutral-300',
                         )}
                     >
                         {getStatusLabel(status)}
@@ -120,7 +120,7 @@ function FeaturedChallengeCard({ challenge }: FeaturedChallengeCardProps) {
                 <h3 className="text-lg font-semibold text-neutral-900 dark:text-white">
                     {challenge.title}
                 </h3>
-                <p className="mt-2 line-clamp-2 flex-1 text-sm text-neutral-600 dark:text-neutral-400">
+                <p className="mt-2 line-clamp-2 flex-1 text-sm text-neutral-600 dark:text-neutral-300">
                     {challenge.tagline}
                 </p>
             </div>
@@ -189,13 +189,13 @@ function ActiveChallengeItem({ challenge }: ActiveChallengeItemProps) {
                         <h3 className="font-semibold text-neutral-900 dark:text-white">
                             {challenge.title}
                         </h3>
-                        <p className="truncate text-sm text-neutral-500 dark:text-neutral-400">
+                        <p className="truncate text-sm text-neutral-500 dark:text-neutral-300">
                             {challenge.tagline}
                         </p>
                     </div>
 
                     {/* Stats */}
-                    <div className="flex shrink-0 items-center gap-3 text-sm text-neutral-500 dark:text-neutral-400">
+                    <div className="flex shrink-0 items-center gap-3 text-sm text-neutral-500 dark:text-neutral-300">
                         <div className="flex items-center gap-1">
                             <Users className="size-4" />
                             <span>{challenge.showcases_count ?? 0}</span>
@@ -208,7 +208,7 @@ function ActiveChallengeItem({ challenge }: ActiveChallengeItemProps) {
                 </div>
 
                 {/* Organisation, Status and Time Info */}
-                <div className="mt-2 flex items-center gap-2 text-sm text-neutral-500 dark:text-neutral-400">
+                <div className="mt-2 flex items-center gap-2 text-sm text-neutral-500 dark:text-neutral-300">
                     {challenge.organisation && (
                         <>
                             <span>{challenge.organisation.name}</span>
@@ -224,7 +224,7 @@ function ActiveChallengeItem({ challenge }: ActiveChallengeItemProps) {
                             status === 'upcoming' &&
                                 'bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-200',
                             status === 'ended' &&
-                                'bg-neutral-100 text-neutral-600 dark:bg-neutral-800 dark:text-neutral-400',
+                                'bg-neutral-100 text-neutral-600 dark:bg-neutral-800 dark:text-neutral-300',
                         )}
                     >
                         {getStatusLabel(status)}
@@ -284,12 +284,12 @@ export default function ChallengeIndex({
                     <h1 className="text-4xl font-bold tracking-tight text-neutral-900 sm:text-5xl dark:text-white">
                         Inspiration.
                     </h1>
-                    <p className="mx-auto mt-4 max-w-3xl text-lg text-neutral-600 dark:text-neutral-400">
+                    <p className="mx-auto mt-4 max-w-3xl text-lg text-neutral-600 dark:text-neutral-300">
                         Staring at a blank prompt window? We've got you! Here
                         are some ideas and community projects to help get you
                         moving.
                     </p>
-                    <p className="mt-6 flex flex-col items-center justify-center gap-2 text-sm text-neutral-600 md:flex-row md:text-base dark:text-neutral-400">
+                    <p className="mt-6 flex flex-col items-center justify-center gap-2 text-sm text-neutral-600 md:flex-row md:text-base dark:text-neutral-300">
                         <span className="flex items-center justify-start gap-2">
                             <Lightbulb className="size-5" />
                             Have an idea for a challenge?

@@ -92,14 +92,14 @@ export default function PublishingSection({
                             <span className="text-sm font-medium">
                                 Allow Preview
                             </span>
-                            <p className="text-sm text-neutral-500 dark:text-neutral-400">
+                            <p className="text-sm text-neutral-500 dark:text-neutral-300">
                                 Allow users to preview this {entityLabel} before
                                 publication.
                             </p>
                         </div>
                     </label>
                     {previewReady === false && allowPreview === false && (
-                        <p className="text-sm text-neutral-500 dark:text-neutral-400">
+                        <p className="text-sm text-neutral-500 dark:text-neutral-300">
                             Complete all required fields to enable preview.
                         </p>
                     )}

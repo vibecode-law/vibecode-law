@@ -27,7 +27,7 @@ export function GroupedTagList({ tags }: GroupedTagListProps) {
         <div className="space-y-5">
             {[...groupedTags.entries()].map(([typeLabel, typeTags]) => (
                 <div key={typeLabel}>
-                    <p className="mb-2 text-xs font-medium tracking-wide text-neutral-500 uppercase dark:text-neutral-400">
+                    <p className="mb-2 text-xs font-medium tracking-wide text-neutral-500 uppercase dark:text-neutral-300">
                         {typeLabel}
                     </p>
                     <div className="flex flex-wrap gap-1.5">

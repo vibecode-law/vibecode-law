@@ -29,7 +29,7 @@ function rankAccent(rank: number): string {
         return 'text-orange-600 dark:text-orange-500';
     }
 
-    return 'text-neutral-400 dark:text-neutral-600';
+    return 'text-neutral-400 dark:text-neutral-400';
 }
 
 export function LiveLeaderboard({
@@ -57,7 +57,7 @@ export function LiveLeaderboard({
                         {title}
                     </h2>
                     {subtitle !== null && subtitle !== undefined && (
-                        <p className="text-base text-neutral-600 lg:text-lg dark:text-neutral-400">
+                        <p className="text-base text-neutral-600 lg:text-lg dark:text-neutral-300">
                             {subtitle}
                         </p>
                     )}
@@ -116,12 +116,12 @@ export function LiveLeaderboard({
                                     <h3 className="truncate text-xl font-semibold text-neutral-900 lg:text-3xl dark:text-white">
                                         {showcase.title}
                                     </h3>
-                                    <p className="truncate text-base text-neutral-600 lg:text-xl dark:text-neutral-400">
+                                    <p className="truncate text-base text-neutral-600 lg:text-xl dark:text-neutral-300">
                                         {showcase.tagline}
                                     </p>
                                     {showcase.user !== null &&
                                         showcase.user !== undefined && (
-                                            <p className="truncate text-sm text-neutral-500 lg:text-base dark:text-neutral-500">
+                                            <p className="truncate text-sm text-neutral-500 lg:text-base dark:text-neutral-400">
                                                 {showcase.user.first_name}{' '}
                                                 {showcase.user.last_name}
                                             </p>

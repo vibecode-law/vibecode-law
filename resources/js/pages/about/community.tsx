@@ -61,7 +61,7 @@ export default function Community({
                     <h1 className="mb-2 text-3xl font-bold text-neutral-900 dark:text-white">
                         {title}
                     </h1>
-                    <p className="mb-10 text-neutral-600 dark:text-neutral-400">
+                    <p className="mb-10 text-neutral-600 dark:text-neutral-300">
                         Meet the community that makes vibecode.law possible.
                     </p>
 
@@ -70,7 +70,7 @@ export default function Community({
                             <h2 className="mb-5 text-xl font-semibold text-neutral-900 dark:text-white">
                                 Core Team
                             </h2>
-                            <p className="mb-5 text-sm text-neutral-500 dark:text-neutral-400">
+                            <p className="mb-5 text-sm text-neutral-500 dark:text-neutral-300">
                                 The people leading the charge on building our
                                 community.
                             </p>
@@ -90,7 +90,7 @@ export default function Community({
                             <h2 className="mb-5 text-xl font-semibold text-neutral-900 dark:text-white">
                                 Collaborators
                             </h2>
-                            <p className="mb-5 text-sm text-neutral-500 dark:text-neutral-400">
+                            <p className="mb-5 text-sm text-neutral-500 dark:text-neutral-300">
                                 The people that keep things running, whether
                                 that is by moderating, maintaining the codebase,
                                 or otherwise.
@@ -108,7 +108,7 @@ export default function Community({
 
                     {coreTeam.length === 0 && collaborators.length === 0 && (
                         <div className="py-12 text-center">
-                            <p className="text-neutral-500 dark:text-neutral-400">
+                            <p className="text-neutral-500 dark:text-neutral-300">
                                 No community members to display yet.
                             </p>
                         </div>

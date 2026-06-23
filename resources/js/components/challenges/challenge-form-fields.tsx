@@ -286,7 +286,7 @@ export default function ChallengeFormFields({
                         disabled={processing}
                         error={errors.timezone}
                     />
-                    <p className="mt-1 text-sm text-neutral-500 dark:text-neutral-400">
+                    <p className="mt-1 text-sm text-neutral-500 dark:text-neutral-300">
                         The start and end times above are in this timezone.
                         Daylight saving is handled automatically.
                     </p>
@@ -393,7 +393,7 @@ export default function ChallengeFormFields({
                     />
                     <div>
                         <span className="text-sm font-medium">Active</span>
-                        <p className="text-sm text-neutral-500 dark:text-neutral-400">
+                        <p className="text-sm text-neutral-500 dark:text-neutral-300">
                             {isActive
                                 ? 'This challenge is active and cannot be deactivated.'
                                 : 'Make this challenge visible and accepting submissions.'}
@@ -409,7 +409,7 @@ export default function ChallengeFormFields({
                     />
                     <div>
                         <span className="text-sm font-medium">Featured</span>
-                        <p className="text-sm text-neutral-500 dark:text-neutral-400">
+                        <p className="text-sm text-neutral-500 dark:text-neutral-300">
                             {isInviteToView
                                 ? 'Invite to view challenges cannot be featured on the homepage.'
                                 : 'Highlight this challenge on the homepage.'}
@@ -442,7 +442,7 @@ export default function ChallengeFormFields({
                         <span className="text-sm font-medium">
                             Live leaderboard view
                         </span>
-                        <p className="text-sm text-neutral-500 dark:text-neutral-400">
+                        <p className="text-sm text-neutral-500 dark:text-neutral-300">
                             Enable a full-screen, auto-updating leaderboard for
                             big screens at in-person events.
                         </p>
@@ -472,7 +472,7 @@ export default function ChallengeFormFields({
                                 maxLength={120}
                                 placeholder={defaultValues?.title}
                             />
-                            <p className="mt-1 text-sm text-neutral-500 dark:text-neutral-400">
+                            <p className="mt-1 text-sm text-neutral-500 dark:text-neutral-300">
                                 Shown big on the screen. Defaults to the
                                 challenge title.
                             </p>
@@ -493,7 +493,7 @@ export default function ChallengeFormFields({
                                 maxLength={160}
                                 placeholder={defaultValues?.tagline}
                             />
-                            <p className="mt-1 text-sm text-neutral-500 dark:text-neutral-400">
+                            <p className="mt-1 text-sm text-neutral-500 dark:text-neutral-300">
                                 Defaults to the challenge tagline.
                             </p>
                         </FormField>
@@ -513,7 +513,7 @@ export default function ChallengeFormFields({
                                 maxLength={64}
                                 placeholder="Leave blank for an open URL"
                             />
-                            <p className="mt-1 text-sm text-neutral-500 dark:text-neutral-400">
+                            <p className="mt-1 text-sm text-neutral-500 dark:text-neutral-300">
                                 If set, the live URL must include{' '}
                                 <code>?key=…</code> to be viewable.
                             </p>
@@ -569,7 +569,7 @@ export default function ChallengeFormFields({
                     error={errors.involvement_instructions}
                     required
                 >
-                    <p className="mb-2 text-sm text-neutral-500 dark:text-neutral-400">
+                    <p className="mb-2 text-sm text-neutral-500 dark:text-neutral-300">
                         Shown to people who aren’t yet eligible to submit,
                         explaining how they can take part.
                     </p>
@@ -589,7 +589,7 @@ export default function ChallengeFormFields({
                 error={errors.participant_instructions}
                 optional
             >
-                <p className="mb-2 text-sm text-neutral-500 dark:text-neutral-400">
+                <p className="mb-2 text-sm text-neutral-500 dark:text-neutral-300">
                     Private instructions shown only to entrants once they’re
                     eligible to take part.
                 </p>

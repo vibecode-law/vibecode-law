@@ -29,7 +29,7 @@ export function PublicFooter() {
                             <li>
                                 <Link
                                     href={LearnIndexController.url()}
-                                    className="text-sm text-neutral-600 transition-colors hover:text-neutral-900 dark:text-neutral-400 dark:hover:text-white"
+                                    className="text-sm text-neutral-600 transition-colors hover:text-neutral-900 dark:text-neutral-300 dark:hover:text-white"
                                 >
                                     Learn
                                 </Link>
@@ -37,7 +37,7 @@ export function PublicFooter() {
                             <li>
                                 <Link
                                     href={ShowcaseIndexController.url()}
-                                    className="text-sm text-neutral-600 transition-colors hover:text-neutral-900 dark:text-neutral-400 dark:hover:text-white"
+                                    className="text-sm text-neutral-600 transition-colors hover:text-neutral-900 dark:text-neutral-300 dark:hover:text-white"
                                 >
                                     Showcases
                                 </Link>
@@ -45,7 +45,7 @@ export function PublicFooter() {
                             <li>
                                 <Link
                                     href={ShowcaseCreateController.url()}
-                                    className="text-sm text-neutral-600 transition-colors hover:text-neutral-900 dark:text-neutral-400 dark:hover:text-white"
+                                    className="text-sm text-neutral-600 transition-colors hover:text-neutral-900 dark:text-neutral-300 dark:hover:text-white"
                                 >
                                     Share Your Project
                                 </Link>
@@ -63,7 +63,7 @@ export function PublicFooter() {
                                 <li key={page.route}>
                                     <Link
                                         href={page.route}
-                                        className="text-sm text-neutral-600 transition-colors hover:text-neutral-900 dark:text-neutral-400 dark:hover:text-white"
+                                        className="text-sm text-neutral-600 transition-colors hover:text-neutral-900 dark:text-neutral-300 dark:hover:text-white"
                                     >
                                         {page.title}
                                     </Link>
@@ -75,7 +75,7 @@ export function PublicFooter() {
                     {/* Brand Column */}
                     <div className="order-first space-y-4 sm:order-0 lg:order-first">
                         <AppLogo />
-                        <p className="text-sm text-neutral-600 dark:text-neutral-400">
+                        <p className="text-sm text-neutral-600 dark:text-neutral-300">
                             Learn. Share. Discover.
                         </p>
                         <div className="flex gap-3">
@@ -106,7 +106,7 @@ export function PublicFooter() {
                             <h3 className="mb-4 text-xs font-semibold tracking-wide text-neutral-900 uppercase dark:text-white">
                                 Stay Updated
                             </h3>
-                            <p className="mb-4 text-sm text-neutral-600 dark:text-neutral-400">
+                            <p className="mb-4 text-sm text-neutral-600 dark:text-neutral-300">
                                 Keep up to date with the latest vibecode.law
                                 news and showcases by signing up to our
                                 newsletter.
@@ -120,7 +120,7 @@ export function PublicFooter() {
             {/* Official Platform Partners */}
             <div className="border-t border-neutral-200 dark:border-neutral-800">
                 <div className="mx-auto my-8 flex max-w-6xl flex-col items-center gap-8 px-2 md:flex-row md:justify-center md:gap-12">
-                    <span className="shrink-0 text-xs font-semibold tracking-wide text-neutral-400 uppercase dark:text-neutral-500">
+                    <span className="shrink-0 text-xs font-semibold tracking-wide text-neutral-400 uppercase dark:text-neutral-400">
                         Official Platform Partners
                     </span>
                     <div className="grid max-w-sm grid-cols-2 items-center gap-8 sm:flex sm:max-w-none sm:gap-10 [&>*:last-child:nth-child(odd)]:col-span-2 [&>*:last-child:nth-child(odd)]:mx-auto [&>*:last-child:nth-child(odd)]:max-w-[calc(50%-0.5rem)]">
@@ -164,7 +164,7 @@ export function PublicFooter() {
             {/* Bottom Bar */}
             <div className="border-t border-neutral-200 dark:border-neutral-800">
                 <div className="mx-auto flex max-w-6xl flex-col items-center justify-between gap-4 px-4 py-4 sm:flex-row">
-                    <p className="text-sm text-neutral-500 dark:text-neutral-400">
+                    <p className="text-sm text-neutral-500 dark:text-neutral-300">
                         &copy; {currentYear} vibecode.law. All rights reserved.
                         Built for the legal community.
                     </p>

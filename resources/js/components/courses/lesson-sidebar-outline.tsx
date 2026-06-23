@@ -19,7 +19,7 @@ export function LessonSidebarOutline({
 }: LessonSidebarOutlineProps) {
     return (
         <div>
-            <p className="mb-3 text-xs font-medium tracking-wide text-neutral-500 uppercase dark:text-neutral-400">
+            <p className="mb-3 text-xs font-medium tracking-wide text-neutral-500 uppercase dark:text-neutral-300">
                 Course Outline
             </p>
             <nav className="space-y-1">
@@ -35,7 +35,7 @@ export function LessonSidebarOutline({
                         return (
                             <span
                                 key={navLesson.id}
-                                className="block rounded-md px-3 py-2 text-sm text-neutral-400 dark:text-neutral-600"
+                                className="block rounded-md px-3 py-2 text-sm text-neutral-400 dark:text-neutral-400"
                             >
                                 <div className="flex items-center justify-between">
                                     <div className="flex items-center gap-2">
@@ -65,13 +65,13 @@ export function LessonSidebarOutline({
                                 isCurrent
                                     ? 'bg-neutral-900 font-semibold text-white dark:bg-white dark:text-neutral-900'
                                     : isLocked
-                                      ? 'text-neutral-400 dark:text-neutral-600'
-                                      : 'text-neutral-600 hover:bg-neutral-50 dark:text-neutral-400 dark:hover:bg-neutral-800',
+                                      ? 'text-neutral-400 dark:text-neutral-400'
+                                      : 'text-neutral-600 hover:bg-neutral-50 dark:text-neutral-300 dark:hover:bg-neutral-800',
                             )}
                         >
                             <div className="flex items-center justify-between">
                                 <div className="flex items-center gap-2">
-                                    <span className="text-neutral-500 dark:text-neutral-400">
+                                    <span className="text-neutral-500 dark:text-neutral-300">
                                         {index + 1}.
                                     </span>
                                     <span>{navLesson.title}</span>

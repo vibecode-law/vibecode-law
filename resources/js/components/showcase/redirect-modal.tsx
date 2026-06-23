@@ -52,7 +52,7 @@ export function RedirectModal({ isOpen, onClose, url }: RedirectModalProps) {
 
                 <div className="my-4 space-y-3">
                     <div className="rounded-lg border border-neutral-200 bg-neutral-50 p-3 dark:border-neutral-700 dark:bg-neutral-800">
-                        <p className="text-sm break-all text-neutral-600 dark:text-neutral-400">
+                        <p className="text-sm break-all text-neutral-600 dark:text-neutral-300">
                             {getDomain(url)}
                         </p>
                     </div>

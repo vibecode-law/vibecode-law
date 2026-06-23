@@ -64,7 +64,7 @@ export default function NewsletterIndex() {
                         Stay in the loop.
                     </h1>
 
-                    <p className="mt-8 text-lg text-neutral-600 dark:text-neutral-400">
+                    <p className="mt-8 text-lg text-neutral-600 dark:text-neutral-300">
                         Hear about the community designing the future of law.
                         Get the latest vibecode.law news and showcases delivered
                         straight to your inbox.
@@ -135,11 +135,11 @@ export default function NewsletterIndex() {
                                     )}
                                 </Form>
 
-                                <p className="mt-4 text-sm text-neutral-500 dark:text-neutral-500">
+                                <p className="mt-4 text-sm text-neutral-500 dark:text-neutral-400">
                                     No spam. Unsubscribe at any time.
                                 </p>
 
-                                <p className="mt-2 text-sm text-neutral-500 dark:text-neutral-500">
+                                <p className="mt-2 text-sm text-neutral-500 dark:text-neutral-400">
                                     Read our{' '}
                                     <TextLink
                                         href={LegalShowController.url(

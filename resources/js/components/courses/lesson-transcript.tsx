@@ -27,7 +27,7 @@ export function LessonTranscript({ lines, onSeek }: LessonTranscriptProps) {
 
     if (lines.length === 0) {
         return (
-            <p className="text-sm text-neutral-500 dark:text-neutral-400">
+            <p className="text-sm text-neutral-500 dark:text-neutral-300">
                 No transcript available for this lesson.
             </p>
         );

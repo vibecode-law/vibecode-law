@@ -130,7 +130,7 @@ export function MarkdownEditor({
                     onFocus: onFocus,
                     onBlur: onBlur,
                 }}
-                className="rounded-md! border-input! border! bg-transparent! shadow-xs! dark:bg-transparent! dark:text-neutral-400!"
+                className="rounded-md! border-input! border! bg-transparent! shadow-xs! dark:bg-transparent! dark:text-neutral-300! [&_.w-md-editor-text-pre>code]:text-base! [&_.w-md-editor-text-pre>code]:leading-6! [&_.w-md-editor-text]:text-base! [&_.w-md-editor-text]:leading-6!"
             />
             <p className="text-muted-foreground mt-1.5 text-xs">
                 Leave a blank line between paragraphs (press Enter twice) to

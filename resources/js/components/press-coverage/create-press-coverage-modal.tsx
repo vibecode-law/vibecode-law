@@ -146,7 +146,7 @@ export function CreatePressCoverageModal({
                                     error={errors.thumbnail}
                                     onCropDataChange={setThumbnailCropData}
                                 />
-                                <p className="mt-1 text-xs text-neutral-500 dark:text-neutral-400">
+                                <p className="mt-1 text-xs text-neutral-500 dark:text-neutral-300">
                                     Square image (1:1 ratio). Max 2MB.
                                 </p>
                             </FormField>
@@ -280,7 +280,7 @@ export function CreatePressCoverageModal({
                                         : undefined
                                 }
                             />
-                            <p className="mt-1 text-xs text-neutral-500 dark:text-neutral-400">
+                            <p className="mt-1 text-xs text-neutral-500 dark:text-neutral-300">
                                 Lower numbers appear first
                             </p>
                         </FormField>

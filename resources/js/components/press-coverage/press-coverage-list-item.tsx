@@ -45,13 +45,13 @@ export function PressCoverageListItem({
                                 {pressCoverage.title}
                             </h3>
                             {pressCoverage.is_published === false && (
-                                <span className="inline-flex items-center gap-1 rounded-full bg-neutral-100 px-2 py-0.5 text-xs text-neutral-600 dark:bg-neutral-800 dark:text-neutral-400">
+                                <span className="inline-flex items-center gap-1 rounded-full bg-neutral-100 px-2 py-0.5 text-xs text-neutral-600 dark:bg-neutral-800 dark:text-neutral-300">
                                     <EyeOff className="size-3" />
                                     Unpublished
                                 </span>
                             )}
                         </div>
-                        <div className="mt-1 flex items-center gap-2 text-sm text-neutral-600 dark:text-neutral-400">
+                        <div className="mt-1 flex items-center gap-2 text-sm text-neutral-600 dark:text-neutral-300">
                             <span className="font-medium">
                                 {pressCoverage.publication_name}
                             </span>
@@ -77,7 +77,7 @@ export function PressCoverageListItem({
                                 href={pressCoverage.url}
                                 target="_blank"
                                 rel="noopener noreferrer"
-                                className="inline-flex items-center gap-1 text-xs text-neutral-500 hover:text-amber-600 dark:text-neutral-400 dark:hover:text-amber-500"
+                                className="inline-flex items-center gap-1 text-xs text-neutral-500 hover:text-amber-600 dark:text-neutral-300 dark:hover:text-amber-500"
                             >
                                 <ExternalLink className="size-3" />
                                 View article

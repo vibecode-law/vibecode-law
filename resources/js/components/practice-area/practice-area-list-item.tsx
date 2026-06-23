@@ -20,12 +20,12 @@ export function PracticeAreaListItem({
                     <h3 className="font-semibold text-neutral-900 dark:text-white">
                         {practiceArea.name}
                     </h3>
-                    <code className="rounded bg-neutral-100 px-2 py-0.5 text-xs text-neutral-600 dark:bg-neutral-800 dark:text-neutral-400">
+                    <code className="rounded bg-neutral-100 px-2 py-0.5 text-xs text-neutral-600 dark:bg-neutral-800 dark:text-neutral-300">
                         {practiceArea.slug}
                     </code>
                 </div>
                 {practiceArea.showcases_count !== undefined && (
-                    <p className="mt-0.5 text-sm text-neutral-500 dark:text-neutral-400">
+                    <p className="mt-0.5 text-sm text-neutral-500 dark:text-neutral-300">
                         {practiceArea.showcases_count}{' '}
                         {practiceArea.showcases_count === 1
                             ? 'showcase'

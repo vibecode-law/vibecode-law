@@ -74,15 +74,15 @@ export function UserListItem({
                         </Badge>
                     )}
                 </div>
-                <p className="text-sm text-neutral-500 dark:text-neutral-400">
+                <p className="text-sm text-neutral-500 dark:text-neutral-300">
                     {user.email}
                     {user.organisation !== null && (
-                        <span className="ml-2 text-neutral-400 dark:text-neutral-500">
+                        <span className="ml-2 text-neutral-400 dark:text-neutral-400">
                             &middot; {user.organisation}
                         </span>
                     )}
                 </p>
-                <p className="mt-0.5 text-xs text-neutral-400 dark:text-neutral-500">
+                <p className="mt-0.5 text-xs text-neutral-400 dark:text-neutral-400">
                     {user.showcases_count !== undefined && (
                         <span>
                             {user.showcases_count}{' '}

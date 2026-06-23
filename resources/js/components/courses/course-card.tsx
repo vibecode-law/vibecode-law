@@ -41,7 +41,7 @@ export function CourseCard({ course, progress }: CourseCardProps) {
                     />
                 ) : (
                     <div className="flex h-full w-full items-center justify-center bg-linear-to-br from-neutral-100 to-neutral-200 dark:from-neutral-800 dark:to-neutral-900">
-                        <BookOpen className="size-16 text-neutral-400 dark:text-neutral-600" />
+                        <BookOpen className="size-16 text-neutral-400 dark:text-neutral-400" />
                     </div>
                 )}
                 <div className="absolute inset-0 bg-linear-to-t from-black/60 via-transparent to-transparent" />
@@ -59,7 +59,7 @@ export function CourseCard({ course, progress }: CourseCardProps) {
 
             {/* Content */}
             <div className="flex flex-1 flex-col p-6">
-                <div className="mb-2 flex items-center justify-between text-sm text-neutral-500 dark:text-neutral-400">
+                <div className="mb-2 flex items-center justify-between text-sm text-neutral-500 dark:text-neutral-300">
                     <div className="flex items-center gap-3">
                         {!isPreviewable && (
                             <div className="flex items-center gap-1">
@@ -90,7 +90,7 @@ export function CourseCard({ course, progress }: CourseCardProps) {
                 <h3 className="text-lg font-semibold text-neutral-900 dark:text-white">
                     {course.title}
                 </h3>
-                <p className="mt-2 line-clamp-2 flex-1 text-sm text-neutral-600 dark:text-neutral-400">
+                <p className="mt-2 line-clamp-2 flex-1 text-sm text-neutral-600 dark:text-neutral-300">
                     {course.tagline}
                 </p>
 

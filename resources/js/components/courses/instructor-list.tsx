@@ -21,7 +21,7 @@ export function InstructorList({ instructors }: InstructorListProps) {
 
     return (
         <div>
-            <p className="mb-3 text-xs font-medium tracking-wide text-neutral-500 uppercase dark:text-neutral-400">
+            <p className="mb-3 text-xs font-medium tracking-wide text-neutral-500 uppercase dark:text-neutral-300">
                 {instructors.length === 1 ? 'Instructor' : 'Instructors'}
             </p>
             <div className="space-y-4">
@@ -54,12 +54,12 @@ export function InstructorList({ instructors }: InstructorListProps) {
                                     {user.first_name} {user.last_name}
                                 </p>
                                 {user.job_title && (
-                                    <p className="text-sm text-neutral-600 dark:text-neutral-400">
+                                    <p className="text-sm text-neutral-600 dark:text-neutral-300">
                                         {user.job_title}
                                     </p>
                                 )}
                                 {user.organisation && (
-                                    <p className="text-sm text-neutral-500 dark:text-neutral-500">
+                                    <p className="text-sm text-neutral-500 dark:text-neutral-400">
                                         {user.organisation}
                                     </p>
                                 )}

@@ -130,7 +130,7 @@ export default function CourseFormFields({
                         }
                     />
                     {slugLocked === true && (
-                        <p className="text-sm text-neutral-500 dark:text-neutral-400">
+                        <p className="text-sm text-neutral-500 dark:text-neutral-300">
                             Slug cannot be changed once the course allows
                             preview or has a publish date set.
                         </p>
@@ -229,7 +229,7 @@ export default function CourseFormFields({
             <div className="space-y-4">
                 <Label className="text-base font-medium">
                     Thumbnail
-                    <span className="ml-1 text-sm font-normal text-neutral-400 dark:text-neutral-500">
+                    <span className="ml-1 text-sm font-normal text-neutral-400 dark:text-neutral-400">
                         (optional)
                     </span>
                 </Label>
@@ -266,7 +266,7 @@ export default function CourseFormFields({
                     />
                     <div>
                         <span className="text-sm font-medium">Featured</span>
-                        <p className="text-sm text-neutral-500 dark:text-neutral-400">
+                        <p className="text-sm text-neutral-500 dark:text-neutral-300">
                             Highlight this course on the homepage.
                         </p>
                     </div>
