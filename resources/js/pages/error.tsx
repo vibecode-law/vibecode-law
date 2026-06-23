@@ -60,7 +60,7 @@ export default function ErrorPage({ status }: ErrorPageProps) {
                 <h1 className="mt-4 text-2xl font-bold tracking-tight text-neutral-900 sm:text-3xl dark:text-white">
                     {title}
                 </h1>
-                <p className="mt-2 max-w-md text-center text-neutral-600 dark:text-neutral-400">
+                <p className="mt-2 max-w-md text-center text-neutral-600 dark:text-neutral-300">
                     {description}
                 </p>
 

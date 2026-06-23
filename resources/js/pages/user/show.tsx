@@ -87,7 +87,7 @@ export default function UserShow({ user, showcases }: UserShowProps) {
                                     {fullName}
                                 </h1>
                                 {jobInfo !== null && (
-                                    <p className="text-neutral-500 dark:text-neutral-400">
+                                    <p className="text-neutral-500 dark:text-neutral-300">
                                         {jobInfo}
                                     </p>
                                 )}
@@ -135,7 +135,7 @@ export default function UserShow({ user, showcases }: UserShowProps) {
                             </div>
                         ) : (
                             <div className="py-8 text-center">
-                                <p className="text-neutral-500 dark:text-neutral-400">
+                                <p className="text-neutral-500 dark:text-neutral-300">
                                     No showcases yet.
                                 </p>
                             </div>

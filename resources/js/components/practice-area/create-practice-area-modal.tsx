@@ -139,7 +139,7 @@ export function CreatePracticeAreaModal({
                                 }
                             />
                             {slug !== '' && (
-                                <p className="text-xs text-neutral-500 dark:text-neutral-400">
+                                <p className="text-xs text-neutral-500 dark:text-neutral-300">
                                     URL: /showcase/practice-area/{slug}
                                 </p>
                             )}

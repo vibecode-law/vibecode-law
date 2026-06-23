@@ -145,7 +145,7 @@ export default function AboutIndex({
                                                     {child.name}
                                                     <ArrowRight className="size-4 opacity-0 transition-all duration-200 group-hover:translate-x-1 group-hover:opacity-100" />
                                                 </h3>
-                                                <p className="mt-1 text-sm leading-relaxed text-neutral-600 dark:text-neutral-400">
+                                                <p className="mt-1 text-sm leading-relaxed text-neutral-600 dark:text-neutral-300">
                                                     {child.summary}
                                                 </p>
                                             </div>

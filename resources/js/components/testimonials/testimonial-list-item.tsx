@@ -47,7 +47,7 @@ export function TestimonialListItem({
                                 </h3>
                             )}
                             {testimonial.is_published === false && (
-                                <span className="inline-flex items-center gap-1 rounded-full bg-neutral-100 px-2 py-0.5 text-xs text-neutral-600 dark:bg-neutral-800 dark:text-neutral-400">
+                                <span className="inline-flex items-center gap-1 rounded-full bg-neutral-100 px-2 py-0.5 text-xs text-neutral-600 dark:bg-neutral-800 dark:text-neutral-300">
                                     <EyeOff className="size-3" />
                                     Unpublished
                                 </span>
@@ -60,7 +60,7 @@ export function TestimonialListItem({
                         </div>
                         {(testimonial.display_job_title ||
                             testimonial.display_organisation) && (
-                            <p className="mt-0.5 text-sm text-neutral-600 dark:text-neutral-400">
+                            <p className="mt-0.5 text-sm text-neutral-600 dark:text-neutral-300">
                                 {testimonial.display_job_title}
                                 {testimonial.display_job_title &&
                                     testimonial.display_organisation &&

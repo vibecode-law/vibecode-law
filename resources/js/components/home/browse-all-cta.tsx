@@ -8,7 +8,7 @@ export function BrowseAllCta() {
             <h4 className="text-xl font-semibold text-neutral-900 dark:text-white">
                 Explore every project
             </h4>
-            <p className="mx-auto mt-2 max-w-md text-sm text-neutral-600 dark:text-neutral-400">
+            <p className="mx-auto mt-2 max-w-md text-sm text-neutral-600 dark:text-neutral-300">
                 Browse the full showcase archive by month, practice area and
                 more.
             </p>

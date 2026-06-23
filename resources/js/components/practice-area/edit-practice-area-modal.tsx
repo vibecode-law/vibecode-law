@@ -101,13 +101,13 @@ export function EditPracticeAreaModal({
                         </FormField>
 
                         <div className="space-y-1">
-                            <p className="text-sm text-neutral-500 dark:text-neutral-400">
+                            <p className="text-sm text-neutral-500 dark:text-neutral-300">
                                 Slug:{' '}
                                 <code className="rounded bg-neutral-100 px-1.5 py-0.5 text-xs dark:bg-neutral-800">
                                     {practiceArea.slug}
                                 </code>
                             </p>
-                            <p className="text-xs text-neutral-400 dark:text-neutral-500">
+                            <p className="text-xs text-neutral-400 dark:text-neutral-400">
                                 The slug cannot be changed after creation.
                             </p>
                         </div>

@@ -46,7 +46,7 @@ export function CreatorSection({ user }: CreatorSectionProps) {
                             {fullName}
                         </div>
                         {jobInfo !== null && (
-                            <div className="text-sm text-neutral-500 dark:text-neutral-400">
+                            <div className="text-sm text-neutral-500 dark:text-neutral-300">
                                 {jobInfo}
                             </div>
                         )}

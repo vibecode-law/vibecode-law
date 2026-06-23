@@ -70,7 +70,7 @@ function DraftButton({
         if (draftStatus === 'Pending') {
             return 'text-amber-600 dark:text-amber-400 hover:bg-amber-50 dark:hover:bg-amber-950';
         }
-        return 'text-neutral-600 dark:text-neutral-400 hover:bg-neutral-100 dark:hover:bg-neutral-800';
+        return 'text-neutral-600 dark:text-neutral-300 hover:bg-neutral-100 dark:hover:bg-neutral-800';
     };
 
     return (

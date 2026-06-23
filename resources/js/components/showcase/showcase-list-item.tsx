@@ -10,7 +10,7 @@ export function ShowcaseUserInfo({
     user: { first_name: string; last_name: string };
 }) {
     return (
-        <p className="text-xs text-neutral-500 dark:text-neutral-500">
+        <p className="text-xs text-neutral-500 dark:text-neutral-400">
             by {user.first_name} {user.last_name}
         </p>
     );
@@ -32,7 +32,7 @@ export function ShowcaseStats({
     upvotesCount: number;
 }) {
     return (
-        <div className="flex items-center gap-4 text-sm text-neutral-500 dark:text-neutral-400">
+        <div className="flex items-center gap-4 text-sm text-neutral-500 dark:text-neutral-300">
             <span className="flex items-center gap-1">
                 <Eye className="size-4" />
                 {viewCount}
@@ -85,7 +85,7 @@ export function ShowcaseListItem({
                             size="sm"
                         />
                     </div>
-                    <p className="truncate text-sm text-neutral-600 dark:text-neutral-400">
+                    <p className="truncate text-sm text-neutral-600 dark:text-neutral-300">
                         {showcase.tagline}
                     </p>
                     {metaSlot}
@@ -145,10 +145,10 @@ export function DraftListItem({
                         </h3>
                         <ShowcaseStatusBadge status={draft.status} size="sm" />
                     </div>
-                    <p className="truncate text-sm text-neutral-600 dark:text-neutral-400">
+                    <p className="truncate text-sm text-neutral-600 dark:text-neutral-300">
                         {draft.tagline}
                     </p>
-                    <p className="text-xs text-neutral-500 dark:text-neutral-500">
+                    <p className="text-xs text-neutral-500 dark:text-neutral-400">
                         Changes to: {draft.showcase_title}
                     </p>
                     {metaSlot}

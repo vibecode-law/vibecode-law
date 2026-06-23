@@ -86,13 +86,13 @@ export default function ChallengesIndex({ challenges }: ChallengesIndexProps) {
                                                 </Badge>
                                             )}
                                         </div>
-                                        <p className="text-sm text-neutral-500 dark:text-neutral-400">
+                                        <p className="text-sm text-neutral-500 dark:text-neutral-300">
                                             {challenge.tagline}
                                             {challenge.organisation !==
                                                 undefined &&
                                                 challenge.organisation !==
                                                     null && (
-                                                    <span className="ml-2 text-neutral-400 dark:text-neutral-500">
+                                                    <span className="ml-2 text-neutral-400 dark:text-neutral-400">
                                                         &middot;{' '}
                                                         {
                                                             challenge
@@ -102,7 +102,7 @@ export default function ChallengesIndex({ challenges }: ChallengesIndexProps) {
                                                     </span>
                                                 )}
                                         </p>
-                                        <p className="mt-0.5 text-xs text-neutral-400 dark:text-neutral-500">
+                                        <p className="mt-0.5 text-xs text-neutral-400 dark:text-neutral-400">
                                             {challenge.showcases_count !==
                                                 undefined && (
                                                 <span>

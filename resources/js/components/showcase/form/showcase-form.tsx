@@ -545,7 +545,7 @@ export function ShowcaseForm({
 
                                         {/* Optional Fields Section */}
                                         <fieldset className="rounded-xl border border-neutral-200 p-6 dark:border-neutral-800">
-                                            <legend className="px-2 text-sm font-medium text-neutral-500 dark:text-neutral-400">
+                                            <legend className="px-2 text-sm font-medium text-neutral-500 dark:text-neutral-300">
                                                 Optional
                                             </legend>
 
@@ -556,7 +556,7 @@ export function ShowcaseForm({
                                                         <Image className="size-5" />
                                                         Logo
                                                     </Label>
-                                                    <p className="text-sm text-neutral-500 dark:text-neutral-400">
+                                                    <p className="text-sm text-neutral-500 dark:text-neutral-300">
                                                         A square image used in
                                                         showcase listings. Min
                                                         100×100px, max 2MB.

@@ -9,7 +9,7 @@ export function CourseStats({ course }: CourseStatsProps) {
     const duration = formatDuration(course.duration_seconds);
 
     return (
-        <div className="flex items-center gap-4 text-sm text-neutral-500 dark:text-neutral-400">
+        <div className="flex items-center gap-4 text-sm text-neutral-500 dark:text-neutral-300">
             <div className="flex items-center gap-1.5">
                 <Users className="size-4" />
                 <span>{course.started_count ?? 0} already enrolled</span>

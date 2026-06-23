@@ -13,7 +13,7 @@ export function CourseProgressBar({
                 <span className="font-medium text-neutral-700 dark:text-neutral-300">
                     {progressPercentage >= 100 ? 'Completed' : 'In Progress'}
                 </span>
-                <span className="text-neutral-500 dark:text-neutral-400">
+                <span className="text-neutral-500 dark:text-neutral-300">
                     {progressPercentage}%
                 </span>
             </div>

@@ -142,7 +142,7 @@ export default function LessonFormFields({
                         }
                     />
                     {slugLocked === true && (
-                        <p className="text-sm text-neutral-500 dark:text-neutral-400">
+                        <p className="text-sm text-neutral-500 dark:text-neutral-300">
                             Slug cannot be changed once the lesson allows
                             preview or has a publish date.
                         </p>
@@ -220,7 +220,7 @@ export default function LessonFormFields({
                     label={
                         <>
                             Instructors
-                            <span className="ml-1 text-sm font-normal text-neutral-400 dark:text-neutral-500">
+                            <span className="ml-1 text-sm font-normal text-neutral-400 dark:text-neutral-400">
                                 (optional)
                             </span>
                         </>
@@ -241,7 +241,7 @@ export default function LessonFormFields({
                                     </p>
                                     {(instructor.job_title ||
                                         instructor.organisation) && (
-                                        <p className="text-xs text-neutral-500 dark:text-neutral-400">
+                                        <p className="text-xs text-neutral-500 dark:text-neutral-300">
                                             {instructor.job_title}
                                             {instructor.job_title &&
                                                 instructor.organisation &&
@@ -259,7 +259,7 @@ export default function LessonFormFields({
                                             ),
                                         )
                                     }
-                                    className="text-sm text-neutral-500 hover:text-red-600 dark:text-neutral-400 dark:hover:text-red-400"
+                                    className="text-sm text-neutral-500 hover:text-red-600 dark:text-neutral-300 dark:hover:text-red-400"
                                     disabled={processing}
                                 >
                                     Remove
@@ -297,7 +297,7 @@ export default function LessonFormFields({
             <div className="space-y-4">
                 <Label className="text-base font-medium">
                     Thumbnail
-                    <span className="ml-1 text-sm font-normal text-neutral-400 dark:text-neutral-500">
+                    <span className="ml-1 text-sm font-normal text-neutral-400 dark:text-neutral-400">
                         (optional)
                     </span>
                 </Label>
@@ -329,7 +329,7 @@ export default function LessonFormFields({
                     />
                     <div>
                         <span className="text-sm font-medium">Gated</span>
-                        <p className="text-sm text-neutral-500 dark:text-neutral-400">
+                        <p className="text-sm text-neutral-500 dark:text-neutral-300">
                             Require authentication to access this lesson.
                         </p>
                     </div>

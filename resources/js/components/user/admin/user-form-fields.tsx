@@ -214,7 +214,7 @@ export default function UserFormFields({
                         )}
                     </Label>
                 </div>
-                <p className="text-sm text-neutral-500 dark:text-neutral-400">
+                <p className="text-sm text-neutral-500 dark:text-neutral-300">
                     Add this user to the team page.
                 </p>
 
@@ -282,7 +282,7 @@ export default function UserFormFields({
                                 )}
                             </Label>
                         </div>
-                        <p className="text-sm text-neutral-500 dark:text-neutral-400">
+                        <p className="text-sm text-neutral-500 dark:text-neutral-300">
                             Assign roles to control user permissions.
                             {isCreate === false &&
                                 ' Super admin status is managed separately.'}
@@ -329,7 +329,7 @@ export default function UserFormFields({
                         <span className="font-medium">
                             Opt out of marketing emails
                         </span>
-                        <p className="text-sm text-neutral-500 dark:text-neutral-400">
+                        <p className="text-sm text-neutral-500 dark:text-neutral-300">
                             User will not receive marketing newsletters.
                         </p>
                     </div>

@@ -77,7 +77,7 @@ export function Pagination({
 
     return (
         <div className={cn('flex items-center justify-between', className)}>
-            <p className="text-sm text-neutral-500 dark:text-neutral-400">
+            <p className="text-sm text-neutral-500 dark:text-neutral-300">
                 Page {meta.current_page} of {meta.last_page}
             </p>
             <div className="flex gap-2">

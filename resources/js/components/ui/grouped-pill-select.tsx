@@ -72,7 +72,7 @@ export function GroupedPillSelect({
 
                 return (
                     <div key={group.label} className="space-y-2">
-                        <p className="text-xs font-medium tracking-wide text-neutral-500 uppercase dark:text-neutral-400">
+                        <p className="text-xs font-medium tracking-wide text-neutral-500 uppercase dark:text-neutral-300">
                             {group.label}
                         </p>
 
@@ -112,7 +112,7 @@ export function GroupedPillSelect({
                         )}
 
                         {group.options.length === 0 && (
-                            <p className="text-sm text-neutral-400 dark:text-neutral-500">
+                            <p className="text-sm text-neutral-400 dark:text-neutral-400">
                                 No tags available
                             </p>
                         )}
@@ -121,7 +121,7 @@ export function GroupedPillSelect({
             })}
 
             {allOptions.length === 0 && (
-                <p className="text-sm text-neutral-400 dark:text-neutral-500">
+                <p className="text-sm text-neutral-400 dark:text-neutral-400">
                     No tags available
                 </p>
             )}

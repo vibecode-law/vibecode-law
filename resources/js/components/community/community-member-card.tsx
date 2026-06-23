@@ -54,7 +54,7 @@ export function CommunityMemberCard({
                         {fullName}
                     </Link>
                     {subtitle !== null && subtitle !== undefined && (
-                        <div className="mt-0.5 text-sm text-neutral-500 dark:text-neutral-400">
+                        <div className="mt-0.5 text-sm text-neutral-500 dark:text-neutral-300">
                             {subtitle}
                         </div>
                     )}

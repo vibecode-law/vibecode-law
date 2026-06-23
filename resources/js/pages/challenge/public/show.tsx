@@ -151,13 +151,13 @@ export default function ChallengeShow({
                                             status === 'upcoming' &&
                                                 'bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-200',
                                             status === 'ended' &&
-                                                'bg-neutral-100 text-neutral-600 dark:bg-neutral-800 dark:text-neutral-400',
+                                                'bg-neutral-100 text-neutral-600 dark:bg-neutral-800 dark:text-neutral-300',
                                         )}
                                     >
                                         {getStatusLabel(status)}
                                     </Badge>
                                     {timeInfo && (
-                                        <span className="text-sm text-neutral-500 dark:text-neutral-400">
+                                        <span className="text-sm text-neutral-500 dark:text-neutral-300">
                                             {timeInfo}
                                         </span>
                                     )}
@@ -166,7 +166,7 @@ export default function ChallengeShow({
                                 <h1 className="text-3xl font-bold tracking-tight text-neutral-900 sm:text-4xl dark:text-white">
                                     {challenge.title}
                                 </h1>
-                                <p className="text-lg text-neutral-600 dark:text-neutral-400">
+                                <p className="text-lg text-neutral-600 dark:text-neutral-300">
                                     {challenge.tagline}
                                 </p>
                             </div>
@@ -182,7 +182,7 @@ export default function ChallengeShow({
 
                             <div className="mt-8 flex flex-col gap-4 sm:flex-row sm:items-center">
                                 {isClosed === true && (
-                                    <p className="text-sm text-neutral-500 italic dark:text-neutral-400">
+                                    <p className="text-sm text-neutral-500 italic dark:text-neutral-300">
                                         This challenge has closed.
                                     </p>
                                 )}
@@ -218,7 +218,7 @@ export default function ChallengeShow({
                                     ((status === 'upcoming' &&
                                         challenge.starts_at !== null) ||
                                         challenge.ends_at !== null) && (
-                                        <p className="text-sm text-neutral-500 dark:text-neutral-400">
+                                        <p className="text-sm text-neutral-500 dark:text-neutral-300">
                                             {status === 'upcoming' &&
                                                 challenge.starts_at !==
                                                     null && (
@@ -250,7 +250,7 @@ export default function ChallengeShow({
                                                     )}
                                                 </span>
                                             )}
-                                            <span className="block text-xs text-neutral-400 dark:text-neutral-500">
+                                            <span className="block text-xs text-neutral-400 dark:text-neutral-400">
                                                 Date/time shown in{' '}
                                                 {formatTimezoneLabel(
                                                     challenge.timezone ?? 'UTC',
@@ -293,7 +293,7 @@ export default function ChallengeShow({
                             <aside className="shrink-0 lg:w-64 xl:w-68 2xl:w-72">
                                 {challenge.organisation ? (
                                     <div>
-                                        <p className="mb-3 text-xs font-medium tracking-wide text-neutral-500 uppercase dark:text-neutral-400">
+                                        <p className="mb-3 text-xs font-medium tracking-wide text-neutral-500 uppercase dark:text-neutral-300">
                                             Presented by
                                         </p>
                                         <Avatar className="aspect-square h-auto w-full rounded-xl">
@@ -307,7 +307,7 @@ export default function ChallengeShow({
                                                     className="rounded-xl object-cover"
                                                 />
                                             ) : null}
-                                            <AvatarFallback className="rounded-xl bg-neutral-100 text-4xl font-bold text-neutral-400 dark:bg-neutral-800 dark:text-neutral-600">
+                                            <AvatarFallback className="rounded-xl bg-neutral-100 text-4xl font-bold text-neutral-400 dark:bg-neutral-800 dark:text-neutral-400">
                                                 {challenge.organisation.name.charAt(
                                                     0,
                                                 )}
@@ -317,7 +317,7 @@ export default function ChallengeShow({
                                             {challenge.organisation.name}
                                         </p>
                                         {challenge.organisation.tagline && (
-                                            <p className="mt-1 text-sm text-neutral-600 dark:text-neutral-400">
+                                            <p className="mt-1 text-sm text-neutral-600 dark:text-neutral-300">
                                                 {challenge.organisation.tagline}
                                             </p>
                                         )}
@@ -384,7 +384,7 @@ export default function ChallengeShow({
                                 />
 
                                 {activeSubChallenge !== null && (
-                                    <p className="mt-3 text-sm text-neutral-600 dark:text-neutral-400">
+                                    <p className="mt-3 text-sm text-neutral-600 dark:text-neutral-300">
                                         {activeSubChallenge.tagline}
                                     </p>
                                 )}

@@ -16,7 +16,7 @@ export function SidebarRecentShowcases({
 
     return (
         <div>
-            <h3 className="mb-2 flex items-center gap-1.5 text-sm font-medium tracking-wide text-neutral-500 uppercase dark:text-neutral-400">
+            <h3 className="mb-2 flex items-center gap-1.5 text-sm font-medium tracking-wide text-neutral-500 uppercase dark:text-neutral-300">
                 <TrendingUp className="size-4" />
                 Recently Added
             </h3>
@@ -34,7 +34,7 @@ export function SidebarRecentShowcases({
                                 {showcase.title}
                             </div>
                             {showcase.user && (
-                                <div className="mt-0.5 truncate text-sm text-neutral-500 dark:text-neutral-400">
+                                <div className="mt-0.5 truncate text-sm text-neutral-500 dark:text-neutral-300">
                                     {showcase.user.first_name}{' '}
                                     {showcase.user.last_name}
                                 </div>

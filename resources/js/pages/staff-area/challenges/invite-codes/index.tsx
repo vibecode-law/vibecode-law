@@ -283,7 +283,7 @@ export default function InviteCodesIndex({
                                                             undefined &&
                                                             inviteCode.users_count !==
                                                                 null && (
-                                                                <span className="text-xs text-neutral-500 dark:text-neutral-400">
+                                                                <span className="text-xs text-neutral-500 dark:text-neutral-300">
                                                                     {
                                                                         inviteCode.users_count
                                                                     }{' '}
@@ -295,7 +295,7 @@ export default function InviteCodesIndex({
                                                             )}
                                                     </div>
                                                     <div className="mt-1 flex items-center gap-2">
-                                                        <span className="truncate text-xs text-neutral-500 dark:text-neutral-400">
+                                                        <span className="truncate text-xs text-neutral-500 dark:text-neutral-300">
                                                             {getInviteUrl(
                                                                 inviteCode.code,
                                                             )}

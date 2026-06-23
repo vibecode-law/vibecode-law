@@ -64,8 +64,8 @@ export default function Home({
                     <h1 className="text-4xl font-bold tracking-tight text-neutral-900 sm:text-5xl lg:text-6xl dark:text-white">
                         Learn. Share. Discover.
                     </h1>
-                    <div className="mx-auto mt-8 max-w-5xl space-y-6 text-lg text-neutral-600 dark:text-neutral-400">
-                        <p className="text-lg text-neutral-600 sm:text-xl dark:text-neutral-400">
+                    <div className="mx-auto mt-8 max-w-5xl space-y-6 text-lg text-neutral-600 dark:text-neutral-300">
+                        <p className="text-lg text-neutral-600 sm:text-xl dark:text-neutral-300">
                             An open platform for legal professionals building
                             with AI.
                         </p>
@@ -82,7 +82,7 @@ export default function Home({
                                 </Link>
                             </Button>
                         </div>
-                        <p className="flex flex-col items-center justify-center gap-2 text-sm text-neutral-600 md:flex-row md:text-base dark:text-neutral-400">
+                        <p className="flex flex-col items-center justify-center gap-2 text-sm text-neutral-600 md:flex-row md:text-base dark:text-neutral-300">
                             <span className="flex items-center justify-start gap-2">
                                 <PlayCircle className="size-5" />
                                 New to building?{' '}
@@ -102,7 +102,7 @@ export default function Home({
             <section className="bg-white dark:bg-neutral-950">
                 <div className="mx-auto flex max-w-6xl flex-col gap-8 px-4 lg:flex-row lg:gap-12 xl:gap-16">
                     <div className="min-w-0 flex-1">
-                        <h3 className="flex items-center gap-1.5 text-sm font-medium tracking-wide text-neutral-500 uppercase dark:text-neutral-400">
+                        <h3 className="flex items-center gap-1.5 text-sm font-medium tracking-wide text-neutral-500 uppercase dark:text-neutral-300">
                             <Medal className="size-4" />
                             Leaderboard
                         </h3>

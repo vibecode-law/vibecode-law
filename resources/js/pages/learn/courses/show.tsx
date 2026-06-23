@@ -111,7 +111,7 @@ export default function CourseShow({
                                 <h1 className="text-3xl font-bold tracking-tight text-neutral-900 sm:text-4xl dark:text-white">
                                     {course.title}
                                 </h1>
-                                <p className="text-lg text-neutral-600 dark:text-neutral-400">
+                                <p className="text-lg text-neutral-600 dark:text-neutral-300">
                                     {course.tagline}
                                 </p>
 
@@ -212,7 +212,7 @@ export default function CourseShow({
 
                             {completedLessonsCount > 0 && (
                                 <div className="mb-8">
-                                    <p className="mb-3 text-xs font-medium tracking-wide text-neutral-500 uppercase dark:text-neutral-400">
+                                    <p className="mb-3 text-xs font-medium tracking-wide text-neutral-500 uppercase dark:text-neutral-300">
                                         Progress
                                     </p>
                                     <CourseProgressBar

@@ -57,7 +57,7 @@ export function CourseCurriculum({
                                             <h3 className="font-semibold text-neutral-900 dark:text-white">
                                                 {lesson.title}
                                             </h3>
-                                            <p className="mt-1 text-sm text-neutral-600 dark:text-neutral-400">
+                                            <p className="mt-1 text-sm text-neutral-600 dark:text-neutral-300">
                                                 {lesson.tagline}
                                             </p>
                                         </div>
@@ -82,7 +82,7 @@ export function CourseCurriculum({
             ) : (
                 <div className="mt-6 rounded-lg border border-neutral-200 bg-neutral-50 p-8 text-center dark:border-neutral-800 dark:bg-neutral-900">
                     <BookOpen className="mx-auto size-12 text-neutral-400" />
-                    <p className="mt-4 text-sm text-neutral-600 dark:text-neutral-400">
+                    <p className="mt-4 text-sm text-neutral-600 dark:text-neutral-300">
                         Lessons coming soon
                     </p>
                 </div>

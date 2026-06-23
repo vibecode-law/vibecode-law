@@ -27,12 +27,12 @@ export function Breadcrumbs({ items }: BreadcrumbsProps) {
                             )}
                         >
                             {index > 0 && (
-                                <ChevronRight className="size-4 shrink-0 text-neutral-400 dark:text-neutral-500" />
+                                <ChevronRight className="size-4 shrink-0 text-neutral-400 dark:text-neutral-400" />
                             )}
                             {isLast || !item.href ? (
                                 <span
                                     className={cn(
-                                        'text-neutral-600 dark:text-neutral-400',
+                                        'text-neutral-600 dark:text-neutral-300',
                                         isLast && 'truncate',
                                     )}
                                     aria-current={isLast ? 'page' : undefined}
@@ -42,7 +42,7 @@ export function Breadcrumbs({ items }: BreadcrumbsProps) {
                             ) : (
                                 <Link
                                     href={item.href}
-                                    className="whitespace-nowrap text-neutral-500 transition-colors hover:text-neutral-900 dark:text-neutral-400 dark:hover:text-neutral-200"
+                                    className="whitespace-nowrap text-neutral-500 transition-colors hover:text-neutral-900 dark:text-neutral-300 dark:hover:text-neutral-200"
                                 >
                                     {item.label}
                                 </Link>

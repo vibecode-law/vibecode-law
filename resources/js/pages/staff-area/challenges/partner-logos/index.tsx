@@ -260,7 +260,7 @@ export default function PartnerLogosIndex({
                                         multiple
                                         disabled={processing}
                                     />
-                                    <p className="mt-1 text-sm text-neutral-500 dark:text-neutral-400">
+                                    <p className="mt-1 text-sm text-neutral-500 dark:text-neutral-300">
                                         PNG, JPG, GIF or WebP, up to 2MB each.
                                         Transparent PNGs work best.
                                     </p>

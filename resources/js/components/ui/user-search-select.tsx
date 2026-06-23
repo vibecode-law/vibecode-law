@@ -92,12 +92,12 @@ export function UserSearchSelect({
                             {selectedUser.name}
                         </p>
                         {selectedUser.email && (
-                            <p className="text-sm text-neutral-600 dark:text-neutral-400">
+                            <p className="text-sm text-neutral-600 dark:text-neutral-300">
                                 {selectedUser.email}
                             </p>
                         )}
                         {(selectedUser.job_title || selectedUser.organisation) && (
-                            <p className="mt-0.5 text-xs text-neutral-500 dark:text-neutral-400">
+                            <p className="mt-0.5 text-xs text-neutral-500 dark:text-neutral-300">
                                 {selectedUser.job_title}
                                 {selectedUser.job_title &&
                                     selectedUser.organisation &&
@@ -163,12 +163,12 @@ export function UserSearchSelect({
                                             <p className="font-medium text-neutral-900 dark:text-white">
                                                 {user.name}
                                             </p>
-                                            <p className="text-sm text-neutral-600 dark:text-neutral-400">
+                                            <p className="text-sm text-neutral-600 dark:text-neutral-300">
                                                 {user.email}
                                             </p>
                                             {(user.job_title ||
                                                 user.organisation) && (
-                                                <p className="mt-0.5 text-xs text-neutral-500 dark:text-neutral-400">
+                                                <p className="mt-0.5 text-xs text-neutral-500 dark:text-neutral-300">
                                                     {user.job_title}
                                                     {user.job_title &&
                                                         user.organisation &&
@@ -184,7 +184,7 @@ export function UserSearchSelect({
                     )}
                 </>
             )}
-            <p className="mt-1 text-xs text-neutral-500 dark:text-neutral-400">
+            <p className="mt-1 text-xs text-neutral-500 dark:text-neutral-300">
                 {selectedUser ? selectedHelpText : searchHelpText}
             </p>
         </div>

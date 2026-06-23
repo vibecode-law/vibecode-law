@@ -157,7 +157,7 @@ function SubChallengeRow({
                 <h3 className="font-semibold text-neutral-900 dark:text-white">
                     {subChallenge.name}
                 </h3>
-                <p className="text-sm text-neutral-500 dark:text-neutral-400">
+                <p className="text-sm text-neutral-500 dark:text-neutral-300">
                     {subChallenge.tagline}
                 </p>
             </div>

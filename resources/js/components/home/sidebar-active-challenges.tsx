@@ -18,7 +18,7 @@ export function SidebarActiveChallenges({
 
     return (
         <div>
-            <h3 className="mb-2 flex items-center gap-1.5 text-sm font-medium tracking-wide text-neutral-500 uppercase dark:text-neutral-400">
+            <h3 className="mb-2 flex items-center gap-1.5 text-sm font-medium tracking-wide text-neutral-500 uppercase dark:text-neutral-300">
                 <Lightbulb className="size-4" />
                 Inspiration
             </h3>
@@ -35,7 +35,7 @@ export function SidebarActiveChallenges({
                             <div className="truncate font-medium text-neutral-900 dark:text-white">
                                 {challenge.title}
                             </div>
-                            <div className="mt-0.5 flex items-center gap-1 text-xs text-neutral-500 dark:text-neutral-400">
+                            <div className="mt-0.5 flex items-center gap-1 text-xs text-neutral-500 dark:text-neutral-300">
                                 <Trophy className="hidden size-3 lg:block" />
                                 <span>Challenge</span>
                                 {challenge.showcases_count !== null &&

@@ -31,13 +31,13 @@ export function EmptyState({
             )}
         >
             <div className="flex size-10 shrink-0 items-center justify-center rounded-full bg-neutral-200 dark:bg-neutral-800">
-                <Icon className="size-5 text-neutral-500 dark:text-neutral-400" />
+                <Icon className="size-5 text-neutral-500 dark:text-neutral-300" />
             </div>
             <div className="min-w-0 flex-1">
                 <p className="font-semibold text-neutral-900 dark:text-white">
                     {title}
                 </p>
-                <p className="text-sm text-neutral-500 dark:text-neutral-400">
+                <p className="text-sm text-neutral-500 dark:text-neutral-300">
                     {description}
                 </p>
             </div>

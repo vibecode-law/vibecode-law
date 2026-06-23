@@ -249,7 +249,7 @@ export default function CoursesEdit({
                             <h3 className="font-semibold text-neutral-900 dark:text-white">
                                 Lessons
                             </h3>
-                            <p className="text-sm text-neutral-500 dark:text-neutral-400">
+                            <p className="text-sm text-neutral-500 dark:text-neutral-300">
                                 {course.lessons_count !== undefined
                                     ? `${course.lessons_count} ${course.lessons_count === 1 ? 'lesson' : 'lessons'}`
                                     : 'No lessons'}

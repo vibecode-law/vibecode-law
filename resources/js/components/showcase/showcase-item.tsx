@@ -26,15 +26,15 @@ export function ProjectItem({ showcase, rank }: ProjectItemProps) {
                 />
                 <div className="min-w-0 flex-1 space-y-0.5 lg:space-y-1">
                     <h3 className="font-semibold text-neutral-900 dark:text-white">
-                        <span className="text-neutral-500 dark:text-neutral-400">
+                        <span className="text-neutral-500 dark:text-neutral-300">
                             {rank}.
                         </span>{' '}
                         {showcase.title}
                     </h3>
-                    <p className="truncate text-sm text-neutral-700 dark:text-neutral-500">
+                    <p className="truncate text-sm text-neutral-700 dark:text-neutral-400">
                         {showcase.tagline}
                     </p>
-                    <div className="flex items-center gap-1 text-xs text-neutral-500 dark:text-neutral-400">
+                    <div className="flex items-center gap-1 text-xs text-neutral-500 dark:text-neutral-300">
                         {showcase.user !== null &&
                             showcase.user !== undefined && (
                                 <span className="hidden items-center gap-1 lg:inline-flex">
@@ -47,7 +47,7 @@ export function ProjectItem({ showcase, rank }: ProjectItemProps) {
                             showcase.user !== undefined &&
                             showcase.view_count !== null &&
                             showcase.view_count !== undefined && (
-                                <span className="hidden text-neutral-300 lg:inline dark:text-neutral-600">
+                                <span className="hidden text-neutral-300 lg:inline dark:text-neutral-400">
                                     &middot;
                                 </span>
                             )}

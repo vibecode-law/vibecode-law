@@ -87,7 +87,7 @@ export default function UsersEdit({ user, roles, teamTypes }: UsersEditProps) {
                                 />
 
                                 <div className="mt-6 flex items-center justify-between border-t pt-6 dark:border-neutral-800">
-                                    <div className="text-sm text-neutral-500 dark:text-neutral-400">
+                                    <div className="text-sm text-neutral-500 dark:text-neutral-300">
                                         {user.showcases_count !== undefined && (
                                             <span>
                                                 {user.showcases_count}{' '}

@@ -252,10 +252,10 @@ export default function LessonsEdit({
                     {isGenerating === true && (
                         <div className="absolute inset-0 z-10 flex flex-col items-center justify-center gap-3 rounded-lg bg-white/80 dark:bg-neutral-900/80">
                             <Spinner className="size-8 text-neutral-500" />
-                            <p className="text-sm font-medium text-neutral-600 dark:text-neutral-400">
+                            <p className="text-sm font-medium text-neutral-600 dark:text-neutral-300">
                                 Generating content from transcript...
                             </p>
-                            <p className="text-xs text-neutral-400 dark:text-neutral-500">
+                            <p className="text-xs text-neutral-400 dark:text-neutral-400">
                                 This may take up to a minute
                             </p>
                         </div>

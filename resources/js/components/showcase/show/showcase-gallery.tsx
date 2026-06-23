@@ -128,7 +128,7 @@ export function ShowcaseGallery({
 
     return (
         <div className="mb-8 space-y-3">
-            <p className="text-sm text-neutral-500 dark:text-neutral-400">
+            <p className="text-sm text-neutral-500 dark:text-neutral-300">
                 Gallery
             </p>
             <div className="overflow-hidden rounded-lg">

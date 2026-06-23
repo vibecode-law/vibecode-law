@@ -72,7 +72,7 @@ function ListCardEmpty({ className, ...props }: React.ComponentProps<'p'>) {
         <p
             data-slot="list-card-empty"
             className={cn(
-                'py-12 text-center text-sm text-neutral-500 dark:text-neutral-400',
+                'py-12 text-center text-sm text-neutral-500 dark:text-neutral-300',
                 className,
             )}
             {...props}

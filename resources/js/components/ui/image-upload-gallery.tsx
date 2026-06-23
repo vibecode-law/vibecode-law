@@ -325,7 +325,7 @@ export function ImageUploadGallery({
                 {label}
             </p>
             {description !== undefined && (
-                <p className="text-sm text-neutral-500 dark:text-neutral-400">
+                <p className="text-sm text-neutral-500 dark:text-neutral-300">
                     {description}
                 </p>
             )}
