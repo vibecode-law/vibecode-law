@@ -57,6 +57,7 @@ test('show returns correct challenge data structure', function () {
                 ->where('participant_instructions_html', null)
                 ->where('starts_at', $challenge->starts_at->toIso8601String())
                 ->where('ends_at', $challenge->ends_at->toIso8601String())
+                ->where('timezone', $challenge->timezone)
                 ->where('is_active', true)
                 ->where('is_featured', false)
                 ->where('thumbnail_url', $challenge->thumbnail_url)

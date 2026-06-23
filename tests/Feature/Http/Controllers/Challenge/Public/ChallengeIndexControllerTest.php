@@ -156,12 +156,25 @@ test('index returns empty arrays when no active challenges exist', function () {
 test('index includes showcases_count for active challenges', function () {
     $challenge = Challenge::factory()->active()->create();
     $challenge->showcases()->attach(
-        Showcase::factory()->count(5)->create()->pluck('id')
+        Showcase::factory()->approved()->count(5)->create()->pluck('id')
     );
 
     get(route('inspiration.index'))
         ->assertInertia(fn (AssertableInertia $page) => $page
             ->where('activeChallenges.0.showcases_count', 5)
+        );
+});
+
+test('index showcases_count only counts approved showcases', function () {
+    $challenge = Challenge::factory()->active()->create();
+    $challenge->showcases()->attach(Showcase::factory()->approved()->count(2)->create()->pluck('id'));
+    $challenge->showcases()->attach(Showcase::factory()->draft()->count(3)->create()->pluck('id'));
+    $challenge->showcases()->attach(Showcase::factory()->pending()->create()->getKey());
+    $challenge->showcases()->attach(Showcase::factory()->rejected()->create()->getKey());
+
+    get(route('inspiration.index'))
+        ->assertInertia(fn (AssertableInertia $page) => $page
+            ->where('activeChallenges.0.showcases_count', 2)
         );
 });
 

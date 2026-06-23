@@ -2,6 +2,7 @@
 
 namespace App\Http\Requests\Staff;
 
+use App\Concerns\NormalisesChallengeDateTimes;
 use App\Enums\ChallengeVisibility;
 use App\Models\Challenge\Challenge;
 use App\Rules\CropAspectRatio;
@@ -11,6 +12,8 @@ use Illuminate\Validation\Rule;
 
 class ChallengeUpdateRequest extends FormRequest
 {
+    use NormalisesChallengeDateTimes;
+
     public function authorize(): bool
     {
         return true;
@@ -40,6 +43,8 @@ class ChallengeUpdateRequest extends FormRequest
                 $this->merge([$field => null]);
             }
         }
+
+        $this->normaliseDateTimeSeconds();
     }
 
     private function requiresInviteToSubmit(): bool
@@ -83,6 +88,7 @@ class ChallengeUpdateRequest extends FormRequest
             'participant_instructions' => ['nullable', 'string'],
             'starts_at' => ['nullable', 'date'],
             'ends_at' => ['nullable', 'date', 'after:starts_at'],
+            'timezone' => ['nullable', 'required_with:starts_at,ends_at', 'string', 'timezone:all'],
             'is_active' => $isActiveRules,
             'is_featured' => ['nullable', 'boolean'],
             'live_view_enabled' => ['nullable', 'boolean'],
@@ -123,6 +129,8 @@ class ChallengeUpdateRequest extends FormRequest
             'tagline.required' => 'Please provide a tagline.',
             'description.required' => 'Please provide a description.',
             'involvement_instructions.required' => 'Please explain how entrants can get involved for invite-only challenges.',
+            'timezone.required_with' => 'Please select a timezone when a start or end date is set.',
+            'timezone.timezone' => 'Please select a valid timezone.',
             'ends_at.after' => 'The end date must be after the start date.',
             'organisation_id.exists' => 'The selected organisation does not exist.',
             'thumbnail.image' => 'The thumbnail must be an image.',

@@ -12,6 +12,8 @@ import { Button } from '@/components/ui/button';
 import { EmptyState } from '@/components/ui/empty-state';
 import PublicLayout from '@/layouts/public-layout';
 import {
+    formatChallengeMoment,
+    formatTimezoneLabel,
     getChallengeStatus,
     getStatusLabel,
     getTimeInfo,
@@ -222,15 +224,11 @@ export default function ChallengeShow({
                                                     null && (
                                                     <span>
                                                         Opens{' '}
-                                                        {new Date(
+                                                        {formatChallengeMoment(
                                                             challenge.starts_at,
-                                                        ).toLocaleDateString(
-                                                            undefined,
-                                                            {
-                                                                year: 'numeric',
-                                                                month: 'long',
-                                                                day: 'numeric',
-                                                            },
+                                                            challenge.timezone ??
+                                                                'UTC',
+                                                            'start',
                                                         )}
                                                     </span>
                                                 )}
@@ -244,18 +242,20 @@ export default function ChallengeShow({
                                             {challenge.ends_at !== null && (
                                                 <span>
                                                     Closes{' '}
-                                                    {new Date(
+                                                    {formatChallengeMoment(
                                                         challenge.ends_at,
-                                                    ).toLocaleDateString(
-                                                        undefined,
-                                                        {
-                                                            year: 'numeric',
-                                                            month: 'long',
-                                                            day: 'numeric',
-                                                        },
+                                                        challenge.timezone ??
+                                                            'UTC',
+                                                        'end',
                                                     )}
                                                 </span>
                                             )}
+                                            <span className="block text-xs text-neutral-400 dark:text-neutral-500">
+                                                Date/time shown in{' '}
+                                                {formatTimezoneLabel(
+                                                    challenge.timezone ?? 'UTC',
+                                                )}
+                                            </span>
                                         </p>
                                     )}
                             </div>

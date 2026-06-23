@@ -80,6 +80,7 @@ export default function ChallengesEdit({
                                             challenge.participant_instructions,
                                         starts_at: challenge.starts_at,
                                         ends_at: challenge.ends_at,
+                                        timezone: challenge.timezone,
                                         is_active: challenge.is_active,
                                         is_featured: challenge.is_featured,
                                         live_view_enabled:
