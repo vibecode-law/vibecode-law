@@ -99,8 +99,8 @@ export function normalizeShowcase(
 
     const images: NormalizedImage[] = (
         (showcase.images as
-            | App.Http.Resources.Showcase.ShowcaseImageResource[]
-            | undefined) ?? []
+            App.Http.Resources.Showcase.ShowcaseImageResource[] | undefined) ??
+        []
     ).map((img) => ({
         id: `showcase-${img.id}`,
         url: img.url,
@@ -124,8 +124,7 @@ export function normalizeShowcase(
         selectedPracticeAreaIds:
             (
                 showcase.practiceAreas as
-                    | App.Http.Resources.PracticeAreaResource[]
-                    | undefined
+                    App.Http.Resources.PracticeAreaResource[] | undefined
             )?.map((pa) => pa.id) ?? [],
         thumbnailUrl: showcase.thumbnail_url,
         thumbnailCrop: showcase.thumbnail_crop ?? null,
@@ -172,8 +171,7 @@ export function normalizeDraft(
         selectedPracticeAreaIds:
             (
                 draft.practiceAreas as
-                    | App.Http.Resources.PracticeAreaResource[]
-                    | undefined
+                    App.Http.Resources.PracticeAreaResource[] | undefined
             )?.map((pa) => pa.id) ?? [],
         thumbnailUrl: draft.thumbnail_url,
         thumbnailCrop: draft.thumbnail_crop ?? null,

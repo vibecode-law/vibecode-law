@@ -8,8 +8,7 @@ export function useFlashToasts() {
     useEffect(() => {
         return router.on('success', (event) => {
             const flash = event.detail.page.props.flash as
-                | FlashData
-                | undefined;
+                FlashData | undefined;
 
             if (flash?.message === undefined || flash.message === null) {
                 return;

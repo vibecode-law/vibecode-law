@@ -445,8 +445,7 @@ export function ShowcaseForm({
                                             }
                                             error={
                                                 errors.images as
-                                                    | string
-                                                    | undefined
+                                                    string | undefined
                                             }
                                             imageErrors={imageErrors}
                                             requireCrop
@@ -486,8 +485,7 @@ export function ShowcaseForm({
                                             placeholder="Select at least one practice area"
                                             error={
                                                 errors.practice_area_ids as
-                                                    | string
-                                                    | undefined
+                                                    string | undefined
                                             }
                                             required
                                         />

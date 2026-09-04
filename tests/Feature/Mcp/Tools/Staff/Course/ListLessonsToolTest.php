@@ -57,8 +57,8 @@ it('returns engagement counts and playback stats when requested as columns', fun
                 ->where('items.0.started_count', 2)
                 ->where('items.0.completed_count', 1)
                 ->where('items.0.total_playback_seconds', 720)
-                ->where('items.0.average_playback_seconds', 360.0)
-                ->where('items.0.average_completion_percentage', 60.0)
+                ->where('items.0.average_playback_seconds', 360)
+                ->where('items.0.average_completion_percentage', 60)
                 ->where('total_count', 1)
                 ->where('next_cursor', null)
                 ->etc();
